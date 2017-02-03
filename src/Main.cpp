@@ -5,24 +5,24 @@
 const char* ssid     = "Lola";
 const char* password = "yourpassword";
 
-const char* host = "data.sparkfun.com";
-const char* streamId   = "....................";
-const char* privateKey = "....................";
+const char* host = "10.0.0.12";
+
+int value = 0;
+volatile int toggle;
+
+void handler(void) {
+  toggle = (toggle == 1) ? 0 : 1;
+  digitalWrite(BUILTIN_LED, toggle);
+  timer0_write(ESP.getCycleCount() + 41660000);
+}
 
 void setup() {
   Serial.begin(115200);
   delay(10);
 
-  // We start by connecting to a WiFi network
-
-  Serial.println();
-  Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
   
-  /* Explicitly set the ESP8266 to be a WiFi-client, otherwise, it by default,
-     would try to act as both a client and an access-point and could cause
-     network-issues with your other WiFi-devices on your WiFi-network. */
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   
@@ -31,36 +31,40 @@ void setup() {
     Serial.print(".");
   }
 
-  Serial.println("");
-  Serial.println("WiFi connected");  
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
+  Serial.println("WIFI OK");
+
+  pinMode(BUILTIN_LED, OUTPUT);
+  noInterrupts();
+  timer0_isr_init();
+  timer0_attachInterrupt(handler);
+  timer0_write(ESP.getCycleCount() + 41660000);
+  interrupts();
+
 }
 
-int value = 0;
 
 void loop() {
   delay(5000);
   ++value;
 
-  Serial.print("connecting to ");
+  Serial.print("Connecting to ");
   Serial.println(host);
   
   // Use WiFiClient class to create TCP connections
   WiFiClient client;
   const int httpPort = 80;
   if (!client.connect(host, httpPort)) {
-    Serial.println("connection failed");
+    Serial.println("Connection failed");
     return;
   }
   
   // We now create a URI for the request
-  String url = "/input/";
+  String url = "/api/";
   url += streamId;
-  url += "?private_key=";
-  url += privateKey;
-  url += "&value=";
-  url += value;
+  url += "?param1=";
+  url += "hey";
+  url += "&param2=";
+  url += "babe";
   
   Serial.print("Requesting URL: ");
   Serial.println(url);
@@ -85,6 +89,6 @@ void loop() {
   }
   
   Serial.println();
-  Serial.println("closing connection");
+  Serial.println("Closing connection");
 }
 
