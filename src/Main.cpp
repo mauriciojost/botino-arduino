@@ -95,12 +95,12 @@ void setup() {
   m.setup();
   //m.setStdoutWriteFunction(displayOnLcdString);
 
-  pinMode(BUILTIN_LED, OUTPUT);
-  noInterrupts();
-  timer0_isr_init();
-  timer0_attachInterrupt(timingInterrupt);
-  timer0_write(ESP.getCycleCount() + 41660000);
-  interrupts();
+  //pinMode(BUILTIN_LED, OUTPUT);
+  //noInterrupts();
+  //timer0_isr_init();
+  //timer0_attachInterrupt(timingInterrupt);
+  //timer0_write(ESP.getCycleCount() + 41660000);
+  //interrupts();
 
   //m.setReadLevelFunction(readLevel);
 
@@ -190,6 +190,8 @@ void loop() {
   }
   */
   delay(1000);
+  toggle = (toggle == 1) ? 0 : 1;
+  digitalWrite(BUILTIN_LED, toggle);
 }
 
 #endif // UNIT_TEST
