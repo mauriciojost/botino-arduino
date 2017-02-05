@@ -34,9 +34,8 @@ int value = 0;
 /*****************/
 
 void timingInterrupt(void) {
-  //log(CLASS, Info, "TIMING");
   timer0_write(ESP.getCycleCount() + 41660000);
-  nroInterruptsQueued++; // increment the queue so the interrupts are treated sometime
+  nroInterruptsQueued++;
 }
 
 void ISR_ButtonMode() {
@@ -51,7 +50,7 @@ void ISR_ButtonSet() {
 /***  CALLBACKS ***/
 /******************/
 
-void displayOnLcdString(const char *str1, const char *str2) {
+void displayOnLogs(const char *str1, const char *str2) {
   log(CLASS, Info, str1);
   log(CLASS, Info, str2);
 }
@@ -91,21 +90,19 @@ void setup() {
 
   setupPins();
   m.setup();
-  //m.setStdoutWriteFunction(displayOnLcdString);
+  m.setStdoutWriteFunction(displayOnLogs);
 
-  //noInterrupts();
+  noInterrupts();
   timer0_isr_init();
   timer0_attachInterrupt(timingInterrupt);
   timer0_write(ESP.getCycleCount() + 41660000);
-  //interrupts();
-
-  //m.setReadLevelFunction(readLevel);
+  interrupts();
 
 }
 
 
 void loop() {
-  log(CLASS, Info, "LOOP");
+  log(CLASS, Info, "MAIN LOOP");
 /*
   delay(5000);
   ++value;
@@ -156,10 +153,8 @@ void loop() {
 */
   ///////////
 
-/*
   bool bModeStable = buttonModeWasPressed;// && digitalRead(BUTTON_MODE_PIN);
   bool bSetStable = buttonSetWasPressed;// && digitalRead(BUTTON_SET_PIN);
-*/
   bool wdtInterrupt = nroInterruptsQueued > 0;
 
   if (wdtInterrupt) {
@@ -167,8 +162,8 @@ void loop() {
     log(CLASS, Info, "INT");
   }
 
-/*
   m.loop(bModeStable, bSetStable, wdtInterrupt);
+/*
   m.getClock()->setNroInterruptsQueued(nroInterruptsQueued);
 
   if (buttonSetWasPressed) {
@@ -189,7 +184,7 @@ void loop() {
     //enterSleep();
   }
   */
-  delay(100);
+  delay(300);
 }
 
 #endif // UNIT_TEST

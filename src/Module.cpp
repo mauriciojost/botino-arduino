@@ -37,8 +37,9 @@ void Module::loop(bool mode, bool set, bool wdtWasTriggered) {
     }
   }
 
-  log(CLASS, Info, "\n\n\nLOOP");
+  log(CLASS, Info, "MODULE LOOP");
 
+  /*
   // execute a cycle on the bot
   bot->cycle(mode, set, interruptType, ((float)subCycle) / SUB_CYCLES_PER_CYCLE);
 
@@ -54,6 +55,7 @@ void Module::loop(bool mode, bool set, bool wdtWasTriggered) {
   if (anyButtonPressed) {
     clearErrorLogged();
   }
+  */
 }
 
 void Module::setup() {
