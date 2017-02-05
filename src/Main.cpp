@@ -28,17 +28,14 @@ const char* password = "yourpassword";
 const char* host = "10.0.0.12";
 
 int value = 0;
-volatile int toggle;
 
 /*****************/
 /** INTERRUPTS ***/
 /*****************/
 
 void timingInterrupt(void) {
-  toggle = (toggle == 1) ? 0 : 1;
-  digitalWrite(BUILTIN_LED, toggle);
+  //log(CLASS, Info, "TIMING");
   timer0_write(ESP.getCycleCount() + 41660000);
-
   nroInterruptsQueued++; // increment the queue so the interrupts are treated sometime
 }
 
@@ -96,11 +93,10 @@ void setup() {
   m.setup();
   //m.setStdoutWriteFunction(displayOnLcdString);
 
-  //pinMode(BUILTIN_LED, OUTPUT);
   //noInterrupts();
-  //timer0_isr_init();
-  //timer0_attachInterrupt(timingInterrupt);
-  //timer0_write(ESP.getCycleCount() + 41660000);
+  timer0_isr_init();
+  timer0_attachInterrupt(timingInterrupt);
+  timer0_write(ESP.getCycleCount() + 41660000);
   //interrupts();
 
   //m.setReadLevelFunction(readLevel);
@@ -163,12 +159,15 @@ void loop() {
 /*
   bool bModeStable = buttonModeWasPressed;// && digitalRead(BUTTON_MODE_PIN);
   bool bSetStable = buttonSetWasPressed;// && digitalRead(BUTTON_SET_PIN);
+*/
   bool wdtInterrupt = nroInterruptsQueued > 0;
 
   if (wdtInterrupt) {
     nroInterruptsQueued--;
+    log(CLASS, Info, "INT");
   }
 
+/*
   m.loop(bModeStable, bSetStable, wdtInterrupt);
   m.getClock()->setNroInterruptsQueued(nroInterruptsQueued);
 
@@ -190,9 +189,7 @@ void loop() {
     //enterSleep();
   }
   */
-  delay(1000);
-  toggle = (toggle == 1) ? 0 : 1;
-  digitalWrite(BUILTIN_LED, toggle);
+  delay(100);
 }
 
 #endif // UNIT_TEST
