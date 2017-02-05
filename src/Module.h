@@ -31,7 +31,6 @@ public:
 
   void setup();
   void setDigitalWriteFunction(void (*digitalWriteFunction)(unsigned char pin, unsigned char value));
-  void setReadLevelFunction(int (*readLevel)());
   void setStdoutWriteFunction(void (*stdOutWriteStringFunction)(const char *, const char *));
   void setFactor(float f);
 

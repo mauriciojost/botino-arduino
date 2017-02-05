@@ -36,35 +36,24 @@ void Module::loop(bool mode, bool set, bool wdtWasTriggered) {
       interruptType = TimingInterruptSubCycle;
     }
   }
-
-  log(CLASS, Info, "MODULE LOOP");
-
   
   // execute a cycle on the bot
   bot->cycle(mode, set, interruptType, ((float)subCycle) / SUB_CYCLES_PER_CYCLE);
   
-  /*
   if (interruptType == TimingInterruptCycle) { // cycles (~1 second)
     bool onceIn2Cycles = (bot->getClock()->getSeconds() % 2) == 0;
     bool lcdLight = (bot->getMode() != RunMode) || isThereErrorLogged();
     if (isThereErrorLogged() && onceIn2Cycles) {
       bot->stdOutWriteString(MSG_ERROR, getErrorLogged());
     }
-    //digitalWrite(LCD_A, lcdLight);
   }
 
   if (anyButtonPressed) {
     clearErrorLogged();
   }
-  */
 }
 
 void Module::setup() {
-  //lcd->initialize();
-}
-
-void Module::setReadLevelFunction(int (*readLevel)()) {
-  //level->setReadLevelFunction(readLevel);
 }
 
 void Module::setDigitalWriteFunction(void (*digitalWriteFunction)(unsigned char pin, unsigned char value)) {
