@@ -9,60 +9,38 @@ Delayer::Delayer(int o) {
   passTheMatchIn = 0;
 }
 
-void Delayer::setActor(Actor* a) {
-  actor = a;
-}
-
 const char *Delayer::getName() {
-  return actor->getName();
+  return "hey";
 }
 
 void Delayer::cycle(bool cronMatches) {
-  if (cronMatches) {
-    matched = true;
-    passTheMatchIn = offset;
-  }
-
-  if (matched) {
-    passTheMatchIn--;
-    log(CLASS, Debug, "  DLY: GO ON", passTheMatchIn);
-  }
-
-  if (matched && passTheMatchIn <= 0) {
-    log(CLASS, Debug, "  DLY: GO NOW");
-    matched = false;
-    passTheMatchIn = 0;
-    actor->cycle(true);
-  } else {
-    log(CLASS, Debug, "  DLY: OFF");
-    actor->cycle(false);
-  }
+  
 }
 
 void Delayer::subCycle(float subCycle) {
-  actor->subCycle(subCycle);
+  
 }
 
 int Delayer::getActuatorValue() {
-  return actor->getActuatorValue();
+  return 0;
 }
 
 void Delayer::setConfig(int configIndex, char *retroMsg, bool set) {
-  actor->setConfig(configIndex, retroMsg, set);
+  
 }
 
 int Delayer::getNroConfigs() {
-  return actor->getNroConfigs();
+  return 0;
 }
 
 void Delayer::getInfo(int infoIndex, char *retroMsg) {
-  actor->getInfo(infoIndex, retroMsg);
+  
 }
 
 int Delayer::getNroInfos() {
-  return actor->getNroInfos();
+  return 0;
 }
 
 FreqConf *Delayer::getFrequencyConfiguration() {
-  return actor->getFrequencyConfiguration();
+  return &freqConf;
 }

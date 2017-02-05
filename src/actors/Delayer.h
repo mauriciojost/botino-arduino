@@ -26,6 +26,7 @@ private:
 
   bool matched;       // flag telling if there was a match in the past for which there is a count down
   int passTheMatchIn; // with [[matched]], tells how long until the match will be notified to the downstream actor
+  FreqConf freqConf;  // configuration of the frequency at which this actor will get triggered
 
 public:
   Delayer(int cowo);

@@ -39,10 +39,11 @@ void Module::loop(bool mode, bool set, bool wdtWasTriggered) {
 
   log(CLASS, Info, "MODULE LOOP");
 
-  /*
+  
   // execute a cycle on the bot
   bot->cycle(mode, set, interruptType, ((float)subCycle) / SUB_CYCLES_PER_CYCLE);
-
+  
+  /*
   if (interruptType == TimingInterruptCycle) { // cycles (~1 second)
     bool onceIn2Cycles = (bot->getClock()->getSeconds() % 2) == 0;
     bool lcdLight = (bot->getMode() != RunMode) || isThereErrorLogged();
