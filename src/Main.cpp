@@ -64,6 +64,7 @@ void displayOnLcdString(const char *str1, const char *str2) {
 /*****************/
 
 void setupPins() {
+  //pinMode(BUILTIN_LED, OUTPUT); // not to set BUILTIN_LED as output!!! it will break Serial!
   //pinMode(SERVO_PIN, OUTPUT);
   //attachInterrupt(digitalPinToInterrupt(BUTTON_MODE_PIN), ISR_ButtonMode, RISING);
   //attachInterrupt(digitalPinToInterrupt(BUTTON_SET_PIN), ISR_ButtonSet, RISING);
