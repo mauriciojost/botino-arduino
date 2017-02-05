@@ -100,7 +100,7 @@ void setup() {
 
 
 void loop() {
-  log(CLASS, Info, "MAIN LOOP");
+  log(CLASS, Info, "\n\n\nMAIN LOOP");
 /*
   delay(5000);
   ++value;
@@ -151,38 +151,47 @@ void loop() {
 */
   ///////////
 
-  bool bModeStable = buttonModeWasPressed;// && digitalRead(BUTTON_MODE_PIN);
-  bool bSetStable = buttonSetWasPressed;// && digitalRead(BUTTON_SET_PIN);
+  if (Serial.available() > 0) {
+    int readByte = Serial.read();
+    switch(readByte) {
+      case 's':
+      case 'S':
+          buttonSetWasPressed = true;
+        break;
+      case 'm':
+      case 'M':
+        buttonModeWasPressed = true;
+        break;
+      default: 
+        break;
+    }
+  }
+  
+  bool bModeStable = buttonModeWasPressed;
+  bool bSetStable = buttonSetWasPressed;
   bool wdtInterrupt = nroInterruptsQueued > 0;
 
+  
   if (wdtInterrupt) {
     nroInterruptsQueued--;
     log(CLASS, Info, "INT");
   }
 
   m.loop(bModeStable, bSetStable, wdtInterrupt);
-/*
+
   m.getClock()->setNroInterruptsQueued(nroInterruptsQueued);
 
-  if (buttonSetWasPressed) {
-    // smth
-  }
 
   if (buttonModeWasPressed || buttonSetWasPressed) {
-    delay(BUTTON_DEBOUNCING_DELAY_MS);
     buttonModeWasPressed = false;
-    // disable set button only if no longer being pressed
-    //if (!digitalRead(BUTTON_SET_PIN)) {
-      //buttonSetWasPressed = false;
-    //}
+    buttonSetWasPressed = false;
   }
 
   if (nroInterruptsQueued <= 0) { // no interrupts queued
     nroInterruptsQueued = 0;
     //enterSleep();
   }
-  */
-  delay(300);
+  delay(1000);
 }
 
 #endif // UNIT_TEST
