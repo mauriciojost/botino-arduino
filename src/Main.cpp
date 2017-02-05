@@ -72,20 +72,18 @@ void setup() {
   delay(1000);
   log(CLASS, Info, "LOG READY");
 /*
-  Serial.begin(115200);
-
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
+  log(CLASS, Info, "Connecting to ");
+  log(CLASS, Info, ssid);
   
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    log(CLASS, Info, ".");
   }
 
-  Serial.println("WIFI OK");
+  log(CLASS, Info, "WIFI OK");
   */
 
   setupPins();
@@ -107,14 +105,14 @@ void loop() {
   delay(5000);
   ++value;
 
-  Serial.print("Connecting to ");
-  Serial.println(host);
+  log(CLASS, Info, "Connecting to ");
+  log(CLASS, Info, host);
   
   // Use WiFiClient class to create TCP connections
   WiFiClient client;
   const int httpPort = 80;
   if (!client.connect(host, httpPort)) {
-    Serial.println("Connection failed");
+    log(CLASS, Info, "Connection failed");
     return;
   }
   
@@ -125,8 +123,8 @@ void loop() {
   url += "&param2=";
   url += "babe";
   
-  Serial.print("Requesting URL: ");
-  Serial.println(url);
+  log(CLASS, Info, "Requesting URL: ");
+  log(CLASS, Info, url);
   
   // This will send the request to the server
   client.print(String("GET ") + url + " HTTP/1.1\r\n" +
@@ -135,7 +133,7 @@ void loop() {
   unsigned long timeout = millis();
   while (client.available() == 0) {
     if (millis() - timeout > 5000) {
-      Serial.println(">>> Client Timeout !");
+      log(CLASS, Info, ">>> Client Timeout !");
       client.stop();
       return;
     }
@@ -144,11 +142,11 @@ void loop() {
   // Read all the lines of the reply from server and print them to Serial
   while(client.available()){
     String line = client.readStringUntil('\r');
-    Serial.print(line);
+    log(CLASS, Info, line);
   }
   
-  Serial.println();
-  Serial.println("Closing connection");
+  
+  log(CLASS, Info, "Closing connection");
 
 */
   ///////////
