@@ -3,7 +3,7 @@
 
 #include <main4ino/Actor.h>
 #include <main4ino/Configurable.h>
-#include <actors/Delayer.h>
+#include <actors/Messenger.h>
 #include <main4ino/Clock.h>
 #include <main4ino/Bot.h>
 
@@ -14,7 +14,7 @@ class Module {
 
 private:
   int amountOfActors;
-  Delayer *pump0;
+  Messenger *msgr;
   Actor **actors;
   Clock *clock;
   int amountOfConfigurables;

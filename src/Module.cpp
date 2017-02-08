@@ -6,8 +6,8 @@ Module::Module() {
   this->amountOfActors = 1;
   this->actors = new Actor *[amountOfActors + 1];
 
-  this->pump0 = new Delayer(0);
-  this->actors[0] = pump0;
+  this->msgr = new Messenger();
+  this->actors[0] = msgr;
   this->actors[1] = NULL; // end of array
 
   this->clock = new Clock(actors, amountOfActors);
@@ -15,7 +15,7 @@ Module::Module() {
   this->amountOfConfigurables = amountOfActors + 1;
   this->configurables = new Configurable *[amountOfConfigurables + 1];
   this->configurables[0] = clock;
-  this->configurables[1] = pump0;
+  this->configurables[1] = msgr;
   this->configurables[2] = NULL; // end of array
 
   this->bot = new Bot(clock, actors, configurables);
