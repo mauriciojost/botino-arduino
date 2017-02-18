@@ -77,10 +77,10 @@ ButtonPressed readButtons() {
 }
 
 void loop() {
-  ButtonPressed button = readButtons();
   bool wdtInterrupt = nroInterruptsQueued > 0;
 
   if (wdtInterrupt) {
+    ButtonPressed button = readButtons();
     nroInterruptsQueued--;
     log(CLASS, Info, "INT");
     m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, wdtInterrupt);
@@ -91,7 +91,6 @@ void loop() {
     nroInterruptsQueued = 0;
   }
 
-  delay(1000);
 }
 
 #endif // UNIT_TEST
