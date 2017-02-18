@@ -19,6 +19,7 @@ Module::Module() {
   this->configurables[2] = NULL; // end of array
 
   this->bot = new Bot(clock, actors, configurables);
+  this->msgr->setBot(bot);
 
   this->subCycle = 0;
 }
