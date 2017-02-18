@@ -21,14 +21,19 @@ const char *Messenger::getName() {
 }
 
 void Messenger::connectToWifi() {
+  static bool configured = false;
   int attempts = 0;
-  while(WiFi.status() != WL_CONNECTED) {
+  log(CLASS, Info, "Status: ", (int)WiFi.status());
+  while(WiFi.status() != WL_CONNECTED || !configured) {
+    log(CLASS, Info, "Connecting...");
     WiFi.mode(WIFI_STA);
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    configured = true;
     while (WiFi.status() != WL_CONNECTED) {
       delay(DELAY_UNIT_MS);
       log(CLASS, Info, ".");
       if (attempts++ > 100) {
+        attempts = 0;
         break;
       }
     }
