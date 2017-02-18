@@ -4,7 +4,7 @@
 
 #define WIFI_SSID "Lola"
 #define WIFI_PASSWORD "yourpassword"
-#define URL "http://jsonplaceholder.typicode.com/posts"
+#define URL "http://10.0.0.8:9000/api/0"
 #define DELAY_UNIT_MS 500
 
 Messenger::Messenger() {
