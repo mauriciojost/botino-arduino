@@ -35,6 +35,7 @@ public:
   FreqConf *getFrequencyConfiguration();
 
   void setBot(Bot* b);
+  void connectToWifi();
 };
 
 #endif // MESSENGER_INC

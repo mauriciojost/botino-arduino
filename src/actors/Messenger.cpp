@@ -2,10 +2,10 @@
 
 #define CLASS "Messenger"
 
-const char* ssid     = "Lola";
-const char* password= "yourpassword";
-const char* host = "10.0.0.8";
-const int port = 80;
+#define WIFI_SSID "Lola"
+#define WIFI_PASSWORD "yourpassword"
+#define URL "http://jsonplaceholder.typicode.com/posts"
+#define DELAY_UNIT_MS 500
 
 Messenger::Messenger() {
   freqConf.setFrequency(OnceEvery5Minutes);
@@ -20,30 +20,35 @@ const char *Messenger::getName() {
   return CLASS;
 }
 
+void Messenger::connectToWifi() {
+  int attempts = 0;
+  while(WiFi.status() != WL_CONNECTED) {
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    while (WiFi.status() != WL_CONNECTED) {
+      delay(DELAY_UNIT_MS);
+      log(CLASS, Info, ".");
+      if (attempts++ > 100) {
+        break;
+      }
+    }
+  }
+  delay(DELAY_UNIT_MS);
+}
+
 void Messenger::cycle(bool cronMatches) {
 
-  static bool initialized = false;
-  if (!initialized) {
-    WiFi.mode(WIFI_STA);
-    WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED) {
-      delay(500);
-      log(CLASS, Info, ".");
-    }
-    initialized = true;
-    delay(1000);
-  }
+  connectToWifi();
 
   char configs[100]; configs[0] = 0;
   bot->getConfigs(configs);
 
   HTTPClient http;
-  http.begin("http://jsonplaceholder.typicode.com/posts");
+  http.begin(URL);
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
   http.POST(configs);
   http.writeToStream(&Serial);
   http.end();
-
 
 }
 
