@@ -4,8 +4,8 @@
 
 #define WIFI_SSID "Lola"
 #define WIFI_PASSWORD "yourpassword"
-#define URL "http://10.0.0.8:9000/api/0"
-#define DELAY_UNIT_MS 500
+#define URL "http://10.0.0.8:9000/dev/0"
+#define DELAY_UNIT_MS 5000
 
 Messenger::Messenger() {
   freqConf.setFrequency(OnceEvery5Minutes);
@@ -26,6 +26,8 @@ void Messenger::connectToWifi() {
   log(CLASS, Info, "Status: ", (int)WiFi.status());
   while(WiFi.status() != WL_CONNECTED || !configured) {
     log(CLASS, Info, "Connecting...");
+    WiFi.persistent(false);
+    WiFi.mode(WIFI_OFF);
     WiFi.mode(WIFI_STA);
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     configured = true;
