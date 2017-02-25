@@ -40,8 +40,8 @@ void Messenger::connectToWifi() {
         break;
       }
     }
+    delay(DELAY_UNIT_MS);
   }
-  delay(DELAY_UNIT_MS);
 }
 
 void Messenger::cycle(bool cronMatches) {
