@@ -2,6 +2,7 @@
 #include <Main.h>
 
 #define CLASS "Main"
+#define TICKS_PERIOD_TIMER1 2500000
 
 volatile char nroInterruptsQueued = 0; // counter to keep track of amount of timing
                                        // interrupts queued
@@ -44,7 +45,7 @@ void setupInterrupts() {
   timer1_isr_init();
   timer1_attachInterrupt(timingInterrupt);
   timer1_enable(TIM_DIV265, TIM_EDGE, TIM_LOOP);
-  timer1_write(1900000);
+  timer1_write(TICKS_PERIOD_TIMER1);
   log(CLASS, Info, "INT READY");
 }
 
