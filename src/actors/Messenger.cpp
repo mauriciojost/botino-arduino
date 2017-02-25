@@ -53,6 +53,8 @@ void Messenger::cycle(bool cronMatches) {
   HTTPClient http;
   http.begin(URL);
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+  log(CLASS, Info, "Client connected to: ", URL);
+  log(CLASS, Info, "Posting: ", configs);
   http.POST(configs);
   http.writeToStream(&Serial);
   http.end();
