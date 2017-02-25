@@ -37,6 +37,8 @@ void displayOnLogs(const char *str1, const char *str2) {
 /*****************/
 
 void setupPins() {
+  pinMode(0, OUTPUT);
+  pinMode(2, OUTPUT);
   log(CLASS, Info, "PINS READY");
 }
 
