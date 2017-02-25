@@ -1,8 +1,6 @@
 #ifndef UNIT_TEST
 #include <Main.h>
 
-#include <Module.h>
-
 #define CLASS "Main"
 
 volatile char nroInterruptsQueued = 0; // counter to keep track of amount of timing
@@ -20,9 +18,9 @@ Module m;
 /** INTERRUPTS ***/
 /*****************/
 
-void timingInterrupt(void) {
-  //timer0_write(ESP.getCycleCount() + 41660000);
+ICACHE_RAM_ATTR void timingInterrupt(void) {
   nroInterruptsQueued++;
+  timer1_write(900000);
 }
 
 /******************/
@@ -38,14 +36,17 @@ void displayOnLogs(const char *str1, const char *str2) {
 /***** SETUP *****/
 /*****************/
 
-void setupPins() { }
+void setupPins() {
+  log(CLASS, Info, "PINS READY");
+}
 
 void setupInterrupts() {
-  noInterrupts();
-  timer0_isr_init();
-  timer0_attachInterrupt(timingInterrupt);
-  timer0_write(ESP.getCycleCount() + 41660000);
-  interrupts();
+  timer1_disable();
+  timer1_isr_init();
+  timer1_attachInterrupt(timingInterrupt);
+  timer1_enable(TIM_DIV265, TIM_EDGE, TIM_SINGLE);
+  timer1_write(900000);
+  log(CLASS, Info, "INT READY");
 }
 
 void setup() {
@@ -57,7 +58,7 @@ void setup() {
   m.setup();
   m.setStdoutWriteFunction(displayOnLogs);
 
-  //setupInterrupts();
+  setupInterrupts();
 }
 
 ButtonPressed readButtons() {
@@ -77,21 +78,20 @@ ButtonPressed readButtons() {
 }
 
 void loop() {
-  //bool wdtInterrupt = nroInterruptsQueued > 0;
+  bool wdtInterrupt = nroInterruptsQueued > 0;
 
-  //if (wdtInterrupt) {
+  if (wdtInterrupt) {
     ButtonPressed button = readButtons();
     nroInterruptsQueued--;
     log(CLASS, Info, "INT");
-    //m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, wdtInterrupt);
-    m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
+    m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, wdtInterrupt);
+    //m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
     m.getClock()->setNroInterruptsQueued(nroInterruptsQueued);
-  //}
+  }
 
-  //if (nroInterruptsQueued <= 0) { // no interrupts queued
-    //nroInterruptsQueued = 0;
-  //}
-  delay(10);
+  if (nroInterruptsQueued <= 0) { // no interrupts queued
+    nroInterruptsQueued = 0;
+  }
 
 }
 
