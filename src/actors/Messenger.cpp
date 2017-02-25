@@ -1,4 +1,5 @@
 #include <actors/Messenger.h>
+#include <actors/ParamStream.h>
 
 #define CLASS "Messenger"
 
@@ -50,14 +51,26 @@ void Messenger::cycle(bool cronMatches) {
   char configs[100]; configs[0] = 0;
   bot->getConfigs(configs);
 
+  ParamStream s;
   HTTPClient http;
   http.begin(URL);
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
   log(CLASS, Info, "Client connected to: ", URL);
   log(CLASS, Info, "Posting: ", configs);
-  http.POST(configs);
-  http.writeToStream(&Serial);
+  int errorCode = http.POST(configs);
+  log(CLASS, Info, "Response code: ", errorCode);
+  http.writeToStream(&s);
   http.end();
+
+  int available = s.getNroCommandsAvailable();
+  for (int i=0; i<available; i++) {
+    Command* c = &s.getCommands()[i];
+    log(CLASS, Info, "Setting new: ", c->configurableIndex);
+    log(CLASS, Info, "             ", c->propertyIndex);
+    log(CLASS, Info, "             ", c->newValue);
+    bot->setConfig(c->configurableIndex, c->propertyIndex, c->newValue);
+  }
+  s.flush();
 
 }
 
