@@ -20,7 +20,6 @@ Module m;
 
 ICACHE_RAM_ATTR void timingInterrupt(void) {
   nroInterruptsQueued++;
-  timer1_write(900000);
 }
 
 /******************/
@@ -44,8 +43,8 @@ void setupInterrupts() {
   timer1_disable();
   timer1_isr_init();
   timer1_attachInterrupt(timingInterrupt);
-  timer1_enable(TIM_DIV265, TIM_EDGE, TIM_SINGLE);
-  timer1_write(900000);
+  timer1_enable(TIM_DIV265, TIM_EDGE, TIM_LOOP);
+  timer1_write(1900000);
   log(CLASS, Info, "INT READY");
 }
 
