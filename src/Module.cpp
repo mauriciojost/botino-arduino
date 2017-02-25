@@ -20,6 +20,7 @@ Module::Module() {
 
   this->bot = new Bot(clock, actors, configurables);
   this->msgr->setBot(bot);
+  this->bot->setMode(RunMode);
 
   this->subCycle = 0;
 }
