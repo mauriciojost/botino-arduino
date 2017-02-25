@@ -6,6 +6,7 @@
 #include <actors/Messenger.h>
 #include <main4ino/Clock.h>
 #include <main4ino/Bot.h>
+#include <log4ino/Log.h>
 
 /**
 * This class represents the integration of all components (LCD, buttons, buzzer, etc).
