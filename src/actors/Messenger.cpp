@@ -5,7 +5,7 @@
 
 #define WIFI_SSID "Lola"
 #define WIFI_PASSWORD "yourpassword"
-#define URL "http://10.0.0.8:9000/dev/0"
+#define URL "http://10.0.0.16:9000/dev/0/status"
 #define DELAY_UNIT_MS 5000
 
 Messenger::Messenger() {
