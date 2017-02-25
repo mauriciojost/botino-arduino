@@ -57,7 +57,7 @@ void setup() {
   setupPins();
   m.setup();
   m.setStdoutWriteFunction(displayOnLogs);
-
+  m.setDigitalWriteFunction(digitalWrite);
   setupInterrupts();
 }
 
@@ -85,7 +85,6 @@ void loop() {
     nroInterruptsQueued--;
     log(CLASS, Info, "INT");
     m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, wdtInterrupt);
-    //m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
     m.getClock()->setNroInterruptsQueued(nroInterruptsQueued);
   }
 
