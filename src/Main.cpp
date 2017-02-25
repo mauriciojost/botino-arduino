@@ -21,7 +21,7 @@ Module m;
 /*****************/
 
 void timingInterrupt(void) {
-  timer0_write(ESP.getCycleCount() + 41660000);
+  //timer0_write(ESP.getCycleCount() + 41660000);
   nroInterruptsQueued++;
 }
 
@@ -57,7 +57,7 @@ void setup() {
   m.setup();
   m.setStdoutWriteFunction(displayOnLogs);
 
-  setupInterrupts();
+  //setupInterrupts();
 }
 
 ButtonPressed readButtons() {
@@ -77,19 +77,21 @@ ButtonPressed readButtons() {
 }
 
 void loop() {
-  bool wdtInterrupt = nroInterruptsQueued > 0;
+  //bool wdtInterrupt = nroInterruptsQueued > 0;
 
-  if (wdtInterrupt) {
+  //if (wdtInterrupt) {
     ButtonPressed button = readButtons();
     nroInterruptsQueued--;
     log(CLASS, Info, "INT");
-    m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, wdtInterrupt);
+    //m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, wdtInterrupt);
+    m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
     m.getClock()->setNroInterruptsQueued(nroInterruptsQueued);
-  }
+  //}
 
-  if (nroInterruptsQueued <= 0) { // no interrupts queued
-    nroInterruptsQueued = 0;
-  }
+  //if (nroInterruptsQueued <= 0) { // no interrupts queued
+    //nroInterruptsQueued = 0;
+  //}
+  delay(10);
 
 }
 
