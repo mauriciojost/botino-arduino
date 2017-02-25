@@ -21,6 +21,10 @@ do
 done < libraries.list
 rm libraries.list
 
-echo "Done."
+echo "Done. Add the following includes configuration lines under tag \"component name=\"CppTools.Loader\"\", in .idea/misc.xml IDEA configuration file:"
+ 
+cat includes.list
 
-echo "Replace the lines in includes.list in the .idea/misc.xml IDEA configuration file."
+rm libraries.list
+rm includes.list
+
