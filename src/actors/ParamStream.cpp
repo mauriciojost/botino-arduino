@@ -35,7 +35,7 @@ size_t ParamStream::write(uint8_t b) {
       log(CLASS, Debug, "=", newValue);
       break;
   }
-	return 0;
+  return 1;
 }
 
 void ParamStream::addCommand() {
