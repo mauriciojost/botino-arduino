@@ -4,6 +4,7 @@
 #include <main4ino/Actor.h>
 #include <main4ino/Configurable.h>
 #include <actors/Messenger.h>
+#include <actors/Led.h>
 #include <main4ino/Clock.h>
 #include <main4ino/Bot.h>
 #include <log4ino/Log.h>
@@ -18,6 +19,7 @@ private:
   Messenger *msgr;
   Actor **actors;
   Clock *clock;
+  Led *led;
   int amountOfConfigurables;
   Configurable **configurables;
   Bot *bot;

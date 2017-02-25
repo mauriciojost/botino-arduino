@@ -3,12 +3,14 @@
 #define CLASS "Module"
 
 Module::Module() {
-  this->amountOfActors = 1;
+  this->amountOfActors = 2;
   this->actors = new Actor *[amountOfActors + 1];
 
   this->msgr = new Messenger();
+  this->led = new Led();
   this->actors[0] = msgr;
-  this->actors[1] = NULL; // end of array
+  this->actors[1] = led;
+  this->actors[2] = NULL; // end of array
 
   this->clock = new Clock(actors, amountOfActors);
 
@@ -16,7 +18,8 @@ Module::Module() {
   this->configurables = new Configurable *[amountOfConfigurables + 1];
   this->configurables[0] = clock;
   this->configurables[1] = msgr;
-  this->configurables[2] = NULL; // end of array
+  this->configurables[2] = led;
+  this->configurables[3] = NULL; // end of array
 
   this->bot = new Bot(clock, actors, configurables);
   this->msgr->setBot(bot);
@@ -44,10 +47,11 @@ void Module::loop(bool mode, bool set, bool wdtWasTriggered) {
   
   if (interruptType == TimingInterruptCycle) { // cycles (~1 second)
     bool onceIn2Cycles = (bot->getClock()->getSeconds() % 2) == 0;
-    bool lcdLight = (bot->getMode() != RunMode) || isThereErrorLogged();
     if (isThereErrorLogged() && onceIn2Cycles) {
       bot->stdOutWriteString(MSG_ERROR, getErrorLogged());
     }
+    digitalWrite(0, led->getActuatorValue());
+    digitalWrite(2, led->getActuatorValue());
   }
 
   if (anyButtonPressed) {
