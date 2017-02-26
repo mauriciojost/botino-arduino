@@ -4,22 +4,15 @@
 
 Module::Module() {
   this->amountOfActors = 2;
-  this->actors = new Actor *[amountOfActors + 1];
 
   this->msgr = new Messenger();
   this->led = new Led();
-  this->actors[0] = msgr;
-  this->actors[1] = led;
-  this->actors[2] = NULL; // end of array
+  this->actors = new Actor *[amountOfActors + 1]{msgr, led, NULL};
 
   this->clock = new Clock(actors, amountOfActors);
 
   this->amountOfConfigurables = amountOfActors + 1;
-  this->configurables = new Configurable *[amountOfConfigurables + 1];
-  this->configurables[0] = clock;
-  this->configurables[1] = msgr;
-  this->configurables[2] = led;
-  this->configurables[3] = NULL; // end of array
+  this->configurables = new Configurable *[amountOfConfigurables + 1]{clock, msgr, led, NULL};
 
   this->bot = new Bot(clock, actors, configurables);
   this->msgr->setBot(bot);
