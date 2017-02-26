@@ -3,17 +3,20 @@
 #define CLASS "Module"
 
 Module::Module() {
-  this->amountOfActors = 3;
+
+#define NRO_ACTORS 3
+
+  this->amountOfActors = NRO_ACTORS;
+  this->amountOfConfigurables = NRO_ACTORS;
 
   this->msgr = new Messenger();
   this->led0 = new Led();
   this->led1 = new Led();
-  this->actors = new Actor *[amountOfActors + 1]{msgr, led0, led1, NULL};
+  this->actors = new Actor *[NRO_ACTORS + 1]{msgr, led0, led1, NULL};
 
   this->clock = new Clock(actors, amountOfActors);
 
-  this->amountOfConfigurables = amountOfActors + 1;
-  this->configurables = new Configurable *[amountOfConfigurables + 1]{clock, msgr, led0, led1, NULL};
+  this->configurables = new Configurable *[NRO_ACTORS + 1]{msgr, led0, led1, NULL};
 
   this->bot = new Bot(clock, actors, configurables);
   this->msgr->setBot(bot);
