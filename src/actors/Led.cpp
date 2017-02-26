@@ -7,24 +7,15 @@ Led::Led() {
   freqConf.setFrequency(OnceEvery5Minutes);
 }
 
-const char *Led::getName() {
-  return CLASS;
-}
+const char *Led::getName() { return CLASS; }
 
-void Led::cycle(bool cronMatches) {
+void Led::cycle(bool cronMatches) { }
 
-}
+void Led::subCycle(float subCycle) { }
 
-void Led::subCycle(float subCycle) {
-
-}
-
-int Led::getActuatorValue() {
-  return currentValue;
-}
+int Led::getActuatorValue() { return currentValue; }
 
 void Led::setConfig(int configIndex, char *retroMsg, SetMode set, int* value) {
-  retroMsg[0] = 0;
   switch (configIndex) {
     case (LedConfigOnState):
       if (set == SetNext) {
@@ -41,18 +32,10 @@ void Led::setConfig(int configIndex, char *retroMsg, SetMode set, int* value) {
   }
 }
 
-int Led::getNroConfigs() {
-  return LedConfigStateDelimiter;
-}
+int Led::getNroConfigs() { return LedConfigStateDelimiter; }
 
-void Led::getInfo(int infoIndex, char *retroMsg) {
-  retroMsg[0] = 0;
-}
+void Led::getInfo(int infoIndex, char *retroMsg) { }
 
-int Led::getNroInfos() {
-  return 0;
-}
+int Led::getNroInfos() { return 0; }
 
-FreqConf *Led::getFrequencyConfiguration() {
-  return &freqConf;
-}
+FreqConf *Led::getFrequencyConfiguration() { return &freqConf; }
