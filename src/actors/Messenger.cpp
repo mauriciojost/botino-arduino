@@ -22,6 +22,7 @@ const char *Messenger::getName() {
 }
 
 void Messenger::connectToWifi() {
+#ifndef UNIT_TEST
   static bool configured = false;
   int attempts = 0;
   log(CLASS, Info, "Status: ", (int)WiFi.status());
@@ -42,6 +43,7 @@ void Messenger::connectToWifi() {
     }
     delay(DELAY_UNIT_MS);
   }
+#endif // UNIT_TEST
 }
 
 void Messenger::cycle(bool cronMatches) {
@@ -56,6 +58,7 @@ void Messenger::cycle(bool cronMatches) {
   bot->getConfigs(configs);
 
   ParamStream s;
+#ifndef UNIT_TEST
   HTTPClient http;
   http.begin(URL);
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -65,6 +68,7 @@ void Messenger::cycle(bool cronMatches) {
   log(CLASS, Info, "Response code: ", errorCode);
   http.writeToStream(&s);
   http.end();
+#endif // UNIT_TEST
 
   int available = s.getNroCommandsAvailable();
   for (int i=0; i<available; i++) {

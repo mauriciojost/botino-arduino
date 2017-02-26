@@ -4,8 +4,10 @@
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Misc.h>
+#ifndef UNIT_TEST
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
+#endif // UNIT_TEST
 #include <main4ino/Bot.h>
 
 /**
