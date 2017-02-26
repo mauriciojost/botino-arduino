@@ -46,6 +46,10 @@ void Messenger::connectToWifi() {
 
 void Messenger::cycle(bool cronMatches) {
 
+  if (bot == NULL) {
+    return;
+  }
+
   connectToWifi();
 
   char configs[100]; configs[0] = 0;
