@@ -46,7 +46,7 @@ int Led::getNroConfigs() {
 }
 
 void Led::getInfo(int infoIndex, char *retroMsg) {
-
+  retroMsg[0] = 0;
 }
 
 int Led::getNroInfos() {
