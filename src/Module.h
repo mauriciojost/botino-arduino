@@ -19,7 +19,8 @@ private:
   Messenger *msgr;
   Actor **actors;
   Clock *clock;
-  Led *led;
+  Led *led0;
+  Led *led1;
   int amountOfConfigurables;
   Configurable **configurables;
   Bot *bot;

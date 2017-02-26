@@ -3,16 +3,17 @@
 #define CLASS "Module"
 
 Module::Module() {
-  this->amountOfActors = 2;
+  this->amountOfActors = 3;
 
   this->msgr = new Messenger();
-  this->led = new Led();
-  this->actors = new Actor *[amountOfActors + 1]{msgr, led, NULL};
+  this->led0 = new Led();
+  this->led1 = new Led();
+  this->actors = new Actor *[amountOfActors + 1]{msgr, led0, led1, NULL};
 
   this->clock = new Clock(actors, amountOfActors);
 
   this->amountOfConfigurables = amountOfActors + 1;
-  this->configurables = new Configurable *[amountOfConfigurables + 1]{clock, msgr, led, NULL};
+  this->configurables = new Configurable *[amountOfConfigurables + 1]{clock, msgr, led0, led1, NULL};
 
   this->bot = new Bot(clock, actors, configurables);
   this->msgr->setBot(bot);
@@ -43,8 +44,8 @@ void Module::loop(bool mode, bool set, bool wdtWasTriggered) {
     if (isThereErrorLogged() && onceIn2Cycles) {
       bot->stdOutWriteString(MSG_ERROR, getErrorLogged());
     }
-    digitalWrite(0, led->getActuatorValue());
-    digitalWrite(2, led->getActuatorValue());
+    digitalWrite(0, led0->getActuatorValue());
+    digitalWrite(2, led1->getActuatorValue());
   }
 
   if (anyButtonPressed) {
