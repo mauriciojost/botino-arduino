@@ -3,6 +3,7 @@
 
 // Auxiliary libraries
 #include <unity.h>
+#include <string.h>
 
 // Library being tested
 #include <actors/ParamStream.h>
@@ -12,17 +13,15 @@ void setUp(void) {}
 void tearDown(void) {}
 
 void test_param_stream_behaviour(void) {
-/*
-  char buffer[LCD_LENGTH];
-  Pump p("PUMP");
-  p.setOnValue(PUMP_ON);
-  p.setOnValueSilentCycles(2);
-
-  p.setConfig(PumpConfigStateAmount, buffer, SetNext); // DEFAULT_WATER_PUMP_AMOUNT_PER_SHOT + 1
-
-  TEST_ASSERT_EQUAL(PUMP_OFF, p.getActuatorValue());
-
-*/
+  const char* msg = "c0p1=5";
+  ParamStream ps;
+  for (int i=0; i<strlen(msg); i++) {
+    ps.write(msg[i]);
+  }
+  TEST_ASSERT_EQUAL(1, ps.getNroCommandsAvailable());
+  TEST_ASSERT_EQUAL(0, ps.getCommands()[0].configurableIndex);
+  TEST_ASSERT_EQUAL(1, ps.getCommands()[0].propertyIndex);
+  TEST_ASSERT_EQUAL(5, ps.getCommands()[0].newValue);
 }
 
 int main() {
