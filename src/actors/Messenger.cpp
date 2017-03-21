@@ -55,7 +55,7 @@ void Messenger::cycle(bool cronMatches) {
   connectToWifi();
 
   char configs[100]; configs[0] = 0;
-  bot->getConfigs(configs);
+  bot->getProps(configs);
 
   ParamStream s;
 #ifndef UNIT_TEST
@@ -73,10 +73,11 @@ void Messenger::cycle(bool cronMatches) {
   int available = s.getNroCommandsAvailable();
   for (int i=0; i<available; i++) {
     Command* c = &s.getCommands()[i];
+    Integer newValue(c->newValue);
     log(CLASS, Info, "Setting new configurable: ", c->configurableIndex);
     log(CLASS, Info, "            property    : ", c->propertyIndex);
     log(CLASS, Info, "            value       : ", c->newValue);
-    bot->setConfig(c->configurableIndex, c->propertyIndex, c->newValue);
+    bot->setProp(c->configurableIndex, c->propertyIndex, &newValue);
   }
   s.flush();
 
@@ -84,13 +85,20 @@ void Messenger::cycle(bool cronMatches) {
 
 void Messenger::subCycle(float subCycle) { }
 
-int Messenger::getActuatorValue() { return 0; }
+void Messenger::getActuatorValue(Value* value) { }
 
-void Messenger::setConfig(int configIndex, char *retroMsg, SetMode set, int* value) { }
+void Messenger::setProp(int propIndex, SetMode set, const Value* targetValue, Value* actualValue) { }
 
-int Messenger::getNroConfigs() { return 0; }
+int Messenger::getNroProps() { return 0; }
 
-void Messenger::getInfo(int infoIndex, char *retroMsg) { }
+const char* Messenger::getPropName(int propIndex) {
+  switch (propIndex) {
+  default:
+    return "";
+  }
+}
+
+void Messenger::getInfo(int infoIndex, Buffer<MAX_VALUE_STR_LENGTH>* info) { }
 
 int Messenger::getNroInfos() { return 0; }
 

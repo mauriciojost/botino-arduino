@@ -4,25 +4,22 @@
 
 Module::Module() {
 
-#define NRO_ACTORS 3
-
-  this->amountOfActors = NRO_ACTORS;
-  this->amountOfConfigurables = NRO_ACTORS;
-
   this->msgr = new Messenger();
   this->led0 = new Led();
   this->led1 = new Led();
-  this->actors = new Actor *[NRO_ACTORS + 1]{msgr, led0, led1, NULL};
+  actors.push_back((Actor*)&msgr);
+  actors.push_back((Actor*)&led0);
+  actors.push_back((Actor*)&led1);
 
-  this->clock = new Clock(actors, amountOfActors);
+  this->clock = new Clock();
 
-  this->configurables = new Configurable *[NRO_ACTORS + 1]{msgr, led0, led1, NULL};
+  configurables.push_back((Actor*)&msgr);
+  configurables.push_back((Actor*)&led0);
+  configurables.push_back((Actor*)&led1);
 
   this->bot = new Bot(clock, actors, configurables);
   this->msgr->setBot(bot);
   this->bot->setMode(RunMode);
-
-  this->subCycle = 0;
 }
 
 void Module::loop(bool mode, bool set, bool wdtWasTriggered) {
@@ -31,24 +28,22 @@ void Module::loop(bool mode, bool set, bool wdtWasTriggered) {
   TimingInterrupt interruptType = TimingInterruptNone;
 
   if (wdtWasTriggered) {
-    subCycle = (subCycle + 1) % SUB_CYCLES_PER_CYCLE;
-    if (subCycle == 0) {
-      interruptType = TimingInterruptCycle;
-    } else {
-      interruptType = TimingInterruptSubCycle;
-    }
+    interruptType = TimingInterruptCycle;
   }
   
   // execute a cycle on the bot
-  bot->cycle(mode, set, interruptType, ((float)subCycle) / SUB_CYCLES_PER_CYCLE);
+  bot->cycle(mode, set, interruptType);
   
   if (interruptType == TimingInterruptCycle) { // cycles (~1 second)
     bool onceIn2Cycles = (bot->getClock()->getSeconds() % 2) == 0;
     if (isThereErrorLogged() && onceIn2Cycles) {
       bot->stdOutWriteString(MSG_ERROR, getErrorLogged());
     }
-    digitalWrite(0, led0->getActuatorValue());
-    digitalWrite(2, led1->getActuatorValue());
+    Integer ledValue;
+    led0->getActuatorValue(&ledValue);
+    digitalWrite(0, ledValue.get());
+    led1->getActuatorValue(&ledValue);
+    digitalWrite(2, ledValue.get());
   }
 
   if (anyButtonPressed) {
@@ -74,5 +69,4 @@ void Module::setFactor(float f) {
 Clock * Module::getClock() {
   return clock;
 }
-
 

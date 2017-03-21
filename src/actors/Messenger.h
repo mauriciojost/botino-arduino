@@ -26,12 +26,13 @@ public:
 
   void cycle(bool cronMatches);
   void subCycle(float subCycle);
-  int getActuatorValue();
+  void getActuatorValue(Value* value);
 
-  int getNroConfigs();
-  void setConfig(int configIndex, char *retroMsg, SetMode set, int* value);
+  int getNroProps();
+  const char* getPropName(int propIndex);
+  void setProp(int propIndex, SetMode set, const Value* targetValue, Value* actualValue);
 
-  void getInfo(int infoIndex, char *retroMsg);
+  void getInfo(int infoIndex, Buffer<MAX_VALUE_STR_LENGTH>* info);
   int getNroInfos();
 
   FreqConf *getFrequencyConfiguration();

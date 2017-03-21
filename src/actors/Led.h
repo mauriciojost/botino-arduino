@@ -3,6 +3,8 @@
 
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
+#include <main4ino/Value.h>
+#include <main4ino/Integer.h>
 
 enum LedConfigState {
   LedConfigOnState = 0,            // if the led is on
@@ -22,12 +24,13 @@ public:
 
   void cycle(bool cronMatches);
   void subCycle(float subCycle);
-  int getActuatorValue();
+  void getActuatorValue(Value* value);
 
-  int getNroConfigs();
-  void setConfig(int configIndex, char *retroMsg, SetMode set, int* value = 0);
+  int getNroProps();
+  const char* getPropName(int propIndex);
+  void setProp(int propIndex, SetMode set, const Value* targetValue, Value* actualValue);
 
-  void getInfo(int infoIndex, char *retroMsg);
+  void getInfo(int infoIndex, Buffer<MAX_VALUE_STR_LENGTH>* info);
   int getNroInfos();
 
   FreqConf *getFrequencyConfiguration();

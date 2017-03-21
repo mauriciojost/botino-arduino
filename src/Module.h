@@ -15,17 +15,14 @@
 class Module {
 
 private:
-  int amountOfActors;
   Messenger *msgr;
-  Actor **actors;
+  std::vector<Actor*> actors;
   Clock *clock;
   Led *led0;
   Led *led1;
-  int amountOfConfigurables;
-  Configurable **configurables;
+  std::vector<Configurable*> configurables;
   Bot *bot;
 
-  unsigned char subCycle;
   void (*digitalWrite)(unsigned char pin, unsigned char value);
 
 public:

@@ -13,28 +13,45 @@ void Led::cycle(bool cronMatches) { }
 
 void Led::subCycle(float subCycle) { }
 
-int Led::getActuatorValue() { return currentValue; }
+void Led::getActuatorValue(Value* value) {
+  if (value != NULL) {
+    Integer i(currentValue?1:0);
+    value->load(&i);
+  }
+}
 
-void Led::setConfig(int configIndex, char *retroMsg, SetMode set, int* value) {
-  switch (configIndex) {
+const char* Led::getPropName(int propIndex) {
+  switch (propIndex) {
+    case (LedConfigOnState): return "configon";
+    default: return "";
+  }
+}
+
+void Led::setProp(int propIndex, SetMode setMode, const Value* targetValue, Value* actualValue) {
+  switch (propIndex) {
     case (LedConfigOnState):
-      if (set == SetNext) {
+      if (setMode == SetNext) {
         currentValue = !currentValue;
       }
-      if (set == SetValue) {
-        currentValue = *value;
+      if (setMode == SetValue) {
+        Integer i;
+        i.load(targetValue);
+        currentValue = i.get();
+      }
+      if (actualValue != NULL) {
+        Integer i(currentValue);
+        actualValue->load(&i);
       }
       log(CLASS, Info, "SET LED: ", currentValue);
-      *value = currentValue;
       break;
     default:
       break;
   }
 }
 
-int Led::getNroConfigs() { return LedConfigStateDelimiter; }
+int Led::getNroProps() { return LedConfigStateDelimiter; }
 
-void Led::getInfo(int infoIndex, char *retroMsg) { }
+void Led::getInfo(int infoIndex, Buffer<MAX_VALUE_STR_LENGTH>* info) { }
 
 int Led::getNroInfos() { return 0; }
 
