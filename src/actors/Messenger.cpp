@@ -73,11 +73,12 @@ void Messenger::cycle(bool cronMatches) {
   int available = s.getNroCommandsAvailable();
   for (int i=0; i<available; i++) {
     Command* c = &s.getCommands()[i];
-    Integer newValue(c->newValue);
-    log(CLASS, Info, "Setting new configurable: ", c->configurableIndex);
-    log(CLASS, Info, "            property    : ", c->propertyIndex);
-    log(CLASS, Info, "            value       : ", c->newValue);
-    bot->setProp(c->configurableIndex, c->propertyIndex, &newValue);
+    Integer newValue;
+    newValue.load(&c->newValue);
+    log(CLASS, Info, "Setting new configurable: ", c->confIndex);
+    log(CLASS, Info, "            property    : ", c->propIndex);
+    log(CLASS, Info, "            value       : ", c->newValue.getBuffer());
+    bot->setProp(c->confIndex, c->propIndex, &newValue);
   }
   s.flush();
 

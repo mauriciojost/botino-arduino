@@ -1,48 +1,57 @@
 #include <actors/ParamStream.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 #define CLASS "ParamStream"
 
 ParamStream::ParamStream() {
   commandsAvailable = 0;
-  bytesReceived = 0;
+  nroBytesReceived = 0;
 }
 
 size_t ParamStream::write(uint8_t b) {
-  switch(bytesReceived) {
-    case 0:
-      if (b == 'c') { bytesReceived++; } else { bytesReceived = 0; }
-      break;
-    case 1:
-      configurableIndex = b - '0';
-      bytesReceived++;
-      log(CLASS, Debug, "c", configurableIndex);
-      break;
-    case 2:
-      if (b == 'p') { bytesReceived++; } else { bytesReceived = 0; }
-      break;
-    case 3:
-      propertyIndex = b - '0';
-      bytesReceived++;
-      log(CLASS, Debug, "p", propertyIndex);
-      break;
-    case 4:
-      if (b == '=') { bytesReceived++; } else { bytesReceived = 0; }
-      break;
-    case 5:
-      newValue = b - '0';
-      bytesReceived = 0;
-      addCommand();
-      log(CLASS, Debug, "=", newValue);
-      break;
+
+  append(b);
+
+  if (b == '&') {
+    if (nroBytesReceived != 0) {
+      Buffer<MAX_VALUE_STR_LENGTH> newValue;
+      // Parse the potential command: c<configurable>p<property>=<value>
+      char* beginStr = bytesReceived.getBuffer();
+      char* indexStr = strtok(beginStr, "=&");
+      char* valueStr = strtok(NULL, "=&");
+      char* configStr = strtok(indexStr, "cp");
+      char* propStr = strtok(NULL, "cp");
+
+      printf("CONFIG: %s\n", configStr);
+      printf("PROPER: %s\n", propStr);
+      printf("VALUE : %s\n", valueStr);
+
+      if (configStr != NULL && propStr != NULL && valueStr != NULL) {
+        int confIndex = atoi(configStr);
+        int propIndex = atoi(propStr);
+        newValue.load(valueStr);
+        addCommand(confIndex, propIndex, &newValue);
+      }
+    }
+    nroBytesReceived = 0;
   }
+
   return 1;
 }
 
-void ParamStream::addCommand() {
+void ParamStream::append(uint8_t b) {
+  log(CLASS, Debug, "Byte: ", (int)b);
+  nroBytesReceived = (nroBytesReceived + 1) % (MAX_VALUE_STR_LENGTH + 1);
+  bytesReceived.getBuffer()[nroBytesReceived - 1] = b;
+}
+
+void ParamStream::addCommand(int confIndex, int propIndex, const Value* newValue) {
   if (commandsAvailable < MAX_NRO_COMMANDS) {
-    commands[commandsAvailable].configurableIndex = configurableIndex;
-    commands[commandsAvailable].propertyIndex = propertyIndex;
-    commands[commandsAvailable].newValue = newValue;
+    commands[commandsAvailable].confIndex = confIndex;
+    commands[commandsAvailable].propIndex = propIndex;
+    commands[commandsAvailable].newValue.load(newValue);
     commandsAvailable++;
   }
 
@@ -62,7 +71,7 @@ int ParamStream::peek() {
 }
 void ParamStream::flush() {
   commandsAvailable = 0;
-  bytesReceived = 0;
+  bytesReceived.clear();
 }
 
 int ParamStream::getNroCommandsAvailable() {

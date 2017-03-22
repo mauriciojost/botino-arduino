@@ -2,6 +2,7 @@
 #define PARAM_STREAM_INC
 
 #include <log4ino/Log.h>
+#include <main4ino/Buffer.h>
 #ifndef UNIT_TEST
 #include <Stream.h>
 #endif // UNIT_TEST
@@ -9,9 +10,9 @@
 #define MAX_NRO_COMMANDS 4
 
 struct Command {
-  int configurableIndex;
-  int propertyIndex;
-  int newValue;
+  int confIndex;
+  int propIndex;
+  Buffer<MAX_VALUE_STR_LENGTH> newValue;
 };
 
 #ifndef UNIT_TEST
@@ -25,13 +26,11 @@ class ParamStream {
 private:
   int commandsAvailable;
   Command commands[MAX_NRO_COMMANDS];
-  int bytesReceived;
+  int nroBytesReceived;
+  Buffer<MAX_VALUE_STR_LENGTH> bytesReceived;
 
-  int configurableIndex;
-  int propertyIndex;
-  int newValue;
-
-  void addCommand();
+  void addCommand(int confIndex, int propIndex, const Value* newValue);
+  void append(uint8_t b);
 
 public:
   ParamStream();
