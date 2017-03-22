@@ -24,16 +24,26 @@ void test_param_stream_behaviour(void) {
 
   ParamStream ps;
 
-  feed(&ps, "c001p11=55a&");
+  feed(&ps, "c001p11=11a&");
   TEST_ASSERT_EQUAL(1, ps.getNroCommandsAvailable());
   TEST_ASSERT_EQUAL(1, ps.getCommands()[0].confIndex);
   TEST_ASSERT_EQUAL(11, ps.getCommands()[0].propIndex);
-  ps.getCommands()[0].newValue.save(newValue);
-  TEST_ASSERT_EQUAL_STRING("55a", newValue);
+  TEST_ASSERT_EQUAL_STRING("11a", ps.getCommands()[0].newValue.getBuffer());
   ps.flush();
 
-  //feed(&ps, "c0k0111=55a&");
-  //TEST_ASSERT_EQUAL(0, ps.getNroCommandsAvailable());
+  feed(&ps, "c0k0111=55a&");
+  TEST_ASSERT_EQUAL(0, ps.getNroCommandsAvailable());
+  ps.flush();
+
+  feed(&ps, "&&c0k1=aa&c0p2=bb&c0p3=55a&"); // 3 commands, 1 malformed (c0k1=aa)
+  TEST_ASSERT_EQUAL(2, ps.getNroCommandsAvailable());
+  TEST_ASSERT_EQUAL(0, ps.getCommands()[0].confIndex);
+  TEST_ASSERT_EQUAL(2, ps.getCommands()[0].propIndex);
+  TEST_ASSERT_EQUAL_STRING("bb", ps.getCommands()[0].newValue.getBuffer());
+  TEST_ASSERT_EQUAL(0, ps.getCommands()[1].confIndex);
+  TEST_ASSERT_EQUAL(3, ps.getCommands()[1].propIndex);
+  TEST_ASSERT_EQUAL_STRING("55a", ps.getCommands()[1].newValue.getBuffer());
+  ps.flush();
 
 }
 
