@@ -8,9 +8,9 @@
 // Library being tested
 #include <actors/ParamStream.h>
 
-void setUp(void) {}
+void setUp() {}
 
-void tearDown(void) {}
+void tearDown() {}
 
 void feed(ParamStream* ps, const char* msg) {
   for (int i=0; i<strlen(msg); i++) {
@@ -19,9 +19,7 @@ void feed(ParamStream* ps, const char* msg) {
 }
 
 
-void test_param_stream_behaviour(void) {
-  char newValue[100];
-
+void test_param_stream_behaviour_one_command() {
   ParamStream ps;
 
   feed(&ps, "c001p11=11a&"); // correct command
@@ -34,6 +32,10 @@ void test_param_stream_behaviour(void) {
   feed(&ps, "c0k0111=55a&"); // command malformed
   TEST_ASSERT_EQUAL(0, ps.getNroCommandsAvailable());
   ps.flush();
+}
+
+void test_param_stream_behaviour_multiple_commands() {
+  ParamStream ps;
 
   feed(&ps, "&&c0k0=aa&c0p1=bb&c0p2=cc&"); // 3 commands, 1 malformed (c0k0=aa)
   TEST_ASSERT_EQUAL(2, ps.getNroCommandsAvailable());
@@ -44,12 +46,13 @@ void test_param_stream_behaviour(void) {
   TEST_ASSERT_EQUAL(2, ps.getCommands()[1].propIndex);
   TEST_ASSERT_EQUAL_STRING("cc", ps.getCommands()[1].newValue.getBuffer());
   ps.flush();
-
 }
+
 
 int main() {
   UNITY_BEGIN();
-  RUN_TEST(test_param_stream_behaviour);
+  RUN_TEST(test_param_stream_behaviour_one_command);
+  RUN_TEST(test_param_stream_behaviour_multiple_commands);
   UNITY_END();
 }
 

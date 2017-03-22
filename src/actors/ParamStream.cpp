@@ -20,19 +20,28 @@ size_t ParamStream::write(uint8_t b) {
       // Parse the potential command: c<configurable>p<property>=<value>
       char* beginStr = bytesReceived.getBuffer();
       char* indexStr = strtok(beginStr, "=&");
-      char* valueStr = strtok(NULL, "=&");
-      char* configStr = strtok(indexStr, "cp");
+      char* newValueStr = strtok(NULL, "=&");
+      char* confStr = strtok(indexStr, "cp");
       char* propStr = strtok(NULL, "cp");
 
-      printf("CONFIG: %s\n", configStr);
-      printf("PROPER: %s\n", propStr);
-      printf("VALUE : %s\n", valueStr);
-
-      if (configStr != NULL && propStr != NULL && valueStr != NULL) {
-        int confIndex = atoi(configStr);
+      if (confStr != NULL && propStr != NULL && newValueStr != NULL) {
+        int confIndex = atoi(confStr);
         int propIndex = atoi(propStr);
-        newValue.load(valueStr);
+        newValue.load(newValueStr);
         addCommand(confIndex, propIndex, &newValue);
+
+        log(CLASS, Info, "Command");
+        log(CLASS, Info, "- Conf: ", confIndex);
+        log(CLASS, Info, "- Prop: ", propIndex);
+        log(CLASS, Info, "- NewV: ", newValue.getBuffer());
+
+      } else {
+
+        log(CLASS, Warn, "Discarded command");
+        log(CLASS, Warn, "- Conf: ", confStr);
+        log(CLASS, Warn, "- Prop: ", propStr);
+        log(CLASS, Warn, "- NewV: ", newValueStr);
+
       }
     }
     nroBytesReceived = 0;
