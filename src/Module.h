@@ -7,6 +7,7 @@
 #include <actors/Led.h>
 #include <main4ino/Clock.h>
 #include <main4ino/Bot.h>
+#include <main4ino/Array.h>
 #include <log4ino/Log.h>
 
 /**
@@ -16,11 +17,11 @@ class Module {
 
 private:
   Messenger *msgr;
-  std::vector<Actor*> actors;
+  Array<Actor*> actors;
   Clock *clock;
   Led *led0;
   Led *led1;
-  std::vector<Configurable*> configurables;
+  Array<Configurable*> configurables;
   Bot *bot;
 
   void (*digitalWrite)(unsigned char pin, unsigned char value);

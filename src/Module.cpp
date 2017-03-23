@@ -2,20 +2,20 @@
 
 #define CLASS "Module"
 
-Module::Module() {
+Module::Module(): actors(3), configurables(3) {
 
   this->msgr = new Messenger();
   this->led0 = new Led();
   this->led1 = new Led();
-  actors.push_back((Actor*)&msgr);
-  actors.push_back((Actor*)&led0);
-  actors.push_back((Actor*)&led1);
+  actors[0] = (Actor*)&msgr;
+  actors[1] = (Actor*)&led0;
+  actors[2] = (Actor*)&led1;
 
   this->clock = new Clock();
 
-  configurables.push_back((Actor*)&msgr);
-  configurables.push_back((Actor*)&led0);
-  configurables.push_back((Actor*)&led1);
+  configurables[0] = (Actor*)&msgr;
+  configurables[1] = (Actor*)&led0;
+  configurables[2] = (Actor*)&led1;
 
   this->bot = new Bot(clock, actors, configurables);
   this->msgr->setBot(bot);
