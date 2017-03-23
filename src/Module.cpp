@@ -2,20 +2,23 @@
 
 #define CLASS "Module"
 
-Module::Module(): actors(3), configurables(3) {
+Module::Module() {
 
   this->msgr = new Messenger();
   this->led0 = new Led();
   this->led1 = new Led();
-  actors[0] = (Actor*)&msgr;
-  actors[1] = (Actor*)&led0;
-  actors[2] = (Actor*)&led1;
+
+  actors = new Array<Actor*>(3);
+  actors->set(0, (Actor*)msgr);
+  actors->set(1, (Actor*)led0);
+  actors->set(2, (Actor*)led1);
 
   this->clock = new Clock();
 
-  configurables[0] = (Actor*)&msgr;
-  configurables[1] = (Actor*)&led0;
-  configurables[2] = (Actor*)&led1;
+  configurables = new Array<Configurable*>(3);
+  configurables->set(0, (Actor*)msgr);
+  configurables->set(1, (Actor*)led0);
+  configurables->set(2, (Actor*)led1);
 
   this->bot = new Bot(clock, actors, configurables);
   this->msgr->setBot(bot);
@@ -24,6 +27,7 @@ Module::Module(): actors(3), configurables(3) {
 
 void Module::loop(bool mode, bool set, bool wdtWasTriggered) {
 
+  log(CLASS, Info, "INT", (int)actors);
   bool anyButtonPressed = mode || set;
   TimingInterrupt interruptType = TimingInterruptNone;
 

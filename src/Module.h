@@ -17,11 +17,11 @@ class Module {
 
 private:
   Messenger *msgr;
-  Array<Actor*> actors;
+  Array<Actor*> *actors;
+  Array<Configurable*> *configurables;
   Clock *clock;
   Led *led0;
   Led *led1;
-  Array<Configurable*> configurables;
   Bot *bot;
 
   void (*digitalWrite)(unsigned char pin, unsigned char value);
