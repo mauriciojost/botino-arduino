@@ -27,7 +27,6 @@ Module::Module() {
 
 void Module::loop(bool mode, bool set, bool wdtWasTriggered) {
 
-  log(CLASS, Info, "INT", (int)actors);
   bool anyButtonPressed = mode || set;
   TimingInterrupt interruptType = TimingInterruptNone;
 
