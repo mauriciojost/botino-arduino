@@ -67,6 +67,7 @@ void Messenger::cycle(bool cronMatches) {
   int errorCode = http.POST(configs);
   log(CLASS, Info, "Response code: ", errorCode);
   http.writeToStream(&s);
+  s.write('&');
   http.end();
 #endif // UNIT_TEST
 
