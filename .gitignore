@@ -13,3 +13,6 @@
 /.settings/language.settings.xml
 /.settings/org.eclipse.cdt.core.prefs
 /.travis.yml
+/src/ArduinoJson
+/src/ArduinoJson.h
+/src/ArduinoJson.hpp
