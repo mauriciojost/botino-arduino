@@ -9,7 +9,6 @@ git clone --recursive git@bitbucket.org:mauriciojost/arduino-wifi.git
 cd arduino-wifi
 ln -s `readlink -e libs/log4ino-arduino/src/log4ino` src/
 ln -s `readlink -e libs/main4ino-arduino/src/main4ino` src/
-ln -s `readlink -e libs/ArduinoJson/include/*` src/
 
 ```
 

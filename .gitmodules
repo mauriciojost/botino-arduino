@@ -4,6 +4,3 @@
 [submodule "libs/log4ino-arduino"]
 	path = libs/log4ino-arduino
 	url = git@github.com:mauriciojost/log4ino-arduino.git
-[submodule "libs/ArduinoJson"]
-	path = libs/ArduinoJson
-	url = https://github.com/bblanchon/ArduinoJson.git
