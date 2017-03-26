@@ -8,8 +8,7 @@
 #define URL "http://10.0.0.16:9000/dev/0/status"
 #define DELAY_UNIT_MS 5000
 
-Messenger::Messenger() {
-  freqConf.setFrequency(OnceEvery5Minutes);
+Messenger::Messenger(): freqConf(OnceEvery5Minutes) {
   bot = NULL;
 }
 

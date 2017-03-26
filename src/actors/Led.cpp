@@ -2,9 +2,8 @@
 
 #define CLASS "Led"
 
-Led::Led() {
+Led::Led(): freqConf(OnceEvery5Minutes) {
   currentValue = false;
-  freqConf.setFrequency(OnceEvery5Minutes);
 }
 
 const char *Led::getName() { return CLASS; }
