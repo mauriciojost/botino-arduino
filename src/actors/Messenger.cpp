@@ -8,7 +8,8 @@
 #define URL "http://10.0.0.16:9000/dev/0/status"
 #define DELAY_UNIT_MS 5000
 
-Messenger::Messenger(): freqConf(OnceEvery5Minutes) {
+Messenger::Messenger(const char* n): freqConf(OnceEvery5Minutes) {
+  name = n;
   bot = NULL;
 }
 
@@ -17,7 +18,7 @@ void Messenger::setBot(Bot* b) {
 }
 
 const char *Messenger::getName() {
-  return CLASS;
+  return name;
 }
 
 void Messenger::connectToWifi() {

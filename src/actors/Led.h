@@ -14,11 +14,12 @@ enum LedConfigState {
 class Led : public Actor {
 
 private:
+  const char* name;
   bool currentValue;
   FreqConf freqConf;
 
 public:
-  Led();
+  Led(const char* n);
 
   const char *getName();
 

@@ -16,11 +16,12 @@
 class Messenger : public Actor {
 
 private:
+  const char* name;
   Bot* bot;
   FreqConf freqConf;  // configuration of the frequency at which this actor will get triggered
 
 public:
-  Messenger();
+  Messenger(const char* n);
 
   const char *getName();
 

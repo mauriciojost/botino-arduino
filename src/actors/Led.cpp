@@ -2,11 +2,14 @@
 
 #define CLASS "Led"
 
-Led::Led(): freqConf(OnceEvery5Minutes) {
+Led::Led(const char* n): freqConf(OnceEvery5Minutes) {
+  name = n;
   currentValue = false;
 }
 
-const char *Led::getName() { return CLASS; }
+const char *Led::getName() {
+  return name;
+}
 
 void Led::cycle(bool cronMatches) { }
 
