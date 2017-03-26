@@ -61,7 +61,7 @@ void Messenger::cycle(bool cronMatches) {
 #ifndef UNIT_TEST
   HTTPClient http;
   http.begin(URL);
-  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+  http.addHeader("Content-Type", "application/json");
   log(CLASS, Info, "Client connected to: ", URL);
   log(CLASS, Info, "Posting: ", configs);
   int errorCode = http.POST(configs);
