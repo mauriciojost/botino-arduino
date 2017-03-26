@@ -24,7 +24,7 @@ void Led::getActuatorValue(Value* value) {
 
 const char* Led::getPropName(int propIndex) {
   switch (propIndex) {
-    case (LedConfigOnState): return "configon";
+    case (LedConfigOnState): return "on";
     default: return "";
   }
 }
