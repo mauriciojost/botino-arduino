@@ -17,3 +17,7 @@ platformio init --ide eclipse --board esp01_1m
 ```
 
 Then open with _eclipse_.
+
+```
+ln -s `readlink -e .piolibdeps/Arduino/libraries/ESP8266HTTPClient/src/ESP8266HTTPClient.*` src/
+```

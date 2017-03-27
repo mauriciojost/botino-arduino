@@ -64,7 +64,7 @@ void Messenger::cycle(bool cronMatches) {
   http.addHeader("Content-Type", "application/json");
   log(CLASS, Info, "Client connected to: ", URL);
   log(CLASS, Info, "Posting: ", configs);
-  int errorCode = http.POST(configs);
+  int errorCode = http.PUT(configs);
   log(CLASS, Info, "Response code: ", errorCode);
   http.writeToStream(&s);
   s.write('&');
