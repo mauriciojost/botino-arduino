@@ -16,3 +16,5 @@
 /src/ArduinoJson
 /src/ArduinoJson.h
 /src/ArduinoJson.hpp
+/src/ESP8266HTTPClient.cpp
+/src/ESP8266HTTPClient.h
