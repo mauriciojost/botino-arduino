@@ -62,12 +62,12 @@ void Messenger::cycle(bool cronMatches) {
   HTTPClient http;
   http.begin(URL);
   http.addHeader("Content-Type", "application/json");
+  http.addHeader("X-Auth-Token", TOKEN);
   log(CLASS, Info, "Client connected to: ", URL);
-  log(CLASS, Info, "Posting: ", configs);
-  int errorCode = http.PUT(configs);
+  log(CLASS, Info, "Putting: ", configs);
+  int errorCode = http.POST(configs);
   log(CLASS, Info, "Response code: ", errorCode);
-  http.writeToStream(&s);
-  s.write('&');
+  http.writeToStream(&Serial);
   http.end();
 #endif // UNIT_TEST
 
