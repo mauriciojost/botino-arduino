@@ -4,9 +4,9 @@
 
 Module::Module() {
 
-  this->msgr = new Messenger("MSGR0");
-  this->led0 = new Led("LED0");
-  this->led1 = new Led("LED1");
+  this->msgr = new Messenger("msgr");
+  this->led0 = new Led("led0");
+  this->led1 = new Led("led1");
 
   actors = new Array<Actor*>(3);
   actors->set(0, (Actor*)msgr);
