@@ -2,7 +2,6 @@
 #define MODULE_INC
 
 #include <main4ino/Actor.h>
-#include <main4ino/Configurable.h>
 #include <actors/Messenger.h>
 #include <actors/Led.h>
 #include <main4ino/Clock.h>
@@ -18,7 +17,6 @@ class Module {
 private:
   Messenger *msgr;
   Array<Actor*> *actors;
-  Array<Configurable*> *configurables;
   Clock *clock;
   Led *led0;
   Led *led1;

@@ -7,20 +7,15 @@ Module::Module() {
   this->msgr = new Messenger("msgr");
   this->led0 = new Led("led0");
   this->led1 = new Led("led1");
-
-  actors = new Array<Actor*>(3);
-  actors->set(0, (Actor*)msgr);
-  actors->set(1, (Actor*)led0);
-  actors->set(2, (Actor*)led1);
-
   this->clock = new Clock();
 
-  configurables = new Array<Configurable*>(3);
-  configurables->set(0, (Actor*)msgr);
-  configurables->set(1, (Actor*)led0);
-  configurables->set(2, (Actor*)led1);
+  actors = new Array<Actor*>(4);
+  actors->set(0, (Actor*)clock);
+  actors->set(1, (Actor*)msgr);
+  actors->set(2, (Actor*)led0);
+  actors->set(3, (Actor*)led1);
 
-  this->bot = new Bot(clock, actors, configurables);
+  this->bot = new Bot(clock, actors);
   this->msgr->setBot(bot);
   this->bot->setMode(RunMode);
 }
