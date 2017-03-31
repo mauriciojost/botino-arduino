@@ -4,10 +4,10 @@
 
 Module::Module() {
 
-  this->msgr = new Messenger("msgr");
+  this->msgr = new Messenger("msgr0");
   this->led0 = new Led("led0");
   this->led1 = new Led("led1");
-  this->clock = new Clock();
+  this->clock = new Clock("clock0");
 
   actors = new Array<Actor*>(4);
   actors->set(0, (Actor*)clock);
