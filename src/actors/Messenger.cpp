@@ -2,9 +2,6 @@
 
 #define CLASS "Messenger"
 
-#define WIFI_SSID "Lola"
-#define WIFI_PASSWORD "yourpassword"
-#define URL "http://10.0.0.16:9000/dev/0/status"
 #define DELAY_UNIT_MS 5000
 
 Messenger::Messenger(const char* n): freqConf(OnceEvery5Minutes) {
@@ -22,6 +19,20 @@ const char *Messenger::getName() {
 
 void Messenger::connectToWifi() {
 #ifndef UNIT_TEST
+
+#ifndef WIFI_SSID
+#error "Must provide WIFI_SSID"
+#endif
+#ifndef WIFI_PASSWORD
+#error "Must provide WIFI_PASSWORD"
+#endif
+#ifndef UBIDOT_URL
+#error "Must provide UBIDOT_URL"
+#endif
+#ifndef UBIDOT_TOKEN
+#error "Must provide UBIDOT_TOKEN"
+#endif
+
   static bool configured = false;
   int attempts = 0;
   log(CLASS, Info, "Status: ", (int)WiFi.status());
@@ -59,10 +70,10 @@ void Messenger::cycle(bool cronMatches) {
 
 #ifndef UNIT_TEST
   HTTPClient http;
-  http.begin(URL);
+  http.begin(UBIDOT_URL);
   http.addHeader("Content-Type", "application/json");
-  http.addHeader("X-Auth-Token", TOKEN);
-  log(CLASS, Info, "Client connected to: ", URL);
+  http.addHeader("X-Auth-Token", UBIDOT_TOKEN);
+  log(CLASS, Info, "Client connected to: ", UBIDOT_URL);
   log(CLASS, Info, "Putting: ", configs);
   int errorCode = http.POST(configs);
   log(CLASS, Info, "Response code: ", errorCode);
@@ -71,7 +82,6 @@ void Messenger::cycle(bool cronMatches) {
 #endif // UNIT_TEST
 
 }
-
 
 void Messenger::getActuatorValue(Value* value) { }
 
