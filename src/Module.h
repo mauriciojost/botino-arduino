@@ -5,7 +5,7 @@
 #include <actors/Messenger.h>
 #include <actors/Led.h>
 #include <main4ino/Clock.h>
-#include <main4ino/Bot.h>
+#include <main4ino/WebBot.h>
 #include <main4ino/Array.h>
 #include <log4ino/Log.h>
 
@@ -20,7 +20,7 @@ private:
   Clock *clock;
   Led *led0;
   Led *led1;
-  Bot *bot;
+  WebBot *bot;
 
   void (*digitalWrite)(unsigned char pin, unsigned char value);
 

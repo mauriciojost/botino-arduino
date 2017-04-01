@@ -15,7 +15,7 @@ Module::Module() {
   actors->set(2, (Actor*)led0);
   actors->set(3, (Actor*)led1);
 
-  this->bot = new Bot(clock, actors);
+  this->bot = new WebBot(clock, actors);
   this->msgr->setBot(bot);
   this->bot->setMode(RunMode);
 }

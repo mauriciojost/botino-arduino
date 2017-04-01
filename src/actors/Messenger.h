@@ -3,6 +3,7 @@
 
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
+#include <main4ino/WebBot.h>
 #include <main4ino/Misc.h>
 #ifndef UNIT_TEST
 #include <ESP8266WiFi.h>
@@ -17,7 +18,7 @@ class Messenger : public Actor {
 
 private:
   const char* name;
-  Bot* bot;
+  WebBot* bot;
   FreqConf freqConf;  // configuration of the frequency at which this actor will get triggered
 
 public:
@@ -38,7 +39,7 @@ public:
 
   FreqConf *getFrequencyConfiguration();
 
-  void setBot(Bot* b);
+  void setBot(WebBot* b);
   void connectToWifi();
 };
 

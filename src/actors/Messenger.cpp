@@ -13,7 +13,7 @@ Messenger::Messenger(const char* n): freqConf(OnceEvery5Minutes) {
   bot = NULL;
 }
 
-void Messenger::setBot(Bot* b) {
+void Messenger::setBot(WebBot* b) {
   bot = b;
 }
 
