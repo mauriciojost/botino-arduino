@@ -17,7 +17,11 @@ function call() {
 #[Messenger] INFO: Putting:  {"clock0.hour":"1","clock0.minute":"1","clock0.advanced":"false","led0.on":"0","led1.on":"0"}
 call -X POST http://things.ubidots.com/api/v1.6/devices/dev0 -d '{"clock0.hour":1,"clock0.minute":1,"clock0.advanced":false,"led0.on":false,"led1.on":false}'
 
-#call -X GET  http://things.ubidots.com/api/v1.6/variables/58d8f4f17625425763226080/values | python -m json.tool
+call -X POST http://things.ubidots.com/api/v1.6/devices/dev0 -d '{"clock0.hour":2,"clock0.minute":0,"clock0.advanced":false,"led0.on":true,"led1.on":true}'
+
+call -X POST http://things.ubidots.com/api/v1.6/devices/dev0 -d '{"clock0.hour":3,"clock0.minute":0,"clock0.advanced":false,"led0.on":true,"led1.on":false}'
+
+call -X GET  http://things.ubidots.com/api/v1.6/devices/dev0/values | python -m json.tool
 
 #call -X GET  http://things.ubidots.com/api/v1.6/devices/dev0/temperature/values | python -m json.tool
 
