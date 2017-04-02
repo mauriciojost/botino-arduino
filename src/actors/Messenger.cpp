@@ -26,11 +26,11 @@ void Messenger::connectToWifi() {
 #ifndef WIFI_PASSWORD
 #error "Must provide WIFI_PASSWORD"
 #endif
-#ifndef UBIDOT_URL
-#error "Must provide UBIDOT_URL"
+#ifndef API_URL_BASE
+#error "Must provide API_URL_BASE"
 #endif
-#ifndef UBIDOT_TOKEN
-#error "Must provide UBIDOT_TOKEN"
+#ifndef API_TOKEN
+#error "Must provide API_TOKEN"
 #endif
 
   static bool configured = false;
@@ -70,17 +70,33 @@ void Messenger::cycle(bool cronMatches) {
   Buffer<512> url(configs);
 
 #ifndef UNIT_TEST
-  HTTPClient http;
+  int errorCode;
+
+  HTTPClient httpPost;
   url.prepend("?");
-  url.prepend(UBIDOT_URL);
-  http.begin(url.getBuffer());
-  http.addHeader("Content-Type", "application/json");
-  http.addHeader("X-Auth-Token", UBIDOT_TOKEN);
+  url.prepend(API_URL_BASE);
+  httpPost.begin(url.getBuffer());
+  httpPost.addHeader("Content-Type", "application/json");
+  httpPost.addHeader("X-Auth-Token", API_TOKEN);
   log(CLASS, Info, "Client connected to: ", url.getBuffer());
-  int errorCode = http.POST("");
+  errorCode = httpPost.POST("");
   log(CLASS, Info, "Response code: ", errorCode);
-  http.writeToStream(&Serial);
-  http.end();
+  httpPost.writeToStream(&Serial);
+  httpPost.end();
+
+  HTTPClient httpGet;
+  url.clear();
+#define API_URL_BASE_2 "http://dweet.io/get/latest/dweet/for/dev0"
+  url.fill(API_URL_BASE_2);
+  httpGet.begin(url.getBuffer());
+  httpGet.addHeader("Content-Type", "application/json");
+  httpGet.addHeader("X-Auth-Token", API_TOKEN);
+  log(CLASS, Info, "Client connected to: ", url.getBuffer());
+  errorCode = httpGet.GET();
+  log(CLASS, Info, "Response code: ", errorCode);
+  httpGet.writeToStream(&Serial);
+  httpGet.end();
+
 #endif // UNIT_TEST
 
 }
