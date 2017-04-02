@@ -26,12 +26,14 @@ void Messenger::connectToWifi() {
 #ifndef WIFI_PASSWORD
 #error "Must provide WIFI_PASSWORD"
 #endif
-#ifndef API_URL_BASE
-#error "Must provide API_URL_BASE"
-#endif
 #ifndef API_TOKEN
 #error "Must provide API_TOKEN"
 #endif
+
+#define DEVICE_ID "dev0"
+#define API_URL_BASE "http://dweet.io"
+#define API_URL_BASE_POST API_URL_BASE "/dweet/for/%s" // device
+#define API_URL_BASE_GET API_URL_BASE "/get/latest/dweet/for/%s" // device
 
   static bool configured = false;
   int attempts = 0;
@@ -62,38 +64,39 @@ void Messenger::cycle(bool cronMatches) {
     return;
   }
 
-
   connectToWifi();
 
-  char configs[512];
-  bot->getPropsUrl(configs);
-  Buffer<512> url(configs);
-
 #ifndef UNIT_TEST
+
   int errorCode;
+  Buffer<MAX_JSON_STR_LENGTH> url;
+  Buffer<100> urlAux;
 
   HTTPClient httpPost;
+
+  bot->getPropsUrl(&url);
   url.prepend("?");
-  url.prepend(API_URL_BASE);
+  urlAux.fill(API_URL_BASE_POST, DEVICE_ID);
+  url.prepend(urlAux.getBuffer());
+
   httpPost.begin(url.getBuffer());
   httpPost.addHeader("Content-Type", "application/json");
   httpPost.addHeader("X-Auth-Token", API_TOKEN);
   log(CLASS, Info, "Client connected to: ", url.getBuffer());
   errorCode = httpPost.POST("");
-  log(CLASS, Info, "Response code: ", errorCode);
+  log(CLASS, Info, "Response code to POST: ", errorCode);
   httpPost.writeToStream(&Serial);
   httpPost.end();
 
   HTTPClient httpGet;
   url.clear();
-#define API_URL_BASE_2 "http://dweet.io/get/latest/dweet/for/dev0"
-  url.fill(API_URL_BASE_2);
+  url.fill(API_URL_BASE_GET, DEVICE_ID);
   httpGet.begin(url.getBuffer());
   httpGet.addHeader("Content-Type", "application/json");
   httpGet.addHeader("X-Auth-Token", API_TOKEN);
   log(CLASS, Info, "Client connected to: ", url.getBuffer());
   errorCode = httpGet.GET();
-  log(CLASS, Info, "Response code: ", errorCode);
+  log(CLASS, Info, "Response code to GET: ", errorCode);
   httpGet.writeToStream(&Serial);
   httpGet.end();
 
