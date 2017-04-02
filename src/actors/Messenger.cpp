@@ -65,17 +65,19 @@ void Messenger::cycle(bool cronMatches) {
 
   connectToWifi();
 
-  char configs[MAX_JSON_STR_LENGTH];
-  bot->getProps(configs);
+  char configs[512];
+  bot->getPropsUrl(configs);
+  Buffer<512> url(configs);
 
 #ifndef UNIT_TEST
   HTTPClient http;
-  http.begin(UBIDOT_URL);
+  url.prepend("?");
+  url.prepend(UBIDOT_URL);
+  http.begin(url.getBuffer());
   http.addHeader("Content-Type", "application/json");
   http.addHeader("X-Auth-Token", UBIDOT_TOKEN);
-  log(CLASS, Info, "Client connected to: ", UBIDOT_URL);
-  log(CLASS, Info, "Putting: ", configs);
-  int errorCode = http.POST(configs);
+  log(CLASS, Info, "Client connected to: ", url.getBuffer());
+  int errorCode = http.POST("");
   log(CLASS, Info, "Response code: ", errorCode);
   http.writeToStream(&Serial);
   http.end();
