@@ -1,7 +1,11 @@
 #include <actors/Messenger.h>
+#include <actors/ParamStream.h>
 
 #define CLASS "Messenger"
 
+#define WIFI_SSID "Lola"
+#define WIFI_PASSWORD "yourpassword"
+#define URL "http://10.0.0.16:9000/dev/0/status"
 #define DELAY_UNIT_MS 5000
 
 Messenger::Messenger(const char* n): freqConf(OnceEvery5Minutes) {
@@ -64,8 +68,13 @@ void Messenger::cycle(bool cronMatches) {
     return;
   }
 
+
   connectToWifi();
 
+  char configs[MAX_JSON_STR_LENGTH];
+  bot->getProps(configs);
+
+  ParamStream s;
 #ifndef UNIT_TEST
 
   int errorCode;
@@ -102,7 +111,20 @@ void Messenger::cycle(bool cronMatches) {
 
 #endif // UNIT_TEST
 
+  int available = s.getNroCommandsAvailable();
+  for (int i=0; i<available; i++) {
+    Command* c = &s.getCommands()[i];
+    Integer newValue;
+    newValue.load(&c->newValue);
+    log(CLASS, Info, "Setting new configurable: ", c->confIndex);
+    log(CLASS, Info, "            property    : ", c->propIndex);
+    log(CLASS, Info, "            value       : ", c->newValue.getBuffer());
+    bot->setProp(c->confIndex, c->propIndex, &newValue);
+  }
+  s.flush();
+
 }
+
 
 void Messenger::getActuatorValue(Value* value) { }
 

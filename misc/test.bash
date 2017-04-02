@@ -11,5 +11,5 @@ echo $PATH
 which platformio
 which pio 
 
-#platformio test -e param-stream-test
+platformio test -e param-stream-test
 platformio run
