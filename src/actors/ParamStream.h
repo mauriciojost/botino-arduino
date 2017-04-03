@@ -65,11 +65,13 @@ public:
   }
 
   JsonObject& parse(const char* key) {
+    log(CLASS_PARAM_STREAM, Debug, "Parsing: ", bytesReceived.getBuffer());
     JsonObject &root = jsonBuffer.parseObject(bytesReceived.getBuffer());
     return root[key];
   }
 
   JsonObject& parse() {
+    log(CLASS_PARAM_STREAM, Debug, "Parsing: ", bytesReceived.getBuffer());
     JsonObject &root = jsonBuffer.parseObject(bytesReceived.getBuffer());
     return root;
   }
