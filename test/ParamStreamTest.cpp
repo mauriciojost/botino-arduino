@@ -29,8 +29,8 @@ void test_param_stream_behaviour() {
   ps.flush();
 
   feed(&ps, "{\"key\":{\"innerkey\":\"innervalue\"}}");
-  JsonObject& json = ps.parse("key");
-  TEST_ASSERT_EQUAL_STRING("innervalue", json["innerkey"]);
+  JsonObject& json = ps.parse();
+  TEST_ASSERT_EQUAL_STRING("innervalue", json["key"]["innerkey"]);
 
   ps.flush();
 }

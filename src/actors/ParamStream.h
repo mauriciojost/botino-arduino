@@ -42,7 +42,6 @@ public:
   }
 
   void append(uint8_t b) {
-    log(CLASS_PARAM_STREAM, Debug, "Byte: ", (int)b);
     bytesReceived.append(b);
   }
 
@@ -62,12 +61,6 @@ public:
 
   void flush() {
     bytesReceived.clear();
-  }
-
-  JsonObject& parse(const char* key) {
-    log(CLASS_PARAM_STREAM, Debug, "Parsing: ", bytesReceived.getBuffer());
-    JsonObject &root = jsonBuffer.parseObject(bytesReceived.getBuffer());
-    return root[key];
   }
 
   JsonObject& parse() {
