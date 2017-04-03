@@ -20,6 +20,7 @@ private:
   const char* name;
   WebBot* bot;
   FreqConf freqConf;  // configuration of the frequency at which this actor will get triggered
+  Buffer<MAX_JSON_STR_LENGTH> url;
 
 public:
   Messenger(const char* n);

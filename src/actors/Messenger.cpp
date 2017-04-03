@@ -71,7 +71,6 @@ void Messenger::cycle(bool cronMatches) {
 #ifndef UNIT_TEST
 
   int errorCode;
-  Buffer<MAX_JSON_STR_LENGTH> url;
   Buffer<100> urlAux;
 
   HTTPClient httpPost;
