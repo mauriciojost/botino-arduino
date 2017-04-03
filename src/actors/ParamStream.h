@@ -4,6 +4,7 @@
 #include <log4ino/Log.h>
 #include <main4ino/Buffer.h>
 #include <main4ino/WebBot.h>
+#include <ArduinoJson.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -29,6 +30,7 @@ class ParamStream {
 
 private:
   Buffer<MAX_JSON_STR_LENGTH> bytesReceived;
+  StaticJsonBuffer<MAX_JSON_STR_LENGTH> jsonBuffer;
 
 public:
 
@@ -45,19 +47,31 @@ public:
   }
 
   int available() {
-    // Not supported.
-    return 0;
+    return bytesReceived.getLength();
   }
+
   int read() {
     // Not supported.
     return -1;
   }
+
   int peek() {
     // Not supported.
     return -1;
   }
+
   void flush() {
     bytesReceived.clear();
+  }
+
+  JsonObject& parse(const char* key) {
+    JsonObject &root = jsonBuffer.parseObject(bytesReceived.getBuffer());
+    return root[key];
+  }
+
+  JsonObject& parse() {
+    JsonObject &root = jsonBuffer.parseObject(bytesReceived.getBuffer());
+    return root;
   }
 
 };
