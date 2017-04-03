@@ -65,7 +65,7 @@ public:
 
   JsonObject& parse() {
     log(CLASS_PARAM_STREAM, Debug, "Parsing: ", bytesReceived.getBuffer());
-    JsonObject &root = jsonBuffer.parseObject(bytesReceived.getBuffer());
+    JsonObject &root = jsonBuffer.parseObject(bytesReceived.getUnsafeBuffer());
     return root;
   }
 
