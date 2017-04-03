@@ -101,14 +101,13 @@ void Messenger::cycle(bool cronMatches) {
   httpGet.writeToStream(&s);
   httpGet.end();
 
-  JsonObject& json = s.parse("content");
-  bot->setPropsJsonFlat(json);
-
-
+  JsonObject& json = s.parse();
+  if (json.containsKey("content")) {
+  JsonObject& content = json["content"];
+    bot->setPropsJsonFlat(content);
+  }
 #endif // UNIT_TEST
-
   s.flush();
-
 }
 
 
