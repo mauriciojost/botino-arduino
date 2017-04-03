@@ -102,10 +102,20 @@ void Messenger::cycle(bool cronMatches) {
   httpGet.end();
 
   JsonObject& json = s.parse();
-  if (json.containsKey("content")) {
-  JsonObject& content = json["content"];
-    bot->setPropsJsonFlat(content);
+
+  if (json.containsKey("with")) {
+    JsonObject& withJson = json["with"];
+    JsonObject& withJsonZero = withJson[0];
+    if (withJsonZero.containsKey("content")) {
+      JsonObject& content = withJsonZero["content"];
+      bot->setPropsJsonFlat(content);
+    } else {
+      log(CLASS, Warn, "Failed to parse 'content'");
+    }
+  } else {
+    log(CLASS, Warn, "Failed to parse 'with'");
   }
+
 #endif // UNIT_TEST
   s.flush();
 }
