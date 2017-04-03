@@ -65,11 +65,7 @@ void Messenger::cycle(bool cronMatches) {
     return;
   }
 
-
   connectToWifi();
-
-  char configs[MAX_JSON_STR_LENGTH];
-  bot->getProps(configs);
 
   ParamStream s;
 #ifndef UNIT_TEST
@@ -103,21 +99,11 @@ void Messenger::cycle(bool cronMatches) {
   log(CLASS, Info, "Client connected to: ", url.getBuffer());
   errorCode = httpGet.GET();
   log(CLASS, Info, "Response code to GET: ", errorCode);
-  httpGet.writeToStream(&Serial);
+  httpGet.writeToStream(&s);
   httpGet.end();
 
 #endif // UNIT_TEST
 
-  int available = s.getNroCommandsAvailable();
-  for (int i=0; i<available; i++) {
-    Command* c = &s.getCommands()[i];
-    Integer newValue;
-    newValue.load(&c->newValue);
-    log(CLASS, Info, "Setting new configurable: ", c->confIndex);
-    log(CLASS, Info, "            property    : ", c->propIndex);
-    log(CLASS, Info, "            value       : ", c->newValue.getBuffer());
-    bot->setProp(c->confIndex, c->propIndex, &newValue);
-  }
   s.flush();
 
 }
