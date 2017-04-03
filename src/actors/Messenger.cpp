@@ -34,7 +34,7 @@ void Messenger::connectToWifi() {
 #define DEVICE_ID "dev0"
 #define API_URL_BASE "http://dweet.io"
 #define API_URL_BASE_POST API_URL_BASE "/dweet/for/%s" // device
-#define API_URL_BASE_GET API_URL_BASE "/get/latest/dweet/for/%s" // device
+#define API_URL_BASE_GET API_URL_BASE "/get/latest/dweet/for/%s-target" // device
 
   static bool configured = false;
   int attempts = 0;
@@ -101,6 +101,10 @@ void Messenger::cycle(bool cronMatches) {
   log(CLASS, Info, "Response code to GET: ", errorCode);
   httpGet.writeToStream(&s);
   httpGet.end();
+
+  JsonObject& json = s.parse("content");
+  bot->setPropsJsonFlat(json);
+
 
 #endif // UNIT_TEST
 
