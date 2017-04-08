@@ -31,7 +31,6 @@ void Messenger::connectToWifi() {
 #error "Must provide API_TOKEN"
 #endif
 
-#define DEVICE_ID "dev0"
 #define API_URL_BASE "http://dweet.io"
 #define API_URL_BASE_POST API_URL_BASE "/dweet/for/%s" // device
 #define API_URL_BASE_GET API_URL_BASE "/get/latest/dweet/for/%s-target" // device
@@ -77,7 +76,7 @@ void Messenger::cycle(bool cronMatches) {
 
   bot->getPropsUrl(&url);
   url.prepend("?");
-  urlAux.fill(API_URL_BASE_POST, DEVICE_ID);
+  urlAux.fill(API_URL_BASE_POST, DEVICE_NAME);
   url.prepend(urlAux.getBuffer());
 
   httpPost.begin(url.getBuffer());
@@ -91,7 +90,7 @@ void Messenger::cycle(bool cronMatches) {
 
   HTTPClient httpGet;
   url.clear();
-  url.fill(API_URL_BASE_GET, DEVICE_ID);
+  url.fill(API_URL_BASE_GET, DEVICE_NAME);
   httpGet.begin(url.getBuffer());
   httpGet.addHeader("Content-Type", "application/json");
   httpGet.addHeader("X-Auth-Token", API_TOKEN);
