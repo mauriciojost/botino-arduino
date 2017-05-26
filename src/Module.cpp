@@ -39,9 +39,9 @@ void Module::loop(bool mode, bool set, bool wdtWasTriggered) {
     }
     Integer ledValue;
     led0->getActuatorValue(&ledValue);
-    digitalWrite(0, ledValue.get());
+    digitalWrite(LED0_PIN, ledValue.get());
     led1->getActuatorValue(&ledValue);
-    digitalWrite(2, ledValue.get());
+    digitalWrite(LED1_PIN, ledValue.get());
   }
 
   if (anyButtonPressed) {

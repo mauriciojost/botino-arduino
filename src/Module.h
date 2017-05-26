@@ -9,6 +9,31 @@
 #include <main4ino/Array.h>
 #include <log4ino/Log.h>
 
+#define PIN_D3 0
+#define PIN_D10 1
+#define PIN_D4 2
+#define PIN_D9 3
+#define PIN_D2 4
+#define PIN_D1 5
+#define PIN_D11 9
+#define PIN_D12 10
+#define PIN_D6 12
+#define PIN_D7 13
+#define PIN_D5 14
+#define PIN_D8 15
+#define PIN_D0 16
+
+#define LED0_PIN PIN_D0
+#define LED1_PIN PIN_D1
+#define LCD_ENABLE_PIN PIN_D2
+#define LCD_RS_PIN PIN_D3
+
+#define LCD_D4_PIN PIN_D4
+#define LCD_D5_PIN PIN_D5
+#define LCD_D6_PIN PIN_D6
+#define LCD_D7_PIN PIN_D7
+
+
 /**
 * This class represents the integration of all components (LCD, buttons, buzzer, etc).
 */
