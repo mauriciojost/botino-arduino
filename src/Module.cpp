@@ -4,20 +4,24 @@
 
 Module::Module() {
 
+  this->lcd = new Lcd(LCD_RS_PIN, LCD_ENABLE_PIN, LCD_D4_PIN, LCD_D5_PIN, LCD_D6_PIN, LCD_D7_PIN);
+
   this->msgr = new Messenger("msgr0");
   this->led0 = new Led("led0");
   this->led1 = new Led("led1");
   this->clock = new Clock("clock0");
 
-  actors = new Array<Actor*>(4);
+  actors = new Array<Actor*>(5);
   actors->set(0, (Actor*)clock);
   actors->set(1, (Actor*)msgr);
   actors->set(2, (Actor*)led0);
   actors->set(3, (Actor*)led1);
+  actors->set(4, (Actor*)lcd);
 
   this->bot = new WebBot(clock, actors);
   this->msgr->setBot(bot);
   this->bot->setMode(RunMode);
+
 }
 
 void Module::loop(bool mode, bool set, bool wdtWasTriggered) {
@@ -50,6 +54,7 @@ void Module::loop(bool mode, bool set, bool wdtWasTriggered) {
 }
 
 void Module::setup() {
+  lcd->initialize();
 }
 
 void Module::setDigitalWriteFunction(void (*digitalWriteFunction)(unsigned char pin, unsigned char value)) {
@@ -66,5 +71,9 @@ void Module::setFactor(float f) {
 
 Clock * Module::getClock() {
   return clock;
+}
+
+Lcd * Module::getLcd() {
+  return lcd;
 }
 

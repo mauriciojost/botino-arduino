@@ -4,6 +4,7 @@
 #include <main4ino/Actor.h>
 #include <actors/Messenger.h>
 #include <actors/Led.h>
+#include <actors/Lcd.h>
 #include <main4ino/Clock.h>
 #include <main4ino/WebBot.h>
 #include <main4ino/Array.h>
@@ -46,6 +47,7 @@ private:
   Led *led0;
   Led *led1;
   WebBot *bot;
+  Lcd *lcd;
 
   void (*digitalWrite)(unsigned char pin, unsigned char value);
 
@@ -61,6 +63,7 @@ public:
 
   Bot *getBot();
   Clock *getClock();
+  Lcd *getLcd();
 
 };
 
