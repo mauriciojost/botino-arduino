@@ -5,6 +5,7 @@
 #include <main4ino/Actor.h>
 #include <main4ino/Value.h>
 #include <main4ino/Integer.h>
+#include <main4ino/Boolean.h>
 
 enum LedConfigState {
   LedConfigOnState = 0,            // if the led is on
