@@ -36,15 +36,17 @@ void Led::setProp(int propIndex, SetMode setMode, const Value* targetValue, Valu
         currentValue = !currentValue;
       }
       if (setMode == SetValue) {
-        Integer i;
-        i.load(targetValue);
-        currentValue = i.get();
+        Boolean b(targetValue);
+        currentValue = b.get();
+      }
+      if (setMode != DoNotSet) {
+        log(CLASS, Info, "Led: ", name);
+        log(CLASS, Info, " set: ", currentValue);
       }
       if (actualValue != NULL) {
-        Integer i(currentValue);
-        actualValue->load(&i);
+        Boolean b(currentValue);
+        actualValue->load(&b);
       }
-      log(CLASS, Info, "SET LED: ", currentValue);
       break;
     default:
       break;
