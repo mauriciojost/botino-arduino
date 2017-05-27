@@ -6,7 +6,7 @@
 #define CLASS "Messenger"
 
 #define DELAY_UNIT_MS 5000
-#define MAX_URL_EFF_LENGTH 100
+#define WAIT_BEFORE_REPOST_DWEETIO_MS 1500
 #define MAX_WIFI_CONNECTION_ATTEMPTS 100
 
 #define DWEET_IO_API_URL_BASE "http://dweet.io"
@@ -75,22 +75,21 @@ void Messenger::cycle(bool cronMatches) {
   }
   if (cronMatches) {
     connectToWifi();
-    updateBotProperties();
     updateClockProperties();
+    updateBotProperties();
   }
 }
 
 void Messenger::updateClockProperties() {
-  ParamStream s;
 #ifndef UNIT_TEST
+  ParamStream s;
   int errorCode;
-  Buffer<MAX_URL_EFF_LENGTH> urlAux;
 
   HTTPClient httpGet;
-  url.clear();
-  url.fill(TIMEZONE_DB_API_URL_BASE_GET, TIMEZONE_DB_KEY, TIMEZONE_DB_ZONE);
-  httpGet.begin(url.getBuffer());
-  log(CLASS, Info, "Client connected to: ", url.getBuffer());
+  staticBuffer.clear();
+  staticBuffer.fill(TIMEZONE_DB_API_URL_BASE_GET, TIMEZONE_DB_KEY, TIMEZONE_DB_ZONE);
+  httpGet.begin(staticBuffer.getBuffer());
+  log(CLASS, Info, "Client connected to: ", staticBuffer.getBuffer());
   errorCode = httpGet.GET();
   log(CLASS, Info, "Response code to GET: ", errorCode);
   httpGet.writeToStream(&s);
@@ -107,43 +106,33 @@ void Messenger::updateClockProperties() {
   } else {
     log(CLASS, Warn, "Failed to parse 'formatted'");
   }
-#endif // UNIT_TEST
   s.flush();
+#endif // UNIT_TEST
+}
+
+void Messenger::setUpDweetClient(HTTPClient* client, Buffer<MAX_URL_EFF_LENGTH> *url) {
+  client->begin(url->getBuffer());
+  client->addHeader("Content-Type", "application/json");
+  client->addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
+  log(CLASS, Info, "Client connected to: ", url->getBuffer());
 }
 
 void Messenger::updateBotProperties() {
-  ParamStream s;
 #ifndef UNIT_TEST
   int errorCode;
-  Buffer<MAX_URL_EFF_LENGTH> urlAux;
 
-  HTTPClient httpPost;
+  delay(WAIT_BEFORE_REPOST_DWEETIO_MS);
 
-  bot->getPropsUrl(&url);
-  url.prepend("?");
-  urlAux.fill(DWEET_IO_API_URL_BASE_POST, DEVICE_NAME);
-  url.prepend(urlAux.getBuffer());
+  HTTPClient client;
 
-  httpPost.begin(url.getBuffer());
-  httpPost.addHeader("Content-Type", "application/json");
-  httpPost.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
-  log(CLASS, Info, "Client connected to: ", url.getBuffer());
-  errorCode = httpPost.POST("");
-  log(CLASS, Info, "Response code to POST: ", errorCode);
-  httpPost.writeToStream(&Serial);
-  httpPost.end();
-
-  HTTPClient httpGet;
-  url.clear();
-  url.fill(DWEET_IO_API_URL_BASE_GET, DEVICE_NAME);
-  httpGet.begin(url.getBuffer());
-  httpGet.addHeader("Content-Type", "application/json");
-  httpGet.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
-  log(CLASS, Info, "Client connected to: ", url.getBuffer());
-  errorCode = httpGet.GET();
+  ParamStream s;
+  staticUrl.clear();
+  staticUrl.fill(DWEET_IO_API_URL_BASE_GET, DEVICE_NAME);
+  setUpDweetClient(&client, &staticUrl);
+  errorCode = client.GET();
   log(CLASS, Info, "Response code to GET: ", errorCode);
-  httpGet.writeToStream(&s);
-  httpGet.end();
+  client.writeToStream(&s);
+  client.end();
 
   JsonObject& json = s.parse();
 
@@ -158,8 +147,22 @@ void Messenger::updateBotProperties() {
   } else {
     log(CLASS, Warn, "Failed to parse 'with'");
   }
-#endif // UNIT_TEST
   s.flush();
+
+  bot->getPropsJsonFlat(&staticBuffer);
+  staticUrl.clear();
+  staticUrl.fill(DWEET_IO_API_URL_BASE_POST, DEVICE_NAME);
+  log(CLASS, Info, "Post body: ", staticBuffer.getBuffer());
+
+  setUpDweetClient(&client, &staticUrl);
+  errorCode = client.POST(staticBuffer.getBuffer());
+  log(CLASS, Info, "Response code to POST: ", errorCode);
+  client.writeToStream(&Serial);
+  client.end();
+
+  delay(WAIT_BEFORE_REPOST_DWEETIO_MS);
+
+#endif // UNIT_TEST
 }
 
 

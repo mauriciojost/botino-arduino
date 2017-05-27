@@ -35,10 +35,16 @@ void Lcd::display(const char *str1, const char *str2) {
     initialize(); // did not find a way a better way to ensure LCD won't get
                   // corrupt due to load noise
   }
-  lcd->setCursor(0, 0);
-  lcd->print(str1);
-  lcd->setCursor(0, 1);
-  lcd->print(str2);
+  if (str1 != NULL) {
+    lineUp->load(str1);
+    lcd->setCursor(0, 0);
+    lcd->print(str1);
+  }
+  if (str2 != NULL) {
+    lineDown->load(str2);
+    lcd->setCursor(0, 1);
+    lcd->print(str2);
+  }
 }
 
 const char *Lcd::getName() {
@@ -66,7 +72,7 @@ void Lcd::setProp(int propIndex, SetMode setMode, const Value* targetValue, Valu
     case (LcdConfigLineUpState):
       if (setMode == SetValue) {
         lineUp->load(targetValue);
-        display(lineUp->getBuffer(), lineDown->getBuffer());
+        display(lineUp->getBuffer(), NULL);
       }
       if (actualValue != NULL) {
         actualValue->load(lineUp);
@@ -75,7 +81,7 @@ void Lcd::setProp(int propIndex, SetMode setMode, const Value* targetValue, Valu
     case (LcdConfigLineDownState):
       if (setMode == SetValue) {
         lineDown->load(targetValue);
-        display(lineUp->getBuffer(), lineDown->getBuffer());
+        display(NULL, lineDown->getBuffer());
       }
       if (actualValue != NULL) {
         actualValue->load(lineDown);

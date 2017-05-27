@@ -11,6 +11,8 @@
 #endif // UNIT_TEST
 #include <main4ino/Bot.h>
 
+#define MAX_URL_EFF_LENGTH 100
+
 /**
 * This actor connects to a server via WIFI.
 */
@@ -20,7 +22,8 @@ private:
   const char* name;
   WebBot* bot;
   FreqConf freqConf;  // configuration of the frequency at which this actor will get triggered
-  Buffer<MAX_JSON_STR_LENGTH> url;
+  Buffer<MAX_JSON_STR_LENGTH> staticBuffer;
+  Buffer<MAX_URL_EFF_LENGTH> staticUrl;
 
 public:
   Messenger(const char* n);
@@ -44,6 +47,8 @@ public:
   void connectToWifi();
   void updateBotProperties();
   void updateClockProperties();
+  void setUpDweetClient(HTTPClient* client, Buffer<MAX_URL_EFF_LENGTH> *url);
+
 };
 
 #endif // MESSENGER_INC
