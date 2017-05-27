@@ -88,7 +88,7 @@ void Lcd::setProp(int propIndex, SetMode setMode, const Value* targetValue, Valu
 
 int Lcd::getNroProps() { return LcdConfigStateDelimiter; }
 
-void Lcd::getInfo(int infoIndex, Buffer<MAX_VALUE_STR_LENGTH>* info) {
+void Lcd::getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH>* info) {
 }
 
 int Lcd::getNroInfos() { return 0; }

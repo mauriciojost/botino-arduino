@@ -53,7 +53,7 @@ void Led::setProp(int propIndex, SetMode setMode, const Value* targetValue, Valu
 
 int Led::getNroProps() { return LedConfigStateDelimiter; }
 
-void Led::getInfo(int infoIndex, Buffer<MAX_VALUE_STR_LENGTH>* info) {
+void Led::getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH>* info) {
   Boolean i(currentValue);
   info->load(&i);
 }

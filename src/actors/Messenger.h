@@ -35,13 +35,15 @@ public:
   const char* getPropName(int propIndex);
   void setProp(int propIndex, SetMode set, const Value* targetValue, Value* actualValue);
 
-  void getInfo(int infoIndex, Buffer<MAX_VALUE_STR_LENGTH>* info);
+  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH>* info);
   int getNroInfos();
 
   FreqConf *getFrequencyConfiguration();
 
   void setBot(WebBot* b);
   void connectToWifi();
+  void updateBotProperties();
+  void updateClockProperties();
 };
 
 #endif // MESSENGER_INC
