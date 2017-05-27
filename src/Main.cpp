@@ -2,7 +2,7 @@
 #include <Main.h>
 
 #define CLASS "Main"
-#define TICKS_PERIOD_TIMER1 2500000
+#define TICKS_PERIOD_TIMER1 300000
 
 volatile char nroInterruptsQueued = 0; // counter to keep track of amount of timing
                                        // interrupts queued
