@@ -30,7 +30,7 @@
 #error "Must provide TIMEZONE_DB_ZONE"
 #endif
 
-Messenger::Messenger(const char* n): freqConf(OnceEvery5Minutes) {
+Messenger::Messenger(const char* n): freqConf(OnceEvery1Minute) {
   name = n;
   bot = NULL;
 }

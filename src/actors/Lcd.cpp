@@ -28,22 +28,26 @@ void Lcd::initialize() {
   lcd->clear();
 }
 
-void Lcd::display(const char *str1, const char *str2) {
+void Lcd::display(const char *strUp, const char *strDown) {
   updates++;
   bool onceInAWhile = ((updates % 20) == 0);
   if (onceInAWhile) {
     initialize(); // did not find a way a better way to ensure LCD won't get
-                  // corrupt due to load noise
+                  // corrupt due to load noise (if any)
   }
-  if (str1 != NULL) {
-    lineUp->load(str1);
-    lcd->setCursor(0, 0);
-    lcd->print(str1);
+  if (strUp != NULL) {
+    if (!strcmp(strUp, lineUp->getBuffer())) {
+      lineUp->load(strUp);
+      lcd->setCursor(0, 0);
+      lcd->print(strUp);
+    }
   }
-  if (str2 != NULL) {
-    lineDown->load(str2);
-    lcd->setCursor(0, 1);
-    lcd->print(str2);
+  if (strDown != NULL) {
+    if (!strcmp(strDown, lineDown->getBuffer())) {
+      lineDown->load(strDown);
+      lcd->setCursor(0, 1);
+      lcd->print(strDown);
+    }
   }
 }
 
