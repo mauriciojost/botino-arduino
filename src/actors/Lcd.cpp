@@ -30,23 +30,29 @@ void Lcd::initialize() {
 
 void Lcd::display(const char *strUp, const char *strDown) {
   updates++;
-  bool onceInAWhile = ((updates % 20) == 0);
-  if (onceInAWhile) {
+  bool forceFullUpdate = ((updates % 20) == 0);
+  if (forceFullUpdate) {
     initialize(); // did not find a way a better way to ensure LCD won't get
                   // corrupt due to load noise (if any)
   }
   if (strUp != NULL) {
-    if (!strcmp(strUp, lineUp->getBuffer())) {
+    if (strcmp(strUp, lineUp->getBuffer()) || forceFullUpdate) {
       lineUp->load(strUp);
       lcd->setCursor(0, 0);
       lcd->print(strUp);
+      log(CLASS, Debug, "Set: ", strUp);
+    } else {
+      log(CLASS, Debug, "Keep: ", strUp);
     }
   }
   if (strDown != NULL) {
-    if (!strcmp(strDown, lineDown->getBuffer())) {
+    if (strcmp(strDown, lineDown->getBuffer()) || forceFullUpdate) {
       lineDown->load(strDown);
       lcd->setCursor(0, 1);
       lcd->print(strDown);
+      log(CLASS, Debug, "Set: ", strDown);
+    } else {
+      log(CLASS, Debug, "Keep: ", strDown);
     }
   }
 }
@@ -75,8 +81,9 @@ void Lcd::setProp(int propIndex, SetMode setMode, const Value* targetValue, Valu
   switch (propIndex) {
     case (LcdConfigLineUpState):
       if (setMode == SetValue) {
-        lineUp->load(targetValue);
-        display(lineUp->getBuffer(), NULL);
+        Buffer<LCD_LINE_LENGTH> b;
+        b.load(targetValue);
+        display(b.getBuffer(), NULL);
       }
       if (actualValue != NULL) {
         actualValue->load(lineUp);
@@ -84,8 +91,9 @@ void Lcd::setProp(int propIndex, SetMode setMode, const Value* targetValue, Valu
       break;
     case (LcdConfigLineDownState):
       if (setMode == SetValue) {
-        lineDown->load(targetValue);
-        display(NULL, lineDown->getBuffer());
+        Buffer<LCD_LINE_LENGTH> b;
+        b.load(targetValue);
+        display(NULL, b.getBuffer());
       }
       if (actualValue != NULL) {
         actualValue->load(lineDown);
