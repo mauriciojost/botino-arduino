@@ -13,8 +13,11 @@
 #define LCD_LINE_LENGTH 16
 
 enum LcdConfigState {
-  LcdConfigLineUpState = 0,
-  LcdConfigLineDownState,
+  LcdConfigLineUpAState = 0,
+  LcdConfigLineDownAState,
+  LcdConfigLineUpBState,
+  LcdConfigLineDownBState,
+  LcdConfigChannelState,
   LcdConfigStateDelimiter // delimiter of the configuration states
 };
 
@@ -24,19 +27,24 @@ class Lcd : public Actor {
 private:
   LiquidCrystal *lcd;
   int updates;
+  int channel;
   FreqConf freqConf;
-  Buffer<LCD_LINE_LENGTH>* lineUp;
-  Buffer<LCD_LINE_LENGTH>* lineDown;
+  Buffer<LCD_LINE_LENGTH>* lineU;
+  Buffer<LCD_LINE_LENGTH>* lineD;
+  Buffer<LCD_LINE_LENGTH>* lineUA;
+  Buffer<LCD_LINE_LENGTH>* lineDA;
+  Buffer<LCD_LINE_LENGTH>* lineUB;
+  Buffer<LCD_LINE_LENGTH>* lineDB;
+
+  void display(const char *upLine, const char *downLine);
 
 public:
   Lcd(int rsPin, int enablePin, int d4Pin, int d5Pin, int d6Pin, int d7Pin);
   void initialize();
-  void display(const char *upLine, const char *downLine);
 
   const char *getName();
 
   void cycle(bool cronMatches);
-  void subCycle(float subCycle);
   void getActuatorValue(Value* value);
 
   int getNroProps();
@@ -47,6 +55,7 @@ public:
   int getNroInfos();
 
   FreqConf *getFrequencyConfiguration();
+
 };
 
 #endif // LCD_INC

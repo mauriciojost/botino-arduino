@@ -14,9 +14,14 @@ byte modeButtonIcon[8] = {
 };
 
 Lcd::Lcd(int rsPin, int enablePin, int d4Pin, int d5Pin, int d6Pin, int d7Pin): freqConf(Never)  {
+  channel = 0;
   lcd = new LiquidCrystal(rsPin, enablePin, d4Pin, d5Pin, d6Pin, d7Pin);
-  lineUp = new Buffer<LCD_LINE_LENGTH>("");
-  lineDown = new Buffer<LCD_LINE_LENGTH>("");
+  lineU = new Buffer<LCD_LINE_LENGTH>("");
+  lineD = new Buffer<LCD_LINE_LENGTH>("");
+  lineUA = new Buffer<LCD_LINE_LENGTH>("");
+  lineDA = new Buffer<LCD_LINE_LENGTH>("");
+  lineUB = new Buffer<LCD_LINE_LENGTH>("");
+  lineDB = new Buffer<LCD_LINE_LENGTH>("");
 }
 
 void Lcd::initialize() {
@@ -36,8 +41,8 @@ void Lcd::display(const char *strUp, const char *strDown) {
                   // corrupt due to load noise (if any)
   }
   if (strUp != NULL) {
-    if (strcmp(strUp, lineUp->getBuffer()) || forceFullUpdate) {
-      lineUp->load(strUp);
+    if (strcmp(strUp, lineU->getBuffer()) || forceFullUpdate) {
+      lineU->load(strUp);
       lcd->setCursor(0, 0);
       lcd->print(strUp);
       log(CLASS, Debug, "Set: ", strUp);
@@ -46,8 +51,8 @@ void Lcd::display(const char *strUp, const char *strDown) {
     }
   }
   if (strDown != NULL) {
-    if (strcmp(strDown, lineDown->getBuffer()) || forceFullUpdate) {
-      lineDown->load(strDown);
+    if (strcmp(strDown, lineD->getBuffer()) || forceFullUpdate) {
+      lineD->load(strDown);
       lcd->setCursor(0, 1);
       lcd->print(strDown);
       log(CLASS, Debug, "Set: ", strDown);
@@ -61,42 +66,69 @@ const char *Lcd::getName() {
   return "lcd";
 }
 
-void Lcd::cycle(bool cronMatches) { }
-
-void Lcd::subCycle(float subCycle) { }
-
-void Lcd::getActuatorValue(Value* value) {
-  value->load(lineUp);
+void Lcd::cycle(bool cronMatches) {
+  if (channel % 2 == 0) {
+    display(lineUA->getBuffer(), lineDA->getBuffer());
+  } else {
+    display(lineUB->getBuffer(), lineDB->getBuffer());
+  }
 }
+
+void Lcd::getActuatorValue(Value* value) { }
 
 const char* Lcd::getPropName(int propIndex) {
   switch (propIndex) {
-    case (LcdConfigLineUpState): return "lineup";
-    case (LcdConfigLineDownState): return "linedown";
+    case (LcdConfigLineUpAState): return "upa";
+    case (LcdConfigLineDownAState): return "doa";
+    case (LcdConfigLineUpBState): return "upb";
+    case (LcdConfigLineDownBState): return "dob";
+    case (LcdConfigChannelState): return "channel";
     default: return "";
   }
 }
 
 void Lcd::setProp(int propIndex, SetMode setMode, const Value* targetValue, Value* actualValue) {
   switch (propIndex) {
-    case (LcdConfigLineUpState):
+    case (LcdConfigLineUpAState):
       if (setMode == SetValue) {
-        Buffer<LCD_LINE_LENGTH> b;
-        b.load(targetValue);
-        display(b.getBuffer(), NULL);
+        lineUA->load(targetValue);
       }
       if (actualValue != NULL) {
-        actualValue->load(lineUp);
+        actualValue->load(lineUA);
       }
       break;
-    case (LcdConfigLineDownState):
+    case (LcdConfigLineDownAState):
       if (setMode == SetValue) {
-        Buffer<LCD_LINE_LENGTH> b;
-        b.load(targetValue);
-        display(NULL, b.getBuffer());
+        lineDA->load(targetValue);
       }
       if (actualValue != NULL) {
-        actualValue->load(lineDown);
+        actualValue->load(lineDA);
+      }
+      break;
+    case (LcdConfigLineUpBState):
+      if (setMode == SetValue) {
+        lineUB->load(targetValue);
+      }
+      if (actualValue != NULL) {
+        actualValue->load(lineUB);
+      }
+      break;
+    case (LcdConfigLineDownBState):
+      if (setMode == SetValue) {
+        lineDB->load(targetValue);
+      }
+      if (actualValue != NULL) {
+        actualValue->load(lineDB);
+      }
+      break;
+    case (LcdConfigChannelState):
+      if (setMode == SetValue) {
+        Integer i(targetValue);
+        channel = i.get() % 2;
+      }
+      if (actualValue != NULL) {
+        Integer i(channel);
+        actualValue->load(&i);
       }
       break;
     default:

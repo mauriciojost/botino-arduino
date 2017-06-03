@@ -30,7 +30,12 @@ ICACHE_RAM_ATTR void timingInterrupt(void) {
 void displayOnLogs(const char *str1, const char *str2) {
   log(CLASS, Info, str1);
   log(CLASS, Info, str2);
-  m.getLcd()->display(str1, str2);
+
+  Buffer<LCD_LINE_LENGTH> b;
+  b.load(str1);
+  m.getLcd()->setProp(LcdConfigLineUpAState, SetValue, &b, NULL);
+  b.load(str2);
+  m.getLcd()->setProp(LcdConfigLineDownAState, SetValue, &b, NULL);
 }
 
 /*****************/
