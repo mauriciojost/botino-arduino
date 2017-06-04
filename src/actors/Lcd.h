@@ -11,12 +11,15 @@
 #include <Wire.h>
 
 #define LCD_LINE_LENGTH 16
+#define NRO_CHANNELS 2
 
 enum LcdConfigState {
   LcdConfigLineUpAState = 0,
   LcdConfigLineDownAState,
   LcdConfigLineUpBState,
   LcdConfigLineDownBState,
+  LcdConfigLightAState,
+  LcdConfigLightBState,
   LcdConfigChannelState,
   LcdConfigStateDelimiter // delimiter of the configuration states
 };
@@ -26,13 +29,18 @@ class Lcd : public Actor {
 
 private:
   LiquidCrystal *lcd;
-  int updates;
   int channel;
   FreqConf freqConf;
+
+  bool light;
   Buffer<LCD_LINE_LENGTH>* lineU;
   Buffer<LCD_LINE_LENGTH>* lineD;
+
+  bool lightA;
   Buffer<LCD_LINE_LENGTH>* lineUA;
   Buffer<LCD_LINE_LENGTH>* lineDA;
+
+  bool lightB;
   Buffer<LCD_LINE_LENGTH>* lineUB;
   Buffer<LCD_LINE_LENGTH>* lineDB;
 
@@ -55,6 +63,10 @@ public:
   int getNroInfos();
 
   FreqConf *getFrequencyConfiguration();
+
+  bool getLight();
+
+  int getChannel();
 
 };
 

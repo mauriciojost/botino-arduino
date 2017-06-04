@@ -9,14 +9,16 @@ Module::Module() {
   this->msgr = new Messenger("msgr0");
   this->led0 = new Led("led0");
   this->led1 = new Led("led1");
+  this->buzzer0 = new Led("buz0");
   this->clock = new Clock("clock0");
 
-  actors = new Array<Actor*>(5);
+  actors = new Array<Actor*>(6);
   actors->set(0, (Actor*)clock);
   actors->set(1, (Actor*)msgr);
   actors->set(2, (Actor*)led0);
   actors->set(3, (Actor*)led1);
-  actors->set(4, (Actor*)lcd);
+  actors->set(4, (Actor*)buzzer0);
+  actors->set(5, (Actor*)lcd);
 
   this->bot = new WebBot(clock, actors);
   this->msgr->setBot(bot);
@@ -46,6 +48,9 @@ void Module::loop(bool mode, bool set, bool wdtWasTriggered) {
     digitalWrite(LED0_PIN, ledValue.get());
     led1->getActuatorValue(&ledValue);
     digitalWrite(LED1_PIN, ledValue.get());
+    buzzer0->getActuatorValue(&ledValue);
+    digitalWrite(BUZZER0_PIN, ledValue.get());
+    digitalWrite(LCD_BACKLIGHT_PIN, lcd->getLight());
   }
 
   if (anyButtonPressed) {

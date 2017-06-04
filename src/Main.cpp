@@ -45,6 +45,8 @@ void displayOnLogs(const char *str1, const char *str2) {
 void setupPins() {
   pinMode(LED0_PIN, OUTPUT);
   pinMode(LED1_PIN, OUTPUT);
+  pinMode(LCD_BACKLIGHT_PIN, OUTPUT);
+  pinMode(BUZZER0_PIN, OUTPUT);
   log(CLASS, Info, "PINS READY");
 }
 

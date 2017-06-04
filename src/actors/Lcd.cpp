@@ -3,6 +3,8 @@
 
 #define CLASS "Lcd"
 
+#define PERIOD_FORCE_UPDATE 20
+
 byte modeButtonIcon[8] = {
     B11111,
     B11011,
@@ -34,8 +36,9 @@ void Lcd::initialize() {
 }
 
 void Lcd::display(const char *strUp, const char *strDown) {
-  updates++;
-  bool forceFullUpdate = ((updates % 20) == 0);
+  static int updates = 0;
+  updates = (updates + 1) % PERIOD_FORCE_UPDATE;
+  bool forceFullUpdate = updates == 0;
   if (forceFullUpdate) {
     initialize(); // did not find a way a better way to ensure LCD won't get
                   // corrupt due to load noise (if any)
@@ -67,7 +70,7 @@ const char *Lcd::getName() {
 }
 
 void Lcd::cycle(bool cronMatches) {
-  if (channel % 2 == 0) {
+  if (channel % NRO_CHANNELS == 0) {
     display(lineUA->getBuffer(), lineDA->getBuffer());
   } else {
     display(lineUB->getBuffer(), lineDB->getBuffer());
@@ -82,7 +85,9 @@ const char* Lcd::getPropName(int propIndex) {
     case (LcdConfigLineDownAState): return "doa";
     case (LcdConfigLineUpBState): return "upb";
     case (LcdConfigLineDownBState): return "dob";
-    case (LcdConfigChannelState): return "channel";
+    case (LcdConfigChannelState): return "chan";
+    case (LcdConfigLightAState): return "liga";
+    case (LcdConfigLightBState): return "ligb";
     default: return "";
   }
 }
@@ -121,10 +126,30 @@ void Lcd::setProp(int propIndex, SetMode setMode, const Value* targetValue, Valu
         actualValue->load(lineDB);
       }
       break;
+    case (LcdConfigLightAState):
+      if (setMode == SetValue) {
+        Boolean b(targetValue);
+        lightA = b.get();
+      }
+      if (actualValue != NULL) {
+        Boolean b(lightA);
+        actualValue->load(&b);
+      }
+      break;
+    case (LcdConfigLightBState):
+      if (setMode == SetValue) {
+        Boolean b(targetValue);
+        lightB = b.get();
+      }
+      if (actualValue != NULL) {
+        Boolean b(lightB);
+        actualValue->load(&b);
+      }
+      break;
     case (LcdConfigChannelState):
       if (setMode == SetValue) {
         Integer i(targetValue);
-        channel = i.get() % 2;
+        channel = i.get() % NRO_CHANNELS;
       }
       if (actualValue != NULL) {
         Integer i(channel);
@@ -144,3 +169,11 @@ void Lcd::getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH>* info) {
 int Lcd::getNroInfos() { return 0; }
 
 FreqConf *Lcd::getFrequencyConfiguration() { return &freqConf; }
+
+bool Lcd::getLight() {
+  if (channel % NRO_CHANNELS == 0) {
+    return lightA;
+  } else {
+    return lightB;
+  }
+}
