@@ -30,7 +30,7 @@
 
 
 #define PIN_D3 GPIO0_PIN
-#define PIN_D10 GPIO1_PIN
+#define PIN_D10 GPIO1_PIN // (!) TX, if used will break serial communication
 #define PIN_D4 GPIO2_PIN
 #define PIN_D9 GPIO3_PIN
 #define PIN_D2 GPIO4_PIN
@@ -46,7 +46,7 @@
 #define LED0_PIN PIN_D0
 #define LED1_PIN PIN_D1
 #define LCD_BACKLIGHT_PIN PIN_D8
-#define BUZZER0_PIN PIN_D0
+#define BUZZER0_PIN PIN_D10
 #define LCD_ENABLE_PIN PIN_D2
 #define LCD_RS_PIN PIN_D3
 
