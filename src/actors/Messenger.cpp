@@ -30,7 +30,7 @@
 #error "Must provide TIMEZONE_DB_ZONE"
 #endif
 
-Messenger::Messenger(const char* n): freqConf(OnceEvery1Minute) {
+Messenger::Messenger(const char* n): freqConf(OnceEvery10Seconds) {
   name = n;
   bot = NULL;
 }
@@ -173,10 +173,7 @@ void Messenger::setProp(int propIndex, SetMode set, const Value* targetValue, Va
 int Messenger::getNroProps() { return 0; }
 
 const char* Messenger::getPropName(int propIndex) {
-  switch (propIndex) {
-  default:
-    return "";
-  }
+  return "";
 }
 
 void Messenger::getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH>* info) { }
