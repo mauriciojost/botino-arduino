@@ -1,5 +1,4 @@
 #ifdef UNIT_TEST
-#ifdef PARAM_STREAM_TEST
 
 // Auxiliary libraries
 #include <unity.h>
@@ -41,5 +40,4 @@ int main() {
   UNITY_END();
 }
 
-#endif // PARAM_STREAM_TEST
 #endif // UNIT_TEST

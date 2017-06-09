@@ -4,6 +4,12 @@ Board used: ESP-01
 
 http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family
 
+## Initialization for test
+
+```
+ln -s `readlink -e libs/main4ino-arduino/src/*` src
+```
+
 ## IDE
 
 ```
