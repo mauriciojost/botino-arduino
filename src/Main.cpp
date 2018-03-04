@@ -2,10 +2,22 @@
 #include <Main.h>
 
 #define CLASS "Main"
-//#define TICKS_PERIOD_TIMER1 300000
-#define SLEEP_DELAY_US 1000 * 1000 * 10
+#define TICKS_PERIOD_TIMER1 300000
+#define SLEEP_DELAY_US 1000 * 1000 * 5
+#define FPM_SLEEP_MAX_TIME 0xFFFFFFF
+#ifndef WIFI_SSID
+#error "Must provide WIFI_SSID"
+#endif
+#ifndef WIFI_PASSWORD
+#error "Must provide WIFI_PASSWORD"
+#endif
 
-//volatile char nroInterruptsQueued = 0; // counter to keep track of amount of timing
+
+extern "C" {
+#include "user_interface.h"
+}
+
+volatile char nroInterruptsQueued = 0; // counter to keep track of amount of timing
                                        // interrupts queued
 
 enum ButtonPressed {
@@ -20,9 +32,10 @@ Module m;
 /** INTERRUPTS ***/
 /*****************/
 
-//ICACHE_RAM_ATTR void timingInterrupt(void) {
-  //nroInterruptsQueued++;
-//}
+ICACHE_RAM_ATTR void timingInterrupt(void) {
+  nroInterruptsQueued++;
+}
+
 
 /******************/
 /***  CALLBACKS ***/
@@ -47,17 +60,17 @@ void setupPins() {
   pinMode(LED0_PIN, OUTPUT);
   pinMode(LED1_PIN, OUTPUT);
   pinMode(LCD_BACKLIGHT_PIN, OUTPUT);
-  pinMode(BUZZER0_PIN, OUTPUT);
+  //pinMode(BUZZER0_PIN, OUTPUT); // will break serial communication
   log(CLASS, Info, "PINS READY");
 }
 
 //void setupInterrupts() {
-  //timer1_disable();
-  //timer1_isr_init();
-  //timer1_attachInterrupt(timingInterrupt);
-  //timer1_enable(TIM_DIV265, TIM_EDGE, TIM_LOOP);
-  //timer1_write(TICKS_PERIOD_TIMER1);
-  //log(CLASS, Info, "INT READY");
+//  timer1_disable();
+//  timer1_isr_init();
+//  timer1_attachInterrupt(timingInterrupt);
+//  timer1_enable(TIM_DIV265, TIM_EDGE, TIM_LOOP);
+//  timer1_write(TICKS_PERIOD_TIMER1);
+//  log(CLASS, Info, "INT READY");
 //}
 
 void setup() {
@@ -88,25 +101,57 @@ ButtonPressed readButtons() {
   }
 }
 
+void doDelays();
+void initWifi();
+
+const char* ssid = "ssid";
+const char* password = "pass";
+
 void loop() {
-  //bool wdtInterrupt = nroInterruptsQueued > 0;
 
-  //if (wdtInterrupt) {
-    ButtonPressed button = readButtons();
-    //nroInterruptsQueued--;
-    log(CLASS, Info, "INT");
-    m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, 1/*wdtInterrupt*/);
-    //m.getClock()->setNroInterruptsQueued(nroInterruptsQueued);
-  //}
+  initWifi();
 
-  //if (nroInterruptsQueued <= 0) { // no interrupts queued
-    //nroInterruptsQueued = 0;
-  //}
+  Serial.println("Light sleep & delays:");
+  wifi_set_sleep_type(LIGHT_SLEEP_T);
+  doDelays();
 
-  //ESP.deepSleep(SLEEP_DELAY_US, WAKE_RF_DEFAULT);
+  Serial.println("Run module:");
+  ButtonPressed button = readButtons();
+  log(CLASS, Info, "INT");
+  m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
 
-  log(CLASS, Info, "WOKE UP");
+  Serial.println("None sleep & delays:");
+  wifi_set_sleep_type(NONE_SLEEP_T);
+  doDelays();
 
+  WiFi.disconnect();
+  Serial.print("WiFi disconnected, IP address: "); Serial.println(WiFi.localIP());
+  Serial.println("Light sleep & delays:");
+  wifi_set_sleep_type(LIGHT_SLEEP_T);
+  doDelays();
+
+}
+
+void doDelays() {
+  Serial.println("Yield for 1 sec");
+  long endMs = millis() + 1000;
+  while (millis() < endMs) {
+     yield();
+  }
+
+  Serial.println("Delay for 1 sec");
+  delay(1000);
+}
+
+void initWifi() {
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  while ((WiFi.status() != WL_CONNECTED)) {
+     delay(500);
+     Serial.print(".");
+  }
+  Serial.println("");
+  Serial.print("WiFi connected, IP address: "); Serial.println(WiFi.localIP());
 }
 
 #endif // UNIT_TEST

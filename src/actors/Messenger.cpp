@@ -43,6 +43,7 @@ const char *Messenger::getName() {
   return name;
 }
 
+/*
 void Messenger::connectToWifi() {
 #ifndef UNIT_TEST
 
@@ -68,13 +69,14 @@ void Messenger::connectToWifi() {
   }
 #endif // UNIT_TEST
 }
+*/
 
 void Messenger::cycle(bool cronMatches) {
   if (bot == NULL) {
     return;
   }
   if (cronMatches) {
-    connectToWifi();
+    //connectToWifi();
     updateClockProperties();
     updateBotProperties();
   }

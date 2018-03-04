@@ -44,7 +44,7 @@ public:
   FreqConf *getFrequencyConfiguration();
 
   void setBot(WebBot* b);
-  void connectToWifi();
+  //void connectToWifi();
   void updateBotProperties();
   void updateClockProperties();
   void setUpDweetClient(HTTPClient* client, Buffer<MAX_URL_EFF_LENGTH> *url);
