@@ -1,0 +1,26 @@
+# PINOUT
+
+V1N -> 5V
+GND -> GND
+TX -> LED YELLOW
+RX
+
+D0 -> 
+D1 -> LED RED
+D2 -> LCD E
+D3 -> LCD RS
+D4 -> LCD D4
+D5 -> LCD D5
+D6 -> LCD D6
+D7 -> LCD D7
+D8 -> RES 1K -> LCD A
+
+LCD K -> GND
+LCD VSS -> GND
+LCD VDD -> 5V
+LCD V0 -> GND
+LCD RW -> GND
+LCD D0, D1, D2, D3 -> GND
+
+RST -> D0 ? 
+	
