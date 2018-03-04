@@ -2,10 +2,9 @@
 #include <Main.h>
 
 #define CLASS "Main"
-//#define TICKS_PERIOD_TIMER1 300000
-#define SLEEP_DELAY_US 1000 * 1000 * 10
+#define TICKS_PERIOD_TIMER1 300000
 
-//volatile char nroInterruptsQueued = 0; // counter to keep track of amount of timing
+volatile char nroInterruptsQueued = 0; // counter to keep track of amount of timing
                                        // interrupts queued
 
 enum ButtonPressed {
@@ -20,9 +19,9 @@ Module m;
 /** INTERRUPTS ***/
 /*****************/
 
-//ICACHE_RAM_ATTR void timingInterrupt(void) {
-  //nroInterruptsQueued++;
-//}
+ICACHE_RAM_ATTR void timingInterrupt(void) {
+  nroInterruptsQueued++;
+}
 
 /******************/
 /***  CALLBACKS ***/
@@ -51,14 +50,14 @@ void setupPins() {
   log(CLASS, Info, "PINS READY");
 }
 
-//void setupInterrupts() {
-  //timer1_disable();
-  //timer1_isr_init();
-  //timer1_attachInterrupt(timingInterrupt);
-  //timer1_enable(TIM_DIV265, TIM_EDGE, TIM_LOOP);
-  //timer1_write(TICKS_PERIOD_TIMER1);
-  //log(CLASS, Info, "INT READY");
-//}
+void setupInterrupts() {
+  timer1_disable();
+  timer1_isr_init();
+  timer1_attachInterrupt(timingInterrupt);
+  timer1_enable(TIM_DIV265, TIM_EDGE, TIM_LOOP);
+  timer1_write(TICKS_PERIOD_TIMER1);
+  log(CLASS, Info, "INT READY");
+}
 
 void setup() {
   setupLog();
@@ -69,7 +68,7 @@ void setup() {
   m.setup();
   m.setStdoutWriteFunction(displayOnLogs);
   m.setDigitalWriteFunction(digitalWrite);
-  //setupInterrupts();
+  setupInterrupts();
 }
 
 ButtonPressed readButtons() {
@@ -89,23 +88,19 @@ ButtonPressed readButtons() {
 }
 
 void loop() {
-  //bool wdtInterrupt = nroInterruptsQueued > 0;
+  bool wdtInterrupt = nroInterruptsQueued > 0;
 
-  //if (wdtInterrupt) {
+  if (wdtInterrupt) {
     ButtonPressed button = readButtons();
-    //nroInterruptsQueued--;
+    nroInterruptsQueued--;
     log(CLASS, Info, "INT");
-    m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, 1/*wdtInterrupt*/);
-    //m.getClock()->setNroInterruptsQueued(nroInterruptsQueued);
-  //}
+    m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, wdtInterrupt);
+    m.getClock()->setNroInterruptsQueued(nroInterruptsQueued);
+  }
 
-  //if (nroInterruptsQueued <= 0) { // no interrupts queued
-    //nroInterruptsQueued = 0;
-  //}
-
-  //ESP.deepSleep(SLEEP_DELAY_US, WAKE_RF_DEFAULT);
-
-  log(CLASS, Info, "WOKE UP");
+  if (nroInterruptsQueued <= 0) { // no interrupts queued
+    nroInterruptsQueued = 0;
+  }
 
 }
 
