@@ -8,7 +8,13 @@ http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family
 
 ```
 ln -s `readlink -e libs/main4ino-arduino/src/*` src
+ln -s `readlink -e libs/log4ino-arduino/src/*` src
+pio lib install "LiquidCrystal"
 ```
+
+Was having issues with log4ino as dependency.
+At the end the dependencies declared in `platformio.ini` can be replaced by 
+the `ln` commands above for any dependency.
 
 ## IDE
 
