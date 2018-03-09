@@ -73,6 +73,7 @@ void setupPins() {
 //  log(CLASS, Info, "INT READY");
 //}
 
+/*
 void setup() {
   setupLog();
   delay(1000);
@@ -84,6 +85,26 @@ void setup() {
   m.setDigitalWriteFunction(digitalWrite);
   //setupInterrupts();
 }
+*/
+
+void setup() {
+  Serial.begin(115200);
+  Serial.setTimeout(2000);
+
+  // Wait for serial to initialize.
+  while(!Serial) { }
+
+  // Deep sleep mode for 30 seconds, the ESP8266 wakes up by itself when GPIO 16 (D0 in NodeMCU board) is connected to the RESET pin
+  Serial.println("I'm awake, but I'm going into deep sleep mode for 30 seconds");
+  ESP.deepSleep(30e6);
+
+  // Deep sleep mode until RESET pin is connected to a LOW signal (for example pushbutton or magnetic reed switch)
+  //Serial.println("I'm awake, but I'm going into deep sleep mode until RESET pin is connected to a LOW signal");
+  //ESP.deepSleep(0);
+}
+
+void loop() { }
+
 
 ButtonPressed readButtons() {
   if (readAvailable() > 0) {
@@ -107,6 +128,7 @@ void initWifi();
 const char* ssid = "ssid";
 const char* password = "pass";
 
+/*
 void loop() {
 
   initWifi();
@@ -130,17 +152,20 @@ void loop() {
   wifi_set_sleep_type(LIGHT_SLEEP_T);
   doDelays();
 
+  ESP.deepSleep(10 * 1000 * 1000);
+
 }
+*/
 
 void doDelays() {
-  Serial.println("Yield for 1 sec");
-  long endMs = millis() + 1000;
+  Serial.println("Yield for 3 sec");
+  long endMs = millis() + 3000;
   while (millis() < endMs) {
      yield();
   }
 
-  Serial.println("Delay for 1 sec");
-  delay(1000);
+  Serial.println("Delay for 3 sec");
+  delay(3000);
 }
 
 void initWifi() {
