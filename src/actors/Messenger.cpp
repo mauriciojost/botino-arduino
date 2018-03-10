@@ -43,43 +43,14 @@ const char *Messenger::getName() {
   return name;
 }
 
-/*
-void Messenger::connectToWifi() {
-#ifndef UNIT_TEST
-
-  static bool configured = false;
-  int attempts = 0;
-  log(CLASS, Info, "Status: ", (int)WiFi.status());
-  while(WiFi.status() != WL_CONNECTED || !configured) {
-    log(CLASS, Info, "Connecting...");
-    WiFi.persistent(false);
-    WiFi.mode(WIFI_OFF);
-    WiFi.mode(WIFI_STA);
-    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-    configured = true;
-    while (WiFi.status() != WL_CONNECTED) {
-      delay(DELAY_UNIT_MS);
-      log(CLASS, Info, ".");
-      if (attempts++ > MAX_WIFI_CONNECTION_ATTEMPTS) {
-        attempts = 0;
-        break;
-      }
-    }
-    delay(DELAY_UNIT_MS);
-  }
-#endif // UNIT_TEST
-}
-*/
-
 void Messenger::cycle(bool cronMatches) {
   if (bot == NULL) {
     return;
   }
-  if (cronMatches) {
-    //connectToWifi();
+  //if (cronMatches) {
     updateClockProperties();
     updateBotProperties();
-  }
+  //}
 }
 
 void Messenger::updateClockProperties() {
