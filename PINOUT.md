@@ -22,12 +22,12 @@ D1  ->
 D2  -> 
 D3  -> 
 D4  ->
-3v3 -> capacitor 104 to GND LINE
-GND -> above capacitor
+3v3 ->
+GND ->
 D5  ->
 D6  ->
 D7  ->
-D8  -> pulloff 4.7k to GND LINE
+D8  ->
 RX  ->
 TX  ->
 GND ->
