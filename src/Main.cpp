@@ -73,7 +73,6 @@ void setupPins() {
 //  log(CLASS, Info, "INT READY");
 //}
 
-/*
 void setup() {
   setupLog();
   delay(1000);
@@ -85,26 +84,6 @@ void setup() {
   m.setDigitalWriteFunction(digitalWrite);
   //setupInterrupts();
 }
-*/
-
-void setup() {
-  Serial.begin(115200);
-  Serial.setTimeout(2000);
-
-  // Wait for serial to initialize.
-  while(!Serial) { }
-
-  // Deep sleep mode for 30 seconds, the ESP8266 wakes up by itself when GPIO 16 (D0 in NodeMCU board) is connected to the RESET pin
-  Serial.println("I'm awake, but I'm going into deep sleep mode for 30 seconds");
-  ESP.deepSleep(30e6);
-
-  // Deep sleep mode until RESET pin is connected to a LOW signal (for example pushbutton or magnetic reed switch)
-  //Serial.println("I'm awake, but I'm going into deep sleep mode until RESET pin is connected to a LOW signal");
-  //ESP.deepSleep(0);
-}
-
-void loop() { }
-
 
 ButtonPressed readButtons() {
   if (readAvailable() > 0) {
@@ -122,52 +101,6 @@ ButtonPressed readButtons() {
   }
 }
 
-void doDelays();
-void initWifi();
-
-const char* ssid = "ssid";
-const char* password = "pass";
-
-/*
-void loop() {
-
-  initWifi();
-
-  Serial.println("Light sleep & delays:");
-  wifi_set_sleep_type(LIGHT_SLEEP_T);
-  doDelays();
-
-  Serial.println("Run module:");
-  ButtonPressed button = readButtons();
-  log(CLASS, Info, "INT");
-  m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
-
-  Serial.println("None sleep & delays:");
-  wifi_set_sleep_type(NONE_SLEEP_T);
-  doDelays();
-
-  WiFi.disconnect();
-  Serial.print("WiFi disconnected, IP address: "); Serial.println(WiFi.localIP());
-  Serial.println("Light sleep & delays:");
-  wifi_set_sleep_type(LIGHT_SLEEP_T);
-  doDelays();
-
-  ESP.deepSleep(10 * 1000 * 1000);
-
-}
-*/
-
-void doDelays() {
-  Serial.println("Yield for 3 sec");
-  long endMs = millis() + 3000;
-  while (millis() < endMs) {
-     yield();
-  }
-
-  Serial.println("Delay for 3 sec");
-  delay(3000);
-}
-
 void initWifi() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -178,5 +111,37 @@ void initWifi() {
   Serial.println("");
   Serial.print("WiFi connected, IP address: "); Serial.println(WiFi.localIP());
 }
+
+
+void loop() {
+
+  Serial.println("Initializing WIFI...");
+  initWifi();
+
+  Serial.println("None sleep...");
+  wifi_set_sleep_type(NONE_SLEEP_T);
+  delay(5000);
+
+  Serial.println("Run module...");
+  ButtonPressed button = readButtons();
+  log(CLASS, Info, "INT");
+  m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
+
+
+  Serial.println("Light sleep...");
+  wifi_set_sleep_type(LIGHT_SLEEP_T);
+  delay(5000);
+
+
+  WiFi.disconnect();
+  Serial.println("Light sleep (disconnected)...");
+  wifi_set_sleep_type(LIGHT_SLEEP_T);
+  delay(5000);
+
+  //Serial.println("Deep sleep...");
+  //ESP.deepSleep(10e6);
+
+}
+
 
 #endif // UNIT_TEST
