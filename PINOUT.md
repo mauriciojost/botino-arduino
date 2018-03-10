@@ -4,8 +4,8 @@ V1N -> 5V LINE
 GND -> GND LINE
 RST -> D0
 EN  -> 
-3v3 -> 3v3 LINE
-GND -> GND LINE
+3v3 ->
+GND ->
 CLK ->
 SDQ ->
 CMD ->

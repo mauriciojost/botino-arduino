@@ -26,7 +26,7 @@ enum ButtonPressed {
   ButtonModeWasPressed
 };
 
-//Module m;
+Module m;
 
 /*****************/
 /** INTERRUPTS ***/
@@ -78,10 +78,10 @@ void setup() {
   setupLog();
   log(CLASS, Info, "LOG READY");
 
-  //setupPins();
-  //m.setup();
-  //m.setStdoutWriteFunction(displayOnLogs);
-  //m.setDigitalWriteFunction(digitalWrite);
+  setupPins();
+  m.setup();
+  m.setStdoutWriteFunction(displayOnLogs);
+  m.setDigitalWriteFunction(digitalWrite);
   //setupInterrupts();
 }
 
@@ -102,8 +102,6 @@ ButtonPressed readButtons() {
 }
 
 void initWifi() {
-  //WiFi.persistent(false);
-  //WiFi.forceSleepWake();
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   while ((WiFi.status() != WL_CONNECTED)) {
@@ -124,10 +122,10 @@ void loop() {
   //wifi_set_sleep_type(NONE_SLEEP_T);
   //delay(2000);
 
-  //Serial.println("Run module...");
-  //ButtonPressed button = readButtons();
-  //log(CLASS, Info, "INT");
-  //m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
+  Serial.println("Run module...");
+  ButtonPressed button = readButtons();
+  log(CLASS, Info, "INT");
+  m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
 
 
   //Serial.println("Light sleep...");
