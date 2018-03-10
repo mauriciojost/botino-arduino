@@ -14,13 +14,13 @@
 #define NRO_CHANNELS 2
 
 enum LcdConfigState {
-  LcdConfigLineUpAState = 0,
-  LcdConfigLineDownAState,
-  LcdConfigLineUpBState,
-  LcdConfigLineDownBState,
-  LcdConfigLightAState,
-  LcdConfigLightBState,
-  LcdConfigChannelState,
+  LcdConfigChan0Line0 = 0,
+  LcdConfigChan0Line1,
+  LcdConfigChan1Line0,
+  LcdConfigChan1Line1,
+  LcdConfigChan0Light,
+  LcdConfigChan1Light,
+  LcdConfigChannel,
   LcdConfigStateDelimiter // delimiter of the configuration states
 };
 
@@ -36,13 +36,13 @@ private:
   Buffer<LCD_LINE_LENGTH>* lineU;
   Buffer<LCD_LINE_LENGTH>* lineD;
 
-  bool lightA;
-  Buffer<LCD_LINE_LENGTH>* lineUA;
-  Buffer<LCD_LINE_LENGTH>* lineDA;
+  bool lightChan0;
+  Buffer<LCD_LINE_LENGTH>* line0Chan0;
+  Buffer<LCD_LINE_LENGTH>* line1Chan0;
 
-  bool lightB;
-  Buffer<LCD_LINE_LENGTH>* lineUB;
-  Buffer<LCD_LINE_LENGTH>* lineDB;
+  bool lightChan1;
+  Buffer<LCD_LINE_LENGTH>* line0Chan1;
+  Buffer<LCD_LINE_LENGTH>* line1Chan1;
 
   void display(const char *upLine, const char *downLine);
 

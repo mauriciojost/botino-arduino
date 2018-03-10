@@ -20,10 +20,10 @@ Lcd::Lcd(int rsPin, int enablePin, int d4Pin, int d5Pin, int d6Pin, int d7Pin): 
   lcd = new LiquidCrystal(rsPin, enablePin, d4Pin, d5Pin, d6Pin, d7Pin);
   lineU = new Buffer<LCD_LINE_LENGTH>("");
   lineD = new Buffer<LCD_LINE_LENGTH>("");
-  lineUA = new Buffer<LCD_LINE_LENGTH>("");
-  lineDA = new Buffer<LCD_LINE_LENGTH>("");
-  lineUB = new Buffer<LCD_LINE_LENGTH>("");
-  lineDB = new Buffer<LCD_LINE_LENGTH>("");
+  line0Chan0 = new Buffer<LCD_LINE_LENGTH>("");
+  line1Chan0 = new Buffer<LCD_LINE_LENGTH>("");
+  line0Chan1 = new Buffer<LCD_LINE_LENGTH>("");
+  line1Chan1 = new Buffer<LCD_LINE_LENGTH>("");
 }
 
 void Lcd::initialize() {
@@ -71,9 +71,9 @@ const char *Lcd::getName() {
 
 void Lcd::cycle(bool cronMatches) {
   if (channel % NRO_CHANNELS == 0) {
-    display(lineUA->getBuffer(), lineDA->getBuffer());
+    display(line0Chan0->getBuffer(), line1Chan0->getBuffer());
   } else {
-    display(lineUB->getBuffer(), lineDB->getBuffer());
+    display(line0Chan1->getBuffer(), line1Chan1->getBuffer());
   }
 }
 
@@ -81,72 +81,72 @@ void Lcd::getActuatorValue(Value* value) { }
 
 const char* Lcd::getPropName(int propIndex) {
   switch (propIndex) {
-    case (LcdConfigLineUpAState): return "upa";
-    case (LcdConfigLineDownAState): return "doa";
-    case (LcdConfigLineUpBState): return "upb";
-    case (LcdConfigLineDownBState): return "dob";
-    case (LcdConfigChannelState): return "chan";
-    case (LcdConfigLightAState): return "liga";
-    case (LcdConfigLightBState): return "ligb";
+    case (LcdConfigChan0Line0): return "c0l0";
+    case (LcdConfigChan0Line1): return "c0l1";
+    case (LcdConfigChan1Line0): return "c1l0";
+    case (LcdConfigChan1Line1): return "c1l1";
+    case (LcdConfigChannel): return "chan";
+    case (LcdConfigChan0Light): return "ligc0";
+    case (LcdConfigChan1Light): return "ligc1";
     default: return "";
   }
 }
 
 void Lcd::setProp(int propIndex, SetMode setMode, const Value* targetValue, Value* actualValue) {
   switch (propIndex) {
-    case (LcdConfigLineUpAState):
+    case (LcdConfigChan0Line0):
       if (setMode == SetValue) {
-        lineUA->load(targetValue);
+        line0Chan0->load(targetValue);
       }
       if (actualValue != NULL) {
-        actualValue->load(lineUA);
+        actualValue->load(line0Chan0);
       }
       break;
-    case (LcdConfigLineDownAState):
+    case (LcdConfigChan0Line1):
       if (setMode == SetValue) {
-        lineDA->load(targetValue);
+        line1Chan0->load(targetValue);
       }
       if (actualValue != NULL) {
-        actualValue->load(lineDA);
+        actualValue->load(line1Chan0);
       }
       break;
-    case (LcdConfigLineUpBState):
+    case (LcdConfigChan1Line0):
       if (setMode == SetValue) {
-        lineUB->load(targetValue);
+        line0Chan1->load(targetValue);
       }
       if (actualValue != NULL) {
-        actualValue->load(lineUB);
+        actualValue->load(line0Chan1);
       }
       break;
-    case (LcdConfigLineDownBState):
+    case (LcdConfigChan1Line1):
       if (setMode == SetValue) {
-        lineDB->load(targetValue);
+        line1Chan1->load(targetValue);
       }
       if (actualValue != NULL) {
-        actualValue->load(lineDB);
+        actualValue->load(line1Chan1);
       }
       break;
-    case (LcdConfigLightAState):
+    case (LcdConfigChan0Light):
       if (setMode == SetValue) {
         Boolean b(targetValue);
-        lightA = b.get();
+        lightChan0 = b.get();
       }
       if (actualValue != NULL) {
-        Boolean b(lightA);
+        Boolean b(lightChan0);
         actualValue->load(&b);
       }
       break;
-    case (LcdConfigLightBState):
+    case (LcdConfigChan1Light):
       if (setMode == SetValue) {
         Boolean b(targetValue);
-        lightB = b.get();
+        lightChan1 = b.get();
       }
       if (actualValue != NULL) {
-        Boolean b(lightB);
+        Boolean b(lightChan1);
         actualValue->load(&b);
       }
       break;
-    case (LcdConfigChannelState):
+    case (LcdConfigChannel):
       if (setMode == SetValue) {
         Integer i(targetValue);
         channel = i.get() % NRO_CHANNELS;
@@ -172,8 +172,8 @@ FreqConf *Lcd::getFrequencyConfiguration() { return &freqConf; }
 
 bool Lcd::getLight() {
   if (channel % NRO_CHANNELS == 0) {
-    return lightA;
+    return lightChan0;
   } else {
-    return lightB;
+    return lightChan1;
   }
 }
