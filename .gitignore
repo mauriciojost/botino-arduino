@@ -18,3 +18,6 @@
 /src/ArduinoJson.hpp
 /src/ESP8266HTTPClient.cpp
 /src/ESP8266HTTPClient.h
+/lib_deps_external/ArduinoJson/
+/lib_deps_external/log4ino-arduino/
+/lib_deps_external/main4ino-arduino/
