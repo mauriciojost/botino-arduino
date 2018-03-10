@@ -1,5 +1,19 @@
 #ifndef UNIT_TEST
 #include <Main.h>
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+#define OLED_RESET LED_BUILTIN
+Adafruit_SSD1306 display(OLED_RESET);
+
+   // sid , scl
+//Adafruit_SSD1306 display(PIN_D5, PIN_D6, PIN_D7, PIN_D8, PIN_D4);
+
+#if (SSD1306_LCDHEIGHT != 64)
+#error("Height incorrect, please fix Adafruit_SSD1306.h!");
+#endif
 
 #define CLASS "Main"
 #define TICKS_PERIOD_TIMER1 300000
@@ -41,15 +55,43 @@ ICACHE_RAM_ATTR void timingInterrupt(void) {
 /***  CALLBACKS ***/
 /******************/
 
-void displayOnLogs(const char *str1, const char *str2) {
-  log(CLASS, Info, str1);
-  log(CLASS, Info, str2);
+void logs(const char *str) {
+  static int i = 0;
+  i = (i + 1) % 8;
+  if (i == 0) {
+    display.clearDisplay();
+  }
+  display.setTextSize(0);
+  display.setTextColor(WHITE);
+  display.setCursor(0,i * 8);
+  display.println("                ");
+  display.setCursor(0,i * 8);
+  display.println(str);
+  display.display();
 
-  Buffer<LCD_LINE_LENGTH> b;
-  b.load(str1);
+}
+
+
+void displayOnLogs(const char *str1, const char *str2) {
+  //log(CLASS, Info, str1);
+  //log(CLASS, Info, str2);
+
+  //Buffer<LCD_LINE_LENGTH> b;
+  //b.load(str1);
   //m.getLcd()->setProp(LcdConfigChan0Line0, SetValue, &b, NULL);
-  b.load(str2);
+  //b.load(str2);
   //m.getLcd()->setProp(LcdConfigChan0Line1, SetValue, &b, NULL);
+
+  logs(str1);
+  logs(str2);
+  //display.clearDisplay();
+  //display.setTextSize(1);
+  //display.setTextColor(WHITE);
+  //display.setCursor(0,0);
+  //display.println(str1);
+  //display.println(str2);
+  //display.display();
+
 }
 
 /*****************/
@@ -73,6 +115,7 @@ void setupPins() {
 //  log(CLASS, Info, "INT READY");
 //}
 
+
 void setup() {
   delay(3*000);
   setupLog();
@@ -83,6 +126,12 @@ void setup() {
   m.setStdoutWriteFunction(displayOnLogs);
   m.setDigitalWriteFunction(digitalWrite);
   //setupInterrupts();
+
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+
+  // Clear the buffer.
+  display.clearDisplay();
+  display.display();
 }
 
 ButtonPressed readButtons() {
@@ -115,32 +164,32 @@ void initWifi() {
 
 void loop() {
 
-  Serial.println("Initializing WIFI...");
+  logs("Init WIFI...");
   initWifi();
 
   //Serial.println("None sleep...");
   //wifi_set_sleep_type(NONE_SLEEP_T);
   //delay(2000);
 
-  Serial.println("Run module...");
+  logs("Run module...");
   ButtonPressed button = readButtons();
   log(CLASS, Info, "INT");
   m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
 
 
-  //Serial.println("Light sleep...");
-  //wifi_set_sleep_type(LIGHT_SLEEP_T);
-  //delay(2000);
+  logs("Light sleep...");
+  wifi_set_sleep_type(LIGHT_SLEEP_T);
+  delay(6000);
 
 
-  WiFi.disconnect();
+  //WiFi.disconnect();
   //Serial.println("Light sleep (disconnected)...");
   //wifi_set_sleep_type(LIGHT_SLEEP_T);
   //delay(2000);
 
-  Serial.println("Deep sleep...");
+  logs("Deep sleep...");
   ESP.deepSleep(10e6);
-  delay(5000);
+  delay(6000);
 
 }
 
