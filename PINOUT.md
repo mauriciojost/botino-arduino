@@ -1,6 +1,6 @@
 # PINOUT
 
-V1N -> 5V LINE & capacitor 2000uF to GND
+V1N -> 5V LINE
 GND -> GND LINE
 RST -> D0
 EN  -> 
@@ -17,11 +17,11 @@ RSV ->
 A0  -> 
 
 
-D0  -> RST & pullup 4.7k to 3v3 LINE & cap 104 to GND LINE
+D0  -> RST
 D1  -> 
 D2  -> 
-D3  -> pullup 4.7k to 3v3 LINE
-D4  -> pullup 4.7k to 3v3 LINE
+D3  -> 
+D4  ->
 3v3 -> capacitor 104 to GND LINE
 GND -> above capacitor
 D5  ->
