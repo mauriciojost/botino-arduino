@@ -14,30 +14,33 @@ SRC_DIR=$ROOT_DIR/src
 
 function pull_dependency() {
   local d="$1"
-  if [[ "$d" =~ ^(.*)@(.*git)#(.*)$ ]]; 
+  if [[ "$d" =~ ^(.*)/(.*)\.git#(.*):(.*)$ ]]; 
   then 
-    local giturl=${BASH_REMATCH[1]}@${BASH_REMATCH[2]}
+    local giturl=${BASH_REMATCH[1]}/${BASH_REMATCH[2]}.git
+    local gitproject=${BASH_REMATCH[2]}
     local gitbranch=${BASH_REMATCH[3]}
-  elif [[ "$d" =~ ^(.*)/(.*)#(.*)$ ]]; 
+    local gitfiles=${BASH_REMATCH[4]}
+  elif [[ "$d" =~ ^(.*)/(.*)#(.*):(.*)$ ]]; 
   then 
-    local ghuser=${BASH_REMATCH[1]}
-    local ghproject=${BASH_REMATCH[2]}
-    local giturl="https://github.com/$ghuser/$ghproject.git"
+    local gituser=${BASH_REMATCH[1]}
+    local gitproject=${BASH_REMATCH[2]}
+    local giturl="https://github.com/$gituser/$gitproject.git"
     local gitbranch=${BASH_REMATCH[3]}
+    local gitfiles=${BASH_REMATCH[4]}
   else 
     echo "Unkown syntax, discarding: $d"
   fi
-  echo "Pulling: $giturl / $gitbranch"
+  echo "Pulling: $giturl / $gitbranch (files: $gitfiles)"
   cd $LIBS_DIR
   git clone -b "$gitbranch" "$giturl"
+
+  local dep_dir="$gitproject"
+  local src_dir="$SRC_DIR"
+  echo "Linking $dep_dir/$gitfiles to $src_dir/..."
+  ln -sf `readlink -e $dep_dir/$gitfiles` $src_dir/
+
 }
 
-function link_dependency() {
-  local dep_dir="$1"
-  local src_dir="$2"
-  echo "Linking $dep_dir/src/* to $src_dir..."
-  ln -sf $dep_dir/src/* $src_dir/
-}
 
 
 source $CONFIG_FILE
@@ -47,8 +50,4 @@ mkdir -p "$LIBS_DIR"
 for dep in $LIB_DEPS_EXTERNAL
 do
   pull_dependency "$dep"
-done
-for dep in `find $LIBS_DIR -maxdepth 1 -mindepth 1 -type d`
-do
-  link_dependency "$dep" "$SRC_DIR"
 done
