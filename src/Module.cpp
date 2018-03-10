@@ -45,11 +45,11 @@ void Module::loop(bool mode, bool set, bool wdtWasTriggered) {
     }
     Integer ledValue;
     led0->getActuatorValue(&ledValue);
-    digitalWrite(LED0_PIN, ledValue.get());
+    //digitalWrite(LED0_PIN, ledValue.get());
     led1->getActuatorValue(&ledValue);
-    digitalWrite(LED1_PIN, ledValue.get());
+    //digitalWrite(LED1_PIN, ledValue.get());
     buzzer0->getActuatorValue(&ledValue);
-    digitalWrite(BUZZER0_PIN, ledValue.get());
+    //digitalWrite(BUZZER0_PIN, ledValue.get());
     digitalWrite(LCD_BACKLIGHT_PIN, lcd->getLight());
   }
 

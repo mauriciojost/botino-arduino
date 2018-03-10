@@ -47,9 +47,9 @@ void displayOnLogs(const char *str1, const char *str2) {
 
   Buffer<LCD_LINE_LENGTH> b;
   b.load(str1);
-  m.getLcd()->setProp(LcdConfigLineUpAState, SetValue, &b, NULL);
+  m.getLcd()->setProp(LcdConfigChan0Line0, SetValue, &b, NULL);
   b.load(str2);
-  m.getLcd()->setProp(LcdConfigLineDownAState, SetValue, &b, NULL);
+  m.getLcd()->setProp(LcdConfigChan0Line1, SetValue, &b, NULL);
 }
 
 /*****************/
@@ -57,8 +57,8 @@ void displayOnLogs(const char *str1, const char *str2) {
 /*****************/
 
 void setupPins() {
-  pinMode(LED0_PIN, OUTPUT);
-  pinMode(LED1_PIN, OUTPUT);
+  //pinMode(LED0_PIN, OUTPUT); // will break deep sleep mode
+  //pinMode(LED1_PIN, OUTPUT); // will break deep sleep mode
   pinMode(LCD_BACKLIGHT_PIN, OUTPUT);
   //pinMode(BUZZER0_PIN, OUTPUT); // will break serial communication
   log(CLASS, Info, "PINS READY");
