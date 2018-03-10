@@ -26,7 +26,7 @@ enum ButtonPressed {
   ButtonModeWasPressed
 };
 
-Module m;
+//Module m;
 
 /*****************/
 /** INTERRUPTS ***/
@@ -47,9 +47,9 @@ void displayOnLogs(const char *str1, const char *str2) {
 
   Buffer<LCD_LINE_LENGTH> b;
   b.load(str1);
-  m.getLcd()->setProp(LcdConfigChan0Line0, SetValue, &b, NULL);
+  //m.getLcd()->setProp(LcdConfigChan0Line0, SetValue, &b, NULL);
   b.load(str2);
-  m.getLcd()->setProp(LcdConfigChan0Line1, SetValue, &b, NULL);
+  //m.getLcd()->setProp(LcdConfigChan0Line1, SetValue, &b, NULL);
 }
 
 /*****************/
@@ -74,14 +74,14 @@ void setupPins() {
 //}
 
 void setup() {
+  delay(3*000);
   setupLog();
-  delay(1000);
   log(CLASS, Info, "LOG READY");
 
-  setupPins();
-  m.setup();
-  m.setStdoutWriteFunction(displayOnLogs);
-  m.setDigitalWriteFunction(digitalWrite);
+  //setupPins();
+  //m.setup();
+  //m.setStdoutWriteFunction(displayOnLogs);
+  //m.setDigitalWriteFunction(digitalWrite);
   //setupInterrupts();
 }
 
@@ -102,10 +102,12 @@ ButtonPressed readButtons() {
 }
 
 void initWifi() {
+  WiFi.persistent(false);
+  WiFi.forceSleepWake();
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   while ((WiFi.status() != WL_CONNECTED)) {
-     delay(500);
+     delay(400);
      Serial.print(".");
   }
   Serial.println("");
@@ -118,28 +120,29 @@ void loop() {
   Serial.println("Initializing WIFI...");
   initWifi();
 
-  Serial.println("None sleep...");
-  wifi_set_sleep_type(NONE_SLEEP_T);
-  delay(5000);
+  //Serial.println("None sleep...");
+  //wifi_set_sleep_type(NONE_SLEEP_T);
+  //delay(2000);
 
-  Serial.println("Run module...");
-  ButtonPressed button = readButtons();
-  log(CLASS, Info, "INT");
-  m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
+  //Serial.println("Run module...");
+  //ButtonPressed button = readButtons();
+  //log(CLASS, Info, "INT");
+  //m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
 
 
-  Serial.println("Light sleep...");
-  wifi_set_sleep_type(LIGHT_SLEEP_T);
-  delay(5000);
+  //Serial.println("Light sleep...");
+  //wifi_set_sleep_type(LIGHT_SLEEP_T);
+  //delay(2000);
 
 
   WiFi.disconnect();
-  Serial.println("Light sleep (disconnected)...");
-  wifi_set_sleep_type(LIGHT_SLEEP_T);
-  delay(5000);
+  //Serial.println("Light sleep (disconnected)...");
+  //wifi_set_sleep_type(LIGHT_SLEEP_T);
+  //delay(2000);
 
-  //Serial.println("Deep sleep...");
-  //ESP.deepSleep(10e6);
+  Serial.println("Deep sleep...");
+  ESP.deepSleep(10e6);
+  delay(5000);
 
 }
 
