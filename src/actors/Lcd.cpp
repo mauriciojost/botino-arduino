@@ -1,7 +1,7 @@
 #include <actors/Lcd.h>
 
 
-#define CLASS "Lcd"
+#define CLASS "LD"
 
 Lcd::Lcd(): freqConf(Never)  {
   channel = 0;
@@ -120,4 +120,8 @@ bool Lcd::getLight() {
   } else {
     return lightChan1;
   }
+}
+
+int Lcd::getChannel() {
+  return channel;
 }

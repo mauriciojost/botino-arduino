@@ -1,6 +1,6 @@
 #include <actors/Led.h>
 
-#define CLASS "Led"
+#define CLASS "LE"
 
 Led::Led(const char* n): freqConf(OnceEvery5Minutes) {
   name = n;
@@ -40,8 +40,8 @@ void Led::setProp(int propIndex, SetMode setMode, const Value* targetValue, Valu
         currentValue = b.get();
       }
       if (setMode != DoNotSet) {
-        log(CLASS, Info, "Led: ", name);
-        log(CLASS, Info, " set: ", currentValue);
+        log(CLASS, Info, "Led: %s", name);
+        log(CLASS, Info, " set: %d", currentValue);
       }
       if (actualValue != NULL) {
         Boolean b(currentValue);

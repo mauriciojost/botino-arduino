@@ -13,7 +13,7 @@
 #include <Stream.h>
 #endif // UNIT_TEST
 
-#define CLASS_PARAM_STREAM "ParamStream"
+#define CLASS_PARAM_STREAM "PS"
 
 
 #ifndef UNIT_TEST
@@ -64,7 +64,7 @@ public:
   }
 
   JsonObject& parse() {
-    log(CLASS_PARAM_STREAM, Debug, "Parsing: ", bytesReceived.getBuffer());
+    log(CLASS_PARAM_STREAM, Debug, "Parsing: %s", bytesReceived.getBuffer());
     JsonObject &root = jsonBuffer.parseObject(bytesReceived.getUnsafeBuffer());
     return root;
   }

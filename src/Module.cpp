@@ -1,6 +1,6 @@
 #include <Module.h>
 
-#define CLASS "Module"
+#define CLASS "MD"
 
 Module::Module() {
 

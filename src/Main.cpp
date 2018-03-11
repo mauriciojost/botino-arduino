@@ -72,14 +72,27 @@ void logLine(const char *str) {
 
 
 void displayOnLcd(const char *str1, const char *str2) {
-  Buffer<LCD_LINE_LENGTH> b;
-  b.load(str1);
-  m.getLcd()->setProp(LcdConfigChan0Line0, SetValue, &b, NULL);
-  b.load(str2);
-  m.getLcd()->setProp(LcdConfigChan0Line1, SetValue, &b, NULL);
+  // Update properties of the logical display actor (channel 0)
+  Buffer<LCD_LINE_LENGTH> b1;
+  Buffer<LCD_LINE_LENGTH> b2;
+
+  b1.load(str1);
+  b2.load(str2);
+
+  m.getLcd()->setProp(LcdConfigChan0Line0, SetValue, &b1, NULL);
+  m.getLcd()->setProp(LcdConfigChan0Line1, SetValue, &b2, NULL);
+
+  // Update the physical display (depending on channel to show)
   display.fillRect(0, 127, 1, 8 * 2, BLACK);
-  lcdPrintLine(str1, 0, CLEAR_FIRST);
-  lcdPrintLine(str2, 1, CLEAR_FIRST);
+  if (m.getLcd()->getChannel() == 0) {
+    lcdPrintLine(str1, 0, CLEAR_FIRST);
+    lcdPrintLine(str2, 1, CLEAR_FIRST);
+  } else {
+	m.getLcd()->setProp(LcdConfigChan1Line0, DoNotSet, b1, b1);
+	m.getLcd()->setProp(LcdConfigChan1Line1, DoNotSet, b2, b2);
+    lcdPrintLine(b1.getBuffer(), 0, CLEAR_FIRST);
+    lcdPrintLine(b2.getBuffer(), 1, CLEAR_FIRST);
+  }
 }
 
 /*****************/

@@ -3,7 +3,7 @@
 #include <main4ino/Clock.h>
 #include <main4ino/Boolean.h>
 
-#define CLASS "Messenger"
+#define CLASS "MS"
 
 #define DELAY_UNIT_MS 5000
 #define WAIT_BEFORE_REPOST_DWEETIO_MS 1500
@@ -87,7 +87,7 @@ void Messenger::setUpDweetClient(HTTPClient* client, Buffer<MAX_URL_EFF_LENGTH> 
   client->begin(url->getBuffer());
   client->addHeader("Content-Type", "application/json");
   client->addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
-  log(CLASS, Info, "Client connected to: ", url->getBuffer());
+  log(CLASS, Info, "Connected %s", url->getBuffer());
 }
 
 void Messenger::updateBotProperties() {
