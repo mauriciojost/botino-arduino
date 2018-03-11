@@ -83,7 +83,7 @@ void displayOnLcd(const char *str1, const char *str2) {
   m.getLcd()->setProp(LcdConfigChan0Line1, SetValue, &b2, NULL);
 
   // Update the physical display (depending on channel to show)
-  display.fillRect(0, 127, 1, 8 * 2, BLACK);
+  display.fillRect(127, 0, 1, 8 * 2, WHITE);
   if (m.getLcd()->getChannel() == 0) {
     lcdPrintLine(str1, 0, CLEAR_FIRST);
     lcdPrintLine(str2, 1, CLEAR_FIRST);
@@ -109,7 +109,7 @@ void setupPins() {
 
 void setup() {
   // Let HW startup
-  delay(3*000);
+  delay(3*1000);
 
   // Initialize the LCD
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
