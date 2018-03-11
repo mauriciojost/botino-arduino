@@ -8,7 +8,7 @@
 #define OLED_RESET LED_BUILTIN
 Adafruit_SSD1306 display(OLED_RESET);
 
-#define CLASS "0"
+#define CLASS "MA"
 #ifndef WIFI_SSID
 #error "Must provide WIFI_SSID"
 #endif
@@ -88,8 +88,8 @@ void displayOnLcd(const char *str1, const char *str2) {
     lcdPrintLine(str1, 0, CLEAR_FIRST);
     lcdPrintLine(str2, 1, CLEAR_FIRST);
   } else {
-	m.getLcd()->setProp(LcdConfigChan1Line0, DoNotSet, b1, b1);
-	m.getLcd()->setProp(LcdConfigChan1Line1, DoNotSet, b2, b2);
+	m.getLcd()->setProp(LcdConfigChan1Line0, DoNotSet, &b1, &b1);
+	m.getLcd()->setProp(LcdConfigChan1Line1, DoNotSet, &b2, &b2);
     lcdPrintLine(b1.getBuffer(), 0, CLEAR_FIRST);
     lcdPrintLine(b2.getBuffer(), 1, CLEAR_FIRST);
   }
