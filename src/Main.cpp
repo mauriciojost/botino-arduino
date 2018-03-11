@@ -8,13 +8,6 @@
 #define OLED_RESET LED_BUILTIN
 Adafruit_SSD1306 display(OLED_RESET);
 
-   // sid , scl
-//Adafruit_SSD1306 display(PIN_D5, PIN_D6, PIN_D7, PIN_D8, PIN_D4);
-
-#if (SSD1306_LCDHEIGHT != 64)
-#error("Height incorrect, please fix Adafruit_SSD1306.h!");
-#endif
-
 #define CLASS "Main"
 #define TICKS_PERIOD_TIMER1 300000
 #define SLEEP_DELAY_US 1000 * 1000 * 5
@@ -31,9 +24,6 @@ extern "C" {
 #include "user_interface.h"
 }
 
-volatile char nroInterruptsQueued = 0; // counter to keep track of amount of timing
-                                       // interrupts queued
-
 enum ButtonPressed {
   NoButton = 0,
   ButtonSetWasPressed,
@@ -41,15 +31,6 @@ enum ButtonPressed {
 };
 
 Module m;
-
-/*****************/
-/** INTERRUPTS ***/
-/*****************/
-
-ICACHE_RAM_ATTR void timingInterrupt(void) {
-  nroInterruptsQueued++;
-}
-
 
 /******************/
 /***  CALLBACKS ***/
@@ -61,37 +42,25 @@ void logs(const char *str) {
   if (i == 0) {
     display.clearDisplay();
   }
-  display.setTextSize(0);
+  display.setTextSize(1);
   display.setTextColor(WHITE);
   display.setCursor(0,i * 8);
   display.println("                ");
   display.setCursor(0,i * 8);
   display.println(str);
   display.display();
-
 }
 
 
 void displayOnLogs(const char *str1, const char *str2) {
-  //log(CLASS, Info, str1);
-  //log(CLASS, Info, str2);
-
-  //Buffer<LCD_LINE_LENGTH> b;
-  //b.load(str1);
-  //m.getLcd()->setProp(LcdConfigChan0Line0, SetValue, &b, NULL);
-  //b.load(str2);
-  //m.getLcd()->setProp(LcdConfigChan0Line1, SetValue, &b, NULL);
+  Buffer<LCD_LINE_LENGTH> b;
+  b.load(str1);
+  m.getLcd()->setProp(LcdConfigChan0Line0, SetValue, &b, NULL);
+  b.load(str2);
+  m.getLcd()->setProp(LcdConfigChan0Line1, SetValue, &b, NULL);
 
   logs(str1);
   logs(str2);
-  //display.clearDisplay();
-  //display.setTextSize(1);
-  //display.setTextColor(WHITE);
-  //display.setCursor(0,0);
-  //display.println(str1);
-  //display.println(str2);
-  //display.display();
-
 }
 
 /*****************/
@@ -106,26 +75,16 @@ void setupPins() {
   log(CLASS, Info, "PINS READY");
 }
 
-//void setupInterrupts() {
-//  timer1_disable();
-//  timer1_isr_init();
-//  timer1_attachInterrupt(timingInterrupt);
-//  timer1_enable(TIM_DIV265, TIM_EDGE, TIM_LOOP);
-//  timer1_write(TICKS_PERIOD_TIMER1);
-//  log(CLASS, Info, "INT READY");
-//}
-
-
 void setup() {
   delay(3*000);
-  setupLog();
+  Serial.begin(115200);
+  setupLog(logs);
   log(CLASS, Info, "LOG READY");
 
   setupPins();
   m.setup();
   m.setStdoutWriteFunction(displayOnLogs);
   m.setDigitalWriteFunction(digitalWrite);
-  //setupInterrupts();
 
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
 
@@ -135,8 +94,8 @@ void setup() {
 }
 
 ButtonPressed readButtons() {
-  if (readAvailable() > 0) {
-    int b = readByte();
+  if (Serial.available() > 0) {
+    int b = Serial.read();
     switch(b) {
       case 's':
       case 'S':
@@ -155,10 +114,9 @@ void initWifi() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   while ((WiFi.status() != WL_CONNECTED)) {
      delay(400);
-     Serial.print(".");
+     logs(".");
   }
-  Serial.println("");
-  Serial.print("WiFi connected, IP address: "); Serial.println(WiFi.localIP());
+  logs("WiFi connected");
 }
 
 
@@ -167,29 +125,29 @@ void loop() {
   logs("Init WIFI...");
   initWifi();
 
-  //Serial.println("None sleep...");
-  //wifi_set_sleep_type(NONE_SLEEP_T);
-  //delay(2000);
+  Serial.println("None sleep...");
+  wifi_set_sleep_type(NONE_SLEEP_T);
+  delay(6000);
 
   logs("Run module...");
   ButtonPressed button = readButtons();
   log(CLASS, Info, "INT");
   m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
 
-
   logs("Light sleep...");
   wifi_set_sleep_type(LIGHT_SLEEP_T);
   delay(6000);
 
+  WiFi.disconnect();
+  Serial.println("Light sleep (disc)...");
+  wifi_set_sleep_type(LIGHT_SLEEP_T);
+  delay(6000);
 
-  //WiFi.disconnect();
-  //Serial.println("Light sleep (disconnected)...");
-  //wifi_set_sleep_type(LIGHT_SLEEP_T);
-  //delay(2000);
-
+  display.dim(true);
   logs("Deep sleep...");
   ESP.deepSleep(10e6);
-  delay(6000);
+  delay(60000);
+  display.dim(false);
 
 }
 

@@ -40,9 +40,6 @@ void Module::loop(bool mode, bool set, bool wdtWasTriggered) {
   
   if (interruptType == TimingInterruptCycle) { // cycles (~1 second)
     bool onceIn2Cycles = (bot->getClock()->getSeconds() % 2) == 0;
-    if (isThereErrorLogged() && onceIn2Cycles) {
-      bot->stdOutWriteString(MSG_ERROR, getErrorLogged());
-    }
     Integer ledValue;
     led0->getActuatorValue(&ledValue);
     //digitalWrite(LED0_PIN, ledValue.get());
@@ -51,10 +48,6 @@ void Module::loop(bool mode, bool set, bool wdtWasTriggered) {
     buzzer0->getActuatorValue(&ledValue);
     //digitalWrite(BUZZER0_PIN, ledValue.get());
     digitalWrite(LCD_BACKLIGHT_PIN, lcd->getLight());
-  }
-
-  if (anyButtonPressed) {
-    clearErrorLogged();
   }
 }
 
