@@ -7,14 +7,14 @@ http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family
 ## Initialization for test
 
 ```
-ln -s `readlink -e libs/main4ino-arduino/src/*` src
-ln -s `readlink -e libs/log4ino-arduino/src/*` src
-pio lib install "LiquidCrystal"
+bash pull_dependencies.sh dependencies.conf
 ```
 
-Was having issues with log4ino as dependency.
-At the end the dependencies declared in `platformio.ini` can be replaced by 
-the `ln` commands above for any dependency.
+If the LCD is displaying big letter, you can change it in
+
+```
+src/Adafruit_SSD1306.h # uncomment 64 instead of 32
+```
 
 ## IDE
 
