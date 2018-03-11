@@ -30,7 +30,7 @@
 #error "Must provide TIMEZONE_DB_ZONE"
 #endif
 
-Messenger::Messenger(const char* n): freqConf(OnceEvery10Seconds) {
+Messenger::Messenger(const char* n): freqConf(Always) {
   name = n;
   bot = NULL;
 }
@@ -47,10 +47,10 @@ void Messenger::cycle(bool cronMatches) {
   if (bot == NULL) {
     return;
   }
-  //if (cronMatches) {
+  if (cronMatches) {
     updateClockProperties();
     updateBotProperties();
-  //}
+  }
 }
 
 void Messenger::updateClockProperties() {
@@ -62,9 +62,9 @@ void Messenger::updateClockProperties() {
   staticBuffer.clear();
   staticBuffer.fill(TIMEZONE_DB_API_URL_BASE_GET, TIMEZONE_DB_KEY, TIMEZONE_DB_ZONE);
   httpGet.begin(staticBuffer.getBuffer());
-  log(CLASS, Info, "Client connected to: ", staticBuffer.getBuffer());
+  log(CLASS, Info, "Url: %s", staticBuffer.getBuffer());
   errorCode = httpGet.GET();
-  log(CLASS, Info, "Response code to GET: ", errorCode);
+  log(CLASS, Info, "Get: %d", errorCode);
   httpGet.writeToStream(&s);
   httpGet.end();
 
@@ -77,7 +77,7 @@ void Messenger::updateClockProperties() {
     bot->getClock()->setProp(ClockConfigStateAutoAdjustFactor, SetValue, &autoAdjust, NULL);
     bot->getClock()->setProp(ClockConfigStateHhMmSs, SetValue, &time, NULL);
   } else {
-    log(CLASS, Warn, "Failed to parse 'formatted'");
+    log(CLASS, Warn, "No 'formatted'");
   }
   s.flush();
 #endif // UNIT_TEST
@@ -103,7 +103,7 @@ void Messenger::updateBotProperties() {
   staticUrl.fill(DWEET_IO_API_URL_BASE_GET, DEVICE_NAME);
   setUpDweetClient(&client, &staticUrl);
   errorCode = client.GET();
-  log(CLASS, Info, "Response code to GET: ", errorCode);
+  log(CLASS, Info, "Get: %d", errorCode);
   client.writeToStream(&s);
   client.end();
 
@@ -115,21 +115,21 @@ void Messenger::updateBotProperties() {
       JsonObject& content = withJson["content"];
       bot->setPropsJsonFlat(content);
     } else {
-      log(CLASS, Warn, "Failed to parse 'content'");
+      log(CLASS, Warn, "No 'content'");
     }
   } else {
-    log(CLASS, Warn, "Failed to parse 'with'");
+    log(CLASS, Warn, "No 'with'");
   }
   s.flush();
 
   bot->getPropsJsonFlat(&staticBuffer);
   staticUrl.clear();
   staticUrl.fill(DWEET_IO_API_URL_BASE_POST, DEVICE_NAME);
-  log(CLASS, Info, "Post body: ", staticBuffer.getBuffer());
+  log(CLASS, Info, "Post: %s", staticBuffer.getBuffer());
 
   setUpDweetClient(&client, &staticUrl);
   errorCode = client.POST(staticBuffer.getBuffer());
-  log(CLASS, Info, "Response code to POST: ", errorCode);
+  log(CLASS, Info, "Post: %d", errorCode);
   client.writeToStream(&Serial);
   client.end();
 

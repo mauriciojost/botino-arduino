@@ -3,21 +3,8 @@
 
 #define CLASS "Lcd"
 
-#define PERIOD_FORCE_UPDATE 20
-
-byte modeButtonIcon[8] = {
-    B11111,
-    B11011,
-    B11101,
-    B00000,
-    B11101,
-    B11011,
-    B11111,
-};
-
-Lcd::Lcd(int rsPin, int enablePin, int d4Pin, int d5Pin, int d6Pin, int d7Pin): freqConf(Never)  {
+Lcd::Lcd(): freqConf(Never)  {
   channel = 0;
-  lcd = new LiquidCrystal(rsPin, enablePin, d4Pin, d5Pin, d6Pin, d7Pin);
   lineU = new Buffer<LCD_LINE_LENGTH>("");
   lineD = new Buffer<LCD_LINE_LENGTH>("");
   line0Chan0 = new Buffer<LCD_LINE_LENGTH>("");
@@ -26,56 +13,13 @@ Lcd::Lcd(int rsPin, int enablePin, int d4Pin, int d5Pin, int d6Pin, int d7Pin): 
   line1Chan1 = new Buffer<LCD_LINE_LENGTH>("");
 }
 
-void Lcd::initialize() {
-  lcd->begin(16, 2);
-  lcd->noAutoscroll();
-  lcd->leftToRight();
-  lcd->noBlink();
-  lcd->createChar(1, modeButtonIcon); // will be printed whenever character \1 is used
-  lcd->clear();
-}
-
-void Lcd::display(const char *strUp, const char *strDown) {
-  static int updates = 0;
-  updates = (updates + 1) % PERIOD_FORCE_UPDATE;
-  bool forceFullUpdate = updates == 0;
-  if (forceFullUpdate) {
-    initialize(); // did not find a way a better way to ensure LCD won't get
-                  // corrupt due to load noise (if any)
-  }
-  if (strUp != NULL) {
-    if (strcmp(strUp, lineU->getBuffer()) || forceFullUpdate) {
-      lineU->load(strUp);
-      lcd->setCursor(0, 0);
-      lcd->print(strUp);
-      log(CLASS, Debug, "Set: ", strUp);
-    } else {
-      log(CLASS, Debug, "Keep: ", strUp);
-    }
-  }
-  if (strDown != NULL) {
-    if (strcmp(strDown, lineD->getBuffer()) || forceFullUpdate) {
-      lineD->load(strDown);
-      lcd->setCursor(0, 1);
-      lcd->print(strDown);
-      log(CLASS, Debug, "Set: ", strDown);
-    } else {
-      log(CLASS, Debug, "Keep: ", strDown);
-    }
-  }
-}
+void Lcd::initialize() { }
 
 const char *Lcd::getName() {
   return "lcd";
 }
 
-void Lcd::cycle(bool cronMatches) {
-  if (channel % NRO_CHANNELS == 0) {
-    display(line0Chan0->getBuffer(), line1Chan0->getBuffer());
-  } else {
-    display(line0Chan1->getBuffer(), line1Chan1->getBuffer());
-  }
-}
+void Lcd::cycle(bool cronMatches) { }
 
 void Lcd::getActuatorValue(Value* value) { }
 

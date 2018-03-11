@@ -7,8 +7,6 @@
 #include <main4ino/Value.h>
 #include <main4ino/Integer.h>
 #include <main4ino/Boolean.h>
-#include <LiquidCrystal.h>
-#include <Wire.h>
 
 #define LCD_LINE_LENGTH 16
 #define NRO_CHANNELS 2
@@ -28,7 +26,6 @@ enum LcdConfigState {
 class Lcd : public Actor {
 
 private:
-  LiquidCrystal *lcd;
   int channel;
   FreqConf freqConf;
 
@@ -44,10 +41,8 @@ private:
   Buffer<LCD_LINE_LENGTH>* line0Chan1;
   Buffer<LCD_LINE_LENGTH>* line1Chan1;
 
-  void display(const char *upLine, const char *downLine);
-
 public:
-  Lcd(int rsPin, int enablePin, int d4Pin, int d5Pin, int d6Pin, int d7Pin);
+  Lcd();
   void initialize();
 
   const char *getName();

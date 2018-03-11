@@ -8,10 +8,7 @@
 #define OLED_RESET LED_BUILTIN
 Adafruit_SSD1306 display(OLED_RESET);
 
-#define CLASS "Main"
-#define TICKS_PERIOD_TIMER1 300000
-#define SLEEP_DELAY_US 1000 * 1000 * 5
-#define FPM_SLEEP_MAX_TIME 0xFFFFFFF
+#define CLASS "0"
 #ifndef WIFI_SSID
 #error "Must provide WIFI_SSID"
 #endif
@@ -30,37 +27,59 @@ enum ButtonPressed {
   ButtonModeWasPressed
 };
 
+#define DO_NOT_CLEAR_FIRST false
+#define CLEAR_FIRST true
+
 Module m;
 
 /******************/
 /***  CALLBACKS ***/
 /******************/
 
-void logs(const char *str) {
-  static int i = 0;
-  i = (i + 1) % 8;
-  if (i == 0) {
-    display.clearDisplay();
+void lcdPrintLine(const char *str, int y, bool clearFirst) {
+  if (clearFirst) {
+    display.fillRect(0, y * 8, 128, 8, BLACK);
   }
   display.setTextSize(1);
   display.setTextColor(WHITE);
-  display.setCursor(0,i * 8);
-  display.println("                ");
-  display.setCursor(0,i * 8);
+  display.setCursor(0, y * 8);
   display.println(str);
   display.display();
 }
 
+/*
+ *
+ * CHANNEL X LINE 0 |
+ * CHANNEL X LINE 1 |
+ * LOGS0
+ * LOGS1
+ * LOGS2
+ * LOGS3
+ * LOGS4
+ * LOGS5
+ *
+ * */
 
-void displayOnLogs(const char *str1, const char *str2) {
+void logLine(const char *str) {
+  static int i = 0;
+  if (i == 0) {
+    display.fillRect(0, 16, 128, 8 * 6, BLACK);
+  }
+  int y = i + 2;
+  lcdPrintLine(str, y, DO_NOT_CLEAR_FIRST);
+  i = (i + 1) % 6;
+}
+
+
+void displayOnLcd(const char *str1, const char *str2) {
   Buffer<LCD_LINE_LENGTH> b;
   b.load(str1);
   m.getLcd()->setProp(LcdConfigChan0Line0, SetValue, &b, NULL);
   b.load(str2);
   m.getLcd()->setProp(LcdConfigChan0Line1, SetValue, &b, NULL);
-
-  logs(str1);
-  logs(str2);
+  display.fillRect(0, 127, 1, 8 * 2, BLACK);
+  lcdPrintLine(str1, 0, CLEAR_FIRST);
+  lcdPrintLine(str2, 1, CLEAR_FIRST);
 }
 
 /*****************/
@@ -68,29 +87,36 @@ void displayOnLogs(const char *str1, const char *str2) {
 /*****************/
 
 void setupPins() {
+  log(CLASS, Debug, "Setup pins");
   //pinMode(LED0_PIN, OUTPUT); // will break deep sleep mode
   //pinMode(LED1_PIN, OUTPUT); // will break deep sleep mode
   pinMode(LCD_BACKLIGHT_PIN, OUTPUT);
   //pinMode(BUZZER0_PIN, OUTPUT); // will break serial communication
-  log(CLASS, Info, "PINS READY");
 }
 
 void setup() {
+  // Let HW startup
   delay(3*000);
-  Serial.begin(115200);
-  setupLog(logs);
-  log(CLASS, Info, "LOG READY");
 
-  setupPins();
-  m.setup();
-  m.setStdoutWriteFunction(displayOnLogs);
-  m.setDigitalWriteFunction(digitalWrite);
-
+  // Initialize the LCD
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-
-  // Clear the buffer.
   display.clearDisplay();
   display.display();
+
+  // Intialize the logging framework
+  setupLog(logLine);
+
+  // Initialize the serial port
+  Serial.begin(115200);
+
+  // Initialize pins
+  setupPins();
+
+  // Intialize the module
+  m.setup();
+  m.setStdoutWriteFunction(displayOnLcd);
+  m.setDigitalWriteFunction(digitalWrite);
+
 }
 
 ButtonPressed readButtons() {
@@ -110,46 +136,51 @@ ButtonPressed readButtons() {
 }
 
 void initWifi() {
+  log(CLASS, Info, "Init WIFI...");
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   while ((WiFi.status() != WL_CONNECTED)) {
      delay(400);
-     logs(".");
+     log(CLASS, Debug, "Connecting...");
   }
-  logs("WiFi connected");
+  log(CLASS, Info, "Connected");
+}
+
+void dim() {
+  log(CLASS, Debug, "Dim");
+  display.dim(true);
+}
+
+void undim() {
+  log(CLASS, Debug, "Undim");
+  display.dim(false);
+}
+
+void lightSleep(unsigned long delayMs) {
+  log(CLASS, Info, "Light sleep...");
+  wifi_set_sleep_type(LIGHT_SLEEP_T);
+  delay(delayMs);
+}
+
+void deepSleep(uint32_t delayUs) {
+  // RST to GPIO16
+  // Sometimes hangs https://github.com/esp8266/Arduino/issues/2049
+  log(CLASS, Info, "Deep sleep...");
+  ESP.deepSleep(delayUs);
 }
 
 
 void loop() {
 
-  logs("Init WIFI...");
   initWifi();
 
-  Serial.println("None sleep...");
-  wifi_set_sleep_type(NONE_SLEEP_T);
-  delay(6000);
-
-  logs("Run module...");
   ButtonPressed button = readButtons();
-  log(CLASS, Info, "INT");
   m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
 
-  logs("Light sleep...");
-  wifi_set_sleep_type(LIGHT_SLEEP_T);
-  delay(6000);
-
-  WiFi.disconnect();
-  Serial.println("Light sleep (disc)...");
-  wifi_set_sleep_type(LIGHT_SLEEP_T);
-  delay(6000);
-
-  display.dim(true);
-  logs("Deep sleep...");
-  ESP.deepSleep(10e6);
-  delay(60000);
-  display.dim(false);
+  dim();
+  lightSleep(10 * 1000);
+  undim();
 
 }
-
 
 #endif // UNIT_TEST
