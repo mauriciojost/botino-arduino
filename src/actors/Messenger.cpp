@@ -7,8 +7,6 @@
 
 #define DELAY_UNIT_MS 5000
 #define WAIT_BEFORE_REPOST_DWEETIO_MS 1500
-#define MAX_WIFI_CONNECTION_ATTEMPTS 100
-
 #define DWEET_IO_API_URL_BASE "http://dweet.io"
 #define DWEET_IO_API_URL_BASE_POST DWEET_IO_API_URL_BASE "/dweet/for/%s" // device
 #define DWEET_IO_API_URL_BASE_GET DWEET_IO_API_URL_BASE "/get/latest/dweet/for/%s-target" // device

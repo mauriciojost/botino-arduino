@@ -43,10 +43,10 @@
 #define PIN_D8 GPIO15_PIN
 #define PIN_D0 GPIO16_PIN
 
-#define LED0_PIN PIN_D0
-#define LED1_PIN PIN_D1
+#define LED0_PIN PIN_D0 // will break deep sleep mode
+#define LED1_PIN PIN_D1 // will break deep sleep mode
 #define LCD_BACKLIGHT_PIN PIN_D8
-#define BUZZER0_PIN PIN_D10
+#define BUZZER0_PIN PIN_D10 // using it breaks serial communication
 #define LCD_ENABLE_PIN PIN_D2
 #define LCD_RS_PIN PIN_D3
 

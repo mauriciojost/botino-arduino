@@ -36,12 +36,12 @@ Module m;
 /***  CALLBACKS ***/
 /******************/
 
-void lcdPrintLine(const char *str, int y, bool clearFirst) {
+void lcdPrintLine(const char *str, int y, bool clearFirst, int color) {
   if (clearFirst) {
     display.fillRect(0, y * 8, 128, 8, BLACK);
   }
   display.setTextSize(1);
-  display.setTextColor(WHITE);
+  display.setTextColor(color);
   display.setCursor(0, y * 8);
   display.println(str);
   display.display();
@@ -63,10 +63,10 @@ void lcdPrintLine(const char *str, int y, bool clearFirst) {
 void logLine(const char *str) {
   static int i = 0;
   if (i == 0) {
-    display.fillRect(0, 16, 128, 8 * 6, BLACK);
+    display.fillRect(0, 16, 128, 8 * 6, WHITE);
   }
   int y = i + 2;
-  lcdPrintLine(str, y, DO_NOT_CLEAR_FIRST);
+  lcdPrintLine(str, y, DO_NOT_CLEAR_FIRST, BLACK);
   i = (i + 1) % 6;
 }
 
@@ -83,15 +83,14 @@ void displayOnLcd(const char *str1, const char *str2) {
   m.getLcd()->setProp(LcdConfigChan0Line1, SetValue, &b2, NULL);
 
   // Update the physical display (depending on channel to show)
-  display.fillRect(127, 0, 1, 8 * 2, WHITE);
   if (m.getLcd()->getChannel() == 0) {
-    lcdPrintLine(str1, 0, CLEAR_FIRST);
-    lcdPrintLine(str2, 1, CLEAR_FIRST);
+    lcdPrintLine(str1, 0, CLEAR_FIRST, WHITE);
+    lcdPrintLine(str2, 1, CLEAR_FIRST, WHITE);
   } else {
 	m.getLcd()->setProp(LcdConfigChan1Line0, DoNotSet, &b1, &b1);
 	m.getLcd()->setProp(LcdConfigChan1Line1, DoNotSet, &b2, &b2);
-    lcdPrintLine(b1.getBuffer(), 0, CLEAR_FIRST);
-    lcdPrintLine(b2.getBuffer(), 1, CLEAR_FIRST);
+    lcdPrintLine(b1.getBuffer(), 0, CLEAR_FIRST, WHITE);
+    lcdPrintLine(b2.getBuffer(), 1, CLEAR_FIRST, WHITE);
   }
 }
 
@@ -101,10 +100,10 @@ void displayOnLcd(const char *str1, const char *str2) {
 
 void setupPins() {
   log(CLASS, Debug, "Setup pins");
-  //pinMode(LED0_PIN, OUTPUT); // will break deep sleep mode
+  //pinMode(LED0_PIN, OUTPUT);
   //pinMode(LED1_PIN, OUTPUT); // will break deep sleep mode
   pinMode(LCD_BACKLIGHT_PIN, OUTPUT);
-  //pinMode(BUZZER0_PIN, OUTPUT); // will break serial communication
+  //pinMode(BUZZER0_PIN, OUTPUT);
 }
 
 void setup() {
@@ -132,6 +131,10 @@ void setup() {
 
 }
 
+/**
+ * Read buttons from serial port
+ * TODO: make evolve to read physical buttons
+ */
 ButtonPressed readButtons() {
   if (Serial.available() > 0) {
     int b = Serial.read();
@@ -149,37 +152,35 @@ ButtonPressed readButtons() {
 }
 
 void initWifi() {
-  log(CLASS, Info, "Init WIFI...");
+  log(CLASS, Info, "Connecting...");
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   while ((WiFi.status() != WL_CONNECTED)) {
-     delay(400);
-     log(CLASS, Debug, "Connecting...");
+    log(CLASS, Debug, "Connecting...");
+    delay(400);
   }
-  log(CLASS, Info, "Connected");
+  log(CLASS, Info, "IP: %s", WiFi.localIP().toString().c_str());
 }
 
-void dim() {
+void lightSleep(unsigned long delayMs) {
   log(CLASS, Debug, "Dim");
   display.dim(true);
-}
-
-void undim() {
+  log(CLASS, Info, "Light sleep...");
+  wifi_set_sleep_type(LIGHT_SLEEP_T);
+  delay(delayMs);
   log(CLASS, Debug, "Undim");
   display.dim(false);
 }
 
-void lightSleep(unsigned long delayMs) {
-  log(CLASS, Info, "Light sleep...");
-  wifi_set_sleep_type(LIGHT_SLEEP_T);
-  delay(delayMs);
-}
-
 void deepSleep(uint32_t delayUs) {
+  log(CLASS, Debug, "Dim");
+  display.dim(true);
   // RST to GPIO16
   // Sometimes hangs https://github.com/esp8266/Arduino/issues/2049
   log(CLASS, Info, "Deep sleep...");
   ESP.deepSleep(delayUs);
+  log(CLASS, Debug, "Undim");
+  display.dim(false);
 }
 
 
@@ -190,9 +191,7 @@ void loop() {
   ButtonPressed button = readButtons();
   m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
 
-  dim();
   lightSleep(10 * 1000);
-  undim();
 
 }
 
