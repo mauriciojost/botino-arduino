@@ -4,6 +4,7 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include "EspSaveCrash.h"
 
 #define OLED_RESET LED_BUILTIN
 Adafruit_SSD1306 display(OLED_RESET);
@@ -110,6 +111,13 @@ void setup() {
   // Let HW startup
   delay(3*1000);
 
+  // Initialize the serial port
+  Serial.begin(115200);
+
+  // Print & clear exception raised during previous run (if any)
+  SaveCrash.print();
+  SaveCrash.clear();
+
   // Initialize the LCD
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   display.clearDisplay();
@@ -117,9 +125,6 @@ void setup() {
 
   // Intialize the logging framework
   setupLog(logLine);
-
-  // Initialize the serial port
-  Serial.begin(115200);
 
   // Initialize pins
   setupPins();

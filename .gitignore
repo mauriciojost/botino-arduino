@@ -86,3 +86,6 @@
 /src/glcdfont.c
 /src/library.properties
 /src/license.txt
+/src/EspSaveCrash.cpp
+/src/EspSaveCrash.h
+/lib_deps_external/EspSaveCrash/
