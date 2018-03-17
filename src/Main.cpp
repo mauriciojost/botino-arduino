@@ -114,9 +114,8 @@ void setup() {
   // Initialize the serial port
   Serial.begin(115200);
 
-  // Print & clear exception raised during previous run (if any)
+  // Print exception raised during previous run (if any)
   SaveCrash.print();
-  SaveCrash.clear();
 
   // Initialize the LCD
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
