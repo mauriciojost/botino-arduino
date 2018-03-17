@@ -195,7 +195,7 @@ void loop() {
   ButtonPressed button = readButtons();
   m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
 
-  lightSleep(10 * 1000);
+  lightSleep(5 * 1000);
 
 }
 
