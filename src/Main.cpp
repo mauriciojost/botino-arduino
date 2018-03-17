@@ -102,7 +102,7 @@ void displayOnLcd(const char *str1, const char *str2) {
 void setupPins() {
   log(CLASS, Debug, "Setup pins");
   //pinMode(LED0_PIN, OUTPUT);
-  //pinMode(LED1_PIN, OUTPUT); // will break deep sleep mode
+  pinMode(LED1_PIN, OUTPUT); // will break deep sleep mode
   pinMode(LCD_BACKLIGHT_PIN, OUTPUT);
   //pinMode(BUZZER0_PIN, OUTPUT);
 }
