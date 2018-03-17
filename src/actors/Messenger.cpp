@@ -56,28 +56,32 @@ void Messenger::updateClockProperties() {
   ParamStream s;
   int errorCode;
 
-  HTTPClient httpGet;
+  HTTPClient client;
   staticBuffer.clear();
   staticBuffer.fill(TIMEZONE_DB_API_URL_BASE_GET, TIMEZONE_DB_KEY, TIMEZONE_DB_ZONE);
-  httpGet.begin(staticBuffer.getBuffer());
+  client.begin(staticBuffer.getBuffer());
   log(CLASS, Info, "Url: %s", staticBuffer.getBuffer());
-  errorCode = httpGet.GET();
+  errorCode = client.GET();
   log(CLASS, Info, "Get: %d", errorCode);
-  httpGet.writeToStream(&s);
-  httpGet.end();
+  if (errorCode > 0) {
+    client.writeToStream(&s);
+    client.end();
 
-  JsonObject& json = s.parse();
+    JsonObject& json = s.parse();
 
-  if (json.containsKey("formatted")) {
-    const char* formatted = json["formatted"].as<char *>();
-    Buffer<8> time(formatted + 11);
-    Boolean autoAdjust(true);
-    bot->getClock()->setProp(ClockConfigStateAutoAdjustFactor, SetValue, &autoAdjust, NULL);
-    bot->getClock()->setProp(ClockConfigStateHhMmSs, SetValue, &time, NULL);
+    if (json.containsKey("formatted")) {
+      const char* formatted = json["formatted"].as<char *>();
+      Buffer<8> time(formatted + 11);
+      Boolean autoAdjust(true);
+      bot->getClock()->setProp(ClockConfigStateAutoAdjustFactor, SetValue, &autoAdjust, NULL);
+      bot->getClock()->setProp(ClockConfigStateHhMmSs, SetValue, &time, NULL);
+    } else {
+      log(CLASS, Warn, "No 'formatted'");
+    }
+    s.flush();
   } else {
-    log(CLASS, Warn, "No 'formatted'");
+	log(CLASS, Error, "! %s", client.errorToString(errorCode).c_str());
   }
-  s.flush();
 #endif // UNIT_TEST
 }
 
@@ -102,23 +106,27 @@ void Messenger::updateBotProperties() {
   setUpDweetClient(&client, &staticUrl);
   errorCode = client.GET();
   log(CLASS, Info, "Get: %d", errorCode);
-  client.writeToStream(&s);
-  client.end();
+  if (errorCode > 0) {
+    client.writeToStream(&s);
+    client.end();
 
-  JsonObject& json = s.parse();
+    JsonObject& json = s.parse();
 
-  if (json.containsKey("with")) {
-    JsonObject& withJson = json["with"][0];
-    if (withJson.containsKey("content")) {
-      JsonObject& content = withJson["content"];
-      bot->setPropsJsonFlat(content);
+    if (json.containsKey("with")) {
+      JsonObject& withJson = json["with"][0];
+      if (withJson.containsKey("content")) {
+        JsonObject& content = withJson["content"];
+        bot->setPropsJsonFlat(content);
+      } else {
+        log(CLASS, Warn, "No 'content'");
+      }
     } else {
-      log(CLASS, Warn, "No 'content'");
+      log(CLASS, Warn, "No 'with'");
     }
+    s.flush();
   } else {
-    log(CLASS, Warn, "No 'with'");
+	log(CLASS, Error, "! %s", client.errorToString(errorCode).c_str());
   }
-  s.flush();
 
   bot->getPropsJsonFlat(&staticBuffer);
   staticUrl.clear();
@@ -128,10 +136,13 @@ void Messenger::updateBotProperties() {
   setUpDweetClient(&client, &staticUrl);
   errorCode = client.POST(staticBuffer.getBuffer());
   log(CLASS, Info, "Post: %d", errorCode);
-  client.writeToStream(&Serial);
-  client.end();
-
-  delay(WAIT_BEFORE_REPOST_DWEETIO_MS);
+  if (errorCode > 0) {
+    client.writeToStream(&Serial);
+    client.end();
+    delay(WAIT_BEFORE_REPOST_DWEETIO_MS);
+  } else {
+	log(CLASS, Error, "! %s", client.errorToString(errorCode).c_str());
+  }
 
 #endif // UNIT_TEST
 }
