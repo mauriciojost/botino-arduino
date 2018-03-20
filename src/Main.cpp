@@ -6,6 +6,7 @@
 #include <Adafruit_SSD1306.h>
 #include <Servo.h>
 #include "EspSaveCrash.h"
+#include <Pinout.h>
 
 #define OLED_RESET LED_BUILTIN
 Adafruit_SSD1306 display(OLED_RESET);
