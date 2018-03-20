@@ -1,5 +1,7 @@
-#ifndef SRC_PINOUT_H_
-#define SRC_PINOUT_H_
+#ifndef PINOUT_INC
+#define PINOUT_INC
+
+// NODEMCU based on ESP8266
 
 #define GPIO0_PIN 0
 #define GPIO1_PIN 1
@@ -18,27 +20,26 @@
 #define GPIO14_PIN 14
 #define GPIO15_PIN 15
 #define GPIO16_PIN 16
+#define PIN_A0 17
 
-
-#define PIN_D3 GPIO0_PIN
-#define PIN_D10 GPIO1_PIN // (!) TX, if used will break serial communication
-#define PIN_D4 GPIO2_PIN
-#define PIN_D9 GPIO3_PIN
-#define PIN_D2 GPIO4_PIN
+#define PIN_D0 GPIO16_PIN // will break deep sleep mode?
 #define PIN_D1 GPIO5_PIN
-#define PIN_D11 GPIO9_PIN
-#define PIN_D12 GPIO10_PIN
-#define PIN_D6 GPIO12_PIN
-#define PIN_D7 GPIO13_PIN
+#define PIN_D2 GPIO4_PIN
+#define PIN_D3 GPIO0_PIN
+#define PIN_D4 GPIO2_PIN
 #define PIN_D5 GPIO14_PIN
-#define PIN_D8 GPIO15_PIN
-#define PIN_D0 GPIO16_PIN
+#define PIN_D6 GPIO12_PIN // using it breaks serial communication?
+#define PIN_D7 GPIO13_PIN // RXD2
+#define PIN_D8 GPIO15_PIN // TXD2, if used may break deep sleep mode?
+#define PIN_D9 GPIO3_PIN // RXDO, if used will break serial communication
+#define PIN_D10 GPIO1_PIN // TXDO, if used will break serial communication
+#define PIN_D11 GPIO9_PIN // SDD2 / SD2
+#define PIN_D12 GPIO10_PIN // SDD3 / SD3
 
-#define LED0_PIN PIN_D0 // will break deep sleep mode
-#define LED1_PIN PIN_D1 // will break deep sleep mode
-#define LCD_BACKLIGHT_PIN PIN_D8
-#define SERVO0_PIN PIN_D6 // using it breaks serial communication
-#define LCD_ENABLE_PIN PIN_D2
-#define LCD_RS_PIN PIN_D3
+#define LED0_PIN PIN_D0
+#define LED1_PIN PIN_D1
+#define SERVO0_PIN PIN_D6
+#define LCD_SCL_PIN PIN_D1
+#define LCD_SDA_PIN PIN_D2
 
-#endif /* SRC_PINOUT_H_ */
+#endif // PINOUT_INC
