@@ -7,6 +7,8 @@
 #include <main4ino/Integer.h>
 #include <main4ino/Boolean.h>
 
+#define CLASS "LE"
+
 enum LedConfigState {
   LedConfigOnState = 0,            // if the led is on
   LedConfigStateDelimiter // delimiter of the configuration states
@@ -18,24 +20,83 @@ private:
   const char* name;
   bool currentValue;
   FreqConf freqConf;
+  int pin;
+  void (*digitalWriteFunc)(unsigned char, unsigned char);
 
 public:
-  Led(const char* n);
 
-  const char *getName();
+  Led(const char* n, int p): freqConf(OnceEvery5Minutes) {
+    name = n;
+    currentValue = false;
+    pin = p;
+    digitalWriteFunc = NULL;
+  }
 
-  void cycle(bool cronMatches);
-  void subCycle(float subCycle);
-  void getActuatorValue(Value* value);
+  const char *getName() {
+    return name;
+  }
 
-  int getNroProps();
-  const char* getPropName(int propIndex);
-  void setProp(int propIndex, SetMode set, const Value* targetValue, Value* actualValue);
+  void setDigitalWriteFunction(void (*d)(unsigned char, unsigned char)) {
+  	digitalWriteFunc = d;
+  }
 
-  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH>* info);
-  int getNroInfos();
+  void cycle(bool cronMatches) {
+  	if (cronMatches) {
+  		if (digitalWriteFunc != NULL) {
+  			digitalWriteFunc(pin, currentValue);
+  		}
+  	}
+  }
 
-  FreqConf *getFrequencyConfiguration();
+  void getActuatorValue(Value* value) {
+    if (value != NULL) {
+      Integer i(currentValue?1:0);
+      value->load(&i);
+    }
+  }
+
+  const char* getPropName(int propIndex) {
+    switch (propIndex) {
+      case (LedConfigOnState): return "on";
+      default: return "";
+    }
+  }
+
+  void setProp(int propIndex, SetMode setMode, const Value* targetValue, Value* actualValue) {
+    switch (propIndex) {
+      case (LedConfigOnState):
+        if (setMode == SetNext) {
+          currentValue = !currentValue;
+        }
+        if (setMode == SetValue) {
+          Boolean b(targetValue);
+          currentValue = b.get();
+        }
+        if (setMode != DoNotSet) {
+          log(CLASS, Info, "Led: %s", name);
+          log(CLASS, Info, " set: %d", currentValue);
+        }
+        if (actualValue != NULL) {
+          Boolean b(currentValue);
+          actualValue->load(&b);
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  int getNroProps() { return LedConfigStateDelimiter; }
+
+  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH>* info) {
+    Boolean i(currentValue);
+    info->load(&i);
+  }
+
+  int getNroInfos() { return 1; }
+
+  FreqConf *getFrequencyConfiguration() { return &freqConf; }
+
 };
 
 #endif // LED_INC

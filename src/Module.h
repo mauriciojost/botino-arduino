@@ -27,39 +27,32 @@ private:
   Arm *arm0;
   Led *led0;
   Led *led1;
-  Led *buzzer0;
   WebBot *bot;
   Lcd *lcd;
-
-  void (*digitalWrite)(unsigned char pin, unsigned char value);
 
 public:
 
   Module() {
 
-    this->lcd = new Lcd();
+    lcd = new Lcd();
 
-    this->msgr = new Messenger("msgr0");
-    this->led0 = new Led("led0");
-    this->led1 = new Led("led1");
-    this->buzzer0 = new Led("buz0");
-    this->clock = new Clock("clock0");
-    this->arm0 = new Arm("arm0");
+    msgr = new Messenger("msgr0");
+    led0 = new Led("led0", LED0_PIN);
+    led1 = new Led("led1", LED1_PIN);
+    clock = new Clock("clock0");
+    arm0 = new Arm("arm0");
 
-    actors = new Array<Actor*>(7);
+    actors = new Array<Actor*>(6);
     actors->set(0, (Actor*)clock);
     actors->set(1, (Actor*)msgr);
     actors->set(2, (Actor*)led0);
     actors->set(3, (Actor*)led1);
-    actors->set(4, (Actor*)buzzer0);
-    actors->set(5, (Actor*)lcd);
-    actors->set(6, (Actor*)arm0);
+    actors->set(4, (Actor*)lcd);
+    actors->set(5, (Actor*)arm0);
 
-    this->bot = new WebBot(clock, actors);
-    this->msgr->setBot(bot);
-    this->bot->setMode(RunMode);
-
-    this->digitalWrite = NULL;
+    bot = new WebBot(clock, actors);
+    msgr->setBot(bot);
+    bot->setMode(RunMode);
 
   }
 
@@ -74,18 +67,6 @@ public:
 
     // execute a cycle on the bot
     bot->cycle(mode, set, interruptType);
-
-    if (interruptType == TimingInterruptCycle) { // cycles (~1 second)
-      bool onceIn2Cycles = (bot->getClock()->getSeconds() % 2) == 0;
-      Integer ledValue;
-      led0->getActuatorValue(&ledValue);
-      //digitalWrite(LED0_PIN, ledValue.get());
-      led1->getActuatorValue(&ledValue);
-      digitalWrite(LED1_PIN, ledValue.get());
-      buzzer0->getActuatorValue(&ledValue);
-      digitalWrite(SERVO0_PIN, ledValue.get());
-      digitalWrite(LCD_BACKLIGHT_PIN, lcd->getLight()); // TODO move all pin related stuff to Main and make callbacks
-    }
   }
 
   void setup() {
@@ -93,7 +74,8 @@ public:
   }
 
   void setDigitalWriteFunction(void (*digitalWriteFunction)(unsigned char pin, unsigned char value)) {
-    digitalWrite = digitalWriteFunction;
+  	led0->setDigitalWriteFunction(digitalWriteFunction);
+  	led1->setDigitalWriteFunction(digitalWriteFunction);
   }
 
   void setStdoutWriteFunction(void (*stdOutWriteStringFunction)(const char *, const char *)) {
