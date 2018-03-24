@@ -8,9 +8,6 @@
 #include "EspSaveCrash.h"
 #include <Pinout.h>
 
-#define OLED_RESET LED_BUILTIN
-Adafruit_SSD1306 display(OLED_RESET);
-
 #define CLASS_MAIN "MA"
 #ifndef WIFI_SSID
 #error "Must provide WIFI_SSID"
@@ -18,7 +15,6 @@ Adafruit_SSD1306 display(OLED_RESET);
 #ifndef WIFI_PASSWORD
 #error "Must provide WIFI_PASSWORD"
 #endif
-#define WIFI_OK 0
 
 
 extern "C" {
@@ -36,20 +32,22 @@ enum ButtonPressed {
 
 Module m;
 Servo servo;
+Adafruit_SSD1306 lcd(LCD_RESET_PIN);
+
 
 /******************/
 /***  CALLBACKS ***/
 /******************/
 
-void lcdPrintLine(const char *str, int y, bool clearFirst, int color) {
+void lcdPrintLine(const char *str, int y, bool clearFirst) {
   if (clearFirst) {
-    display.fillRect(0, y * 8, 128, 8, BLACK);
+    lcd.fillRect(0, y * 8, 128, 8, BLACK);
   }
-  display.setTextSize(1);
-  display.setTextColor(color);
-  display.setCursor(0, y * 8);
-  display.println(str);
-  display.display();
+  lcd.setTextSize(1);
+  lcd.setTextColor(WHITE);
+  lcd.setCursor(0, y * 8);
+  lcd.println(str);
+  lcd.display();
 }
 
 /*
@@ -67,12 +65,10 @@ void lcdPrintLine(const char *str, int y, bool clearFirst, int color) {
 
 void logLine(const char *str) {
   static int i = 0;
-  if (i == 0) {
-    display.fillRect(0, 16, 128, 8 * 6, WHITE);
-  }
   int y = i + 2;
-  lcdPrintLine(str, y, DO_NOT_CLEAR_FIRST, BLACK);
+  lcdPrintLine(str, y, CLEAR_FIRST);
   i = (i + 1) % 6;
+  Serial.println(str);
 }
 
 
@@ -89,13 +85,13 @@ void displayOnLcd(const char *str1, const char *str2) {
 
   // Update the physical display (depending on channel to show)
   if (m.getLcd()->getChannel() == 0) {
-    lcdPrintLine(str1, 0, CLEAR_FIRST, WHITE);
-    lcdPrintLine(str2, 1, CLEAR_FIRST, WHITE);
+    lcdPrintLine(str1, 0, CLEAR_FIRST);
+    lcdPrintLine(str2, 1, CLEAR_FIRST);
   } else {
     m.getLcd()->setProp(LcdConfigChan1Line0, DoNotSet, &b1, &b1);
     m.getLcd()->setProp(LcdConfigChan1Line1, DoNotSet, &b2, &b2);
-    lcdPrintLine(b1.getBuffer(), 0, CLEAR_FIRST, WHITE);
-    lcdPrintLine(b2.getBuffer(), 1, CLEAR_FIRST, WHITE);
+    lcdPrintLine(b1.getBuffer(), 0, CLEAR_FIRST);
+    lcdPrintLine(b2.getBuffer(), 1, CLEAR_FIRST);
   }
 }
 
@@ -126,11 +122,13 @@ void setup() {
 
   // Print exception raised during previous run (if any)
   SaveCrash.print();
+  SaveCrash.clear();
 
   // Initialize the LCD
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  display.clearDisplay();
-  display.display();
+  lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  lcd.clearDisplay();
+  lcd.display();
+  lcd.dim(true);
 
   // Intialize the logging framework
   setupLog(logLine);
@@ -188,24 +186,16 @@ wl_status_t initWifi() {
 }
 
 void lightSleep(unsigned long delayMs) {
-  log(CLASS_MAIN, Debug, "Dim");
-  display.dim(true);
   log(CLASS_MAIN, Info, "Light sleep...");
   wifi_set_sleep_type(LIGHT_SLEEP_T);
   delay(delayMs);
-  log(CLASS_MAIN, Debug, "Undim");
-  display.dim(false);
 }
 
 void deepSleep(uint32_t delayUs) {
-  log(CLASS_MAIN, Debug, "Dim");
-  display.dim(true);
   // RST to GPIO16
   // Sometimes hangs https://github.com/esp8266/Arduino/issues/2049
   log(CLASS_MAIN, Info, "Deep sleep...");
   ESP.deepSleep(delayUs);
-  log(CLASS_MAIN, Debug, "Undim");
-  display.dim(false);
 }
 
 

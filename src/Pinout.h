@@ -22,6 +22,8 @@
 #define GPIO16_PIN 16
 #define PIN_A0 17
 
+// NODEMCU based on ESP8266 (human names)
+
 #define PIN_D0 GPIO16_PIN // will break deep sleep mode?
 #define PIN_D1 GPIO5_PIN
 #define PIN_D2 GPIO4_PIN
@@ -36,10 +38,16 @@
 #define PIN_D11 GPIO9_PIN // SDD2 / SD2
 #define PIN_D12 GPIO10_PIN // SDD3 / SD3
 
+// LEDS
 #define LED0_PIN PIN_D0
 #define LED1_PIN PIN_D1
+
+// SERVO
 #define SERVO0_PIN PIN_D6
+
+// I2C OLED 128x64
 #define LCD_SCL_PIN PIN_D1
 #define LCD_SDA_PIN PIN_D2
+#define LCD_RESET_PIN GPIO0_PIN
 
 #endif // PINOUT_INC
