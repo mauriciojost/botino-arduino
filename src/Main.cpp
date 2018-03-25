@@ -50,6 +50,7 @@ void lcdPrintLine(const char *str, int line, bool clearFirst) {
   lcd.setCursor(0, line * 8);
   lcd.println(str);
   lcd.display();
+  delay(1);
 }
 
 /*
@@ -79,10 +80,8 @@ void logLine(const char *str) {
   static int i = 0;
   int line = i + 4;
   i = (i + 1) % 4;
-
   lcdPrintLine(str, line, CLEAR_FIRST);
   Serial.println(str);
-
 }
 
 void servoControl(int pos) {

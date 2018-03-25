@@ -38,7 +38,7 @@ private:
 
 public:
 
-  Lcd(): freqConf(OnceEvery1Second)  {
+  Lcd(): freqConf(OnceEvery5Seconds)  {
     channel = 0;
     line0Chan0 = new Buffer<LCD_LINE_LENGTH>("");
     line1Chan0 = new Buffer<LCD_LINE_LENGTH>("");

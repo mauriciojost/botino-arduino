@@ -49,7 +49,7 @@ private:
 
 public:
 
-  Messenger(const char* n): freqConf(OnceEvery1Minute) {
+  Messenger(const char* n): freqConf(OnceEvery1Second) {
     name = n;
     bot = NULL;
   }
