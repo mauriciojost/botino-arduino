@@ -19,7 +19,7 @@ class Arm : public Actor {
 private:
   const char* name;
   int currentPosition;
-  FreqConf freqConf;
+  Timing freqConf;
   void (*setPositionFunction)(int);
 
 public:
@@ -38,18 +38,13 @@ public:
     setPositionFunction = f;
   }
 
-  void cycle(bool cronMatches) {
-  	if (setPositionFunction != NULL) {
-  		log(CLASS_SERVO, Info, "Set: %d", currentPosition);
-  		setPositionFunction(currentPosition);
+  void cycle() {
+  	if (freqConf.matches()) {
+      if (setPositionFunction != NULL) {
+        log(CLASS_SERVO, Info, "Set: %d", currentPosition);
+        setPositionFunction(currentPosition);
+      }
   	}
-  }
-
-  void getActuatorValue(Value* value) {
-    if (value != NULL) {
-      Integer i(currentPosition);
-      value->load(&i);
-    }
   }
 
   const char* getPropName(int propIndex) {
@@ -89,7 +84,7 @@ public:
 
   int getNroInfos() { return 1; }
 
-  FreqConf *getFrequencyConfiguration() { return &freqConf; }
+  Timing *getFrequencyConfiguration() { return &freqConf; }
 
 };
 

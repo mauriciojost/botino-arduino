@@ -28,7 +28,7 @@ class Lcd : public Actor {
 
 private:
   int channel;
-  FreqConf freqConf;
+  Timing freqConf;
 
   bool lightChan0;
   Buffer<LCD_LINE_LENGTH>* line0Chan0;
@@ -54,9 +54,19 @@ public:
 
   const char *getName() { return "lcd"; }
 
-  void cycle(bool cronMatches) { }
-
-  void getActuatorValue(Value* value) { }
+  void cycle() {
+  	if (freqConf.matches()) {
+      if (stdOutFunction != NULL) {
+      	if (channel == 0) {
+      		stdOutFunction(0, line0Chan0->getBuffer());
+      		stdOutFunction(1, line1Chan0->getBuffer());
+      	} else {
+      		stdOutFunction(0, line0Chan1->getBuffer());
+      		stdOutFunction(1, line1Chan1->getBuffer());
+      	}
+      }
+  	}
+  }
 
   const char* getPropName(int propIndex) {
     switch (propIndex) {
@@ -146,7 +156,7 @@ public:
 
   int getNroInfos() { return 0; }
 
-  FreqConf *getFrequencyConfiguration() { return &freqConf; }
+  Timing *getFrequencyConfiguration() { return &freqConf; }
 
   bool getLight() {
     if (channel % NRO_CHANNELS == 0) {

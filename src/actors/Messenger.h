@@ -43,13 +43,13 @@ class Messenger : public Actor {
 private:
   const char* name;
   WebBot* bot;
-  FreqConf freqConf;  // configuration of the frequency at which this actor will get triggered
+  Timing freqConf;  // configuration of the frequency at which this actor will get triggered
   Buffer<MAX_JSON_STR_LENGTH> staticBuffer;
   Buffer<MAX_URL_EFF_LENGTH> staticUrl;
 
 public:
 
-  Messenger(const char* n): freqConf(OnceEvery1Second) {
+  Messenger(const char* n): freqConf(OnceEvery1Minute) {
     name = n;
     bot = NULL;
   }
@@ -62,11 +62,11 @@ public:
     return name;
   }
 
-  void cycle(bool cronMatches) {
+  void cycle() {
     if (bot == NULL) {
       return;
     }
-    if (cronMatches) {
+    if (freqConf.matches()) {
       updateClockProperties();
       updateBotProperties();
     }
@@ -183,7 +183,7 @@ public:
 
   int getNroInfos() { return 0; }
 
-  FreqConf *getFrequencyConfiguration() { return &freqConf; }
+  Timing *getFrequencyConfiguration() { return &freqConf; }
 
 };
 

@@ -19,7 +19,7 @@ class Led : public Actor {
 private:
   const char* name;
   bool currentValue;
-  FreqConf freqConf;
+  Timing freqConf;
   int pin;
   void (*digitalWriteFunc)(unsigned char, unsigned char);
 
@@ -40,19 +40,12 @@ public:
   	digitalWriteFunc = d;
   }
 
-  void cycle(bool cronMatches) {
-  	if (cronMatches) {
+  void cycle() {
+    if (freqConf.matches()) {
   		if (digitalWriteFunc != NULL) {
   			digitalWriteFunc(pin, currentValue);
   		}
   	}
-  }
-
-  void getActuatorValue(Value* value) {
-    if (value != NULL) {
-      Integer i(currentValue?1:0);
-      value->load(&i);
-    }
   }
 
   const char* getPropName(int propIndex) {
@@ -95,7 +88,7 @@ public:
 
   int getNroInfos() { return 1; }
 
-  FreqConf *getFrequencyConfiguration() { return &freqConf; }
+  Timing *getFrequencyConfiguration() { return &freqConf; }
 
 };
 
