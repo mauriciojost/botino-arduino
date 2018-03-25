@@ -7,7 +7,7 @@
 #include <main4ino/Integer.h>
 #include <main4ino/Boolean.h>
 
-#define CLASS_SERVO "SE"
+#define CLASS_ARM "AR"
 
 enum ArmConfigState {
   ArmConfigOnState = 0,
@@ -24,7 +24,7 @@ private:
 
 public:
 
-  Arm(const char* n): freqConf(OnceEvery1Second) {
+  Arm(const char* n): freqConf(OnceEvery5Seconds) {
     name = n;
     currentPosition = 0;
     setPositionFunction = NULL;
@@ -41,7 +41,7 @@ public:
   void cycle() {
   	if (freqConf.matches()) {
       if (setPositionFunction != NULL) {
-        log(CLASS_SERVO, Info, "Set: %d", currentPosition);
+        log(CLASS_ARM, Info, "Set: %d", currentPosition);
         setPositionFunction(currentPosition);
       }
   	}
@@ -62,8 +62,8 @@ public:
           currentPosition = b.get();
         }
         if (setMode != DoNotSet) {
-          log(CLASS_SERVO, Info, "Arm: %s", name);
-          log(CLASS_SERVO, Info, " set: %d", currentPosition);
+          log(CLASS_ARM, Info, "Arm: %s", name);
+          log(CLASS_ARM, Info, " set: %d", currentPosition);
         }
         if (actualValue != NULL) {
           Integer b(currentPosition);
