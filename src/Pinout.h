@@ -20,7 +20,7 @@
 #define GPIO14_PIN 14
 #define GPIO15_PIN 15
 #define GPIO16_PIN 16
-#define PIN_A0 17
+#define A0_PIN 17
 
 // NODEMCU based on ESP8266 (human names)
 
