@@ -78,8 +78,12 @@ public:
   	led1->setDigitalWriteFunction(digitalWriteFunction);
   }
 
-  void setStdoutWriteFunction(void (*stdOutWriteStringFunction)(const char *, const char *)) {
+  void setBotStdoutWriteFunction(void (*stdOutWriteStringFunction)(const char *, const char *)) {
     bot->setStdoutFunction(stdOutWriteStringFunction);
+  }
+
+  void setLcdStdoutWriteFunction(void (*stdOutWriteStringFunction)(int, const char *)) {
+    lcd->setStdoutFunction(stdOutWriteStringFunction);
   }
 
   void setServoPositionFunction(void (*f)(int)) {
@@ -92,10 +96,6 @@ public:
 
   Clock * getClock() {
     return clock;
-  }
-
-  Lcd * getLcd() {
-    return lcd;
   }
 
 };

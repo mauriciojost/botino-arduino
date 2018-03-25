@@ -17,8 +17,6 @@ enum LcdConfigState {
   LcdConfigChan0Line1,
   LcdConfigChan1Line0,
   LcdConfigChan1Line1,
-  LcdConfigChan0Light,
-  LcdConfigChan1Light,
   LcdConfigChannel,
   LcdConfigStateDelimiter // delimiter of the configuration states
 };
@@ -30,24 +28,23 @@ private:
   int channel;
   Timing freqConf;
 
-  bool lightChan0;
   Buffer<LCD_LINE_LENGTH>* line0Chan0;
   Buffer<LCD_LINE_LENGTH>* line1Chan0;
 
-  bool lightChan1;
   Buffer<LCD_LINE_LENGTH>* line0Chan1;
   Buffer<LCD_LINE_LENGTH>* line1Chan1;
 
+  void (*stdOutFunction)(int, const char *);
+
 public:
 
-  Lcd(): freqConf(Never)  {
+  Lcd(): freqConf(OnceEvery1Second)  {
     channel = 0;
     line0Chan0 = new Buffer<LCD_LINE_LENGTH>("");
     line1Chan0 = new Buffer<LCD_LINE_LENGTH>("");
     line0Chan1 = new Buffer<LCD_LINE_LENGTH>("");
     line1Chan1 = new Buffer<LCD_LINE_LENGTH>("");
-    lightChan0 = false;
-    lightChan1 = false;
+    stdOutFunction = NULL;
   }
 
   void initialize() { }
@@ -75,8 +72,6 @@ public:
       case (LcdConfigChan0Line1): return "c0l1";
       case (LcdConfigChan1Line0): return "c1l0";
       case (LcdConfigChan1Line1): return "c1l1";
-      case (LcdConfigChan0Light): return "ligc0";
-      case (LcdConfigChan1Light): return "ligc1";
       default: return "";
     }
   }
@@ -115,26 +110,6 @@ public:
           actualValue->load(line1Chan1);
         }
         break;
-      case (LcdConfigChan0Light):
-        if (setMode == SetValue) {
-          Boolean b(targetValue);
-          lightChan0 = b.get();
-        }
-        if (actualValue != NULL) {
-          Boolean b(lightChan0);
-          actualValue->load(&b);
-        }
-        break;
-      case (LcdConfigChan1Light):
-        if (setMode == SetValue) {
-          Boolean b(targetValue);
-          lightChan1 = b.get();
-        }
-        if (actualValue != NULL) {
-          Boolean b(lightChan1);
-          actualValue->load(&b);
-        }
-        break;
       case (LcdConfigChannel):
         if (setMode == SetValue) {
           Integer i(targetValue);
@@ -158,15 +133,9 @@ public:
 
   Timing *getFrequencyConfiguration() { return &freqConf; }
 
-  bool getLight() {
-    if (channel % NRO_CHANNELS == 0) {
-      return lightChan0;
-    } else {
-      return lightChan1;
-    }
+  void setStdoutFunction(void (*stdOutWriteStringFunction)(int, const char *)) {
+    stdOutFunction = stdOutWriteStringFunction;
   }
-
-  int getChannel() { return channel; }
 
 };
 

@@ -41,60 +41,48 @@ Adafruit_SSD1306 lcd(LCD_RESET_PIN);
 /***  CALLBACKS ***/
 /******************/
 
-void lcdPrintLine(const char *str, int y, bool clearFirst) {
+void lcdPrintLine(const char *str, int line, bool clearFirst) {
   if (clearFirst) {
-    lcd.fillRect(0, y * 8, 128, 8, BLACK);
+    lcd.fillRect(0, line * 8, 128, 8, BLACK);
   }
   lcd.setTextSize(1);
   lcd.setTextColor(WHITE);
-  lcd.setCursor(0, y * 8);
+  lcd.setCursor(0, line * 8);
   lcd.println(str);
   lcd.display();
 }
 
 /*
  *
- * CHANNEL X LINE 0 |
- * CHANNEL X LINE 1 |
+ * BOT X LINE 0
+ * BOT X LINE 1
+ * LCD X LINE 0
+ * LCD X LINE 1
  * LOGS0
  * LOGS1
  * LOGS2
  * LOGS3
- * LOGS4
- * LOGS5
  *
  * */
 
-void logLine(const char *str) {
-  static int i = 0;
-  int y = i + 2;
-  lcdPrintLine(str, y, CLEAR_FIRST);
-  i = (i + 1) % 6;
-  Serial.println(str);
+void botDisplayOnLcd(const char *str1, const char *str2) {
+  lcdPrintLine(str1, 0, CLEAR_FIRST);
+  lcdPrintLine(str2, 1, CLEAR_FIRST);
 }
 
+void lcdDisplayOnLcd(int line, const char *str) {
+	int l = (line % 2) + 2;
+  lcdPrintLine(str, l, CLEAR_FIRST);
+}
 
-void displayOnLcd(const char *str1, const char *str2) {
-  // Update properties of the logical display actor (channel 0)
-  Buffer<LCD_LINE_LENGTH> b1;
-  Buffer<LCD_LINE_LENGTH> b2;
+void logLine(const char *str) {
+  static int i = 0;
+  int line = i + 4;
+  i = (i + 1) % 4;
 
-  b1.load(str1);
-  b2.load(str2);
+  lcdPrintLine(str, line, CLEAR_FIRST);
+  Serial.println(str);
 
-  m.getLcd()->setProp(LcdConfigChan0Line0, SetValue, &b1, NULL);
-  m.getLcd()->setProp(LcdConfigChan0Line1, SetValue, &b2, NULL);
-
-  // Update the physical display (depending on channel to show)
-  if (m.getLcd()->getChannel() == 0) {
-    lcdPrintLine(str1, 0, CLEAR_FIRST);
-    lcdPrintLine(str2, 1, CLEAR_FIRST);
-  } else {
-    m.getLcd()->setProp(LcdConfigChan1Line0, DoNotSet, &b1, &b1);
-    m.getLcd()->setProp(LcdConfigChan1Line1, DoNotSet, &b2, &b2);
-    lcdPrintLine(b1.getBuffer(), 0, CLEAR_FIRST);
-    lcdPrintLine(b2.getBuffer(), 1, CLEAR_FIRST);
-  }
 }
 
 void servoControl(int pos) {
@@ -140,7 +128,8 @@ void setup() {
 
   // Intialize the module
   m.setup();
-  m.setStdoutWriteFunction(displayOnLcd);
+  m.setBotStdoutWriteFunction(botDisplayOnLcd);
+  m.setLcdStdoutWriteFunction(lcdDisplayOnLcd);
   m.setDigitalWriteFunction(digitalWrite);
   m.setServoPositionFunction(servoControl);
 
