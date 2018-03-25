@@ -46,6 +46,7 @@
 #define SERVO0_PIN PIN_D6
 
 // I2C OLED 128x64
+// (Kuman 0.96inches I2C OLED 128x64 LCD screen)
 #define LCD_SCL_PIN PIN_D1
 #define LCD_SDA_PIN PIN_D2
 #define LCD_RESET_PIN GPIO0_PIN
