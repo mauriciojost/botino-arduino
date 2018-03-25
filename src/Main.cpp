@@ -9,16 +9,18 @@
 #include <Pinout.h>
 
 #define CLASS_MAIN "MA"
+
 #ifndef WIFI_SSID
-#error "Must provide WIFI_SSID"
+  #error "Must provide WIFI_SSID"
 #endif
+
 #ifndef WIFI_PASSWORD
-#error "Must provide WIFI_PASSWORD"
+  #error "Must provide WIFI_PASSWORD"
 #endif
 
 
 extern "C" {
-#include "user_interface.h"
+  #include "user_interface.h"
 }
 
 enum ButtonPressed {
