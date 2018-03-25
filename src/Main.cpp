@@ -97,8 +97,8 @@ void servoControl(int pos) {
 
 void setupPins() {
   log(CLASS_MAIN, Debug, "Setup pins");
-  //pinMode(LED0_PIN, OUTPUT); // breaks serial
-  pinMode(LED1_PIN, OUTPUT); // will break deep sleep mode
+  pinMode(LED0_PIN, OUTPUT);
+  pinMode(LED1_PIN, OUTPUT);
   pinMode(SERVO0_PIN, OUTPUT);
 }
 

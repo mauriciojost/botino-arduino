@@ -39,8 +39,8 @@
 #define PIN_D12 GPIO10_PIN // SDD3 / SD3
 
 // LEDS
-#define LED0_PIN PIN_D0
-#define LED1_PIN PIN_D1
+#define LED0_PIN PIN_D3
+#define LED1_PIN PIN_D4
 
 // SERVO
 #define SERVO0_PIN PIN_D6
