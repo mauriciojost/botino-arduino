@@ -80,6 +80,9 @@ void logLine(const char *str) {
   static int i = 0;
   int line = i + 4;
   i = (i + 1) % 4;
+  if (i == 0) {
+    lcd.fillRect(0, 4 * 8, 128, 4 * 8, BLACK);
+  }
   lcdPrintLine(str, line, CLEAR_FIRST);
   Serial.println(str);
 }
@@ -111,7 +114,6 @@ void setup() {
 
   // Print exception raised during previous run (if any)
   SaveCrash.print();
-  SaveCrash.clear();
 
   // Initialize the LCD
   lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C);
@@ -196,6 +198,10 @@ void loop() {
   if (wifiStatus == WL_CONNECTED) {
     ButtonPressed button = readButtons();
     m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
+  }
+
+  if (m.getGlobal()->getClear()) {
+    SaveCrash.clear();
   }
 
   lightSleep(5 * 1000);
