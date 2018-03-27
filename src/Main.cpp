@@ -79,10 +79,10 @@ void lcdDisplayOnLcd(int line, const char *str) {
 void logLine(const char *str) {
   static int i = 0;
   int line = i + 4;
-  i = (i + 1) % 4;
   if (i == 0) {
     lcd.fillRect(0, 4 * 8, 128, 4 * 8, BLACK);
   }
+  i = (i + 1) % 4;
   lcdPrintLine(str, line, CLEAR_FIRST);
   Serial.println(str);
 }
@@ -120,6 +120,7 @@ void setup() {
   lcd.clearDisplay();
   lcd.display();
   lcd.dim(true);
+  lcd.setTextWrap(false);
 
   // Intialize the logging framework
   setupLog(logLine);
