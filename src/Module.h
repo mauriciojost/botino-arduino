@@ -37,7 +37,6 @@ public:
   Module() {
 
     lcd = new Lcd();
-
     msgr = new Messenger("m0");
     led0 = new Led("l0", LED0_PIN);
     led1 = new Led("l1", LED1_PIN);

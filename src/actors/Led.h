@@ -25,7 +25,7 @@ private:
 
 public:
 
-  Led(const char* n, int p): freqConf(OnceEvery5Minutes) {
+  Led(const char* n, int p): freqConf(OnceEvery10Seconds) {
     name = n;
     currentValue = false;
     pin = p;
