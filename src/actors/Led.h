@@ -7,7 +7,7 @@
 #include <main4ino/Integer.h>
 #include <main4ino/Boolean.h>
 
-#define CLASS "LE"
+#define CLASS_LED "LE"
 
 enum LedConfigState {
   LedConfigOnState = 0,            // if the led is on
@@ -25,7 +25,7 @@ private:
 
 public:
 
-  Led(const char* n, int p): freqConf(OnceEvery10Seconds) {
+  Led(const char* n, int p): freqConf(OnceEvery1Second) {
     name = n;
     currentValue = false;
     pin = p;
@@ -60,14 +60,12 @@ public:
       case (LedConfigOnState):
         if (setMode == SetNext) {
           currentValue = !currentValue;
+          log(CLASS_LED, Info, "%s set %d", name, currentValue);
         }
         if (setMode == SetValue) {
           Boolean b(targetValue);
           currentValue = b.get();
-        }
-        if (setMode != DoNotSet) {
-          log(CLASS, Info, "Led: %s", name);
-          log(CLASS, Info, " set: %d", currentValue);
+          log(CLASS_LED, Info, "%s set %d", name, currentValue);
         }
         if (actualValue != NULL) {
           Boolean b(currentValue);

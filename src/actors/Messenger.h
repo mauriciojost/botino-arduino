@@ -49,7 +49,7 @@ private:
 
 public:
 
-  Messenger(const char* n): freqConf(OnceEvery1Second) {
+  Messenger(const char* n): freqConf(OnceEvery10Seconds) {
     name = n;
     bot = NULL;
   }
@@ -81,9 +81,9 @@ public:
     staticBuffer.clear();
     staticBuffer.fill(TIMEZONE_DB_API_URL_BASE_GET, TIMEZONE_DB_KEY, TIMEZONE_DB_ZONE);
     client.begin(staticBuffer.getBuffer());
-    log(CLASS_MESSENGER, Info, "Url: %s", staticBuffer.getBuffer());
+    log(CLASS_MESSENGER, Info, "Url clk: %s", staticBuffer.getBuffer());
     errorCode = client.GET();
-    log(CLASS_MESSENGER, Info, "Get: %d", errorCode);
+    log(CLASS_MESSENGER, Info, "Get clk: %d", errorCode);
     if (errorCode > 0) {
       client.writeToStream(&s);
       client.end();
@@ -91,11 +91,14 @@ public:
       JsonObject& json = s.parse();
 
       if (json.containsKey("formatted")) {
-        const char* formatted = json["formatted"].as<char *>();
-        Buffer<8> time(formatted + 11);
+
         Boolean autoAdjust(true);
         bot->getClock()->setProp(ClockConfigStateAutoAdjustFactor, SetValue, &autoAdjust, NULL);
+
+        const char* formatted = json["formatted"].as<char *>();
+        Buffer<8> time(formatted + 11);
         bot->getClock()->setProp(ClockConfigStateHhMmSs, SetValue, &time, NULL);
+
       } else {
         log(CLASS_MESSENGER, Warn, "No 'formatted'");
       }
@@ -110,7 +113,7 @@ public:
     client->begin(url->getBuffer());
     client->addHeader("Content-Type", "application/json");
     client->addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
-    log(CLASS_MESSENGER, Info, "Connected %s", url->getBuffer());
+    log(CLASS_MESSENGER, Info, "Connected dwt %s", url->getBuffer());
   }
 
   void updateBotProperties() {
@@ -126,7 +129,7 @@ public:
     staticUrl.fill(DWEET_IO_API_URL_BASE_GET, DEVICE_NAME);
     setUpDweetClient(&client, &staticUrl);
     errorCode = client.GET();
-    log(CLASS_MESSENGER, Info, "Get: %d", errorCode);
+    log(CLASS_MESSENGER, Info, "Get dwt: %d", errorCode);
     if (errorCode > 0) {
       client.writeToStream(&s);
       client.end();
@@ -152,11 +155,11 @@ public:
     bot->getPropsJsonFlat(&staticBuffer);
     staticUrl.clear();
     staticUrl.fill(DWEET_IO_API_URL_BASE_POST, DEVICE_NAME);
-    log(CLASS_MESSENGER, Info, "Post: %s", staticBuffer.getBuffer());
+    log(CLASS_MESSENGER, Info, "Post dwt: %s", staticBuffer.getBuffer());
 
     setUpDweetClient(&client, &staticUrl);
     errorCode = client.POST(staticBuffer.getBuffer());
-    log(CLASS_MESSENGER, Info, "Post: %d", errorCode);
+    log(CLASS_MESSENGER, Info, "Pos dwt: %d", errorCode);
     if (errorCode > 0) {
       client.writeToStream(&Serial);
       client.end();

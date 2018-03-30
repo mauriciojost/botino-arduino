@@ -36,13 +36,13 @@ public:
 
   Module() {
 
-    lcd = new Lcd();
-    msgr = new Messenger("m0");
+    lcd = new Lcd("lc");
+    msgr = new Messenger("m");
     led0 = new Led("l0", LED0_PIN);
     led1 = new Led("l1", LED1_PIN);
-    clock = new Clock("c0");
-    arm0 = new Arm("a0");
-    global0 = new Global("g0");
+    clock = new Clock("c");
+    arm0 = new Arm("a");
+    global0 = new Global("g");
 
     actors = new Array<Actor*>(7);
     actors->set(0, (Actor*)clock);
@@ -72,9 +72,7 @@ public:
     bot->cycle(mode, set, interruptType);
   }
 
-  void setup() {
-    lcd->initialize();
-  }
+  void setup() { }
 
   void setDigitalWriteFunction(void (*digitalWriteFunction)(unsigned char pin, unsigned char value)) {
   	led0->setDigitalWriteFunction(digitalWriteFunction);

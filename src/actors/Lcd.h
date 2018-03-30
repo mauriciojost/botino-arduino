@@ -25,6 +25,7 @@ enum LcdConfigState {
 class Lcd : public Actor {
 
 private:
+  const char* name;
   int channel;
   Timing freqConf;
 
@@ -38,7 +39,9 @@ private:
 
 public:
 
-  Lcd(): freqConf(OnceEvery5Seconds)  {
+
+  Lcd(const char *n): freqConf(OnceEvery5Seconds)  {
+    name = n;
     channel = 0;
     line0Chan0 = new Buffer<LCD_LINE_LENGTH>("");
     line1Chan0 = new Buffer<LCD_LINE_LENGTH>("");
@@ -47,9 +50,7 @@ public:
     stdOutFunction = NULL;
   }
 
-  void initialize() { }
-
-  const char *getName() { return "lcd"; }
+  const char *getName() { return name; }
 
   void cycle() {
   	if (freqConf.matches()) {
