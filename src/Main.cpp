@@ -205,6 +205,8 @@ void loop() {
     SaveCrash.clear();
   }
 
+  setLogLevel((char)(m.getGlobal()->getLogLevel() % 4));
+
   lightSleep(5 * 1000);
 
 }

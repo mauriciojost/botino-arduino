@@ -11,6 +11,7 @@
 
 enum GlobalConfigState {
   GlobalClearStackTraceState = 0,
+  GlobalLogLevelState,
   GlobalConfigStateDelimiter // delimiter of the configuration states
 };
 
@@ -19,6 +20,7 @@ class Global : public Actor {
 private:
   const char* name;
   bool clear;
+  int logLevel;
   Timing freqConf;
 
 public:
@@ -26,6 +28,7 @@ public:
   Global(const char* n): freqConf(OnceEvery5Seconds) {
     name = n;
     clear = false;
+    logLevel = 0;
   }
 
   const char *getName() {
@@ -36,7 +39,8 @@ public:
 
   const char* getPropName(int propIndex) {
     switch (propIndex) {
-      case (GlobalClearStackTraceState): return "clear";
+      case (GlobalClearStackTraceState): return "cl";
+      case (GlobalLogLevelState): return "ll";
       default: return "";
     }
   }
@@ -50,10 +54,24 @@ public:
         }
         if (setMode != DoNotSet) {
           log(CLASS_GLOBAL, Info, "Global: %s", name);
-          log(CLASS_GLOBAL, Info, " set: %d", clear);
+          log(CLASS_GLOBAL, Info, " clear: %d", clear);
         }
         if (actualValue != NULL) {
           Boolean b(clear);
+          actualValue->load(&b);
+        }
+        break;
+      case (GlobalLogLevelState):
+        if (setMode == SetValue) {
+          Integer b(targetValue);
+          logLevel = b.get();
+        }
+        if (setMode != DoNotSet) {
+          log(CLASS_GLOBAL, Info, "Global: %s", name);
+          log(CLASS_GLOBAL, Info, " log: %d", logLevel);
+        }
+        if (actualValue != NULL) {
+          Integer b(logLevel);
           actualValue->load(&b);
         }
         break;
@@ -74,6 +92,7 @@ public:
   Timing *getFrequencyConfiguration() { return &freqConf; }
 
   bool getClear() { return clear; }
+  int getLogLevel() { return logLevel; }
 
 };
 
