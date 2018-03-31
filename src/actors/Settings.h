@@ -26,7 +26,7 @@ private:
   Timing freqConf;
 
 public:
-  Settings(const char *n) : freqConf(OnceEvery5Seconds) {
+  Settings(const char *n) : freqConf(Never) {
     name = n;
     clear = false;
     logLevel = 0;
@@ -55,37 +55,11 @@ public:
   void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
       case (GlobalClearStackTraceState):
-        if (setMode == SetValue) {
-          Boolean b(targetValue);
-          clear = b.get();
-          log(CLASS_SETTINGS, Info, "%s: clear %d", name, clear);
-        }
-        if (actualValue != NULL) {
-          Boolean b(clear);
-          actualValue->load(&b);
-        }
-        break;
+      	setPropBoolean(setMode, targetValue, actualValue, &clear); break;
       case (GlobalLogLevelState):
-        if (setMode == SetValue) {
-          Integer b(targetValue);
-          logLevel = b.get();
-          log(CLASS_SETTINGS, Info, "%s: log %d", name, logLevel);
-        }
-        if (actualValue != NULL) {
-          Integer b(logLevel);
-          actualValue->load(&b);
-        }
-        break;
+      	setPropInteger(setMode, targetValue, actualValue, &logLevel); break;
       case (GlobalButtonPressedState):
-        if (setMode == SetValue) {
-          Integer b(targetValue);
-          buttonPressed = b.get();
-        }
-        if (actualValue != NULL) {
-          Integer b(buttonPressed);
-          actualValue->load(&b);
-        }
-        break;
+      	setPropInteger(setMode, targetValue, actualValue, &buttonPressed); break;
       default:
         break;
     }

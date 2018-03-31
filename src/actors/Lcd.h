@@ -85,37 +85,13 @@ public:
   void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
       case (LcdConfigChan0Line0):
-        if (setMode == SetValue) {
-          line0Chan0->load(targetValue);
-        }
-        if (actualValue != NULL) {
-          actualValue->load(line0Chan0);
-        }
-        break;
+      	setPropValue(setMode, targetValue, actualValue, (Value*)line0Chan0); break;
       case (LcdConfigChan0Line1):
-        if (setMode == SetValue) {
-          line1Chan0->load(targetValue);
-        }
-        if (actualValue != NULL) {
-          actualValue->load(line1Chan0);
-        }
-        break;
+      	setPropValue(setMode, targetValue, actualValue, (Value*)line1Chan0); break;
       case (LcdConfigChan1Line0):
-        if (setMode == SetValue) {
-          line0Chan1->load(targetValue);
-        }
-        if (actualValue != NULL) {
-          actualValue->load(line0Chan1);
-        }
-        break;
+      	setPropValue(setMode, targetValue, actualValue, (Value*)line0Chan1); break;
       case (LcdConfigChan1Line1):
-        if (setMode == SetValue) {
-          line1Chan1->load(targetValue);
-        }
-        if (actualValue != NULL) {
-          actualValue->load(line1Chan1);
-        }
-        break;
+      	setPropValue(setMode, targetValue, actualValue, (Value*)line1Chan1); break;
       case (LcdConfigChannel):
         if (setMode == SetValue) {
           Integer i(targetValue);
