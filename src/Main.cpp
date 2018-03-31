@@ -102,13 +102,13 @@ void setupPins() {
   log(CLASS_MAIN, Debug, "Setup pins");
   pinMode(LED0_PIN, OUTPUT);
   pinMode(LED1_PIN, OUTPUT);
-  pinMode(LED2_PIN, OUTPUT);
-  pinMode(LED3_PIN, OUTPUT);
-  pinMode(LED4_PIN, OUTPUT);
-  pinMode(LED5_PIN, OUTPUT);
-  pinMode(LED6_PIN, OUTPUT);
-  pinMode(LED7_PIN, OUTPUT);
-  pinMode(LED8_PIN, OUTPUT);
+  //pinMode(LED2_PIN, OUTPUT);
+  //pinMode(LED3_PIN, OUTPUT);
+  //pinMode(LED4_PIN, OUTPUT);
+  //pinMode(LED5_PIN, OUTPUT);
+  //pinMode(LED6_PIN, OUTPUT);
+  //pinMode(LED7_PIN, OUTPUT);
+  //pinMode(LED8_PIN, OUTPUT);
   pinMode(SERVO0_PIN, OUTPUT);
 }
 
@@ -214,7 +214,7 @@ void loop() {
 
   setLogLevel((char)(m.getGlobal()->getLogLevel() % 4));
 
-  lightSleep(5 * 1000);
+  lightSleep(1 * 1000);
 
 }
 
