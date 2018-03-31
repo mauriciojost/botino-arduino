@@ -11,23 +11,18 @@
 #define CLASS_MAIN "MA"
 
 #ifndef WIFI_SSID
-  #error "Must provide WIFI_SSID"
+#error "Must provide WIFI_SSID"
 #endif
 
 #ifndef WIFI_PASSWORD
-  #error "Must provide WIFI_PASSWORD"
+#error "Must provide WIFI_PASSWORD"
 #endif
 
-
 extern "C" {
-  #include "user_interface.h"
+#include "user_interface.h"
 }
 
-enum ButtonPressed {
-  NoButton = 0,
-  ButtonSetWasPressed,
-  ButtonModeWasPressed
-};
+enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 
 #define DO_NOT_CLEAR_FIRST false
 #define CLEAR_FIRST true
@@ -35,7 +30,6 @@ enum ButtonPressed {
 Module m;
 Servo servo;
 Adafruit_SSD1306 lcd(-1);
-
 
 /******************/
 /***  CALLBACKS ***/
@@ -72,7 +66,7 @@ void botDisplayOnLcd(const char *str1, const char *str2) {
 }
 
 void lcdDisplayOnLcd(int line, const char *str) {
-	int l = (line % 2) + 2;
+  int l = (line % 2) + 2;
   lcdPrintLine(str, l, CLEAR_FIRST);
 }
 
@@ -100,21 +94,21 @@ void servoControl(int pos) {
 
 void setupPins() {
   log(CLASS_MAIN, Debug, "Setup pins");
-  //pinMode(LED0_PIN, OUTPUT);
-  //pinMode(LED1_PIN, OUTPUT);
-  //pinMode(LED2_PIN, OUTPUT);
-  //pinMode(LED3_PIN, OUTPUT);
-  //pinMode(LED4_PIN, OUTPUT);
-  //pinMode(LED5_PIN, OUTPUT);
-  //pinMode(LED6_PIN, OUTPUT);
-  //pinMode(LED7_PIN, OUTPUT);
+  // pinMode(LED0_PIN, OUTPUT);
+  // pinMode(LED1_PIN, OUTPUT);
+  // pinMode(LED2_PIN, OUTPUT);
+  // pinMode(LED3_PIN, OUTPUT);
+  // pinMode(LED4_PIN, OUTPUT);
+  // pinMode(LED5_PIN, OUTPUT);
+  // pinMode(LED6_PIN, OUTPUT);
+  // pinMode(LED7_PIN, OUTPUT);
   pinMode(LED8_PIN, OUTPUT);
   pinMode(SERVO0_PIN, OUTPUT);
 }
 
 void setup() {
   // Let HW startup
-  delay(3*1000);
+  delay(3 * 1000);
 
   // Initialize the serial port
   Serial.begin(115200);
@@ -141,7 +135,6 @@ void setup() {
   m.setLcdStdoutWriteFunction(lcdDisplayOnLcd);
   m.setDigitalWriteFunction(digitalWrite);
   m.setServoPositionFunction(servoControl);
-
 }
 
 /**
@@ -151,7 +144,7 @@ void setup() {
 ButtonPressed readButtons() {
   if (Serial.available() > 0) {
     int b = Serial.read();
-    switch(b) {
+    switch (b) {
       case 's':
       case 'S':
         return ButtonSetWasPressed;
@@ -165,14 +158,14 @@ ButtonPressed readButtons() {
 }
 
 wl_status_t initWifi() {
-	int attemptsLeft = 10;
+  int attemptsLeft = 10;
   log(CLASS_MAIN, Info, "Connecting...");
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   while (true) {
     wl_status_t status = WiFi.status();
     log(CLASS_MAIN, Info, " attempts %d", attemptsLeft);
-    attemptsLeft --;
+    attemptsLeft--;
     if (status == WL_CONNECTED) {
       log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
       return status;
@@ -198,7 +191,6 @@ void deepSleep(uint32_t delayUs) {
   ESP.deepSleep(delayUs);
 }
 
-
 void loop() {
 
   wl_status_t wifiStatus = initWifi();
@@ -215,7 +207,6 @@ void loop() {
   setLogLevel((char)(m.getGlobal()->getLogLevel() % 4));
 
   lightSleep(1 * 1000);
-
 }
 
 #endif // UNIT_TEST

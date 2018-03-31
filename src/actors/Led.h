@@ -10,22 +10,21 @@
 #define CLASS_LED "LE"
 
 enum LedConfigState {
-  LedConfigOnState = 0,            // if the led is on
+  LedConfigOnState = 0,   // if the led is on
   LedConfigStateDelimiter // delimiter of the configuration states
 };
 
 class Led : public Actor {
 
 private:
-  const char* name;
+  const char *name;
   bool currentValue;
   Timing freqConf;
   int pin;
   void (*digitalWriteFunc)(unsigned char, unsigned char);
 
 public:
-
-  Led(const char* n, int p): freqConf(OnceEvery1Second) {
+  Led(const char *n, int p) : freqConf(OnceEvery1Second) {
     name = n;
     currentValue = false;
     pin = p;
@@ -37,25 +36,27 @@ public:
   }
 
   void setDigitalWriteFunction(void (*d)(unsigned char, unsigned char)) {
-  	digitalWriteFunc = d;
+    digitalWriteFunc = d;
   }
 
   void cycle() {
     if (freqConf.matches()) {
-  		if (digitalWriteFunc != NULL) {
-  			digitalWriteFunc(pin, currentValue);
-  		}
-  	}
-  }
-
-  const char* getPropName(int propIndex) {
-    switch (propIndex) {
-      case (LedConfigOnState): return "on";
-      default: return "";
+      if (digitalWriteFunc != NULL) {
+        digitalWriteFunc(pin, currentValue);
+      }
     }
   }
 
-  void setProp(int propIndex, SetMode setMode, const Value* targetValue, Value* actualValue) {
+  const char *getPropName(int propIndex) {
+    switch (propIndex) {
+      case (LedConfigOnState):
+        return "on";
+      default:
+        return "";
+    }
+  }
+
+  void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
       case (LedConfigOnState):
         if (setMode == SetNext) {
@@ -77,17 +78,22 @@ public:
     }
   }
 
-  int getNroProps() { return LedConfigStateDelimiter; }
+  int getNroProps() {
+    return LedConfigStateDelimiter;
+  }
 
-  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH>* info) {
+  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {
     Boolean i(currentValue);
     info->load(&i);
   }
 
-  int getNroInfos() { return 1; }
+  int getNroInfos() {
+    return 1;
+  }
 
-  Timing *getFrequencyConfiguration() { return &freqConf; }
-
+  Timing *getFrequencyConfiguration() {
+    return &freqConf;
+  }
 };
 
 #endif // LED_INC

@@ -17,14 +17,13 @@ enum ArmConfigState {
 class Arm : public Actor {
 
 private:
-  const char* name;
+  const char *name;
   int currentPosition;
   Timing freqConf;
   void (*setPositionFunction)(int);
 
 public:
-
-  Arm(const char* n): freqConf(OnceEvery5Seconds) {
+  Arm(const char *n) : freqConf(OnceEvery5Seconds) {
     name = n;
     currentPosition = 0;
     setPositionFunction = NULL;
@@ -39,22 +38,24 @@ public:
   }
 
   void cycle() {
-  	if (freqConf.matches()) {
+    if (freqConf.matches()) {
       if (setPositionFunction != NULL) {
         log(CLASS_ARM, Info, "Set: %d", currentPosition);
         setPositionFunction(currentPosition);
       }
-  	}
-  }
-
-  const char* getPropName(int propIndex) {
-    switch (propIndex) {
-      case (ArmConfigOnState): return "pos";
-      default: return "";
     }
   }
 
-  void setProp(int propIndex, SetMode setMode, const Value* targetValue, Value* actualValue) {
+  const char *getPropName(int propIndex) {
+    switch (propIndex) {
+      case (ArmConfigOnState):
+        return "pos";
+      default:
+        return "";
+    }
+  }
+
+  void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
       case (ArmConfigOnState):
         if (setMode == SetValue) {
@@ -75,17 +76,22 @@ public:
     }
   }
 
-  int getNroProps() { return ArmConfigStateDelimiter; }
+  int getNroProps() {
+    return ArmConfigStateDelimiter;
+  }
 
-  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH>* info) {
+  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {
     Integer i(currentPosition);
     info->load(&i);
   }
 
-  int getNroInfos() { return 1; }
+  int getNroInfos() {
+    return 1;
+  }
 
-  Timing *getFrequencyConfiguration() { return &freqConf; }
-
+  Timing *getFrequencyConfiguration() {
+    return &freqConf;
+  }
 };
 
 #endif // ARM_INC

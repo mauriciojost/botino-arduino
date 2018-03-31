@@ -11,12 +11,11 @@ void setUp() {}
 
 void tearDown() {}
 
-void feed(ParamStream* ps, const char* msg) {
-  for (int i=0; i<strlen(msg); i++) {
+void feed(ParamStream *ps, const char *msg) {
+  for (int i = 0; i < strlen(msg); i++) {
     ps->write(msg[i]);
   }
 }
-
 
 void test_param_stream_behaviour() {
   ParamStream ps;
@@ -28,7 +27,7 @@ void test_param_stream_behaviour() {
   ps.flush();
 
   feed(&ps, "{\"key\":{\"innerkey\":\"innervalue\"}}");
-  JsonObject& json = ps.parse();
+  JsonObject &json = ps.parse();
   TEST_ASSERT_EQUAL_STRING("innervalue", json["key"]["innerkey"]);
 
   ps.flush();

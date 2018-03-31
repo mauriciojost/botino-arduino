@@ -13,7 +13,6 @@
 #include <log4ino/Log.h>
 #include <Pinout.h>
 
-
 #define CLASS_MODULE "MD"
 
 /**
@@ -23,7 +22,7 @@ class Module {
 
 private:
   Messenger *msgr;
-  Array<Actor*> *actors;
+  Array<Actor *> *actors;
   Clock *clock;
   Arm *arm0;
   Led *led0;
@@ -40,7 +39,6 @@ private:
   Lcd *lcd;
 
 public:
-
   Module() {
 
     lcd = new Lcd("lc");
@@ -58,26 +56,25 @@ public:
     arm0 = new Arm("a");
     global0 = new Global("g");
 
-    actors = new Array<Actor*>(14);
-    actors->set(0, (Actor*)clock);
-    actors->set(1, (Actor*)msgr);
-    actors->set(2, (Actor*)led0);
-    actors->set(3, (Actor*)led1);
-    actors->set(4, (Actor*)led2);
-    actors->set(5, (Actor*)led3);
-    actors->set(6, (Actor*)led4);
-    actors->set(7, (Actor*)led5);
-    actors->set(8, (Actor*)led6);
-    actors->set(9, (Actor*)led7);
-    actors->set(10, (Actor*)led8);
-    actors->set(11, (Actor*)lcd);
-    actors->set(12, (Actor*)arm0);
-    actors->set(13, (Actor*)global0);
+    actors = new Array<Actor *>(14);
+    actors->set(0, (Actor *)clock);
+    actors->set(1, (Actor *)msgr);
+    actors->set(2, (Actor *)led0);
+    actors->set(3, (Actor *)led1);
+    actors->set(4, (Actor *)led2);
+    actors->set(5, (Actor *)led3);
+    actors->set(6, (Actor *)led4);
+    actors->set(7, (Actor *)led5);
+    actors->set(8, (Actor *)led6);
+    actors->set(9, (Actor *)led7);
+    actors->set(10, (Actor *)led8);
+    actors->set(11, (Actor *)lcd);
+    actors->set(12, (Actor *)arm0);
+    actors->set(13, (Actor *)global0);
 
     bot = new WebBot(clock, actors);
     msgr->setBot(bot);
     bot->setMode(RunMode);
-
   }
 
   void loop(bool mode, bool set, bool wdtWasTriggered) {
@@ -93,18 +90,18 @@ public:
     bot->cycle(mode, set, interruptType);
   }
 
-  void setup() { }
+  void setup() {}
 
   void setDigitalWriteFunction(void (*digitalWriteFunction)(unsigned char pin, unsigned char value)) {
-  	//led0->setDigitalWriteFunction(digitalWriteFunction);
-  	//led1->setDigitalWriteFunction(digitalWriteFunction);
-  	//led2->setDigitalWriteFunction(digitalWriteFunction);
-  	//led3->setDigitalWriteFunction(digitalWriteFunction);
-  	//led4->setDigitalWriteFunction(digitalWriteFunction);
-  	//led5->setDigitalWriteFunction(digitalWriteFunction);
-  	//led6->setDigitalWriteFunction(digitalWriteFunction);
-  	//led7->setDigitalWriteFunction(digitalWriteFunction);
-  	led8->setDigitalWriteFunction(digitalWriteFunction);
+    // led0->setDigitalWriteFunction(digitalWriteFunction);
+    // led1->setDigitalWriteFunction(digitalWriteFunction);
+    // led2->setDigitalWriteFunction(digitalWriteFunction);
+    // led3->setDigitalWriteFunction(digitalWriteFunction);
+    // led4->setDigitalWriteFunction(digitalWriteFunction);
+    // led5->setDigitalWriteFunction(digitalWriteFunction);
+    // led6->setDigitalWriteFunction(digitalWriteFunction);
+    // led7->setDigitalWriteFunction(digitalWriteFunction);
+    led8->setDigitalWriteFunction(digitalWriteFunction);
   }
 
   void setBotStdoutWriteFunction(void (*stdOutWriteStringFunction)(const char *, const char *)) {
@@ -123,14 +120,13 @@ public:
     clock->setFactor(f);
   }
 
-  Clock * getClock() {
+  Clock *getClock() {
     return clock;
   }
 
-  Global * getGlobal() {
+  Global *getGlobal() {
     return global0;
   }
-
 };
 
 #endif // MODULE_INC

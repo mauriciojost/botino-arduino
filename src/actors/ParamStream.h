@@ -15,7 +15,6 @@
 
 #define CLASS_PARAM_STREAM "PS"
 
-
 #ifndef UNIT_TEST
 
 class ParamStream : public Stream {
@@ -33,8 +32,7 @@ private:
   StaticJsonBuffer<MAX_JSON_STR_LENGTH> jsonBuffer;
 
 public:
-
-  ParamStream() { }
+  ParamStream() {}
 
   size_t write(uint8_t b) {
     append(b);
@@ -63,12 +61,11 @@ public:
     bytesReceived.clear();
   }
 
-  JsonObject& parse() {
+  JsonObject &parse() {
     log(CLASS_PARAM_STREAM, Debug, "Parsing: %s", bytesReceived.getBuffer());
     JsonObject &root = jsonBuffer.parseObject(bytesReceived.getUnsafeBuffer());
     return root;
   }
-
 };
 
 #endif // PARAM_STREAM_INC

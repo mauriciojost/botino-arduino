@@ -18,14 +18,13 @@ enum GlobalConfigState {
 class Global : public Actor {
 
 private:
-  const char* name;
+  const char *name;
   bool clear;
   int logLevel;
   Timing freqConf;
 
 public:
-
-  Global(const char* n): freqConf(OnceEvery5Seconds) {
+  Global(const char *n) : freqConf(OnceEvery5Seconds) {
     name = n;
     clear = false;
     logLevel = 0;
@@ -35,17 +34,20 @@ public:
     return name;
   }
 
-  void cycle() { }
+  void cycle() {}
 
-  const char* getPropName(int propIndex) {
+  const char *getPropName(int propIndex) {
     switch (propIndex) {
-      case (GlobalClearStackTraceState): return "cl";
-      case (GlobalLogLevelState): return "ll";
-      default: return "";
+      case (GlobalClearStackTraceState):
+        return "cl";
+      case (GlobalLogLevelState):
+        return "ll";
+      default:
+        return "";
     }
   }
 
-  void setProp(int propIndex, SetMode setMode, const Value* targetValue, Value* actualValue) {
+  void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
       case (GlobalClearStackTraceState):
         if (setMode == SetValue) {
@@ -80,20 +82,29 @@ public:
     }
   }
 
-  int getNroProps() { return GlobalConfigStateDelimiter; }
+  int getNroProps() {
+    return GlobalConfigStateDelimiter;
+  }
 
-  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH>* info) {
+  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {
     Boolean i(clear);
     info->load(&i);
   }
 
-  int getNroInfos() { return 1; }
+  int getNroInfos() {
+    return 1;
+  }
 
-  Timing *getFrequencyConfiguration() { return &freqConf; }
+  Timing *getFrequencyConfiguration() {
+    return &freqConf;
+  }
 
-  bool getClear() { return clear; }
-  int getLogLevel() { return logLevel; }
-
+  bool getClear() {
+    return clear;
+  }
+  int getLogLevel() {
+    return logLevel;
+  }
 };
 
 #endif // GLOBAL_INC
