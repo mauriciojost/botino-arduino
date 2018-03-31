@@ -96,15 +96,15 @@ public:
   void setup() { }
 
   void setDigitalWriteFunction(void (*digitalWriteFunction)(unsigned char pin, unsigned char value)) {
-  	led0->setDigitalWriteFunction(digitalWriteFunction);
-  	led1->setDigitalWriteFunction(digitalWriteFunction);
+  	//led0->setDigitalWriteFunction(digitalWriteFunction);
+  	//led1->setDigitalWriteFunction(digitalWriteFunction);
   	//led2->setDigitalWriteFunction(digitalWriteFunction);
   	//led3->setDigitalWriteFunction(digitalWriteFunction);
   	//led4->setDigitalWriteFunction(digitalWriteFunction);
   	//led5->setDigitalWriteFunction(digitalWriteFunction);
   	//led6->setDigitalWriteFunction(digitalWriteFunction);
   	//led7->setDigitalWriteFunction(digitalWriteFunction);
-  	//led8->setDigitalWriteFunction(digitalWriteFunction);
+  	led8->setDigitalWriteFunction(digitalWriteFunction);
   }
 
   void setBotStdoutWriteFunction(void (*stdOutWriteStringFunction)(const char *, const char *)) {
