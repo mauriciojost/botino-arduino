@@ -47,10 +47,15 @@ void lcdClear(int line) {
 }
 
 void lcdPrintLine(const char *str, int line, bool clearFirst) {
-	if (m.getSettings()->getDisableLcd()) {
-  	lcdClear(line);
+  static bool previousDisableLcd = false;
+	bool disableLcd = m.getSettings()->getDisableLcd();
+	if (disableLcd) {
+		if (disableLcd != previousDisableLcd) {
+      lcdClear(line);
+		}
 		return;
 	}
+  previousDisableLcd = disableLcd;
   if (clearFirst) {
   	lcdClear(line);
   }
