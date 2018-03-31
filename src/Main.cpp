@@ -41,6 +41,9 @@ void buttonPressed() {
 }
 
 void lcdPrintLine(const char *str, int line, bool clearFirst) {
+	if (m.getSettings()->getDisableLcd()) {
+		return;
+	}
   if (clearFirst) {
     lcd.fillRect(0, line * 8, 128, 8, BLACK);
   }
@@ -213,7 +216,7 @@ void loop() {
 
   setLogLevel((char)(m.getSettings()->getLogLevel() % 4));
 
-  lightSleep(1 * 1000);
+  lightSleep(m.getSettings()->getPeriodSeconds() * 1000);
 }
 
 

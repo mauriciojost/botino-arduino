@@ -13,6 +13,8 @@ enum GlobalConfigState {
   GlobalClearStackTraceState = 0,
   GlobalLogLevelState,
   GlobalButtonPressedState,
+  GlobalPeriodSecondsState,
+  GlobalDisableLcdState,
   GlobalConfigStateDelimiter // delimiter of the configuration states
 };
 
@@ -20,17 +22,21 @@ class Settings : public Actor {
 
 private:
   const char *name;
-  bool clear;
+  bool clearStackTrace;
   int logLevel;
   int buttonPressed;
+  int periodSeconds;
+  bool disableLcd;
   Timing freqConf;
 
 public:
   Settings(const char *n) : freqConf(Never) {
     name = n;
-    clear = false;
-    logLevel = 0;
+    clearStackTrace = false;
+    logLevel = 1;
     buttonPressed = 0;
+    periodSeconds = 1;
+    disableLcd = true;
   }
 
   const char *getName() {
@@ -47,6 +53,10 @@ public:
         return "ll";
       case (GlobalButtonPressedState):
         return "bp";
+      case (GlobalPeriodSecondsState):
+        return "ps";
+      case (GlobalDisableLcdState):
+        return "di";
       default:
         return "";
     }
@@ -55,11 +65,15 @@ public:
   void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
       case (GlobalClearStackTraceState):
-      	setPropBoolean(setMode, targetValue, actualValue, &clear); break;
+      	setPropBoolean(setMode, targetValue, actualValue, &clearStackTrace); break;
       case (GlobalLogLevelState):
       	setPropInteger(setMode, targetValue, actualValue, &logLevel); break;
       case (GlobalButtonPressedState):
       	setPropInteger(setMode, targetValue, actualValue, &buttonPressed); break;
+      case (GlobalPeriodSecondsState):
+      	setPropInteger(setMode, targetValue, actualValue, &periodSeconds); break;
+      case (GlobalDisableLcdState):
+      	setPropBoolean(setMode, targetValue, actualValue, &disableLcd); break;
       default:
         break;
     }
@@ -70,7 +84,7 @@ public:
   }
 
   void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {
-    Boolean i(clear);
+    Boolean i(clearStackTrace);
     info->load(&i);
   }
 
@@ -83,7 +97,7 @@ public:
   }
 
   bool getClear() {
-    return clear;
+    return clearStackTrace;
   }
 
   int getLogLevel() {
@@ -96,6 +110,14 @@ public:
 
   void setButtonPressed(int v) {
     buttonPressed = v;
+  }
+
+  int getPeriodSeconds() {
+    return periodSeconds;
+  }
+
+  bool getDisableLcd() {
+    return disableLcd;
   }
 
 };
