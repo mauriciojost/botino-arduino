@@ -138,7 +138,7 @@ void setup() {
   m.setDigitalWriteFunction(digitalWrite);
   m.setServoPositionFunction(servoControl);
 
-  attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, RISING);
+  attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, FALLING);
 }
 
 
