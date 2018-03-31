@@ -40,7 +40,7 @@ public:
   void cycle() {
     if (freqConf.matches()) {
       if (setPositionFunction != NULL) {
-        log(CLASS_ARM, Info, "Set: %d", currentPosition);
+        log(CLASS_ARM, Info, "%s set: %d", name, currentPosition);
         setPositionFunction(currentPosition);
       }
     }
