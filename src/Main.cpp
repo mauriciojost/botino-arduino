@@ -43,6 +43,7 @@ void buttonPressed() {
 void lcdClear(int line) {
   lcd.fillRect(0, line * 8, 128, 8, BLACK);
   lcd.display();
+  delay(1);
 }
 
 void lcdPrintLine(const char *str, int line, bool clearFirst) {
