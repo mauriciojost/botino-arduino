@@ -40,12 +40,18 @@ void buttonPressed() {
 	ints++;
 }
 
+void lcdClear(int line) {
+  lcd.fillRect(0, line * 8, 128, 8, BLACK);
+  lcd.display();
+}
+
 void lcdPrintLine(const char *str, int line, bool clearFirst) {
 	if (m.getSettings()->getDisableLcd()) {
+  	lcdClear(line);
 		return;
 	}
   if (clearFirst) {
-    lcd.fillRect(0, line * 8, 128, 8, BLACK);
+  	lcdClear(line);
   }
   lcd.setTextSize(1);
   lcd.setTextColor(WHITE);
@@ -187,7 +193,7 @@ wl_status_t initWifi() {
 }
 
 void lightSleep(unsigned long delayMs) {
-  log(CLASS_MAIN, Info, "Light sleep...");
+  log(CLASS_MAIN, Info, "Li-sleep (%lu ms)...", delayMs);
   wifi_set_sleep_type(LIGHT_SLEEP_T);
   delay(delayMs);
 }
@@ -195,7 +201,7 @@ void lightSleep(unsigned long delayMs) {
 void deepSleep(uint32_t delayUs) {
   // RST to GPIO16
   // Sometimes hangs https://github.com/esp8266/Arduino/issues/2049
-  log(CLASS_MAIN, Info, "Deep sleep...");
+  log(CLASS_MAIN, Info, "De-sleep (%lu us)...", delayUs);
   ESP.deepSleep(delayUs);
 }
 
