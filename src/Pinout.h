@@ -30,25 +30,26 @@
 #define PIN_D3 GPIO0_PIN
 #define PIN_D4 GPIO2_PIN
 #define PIN_D5 GPIO14_PIN
-#define PIN_D6 GPIO12_PIN // using it breaks serial communication?
+#define PIN_D6 GPIO12_PIN
 #define PIN_D7 GPIO13_PIN // RXD2
-#define PIN_D8 GPIO15_PIN // TXD2, if used may break deep sleep mode?
+#define PIN_D8 GPIO15_PIN // TXD2
 #define PIN_D9 GPIO3_PIN // RXDO, if used will break serial communication
 #define PIN_D10 GPIO1_PIN // TXDO, if used will break serial communication
 #define PIN_D11 GPIO9_PIN // SDD2 / SD2
 #define PIN_D12 GPIO10_PIN // SDD3 / SD3
 
 // LEDS
-#define LED0_PIN PIN_D3
-#define LED1_PIN PIN_D4
+#define LED0_PIN PIN_D0
+#define LED1_PIN PIN_D3
+#define LED2_PIN PIN_D4
+#define LED3_PIN PIN_D5
 
 // SERVO
-#define SERVO0_PIN PIN_D6
+#define SERVO0_PIN PIN_D7
 
 // I2C OLED 128x64
 // (Kuman 0.96inches I2C OLED 128x64 LCD screen)
 #define LCD_SCL_PIN PIN_D1
 #define LCD_SDA_PIN PIN_D2
-#define LCD_RESET_PIN GPIO0_PIN
 
 #endif // PINOUT_INC

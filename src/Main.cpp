@@ -34,7 +34,7 @@ enum ButtonPressed {
 
 Module m;
 Servo servo;
-Adafruit_SSD1306 lcd(LCD_RESET_PIN);
+Adafruit_SSD1306 lcd(-1);
 
 
 /******************/
@@ -102,6 +102,8 @@ void setupPins() {
   log(CLASS_MAIN, Debug, "Setup pins");
   pinMode(LED0_PIN, OUTPUT);
   pinMode(LED1_PIN, OUTPUT);
+  pinMode(LED2_PIN, OUTPUT);
+  pinMode(LED3_PIN, OUTPUT);
   pinMode(SERVO0_PIN, OUTPUT);
 }
 

@@ -28,6 +28,8 @@ private:
   Arm *arm0;
   Led *led0;
   Led *led1;
+  Led *led2;
+  Led *led3;
   Global *global0;
   WebBot *bot;
   Lcd *lcd;
@@ -40,18 +42,22 @@ public:
     msgr = new Messenger("m");
     led0 = new Led("l0", LED0_PIN);
     led1 = new Led("l1", LED1_PIN);
+    led2 = new Led("l2", LED2_PIN);
+    led3 = new Led("l3", LED3_PIN);
     clock = new Clock("c");
     arm0 = new Arm("a");
     global0 = new Global("g");
 
-    actors = new Array<Actor*>(7);
+    actors = new Array<Actor*>(9);
     actors->set(0, (Actor*)clock);
     actors->set(1, (Actor*)msgr);
     actors->set(2, (Actor*)led0);
     actors->set(3, (Actor*)led1);
-    actors->set(4, (Actor*)lcd);
-    actors->set(5, (Actor*)arm0);
-    actors->set(6, (Actor*)global0);
+    actors->set(4, (Actor*)led2);
+    actors->set(5, (Actor*)led3);
+    actors->set(6, (Actor*)lcd);
+    actors->set(7, (Actor*)arm0);
+    actors->set(8, (Actor*)global0);
 
     bot = new WebBot(clock, actors);
     msgr->setBot(bot);
