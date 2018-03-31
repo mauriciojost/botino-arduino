@@ -7,27 +7,30 @@
 #include <main4ino/Integer.h>
 #include <main4ino/Boolean.h>
 
-#define CLASS_GLOBAL "GL"
+#define CLASS_SETTINGS "ST"
 
 enum GlobalConfigState {
   GlobalClearStackTraceState = 0,
   GlobalLogLevelState,
+  GlobalButtonPressedState,
   GlobalConfigStateDelimiter // delimiter of the configuration states
 };
 
-class Global : public Actor {
+class Settings : public Actor {
 
 private:
   const char *name;
   bool clear;
   int logLevel;
+  int buttonPressed;
   Timing freqConf;
 
 public:
-  Global(const char *n) : freqConf(OnceEvery5Seconds) {
+  Settings(const char *n) : freqConf(OnceEvery5Seconds) {
     name = n;
     clear = false;
     logLevel = 0;
+    buttonPressed = 0;
   }
 
   const char *getName() {
@@ -42,6 +45,8 @@ public:
         return "cl";
       case (GlobalLogLevelState):
         return "ll";
+      case (GlobalButtonPressedState):
+        return "bp";
       default:
         return "";
     }
@@ -53,10 +58,7 @@ public:
         if (setMode == SetValue) {
           Boolean b(targetValue);
           clear = b.get();
-        }
-        if (setMode != DoNotSet) {
-          log(CLASS_GLOBAL, Info, "Global: %s", name);
-          log(CLASS_GLOBAL, Info, " clear: %d", clear);
+          log(CLASS_SETTINGS, Info, "%s: clear %d", name, clear);
         }
         if (actualValue != NULL) {
           Boolean b(clear);
@@ -67,13 +69,20 @@ public:
         if (setMode == SetValue) {
           Integer b(targetValue);
           logLevel = b.get();
-        }
-        if (setMode != DoNotSet) {
-          log(CLASS_GLOBAL, Info, "Global: %s", name);
-          log(CLASS_GLOBAL, Info, " log: %d", logLevel);
+          log(CLASS_SETTINGS, Info, "%s: log %d", name, logLevel);
         }
         if (actualValue != NULL) {
           Integer b(logLevel);
+          actualValue->load(&b);
+        }
+        break;
+      case (GlobalButtonPressedState):
+        if (setMode == SetValue) {
+          Integer b(targetValue);
+          buttonPressed = b.get();
+        }
+        if (actualValue != NULL) {
+          Integer b(buttonPressed);
           actualValue->load(&b);
         }
         break;
@@ -102,9 +111,19 @@ public:
   bool getClear() {
     return clear;
   }
+
   int getLogLevel() {
     return logLevel;
   }
+
+  int getButtonPressed() {
+    return buttonPressed;
+  }
+
+  void setButtonPressed(int v) {
+    buttonPressed = v;
+  }
+
 };
 
 #endif // GLOBAL_INC

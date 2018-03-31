@@ -30,10 +30,15 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 Module m;
 Servo servo;
 Adafruit_SSD1306 lcd(-1);
+volatile unsigned char ints = 0;
 
 /******************/
 /***  CALLBACKS ***/
 /******************/
+
+void buttonPressed() {
+	ints++;
+}
 
 void lcdPrintLine(const char *str, int line, bool clearFirst) {
   if (clearFirst) {
@@ -48,15 +53,18 @@ void lcdPrintLine(const char *str, int line, bool clearFirst) {
 }
 
 /*
+ * LCD (128 x 64 pixels, 16 x 8 chars):
  *
- * BOT X LINE 0
- * BOT X LINE 1
- * LCD X LINE 0
- * LCD X LINE 1
- * LOGS0
- * LOGS1
- * LOGS2
- * LOGS3
+ *   BOT X LINE 0
+ *   BOT X LINE 1
+ *
+ *   LCD X LINE 0
+ *   LCD X LINE 1
+ *
+ *   LOGS0
+ *   LOGS1
+ *   LOGS2
+ *   LOGS3
  *
  * */
 
@@ -94,16 +102,10 @@ void servoControl(int pos) {
 
 void setupPins() {
   log(CLASS_MAIN, Debug, "Setup pins");
-  // pinMode(LED0_PIN, OUTPUT);
-  // pinMode(LED1_PIN, OUTPUT);
-  // pinMode(LED2_PIN, OUTPUT);
-  // pinMode(LED3_PIN, OUTPUT);
-  // pinMode(LED4_PIN, OUTPUT);
-  // pinMode(LED5_PIN, OUTPUT);
-  // pinMode(LED6_PIN, OUTPUT);
-  // pinMode(LED7_PIN, OUTPUT);
-  pinMode(LED8_PIN, OUTPUT);
+  pinMode(LED0_PIN, OUTPUT);
+  pinMode(LED1_PIN, OUTPUT);
   pinMode(SERVO0_PIN, OUTPUT);
+  pinMode(BUTTON0_PIN, INPUT);
 }
 
 void setup() {
@@ -135,7 +137,10 @@ void setup() {
   m.setLcdStdoutWriteFunction(lcdDisplayOnLcd);
   m.setDigitalWriteFunction(digitalWrite);
   m.setServoPositionFunction(servoControl);
+
+  attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, RISING);
 }
+
 
 /**
  * Read buttons from serial port
@@ -200,13 +205,17 @@ void loop() {
     m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
   }
 
-  if (m.getGlobal()->getClear()) {
+  if (m.getSettings()->getClear()) {
     SaveCrash.clear();
   }
 
-  setLogLevel((char)(m.getGlobal()->getLogLevel() % 4));
+  m.getSettings()->setButtonPressed((int)ints);
+
+  setLogLevel((char)(m.getSettings()->getLogLevel() % 4));
 
   lightSleep(1 * 1000);
 }
+
+
 
 #endif // UNIT_TEST

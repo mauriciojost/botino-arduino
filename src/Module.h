@@ -6,12 +6,12 @@
 #include <actors/Led.h>
 #include <actors/Lcd.h>
 #include <actors/Arm.h>
-#include <actors/Global.h>
 #include <main4ino/Clock.h>
 #include <main4ino/WebBot.h>
 #include <main4ino/Array.h>
 #include <log4ino/Log.h>
 #include <Pinout.h>
+#include "actors/Settings.h"
 
 #define CLASS_MODULE "MD"
 
@@ -27,14 +27,7 @@ private:
   Arm *arm0;
   Led *led0;
   Led *led1;
-  Led *led2;
-  Led *led3;
-  Led *led4;
-  Led *led5;
-  Led *led6;
-  Led *led7;
-  Led *led8;
-  Global *global0;
+  Settings *settings;
   WebBot *bot;
   Lcd *lcd;
 
@@ -45,32 +38,18 @@ public:
     msgr = new Messenger("m");
     led0 = new Led("l0", LED0_PIN);
     led1 = new Led("l1", LED1_PIN);
-    led2 = new Led("l2", LED2_PIN);
-    led3 = new Led("l3", LED3_PIN);
-    led4 = new Led("l4", LED4_PIN);
-    led5 = new Led("l5", LED5_PIN);
-    led6 = new Led("l6", LED6_PIN);
-    led7 = new Led("l7", LED7_PIN);
-    led8 = new Led("l8", LED8_PIN);
     clock = new Clock("c");
     arm0 = new Arm("a");
-    global0 = new Global("g");
+    settings = new Settings("g");
 
-    actors = new Array<Actor *>(14);
+    actors = new Array<Actor *>(7);
     actors->set(0, (Actor *)clock);
     actors->set(1, (Actor *)msgr);
     actors->set(2, (Actor *)led0);
     actors->set(3, (Actor *)led1);
-    actors->set(4, (Actor *)led2);
-    actors->set(5, (Actor *)led3);
-    actors->set(6, (Actor *)led4);
-    actors->set(7, (Actor *)led5);
-    actors->set(8, (Actor *)led6);
-    actors->set(9, (Actor *)led7);
-    actors->set(10, (Actor *)led8);
-    actors->set(11, (Actor *)lcd);
-    actors->set(12, (Actor *)arm0);
-    actors->set(13, (Actor *)global0);
+    actors->set(4, (Actor *)lcd);
+    actors->set(5, (Actor *)arm0);
+    actors->set(6, (Actor *)settings);
 
     bot = new WebBot(clock, actors);
     msgr->setBot(bot);
@@ -93,15 +72,8 @@ public:
   void setup() {}
 
   void setDigitalWriteFunction(void (*digitalWriteFunction)(unsigned char pin, unsigned char value)) {
-    // led0->setDigitalWriteFunction(digitalWriteFunction);
-    // led1->setDigitalWriteFunction(digitalWriteFunction);
-    // led2->setDigitalWriteFunction(digitalWriteFunction);
-    // led3->setDigitalWriteFunction(digitalWriteFunction);
-    // led4->setDigitalWriteFunction(digitalWriteFunction);
-    // led5->setDigitalWriteFunction(digitalWriteFunction);
-    // led6->setDigitalWriteFunction(digitalWriteFunction);
-    // led7->setDigitalWriteFunction(digitalWriteFunction);
-    led8->setDigitalWriteFunction(digitalWriteFunction);
+    led0->setDigitalWriteFunction(digitalWriteFunction);
+    led1->setDigitalWriteFunction(digitalWriteFunction);
   }
 
   void setBotStdoutWriteFunction(void (*stdOutWriteStringFunction)(const char *, const char *)) {
@@ -124,8 +96,8 @@ public:
     return clock;
   }
 
-  Global *getGlobal() {
-    return global0;
+  Settings *getSettings() {
+    return settings;
   }
 };
 
