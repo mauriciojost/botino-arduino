@@ -30,6 +30,11 @@ private:
   Led *led1;
   Led *led2;
   Led *led3;
+  Led *led4;
+  Led *led5;
+  Led *led6;
+  Led *led7;
+  Led *led8;
   Global *global0;
   WebBot *bot;
   Lcd *lcd;
@@ -44,20 +49,30 @@ public:
     led1 = new Led("l1", LED1_PIN);
     led2 = new Led("l2", LED2_PIN);
     led3 = new Led("l3", LED3_PIN);
+    led4 = new Led("l4", LED4_PIN);
+    led5 = new Led("l5", LED5_PIN);
+    led6 = new Led("l6", LED6_PIN);
+    led7 = new Led("l7", LED7_PIN);
+    led8 = new Led("l8", LED8_PIN);
     clock = new Clock("c");
     arm0 = new Arm("a");
     global0 = new Global("g");
 
-    actors = new Array<Actor*>(9);
+    actors = new Array<Actor*>(14);
     actors->set(0, (Actor*)clock);
     actors->set(1, (Actor*)msgr);
     actors->set(2, (Actor*)led0);
     actors->set(3, (Actor*)led1);
     actors->set(4, (Actor*)led2);
     actors->set(5, (Actor*)led3);
-    actors->set(6, (Actor*)lcd);
-    actors->set(7, (Actor*)arm0);
-    actors->set(8, (Actor*)global0);
+    actors->set(6, (Actor*)led4);
+    actors->set(7, (Actor*)led5);
+    actors->set(8, (Actor*)led6);
+    actors->set(9, (Actor*)led7);
+    actors->set(10, (Actor*)led8);
+    actors->set(11, (Actor*)lcd);
+    actors->set(12, (Actor*)arm0);
+    actors->set(13, (Actor*)global0);
 
     bot = new WebBot(clock, actors);
     msgr->setBot(bot);

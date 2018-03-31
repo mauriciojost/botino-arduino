@@ -104,6 +104,11 @@ void setupPins() {
   pinMode(LED1_PIN, OUTPUT);
   pinMode(LED2_PIN, OUTPUT);
   pinMode(LED3_PIN, OUTPUT);
+  pinMode(LED4_PIN, OUTPUT);
+  pinMode(LED5_PIN, OUTPUT);
+  pinMode(LED6_PIN, OUTPUT);
+  pinMode(LED7_PIN, OUTPUT);
+  pinMode(LED8_PIN, OUTPUT);
   pinMode(SERVO0_PIN, OUTPUT);
 }
 
