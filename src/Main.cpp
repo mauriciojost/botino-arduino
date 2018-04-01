@@ -26,6 +26,8 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 
 #define DO_NOT_CLEAR_FIRST false
 #define CLEAR_FIRST true
+#define MIN(x,y) ((x < y)? x : y)
+#define ABS(x) ((x >= 0)? x : -x)
 
 Module m;
 Servo servo;
@@ -228,6 +230,8 @@ void deepSleep(uint32_t delayUs) {
 
 void loop() {
 
+  unsigned long t1 = millis();
+
   wl_status_t wifiStatus = initWifi();
 
   if (wifiStatus == WL_CONNECTED) {
@@ -243,7 +247,10 @@ void loop() {
 
   setLogLevel((char)(m.getSettings()->getLogLevel() % 4));
 
-  lightSleep(m.getSettings()->getPeriodSeconds() * 1000);
+  unsigned long t2 = millis();
+  unsigned long periodMs = m.getSettings()->getPeriodSeconds() * 1000;
+  unsigned long spentPeriodMs = MIN(ABS(t2 - t1), periodMs);
+  lightSleep(periodMs - spentPeriodMs);
 }
 
 
