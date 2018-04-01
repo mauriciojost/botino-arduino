@@ -36,8 +36,21 @@ volatile unsigned char ints = 0;
 /***  CALLBACKS ***/
 /******************/
 
+void lcdInit() {
+  lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  lcd.dim(true);
+  lcd.setTextWrap(false);
+  delay(1);
+}
+
 void buttonPressed() {
 	ints++;
+}
+
+void lcdClear() {
+	lcd.clearDisplay();
+  lcd.display();
+  delay(1);
 }
 
 void lcdClear(int line) {
@@ -47,15 +60,20 @@ void lcdClear(int line) {
 }
 
 void lcdPrintLine(const char *str, int line, bool clearFirst) {
-  static bool previousDisableLcd = false;
+  static unsigned int cnt = 0;
+  static bool cleared = false;
+  if (cnt++ % 100 == 0) {
+    lcdInit();
+  }
+
 	bool disableLcd = m.getSettings()->getDisableLcd();
 	if (disableLcd) {
-		if (disableLcd != previousDisableLcd) {
-      lcdClear(line);
+		if (!cleared) {
+      lcdClear();
+      cleared = true;
 		}
 		return;
 	}
-  previousDisableLcd = disableLcd;
   if (clearFirst) {
   	lcdClear(line);
   }
@@ -64,6 +82,7 @@ void lcdPrintLine(const char *str, int line, bool clearFirst) {
   lcd.setCursor(0, line * 8);
   lcd.println(str);
   lcd.display();
+  cleared = false;
   delay(1);
 }
 
@@ -134,11 +153,7 @@ void setup() {
   SaveCrash.print();
 
   // Initialize the LCD
-  lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  lcd.clearDisplay();
-  lcd.display();
-  lcd.dim(true);
-  lcd.setTextWrap(false);
+  lcdInit();
 
   // Intialize the logging framework
   setupLog(logLine);
