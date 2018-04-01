@@ -194,7 +194,7 @@ wl_status_t initWifi() {
       log(CLASS_MAIN, Warn, "Connection failed %d", status);
       return status;
     }
-    delay(400);
+    delay(1500);
   }
 }
 
