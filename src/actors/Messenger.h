@@ -60,13 +60,17 @@ public:
   }
 
   void cycle() {
+  	static int count = 0;
     if (bot == NULL) {
       return;
     }
     if (freqConf.matches()) {
-      updateClockProperties();
+    	if (count % 100 == 0) {
+        updateClockProperties();
+    	}
       updateBotProperties();
     }
+    count++;
   }
 
   void updateClockProperties() {
@@ -167,8 +171,6 @@ public:
 
 #endif // UNIT_TEST
   }
-
-  void getActuatorValue(Value *value) {}
 
   void setProp(int propIndex, SetMode set, const Value *targetValue, Value *actualValue) {}
 
