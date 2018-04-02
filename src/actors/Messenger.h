@@ -59,7 +59,7 @@ public:
     return name;
   }
 
-  void cycle() {
+  void act() {
   	static int count = 0;
     if (bot == NULL) {
       return;

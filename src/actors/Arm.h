@@ -37,7 +37,7 @@ public:
     setPositionFunction = f;
   }
 
-  void cycle() {
+  void act() {
     if (freqConf.matches()) {
       if (setPositionFunction != NULL) {
         log(CLASS_ARM, Info, "%s set: %d", name, currentPosition);

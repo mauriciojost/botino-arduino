@@ -43,7 +43,7 @@ public:
     return name;
   }
 
-  void cycle() {}
+  void act() {}
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {

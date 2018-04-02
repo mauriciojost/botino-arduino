@@ -51,7 +51,7 @@ public:
     return name;
   }
 
-  void cycle() {
+  void act() {
     if (freqConf.matches()) {
       if (stdOutFunction != NULL) {
         if (channel == 0) {

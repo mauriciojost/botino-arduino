@@ -39,7 +39,7 @@ public:
     digitalWriteFunc = d;
   }
 
-  void cycle() {
+  void act() {
     if (freqConf.matches()) {
       if (digitalWriteFunc != NULL) {
         log(CLASS_LED, Info, "%s -> %d", name, currentValue);
