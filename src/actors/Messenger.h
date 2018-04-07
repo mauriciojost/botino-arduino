@@ -46,7 +46,7 @@ private:
   Buffer<MAX_URL_EFF_LENGTH> staticUrl;
 
 public:
-  Messenger(const char *n) : freqConf(OnceEvery10Seconds) {
+  Messenger(const char *n) : freqConf(OnceEvery1Minute) {
     name = n;
     bot = NULL;
   }
@@ -65,7 +65,7 @@ public:
     }
     if (freqConf.matches()) {
       static int count = 0;
-      if (count++ % 10 == 0) {
+      if (count++ % 100 == 0) {
         updateClockProperties();
       }
       updateBotProperties();
