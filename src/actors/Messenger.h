@@ -64,10 +64,7 @@ public:
       return;
     }
     if (freqConf.matches()) {
-      static int count = 0;
-      if (count++ % 100 == 0) {
-        updateClockProperties();
-      }
+      updateClockProperties();
       updateBotProperties();
     }
   }
@@ -92,12 +89,13 @@ public:
 
       if (json.containsKey("formatted")) {
 
-        Boolean autoAdjust(true);
+      	static bool fi = true;
+        Boolean autoAdjust(!fi);
         bot->getClock()->setProp(ClockConfigStateAutoAdjustFactor, SetValue, &autoAdjust, NULL);
-
         const char *formatted = json["formatted"].as<char *>();
         Buffer<8> time(formatted + 11);
         bot->getClock()->setProp(ClockConfigStateHhMmSs, SetValue, &time, NULL);
+        fi = false;
 
       } else {
         log(CLASS_MESSENGER, Warn, "No 'formatted'");

@@ -33,7 +33,7 @@ public:
   Settings(const char *n) : freqConf(Never) {
     name = n;
     clearStackTrace = false;
-    logLevel = 1;
+    logLevel = 0;
     buttonPressed = 0;
     periodSeconds = 1;
     disableLcd = true;
