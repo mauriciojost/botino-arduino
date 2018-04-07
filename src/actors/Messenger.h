@@ -60,17 +60,16 @@ public:
   }
 
   void act() {
-  	static int count = 0;
     if (bot == NULL) {
       return;
     }
     if (freqConf.matches()) {
-    	if (count % 100 == 0) {
+      static int count = 0;
+      if (count++ % 10 == 0) {
         updateClockProperties();
-    	}
+      }
       updateBotProperties();
     }
-    count++;
   }
 
   void updateClockProperties() {
