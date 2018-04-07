@@ -26,8 +26,6 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 
 #define DO_NOT_CLEAR_FIRST false
 #define CLEAR_FIRST true
-#define MIN(x,y) ((x < y)? x : y)
-#define ABS(x) ((x >= 0)? x : -x)
 
 Module m;
 Servo servo;
@@ -51,14 +49,10 @@ void buttonPressed() {
 
 void lcdClear() {
 	lcd.clearDisplay();
-  lcd.display();
-  delay(1);
 }
 
 void lcdClear(int line) {
   lcd.fillRect(0, line * 8, 128, 8, BLACK);
-  lcd.display();
-  delay(1);
 }
 
 void lcdPrintLine(const char *str, int line, bool clearFirst) {
@@ -72,6 +66,8 @@ void lcdPrintLine(const char *str, int line, bool clearFirst) {
 	if (disableLcd) {
 		if (!cleared) {
       lcdClear();
+      lcd.display();
+      delay(1);
       cleared = true;
 		}
 		return;
@@ -84,8 +80,8 @@ void lcdPrintLine(const char *str, int line, bool clearFirst) {
   lcd.setCursor(0, line * 8);
   lcd.println(str);
   lcd.display();
-  cleared = false;
   delay(1);
+  cleared = false;
 }
 
 /*
@@ -249,7 +245,7 @@ void loop() {
 
   unsigned long t2 = millis();
   unsigned long periodMs = m.getSettings()->getPeriodSeconds() * 1000;
-  unsigned long spentPeriodMs = MIN(ABS(t2 - t1), periodMs);
+  unsigned long spentPeriodMs = MINIM(POSIT(t2 - t1), periodMs);
   lightSleep(periodMs - spentPeriodMs);
 }
 
