@@ -9,6 +9,10 @@
 
 #define CLASS_SETTINGS "ST"
 
+#ifndef PERIOD_SEC
+#define PERIOD_SEC 30
+#endif // PERIOD_SEC
+
 enum GlobalConfigState {
   GlobalClearStackTraceState = 0,
   GlobalLogLevelState,
@@ -35,7 +39,7 @@ public:
     clearStackTrace = false;
     logLevel = 0;
     buttonPressed = 0;
-    periodSeconds = 1;
+    periodSeconds = PERIOD_SEC;
     disableLcd = true;
   }
 

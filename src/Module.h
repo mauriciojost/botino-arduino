@@ -42,6 +42,8 @@ public:
     arm0 = new Arm("a");
     settings = new Settings("g");
 
+    clock->setFactor(PERIOD_SEC);
+
     actors = new Array<Actor *>(7);
     actors->set(0, (Actor *)clock);
     actors->set(1, (Actor *)msgr);
