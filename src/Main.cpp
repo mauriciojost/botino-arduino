@@ -7,6 +7,7 @@
 #include <Servo.h>
 #include "EspSaveCrash.h"
 #include <Pinout.h>
+#include <images/Smile.h>
 
 #define CLASS_MAIN "MA"
 
@@ -21,6 +22,7 @@
 extern "C" {
 #include "user_interface.h"
 }
+
 
 enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 
@@ -152,6 +154,22 @@ void setup() {
 
   // Initialize the LCD
   lcdInit();
+  lcd.clearDisplay();
+  lcd.drawBitmap(0, 0, small_smile, 128, 64, WHITE);
+  lcd.display();
+  delay(3000);
+  lcd.clearDisplay();
+  lcd.drawBitmap(0, 0, small_smile, 128, 64, BLACK, WHITE);
+  lcd.display();
+  delay(3000);
+  lcd.clearDisplay();
+  lcd.drawBitmap(0, 0, small_smile, 128, 64, WHITE, BLACK);
+  lcd.display();
+  delay(3000);
+  lcd.clearDisplay();
+  lcd.drawGrayscaleBitmap(0, 0, small_smile, 128, 64);
+  lcd.display();
+  delay(3000);
 
   // Intialize the logging framework
   setupLog(logLine);
