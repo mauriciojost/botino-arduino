@@ -145,7 +145,7 @@ void setupPins() {
 
 void beSmily() {
   lcd.clearDisplay();
-  lcd.drawBitmap(0, 0, smile, 128, 64, WHITE);
+  lcd.drawBitmap(0, 0, happy, 128, 64, WHITE);
   lcd.display();
   delay(1000);
 }
