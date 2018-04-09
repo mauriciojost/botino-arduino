@@ -22,9 +22,10 @@ enum ArmState {
 };
 
 enum Mood {
-  Happy = 0,
+  Normal = 0,
   Sad,
-  Normal,
+  Happy,
+  Sleepy,
   BodyStateDelimiter
 };
 
@@ -42,52 +43,75 @@ private:
 
   const char *name;
   Timing freqConf;
-  void (*smile)();
-  void (*beSad)();
+  void (*smilyFace)();
+  void (*sadFace)();
+  void (*normalFace)();
+  void (*sleepyFace)();
   void (*arms)(ArmState left, ArmState right);
   Mood mood;
 
   bool isInitialized() {
-  	return smile != NULL && beSad != NULL && arms != NULL;
+  	return smilyFace != NULL && sadFace != NULL && normalFace != NULL && sleepyFace != NULL && arms != NULL;
   }
+
+  void actMood() {
+  	switch (mood) {
+  		case Happy:
+        smilyFace();
+        arms(ArmUp, ArmUp);
+        arms(ArmDown, ArmDown);
+        arms(ArmUp, ArmUp);
+        arms(ArmDown, ArmDown);
+        arms(ArmUp, ArmUp);
+        smilyFace();
+        break;
+  		case Sad:
+        sadFace();
+        arms(ArmUp, ArmUp);
+        arms(ArmMiddle, ArmMiddle);
+        arms(ArmDown, ArmDown);
+        arms(ArmMiddle, ArmMiddle);
+        arms(ArmDown, ArmDown);
+        sadFace();
+        break;
+  		case Normal:
+        normalFace();
+        arms(ArmDown, ArmDown);
+        break;
+  		case Sleepy:
+        sleepyFace();
+        arms(ArmDown, ArmDown);
+        arms(ArmMiddle, ArmMiddle);
+        arms(ArmDown, ArmDown);
+        sleepyFace();
+        break;
+  		default:
+  			break;
+  	}
+  }
+
 
 public:
 
-  Body(const char *n) : freqConf(OnceEvery5Seconds) {
+  Body(const char *n) : freqConf(OnceEvery10Seconds) {
     name = n;
-    smile = NULL;
-    beSad = NULL;
+    smilyFace = NULL;
+    sadFace = NULL;
+    normalFace = NULL;
+    sleepyFace = NULL;
     arms = NULL;
-    mood = Normal;
+    mood = Happy;
   }
 
   const char *getName() {
     return name;
   }
 
-  void setSmile(void (*f)()) { smile = f; }
-  void setBeSad(void (*f)()) { beSad = f; }
+  void setSleepyFace(void (*f)()) { sleepyFace = f; }
+  void setNormalFace(void (*f)()) { normalFace = f; }
+  void setSmilyFace(void (*f)()) { smilyFace = f; }
+  void setSadFace(void (*f)()) { sadFace = f; }
   void setArms(void (*f)(ArmState left, ArmState right)) { arms = f; }
-
-  void actMood() {
-  	switch (mood) {
-  		case Happy:
-        smile();
-        arms(ArmUp, ArmUp);
-        beSad();
-        arms(ArmDown, ArmDown);
-        smile();
-        arms(ArmUp, ArmUp);
-        arms(ArmDown, ArmDown);
-        arms(ArmUp, ArmUp);
-        arms(ArmDown, ArmDown);
-        arms(ArmUp, ArmUp);
-        smile();
-        break;
-  		default:
-  			break;
-  	}
-  }
 
   void act() {
   	if (!isInitialized()) {
@@ -95,6 +119,7 @@ public:
   	}
     if (freqConf.matches()) {
     	actMood();
+    	mood = Normal;
     }
   }
 

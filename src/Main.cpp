@@ -1,3 +1,4 @@
+
 #ifndef UNIT_TEST
 #include <Main.h>
 #include <SPI.h>
@@ -7,7 +8,7 @@
 #include <Servo.h>
 #include "EspSaveCrash.h"
 #include <Pinout.h>
-#include <images/Smile.h>
+#include "Images.h"
 
 #define CLASS_MAIN "MA"
 
@@ -142,14 +143,29 @@ void setupPins() {
   pinMode(BUTTON0_PIN, INPUT);
 }
 
-void smile() {
+void beSmily() {
   lcd.clearDisplay();
-  lcd.drawBitmap(0, 0, img_smile, 128, 64, WHITE);
+  lcd.drawBitmap(0, 0, smile, 128, 64, WHITE);
   lcd.display();
   delay(1000);
 }
 void beSad() {
   lcd.clearDisplay();
+  lcd.drawBitmap(0, 0, sad, 128, 64, WHITE);
+  lcd.display();
+  delay(1000);
+}
+
+void beNormal() {
+  lcd.clearDisplay();
+  lcd.drawBitmap(0, 0, normal, 128, 64, WHITE);
+  lcd.display();
+  delay(1000);
+}
+
+void beSleepy() {
+  lcd.clearDisplay();
+  lcd.drawBitmap(0, 0, sleepy, 128, 64, WHITE);
   lcd.display();
   delay(1000);
 }
@@ -200,8 +216,10 @@ void setup() {
   m.setDigitalWriteFunction(digitalWrite);
   m.setServoPositionFunction(servoLeftControl);
 
-  m.getBody()->setSmile(smile);
-  m.getBody()->setBeSad(beSad);
+  m.getBody()->setSmilyFace(beSmily);
+  m.getBody()->setSadFace(beSad);
+  m.getBody()->setNormalFace(beNormal);
+  m.getBody()->setSleepyFace(beSleepy);
   m.getBody()->setArms(arms);
 
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, FALLING);
