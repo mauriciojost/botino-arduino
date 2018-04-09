@@ -159,13 +159,13 @@ void arms(ArmState left, ArmState right) {
   // Right arm ignored for now
   switch (left) {
   	case ArmUp:
-      servoLeft.write(pos);
+      servoLeft.write(180);
       break;
   	case ArmMiddle:
-      servoLeft.write(pos);
+      servoLeft.write(90);
       break;
   	case ArmDown:
-      servoLeft.write(pos);
+      servoLeft.write(0);
       break;
   	default:
       break;
