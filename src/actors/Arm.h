@@ -23,7 +23,7 @@ private:
   void (*setPositionFunction)(int);
 
 public:
-  Arm(const char *n) : freqConf(OnceEvery10Seconds) {
+  Arm(const char *n) : freqConf(Never) {
     name = n;
     currentPosition = 0;
     setPositionFunction = NULL;
