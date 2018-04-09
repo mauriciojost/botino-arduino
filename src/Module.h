@@ -6,6 +6,7 @@
 #include <actors/Led.h>
 #include <actors/Lcd.h>
 #include <actors/Arm.h>
+#include <actors/Body.h>
 #include <main4ino/Clock.h>
 #include <main4ino/WebBot.h>
 #include <main4ino/Array.h>
@@ -30,6 +31,7 @@ private:
   Settings *settings;
   WebBot *bot;
   Lcd *lcd;
+  Body *body;
 
 public:
   Module() {
@@ -41,10 +43,11 @@ public:
     clock = new Clock("c");
     arm0 = new Arm("a");
     settings = new Settings("g");
+    body = new Body("b");
 
     clock->setFactor(PERIOD_SEC);
 
-    actors = new Array<Actor *>(7);
+    actors = new Array<Actor *>(8);
     actors->set(0, (Actor *)clock);
     actors->set(1, (Actor *)msgr);
     actors->set(2, (Actor *)led0);
@@ -52,6 +55,7 @@ public:
     actors->set(4, (Actor *)lcd);
     actors->set(5, (Actor *)arm0);
     actors->set(6, (Actor *)settings);
+    actors->set(7, (Actor *)body);
 
     bot = new WebBot(clock, actors);
     msgr->setBot(bot);
@@ -101,6 +105,11 @@ public:
   Settings *getSettings() {
     return settings;
   }
+
+  Body *getBody() {
+    return body;
+  }
+
 };
 
 #endif // MODULE_INC

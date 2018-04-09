@@ -30,7 +30,7 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 #define CLEAR_FIRST true
 
 Module m;
-Servo servo;
+Servo servoLeft;
 Adafruit_SSD1306 lcd(-1);
 volatile unsigned char ints = 0;
 
@@ -123,11 +123,11 @@ void logLine(const char *str) {
   Serial.println(str);
 }
 
-void servoControl(int pos) {
-  servo.attach(SERVO0_PIN);
-  servo.write(pos);
+void servoLeftControl(int pos) {
+  servoLeft.attach(SERVO0_PIN);
+  servoLeft.write(pos);
   delay(1000);
-  servo.detach();
+  servoLeft.detach();
 }
 
 /*****************/
@@ -142,6 +142,38 @@ void setupPins() {
   pinMode(BUTTON0_PIN, INPUT);
 }
 
+void smile() {
+  lcd.clearDisplay();
+  lcd.drawBitmap(0, 0, img_smile, 128, 64, WHITE);
+  lcd.display();
+  delay(1000);
+}
+void beSad() {
+  lcd.clearDisplay();
+  lcd.display();
+  delay(1000);
+}
+
+void arms(ArmState left, ArmState right) {
+  servoLeft.attach(SERVO0_PIN);
+  // Right arm ignored for now
+  switch (left) {
+  	case ArmUp:
+      servoLeft.write(pos);
+      break;
+  	case ArmMiddle:
+      servoLeft.write(pos);
+      break;
+  	case ArmDown:
+      servoLeft.write(pos);
+      break;
+  	default:
+      break;
+  }
+  delay(1000);
+  servoLeft.detach();
+}
+
 void setup() {
   // Let HW startup
   delay(3 * 1000);
@@ -154,22 +186,6 @@ void setup() {
 
   // Initialize the LCD
   lcdInit();
-  lcd.clearDisplay();
-  lcd.drawBitmap(0, 0, small_smile, 128, 64, WHITE);
-  lcd.display();
-  delay(3000);
-  lcd.clearDisplay();
-  lcd.drawBitmap(0, 0, small_smile, 128, 64, BLACK, WHITE);
-  lcd.display();
-  delay(3000);
-  lcd.clearDisplay();
-  lcd.drawBitmap(0, 0, small_smile, 128, 64, WHITE, BLACK);
-  lcd.display();
-  delay(3000);
-  lcd.clearDisplay();
-  lcd.drawGrayscaleBitmap(0, 0, small_smile, 128, 64);
-  lcd.display();
-  delay(3000);
 
   // Intialize the logging framework
   setupLog(logLine);
@@ -182,7 +198,11 @@ void setup() {
   m.setBotStdoutWriteFunction(botDisplayOnLcd);
   m.setLcdStdoutWriteFunction(lcdDisplayOnLcd);
   m.setDigitalWriteFunction(digitalWrite);
-  m.setServoPositionFunction(servoControl);
+  m.setServoPositionFunction(servoLeftControl);
+
+  m.getBody()->setSmile(smile);
+  m.getBody()->setBeSad(beSad);
+  m.getBody()->setArms(arms);
 
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, FALLING);
 }
@@ -266,7 +286,5 @@ void loop() {
   unsigned long spentPeriodMs = MINIM(POSIT(t2 - t1), periodMs);
   lightSleep(periodMs - spentPeriodMs);
 }
-
-
 
 #endif // UNIT_TEST
