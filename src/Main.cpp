@@ -134,6 +134,8 @@ void setupPins() {
   pinMode(LED1_PIN, OUTPUT);
   pinMode(SERVO0_PIN, OUTPUT);
   pinMode(BUTTON0_PIN, INPUT);
+
+  servoLeft.attach(SERVO0_PIN);
 }
 
 void beSmily() {
@@ -163,24 +165,34 @@ void beSleepy() {
   delay(1000);
 }
 
-void arms(ArmState left, ArmState right) {
-  servoLeft.attach(SERVO0_PIN);
+int smoothlyTo(Servo* servo, int lastPos, int targetPos, int steps) {
+	for (int i = 1; i <= steps; i++) {
+    float factor = i / steps;
+    servo->write(lastPos + ((targetPos - lastPos) * factor));
+    delay(15);
+	}
+	return targetPos;
+}
+
+int arm(Servo* servo, ArmState a, int lastPos) {
   // Right arm ignored for now
-  switch (left) {
+  switch (a) {
   	case ArmUp:
-      servoLeft.write(180);
-      break;
+  		return smoothlyTo(servo, lastPos, 180, 10);
   	case ArmMiddle:
-      servoLeft.write(90);
-      break;
+  		return smoothlyTo(servo, lastPos, 90, 10);
   	case ArmDown:
-      servoLeft.write(0);
-      break;
+  		return smoothlyTo(servo, lastPos, 0, 10);
   	default:
-      break;
+      return lastPos;
   }
-  delay(1000);
-  servoLeft.detach();
+
+}
+
+void arms(ArmState left, ArmState right) {
+	static int rightPos = 0;
+	static int leftPos = 0;
+	leftPos = arm(&servoLeft, left, leftPos);
 }
 
 void setup() {
