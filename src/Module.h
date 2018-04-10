@@ -25,7 +25,6 @@ private:
   Messenger *msgr;
   Array<Actor *> *actors;
   Clock *clock;
-  Arm *arm0;
   Led *led0;
   Led *led1;
   Settings *settings;
@@ -41,21 +40,19 @@ public:
     led0 = new Led("l0", LED0_PIN);
     led1 = new Led("l1", LED1_PIN);
     clock = new Clock("c");
-    arm0 = new Arm("a");
     settings = new Settings("g");
     body = new Body("b");
 
     clock->setFactor(PERIOD_SEC);
 
-    actors = new Array<Actor *>(8);
+    actors = new Array<Actor *>(7);
     actors->set(0, (Actor *)clock);
     actors->set(1, (Actor *)msgr);
     actors->set(2, (Actor *)led0);
     actors->set(3, (Actor *)led1);
     actors->set(4, (Actor *)lcd);
-    actors->set(5, (Actor *)arm0);
-    actors->set(6, (Actor *)settings);
-    actors->set(7, (Actor *)body);
+    actors->set(5, (Actor *)settings);
+    actors->set(6, (Actor *)body);
 
     bot = new WebBot(clock, actors);
     msgr->setBot(bot);
@@ -88,10 +85,6 @@ public:
 
   void setLcdStdoutWriteFunction(void (*stdOutWriteStringFunction)(int, const char *)) {
     lcd->setStdoutFunction(stdOutWriteStringFunction);
-  }
-
-  void setServoPositionFunction(void (*f)(int)) {
-    arm0->setServoPositionFunction(f);
   }
 
   void setFactor(float f) {

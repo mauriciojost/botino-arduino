@@ -124,13 +124,6 @@ void logLine(const char *str) {
   Serial.println(str);
 }
 
-void servoLeftControl(int pos) {
-  servoLeft.attach(SERVO0_PIN);
-  servoLeft.write(pos);
-  delay(1000);
-  servoLeft.detach();
-}
-
 /*****************/
 /***** SETUP *****/
 /*****************/
@@ -214,7 +207,6 @@ void setup() {
   m.setBotStdoutWriteFunction(botDisplayOnLcd);
   m.setLcdStdoutWriteFunction(lcdDisplayOnLcd);
   m.setDigitalWriteFunction(digitalWrite);
-  m.setServoPositionFunction(servoLeftControl);
 
   m.getBody()->setSmilyFace(beSmily);
   m.getBody()->setSadFace(beSad);
