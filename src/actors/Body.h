@@ -29,14 +29,6 @@ enum Mood {
   BodyStateDelimiter
 };
 
-// Face
-// - Smily
-// - Sad
-// Body
-// - Arms up
-// - Arms down
-// - Arms shaking
-
 class Body : public Actor {
 
 private:
