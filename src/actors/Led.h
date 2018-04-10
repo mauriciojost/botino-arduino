@@ -24,7 +24,7 @@ private:
   void (*digitalWriteFunc)(unsigned char, unsigned char);
 
 public:
-  Led(const char *n, int p) : freqConf(OnceEvery1Second) {
+  Led(const char *n, int p) : freqConf(OnceEvery1Minute) {
     name = n;
     currentValue = false;
     pin = p;
