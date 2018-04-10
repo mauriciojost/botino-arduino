@@ -1,6 +1,8 @@
 # TODO
 
-- Improve API regarding STDOUT in Bot (avoid using two lines for instance)
+- Improve the API regarding moves: if HAPPY, then allow to have a full control on a move of the arms and the faces used
+- Make the servo control more stable (sometimes it is laggy)
+- Create a library with standard reusable actors (Led, Arm, Lcd)
 
 # DONE
 
