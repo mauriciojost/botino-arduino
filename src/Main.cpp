@@ -168,7 +168,9 @@ void beSleepy() {
 int smoothlyTo(Servo* servo, int lastPos, int targetPos, int steps) {
 	for (int i = 1; i <= steps; i++) {
     float factor = i / steps;
-    servo->write(lastPos + ((targetPos - lastPos) * factor));
+    if (lastPos != targetPos) {
+      servo->write(lastPos + ((targetPos - lastPos) * factor));
+    }
     delay(15);
 	}
 	return targetPos;
@@ -178,11 +180,11 @@ int arm(Servo* servo, ArmState a, int lastPos) {
   // Right arm ignored for now
   switch (a) {
   	case ArmUp:
-  		return smoothlyTo(servo, lastPos, 180, 10);
+  		return smoothlyTo(servo, lastPos, 180, 50);
   	case ArmMiddle:
-  		return smoothlyTo(servo, lastPos, 90, 10);
+  		return smoothlyTo(servo, lastPos, 90, 50);
   	case ArmDown:
-  		return smoothlyTo(servo, lastPos, 0, 10);
+  		return smoothlyTo(servo, lastPos, 0, 50);
   	default:
       return lastPos;
   }
@@ -190,9 +192,11 @@ int arm(Servo* servo, ArmState a, int lastPos) {
 }
 
 void arms(ArmState left, ArmState right) {
-	static int rightPos = 0;
+	static int rightPos = 0; // ignored for now
 	static int leftPos = 0;
+	servoLeft.attach(SERVO0_PIN);
 	leftPos = arm(&servoLeft, left, leftPos);
+	servoLeft.detach();
 }
 
 void setup() {

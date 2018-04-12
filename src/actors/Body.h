@@ -85,7 +85,7 @@ private:
 
 public:
 
-  Body(const char *n) : freqConf(OnceEvery10Seconds) {
+  Body(const char *n) : freqConf(OnceEvery1Minute) {
     name = n;
     smilyFace = NULL;
     sadFace = NULL;
