@@ -92,7 +92,7 @@ public:
     normalFace = NULL;
     sleepyFace = NULL;
     arms = NULL;
-    mood = Happy;
+    mood = Normal;
   }
 
   const char *getName() {
@@ -111,7 +111,6 @@ public:
   	}
     if (freqConf.matches()) {
     	actMood();
-    	mood = Normal;
     }
   }
 

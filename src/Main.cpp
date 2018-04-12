@@ -180,11 +180,11 @@ int arm(Servo* servo, ArmState a, int lastPos) {
   // Right arm ignored for now
   switch (a) {
   	case ArmUp:
-  		return smoothlyTo(servo, lastPos, 180, 50);
+  		return smoothlyTo(servo, lastPos, 0, 50); // oups, messed up with HW, TODO: FIXME
   	case ArmMiddle:
   		return smoothlyTo(servo, lastPos, 90, 50);
   	case ArmDown:
-  		return smoothlyTo(servo, lastPos, 0, 50);
+  		return smoothlyTo(servo, lastPos, 180, 50);
   	default:
       return lastPos;
   }
