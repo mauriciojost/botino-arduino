@@ -41,6 +41,7 @@ private:
   void actMood() {
     switch (mood) {
       case Happy:
+        log(CLASS_BODY, Debug, "Happy");
         arms(ArmUp, ArmUp);
         messageFunc(0, msg->getBuffer());
         smilyFace();
@@ -55,6 +56,7 @@ private:
         smilyFace();
         break;
       case Sad:
+        log(CLASS_BODY, Debug, "Sad");
         arms(ArmUp, ArmUp);
         messageFunc(0, msg->getBuffer());
         sadFace();
@@ -68,6 +70,7 @@ private:
         sadFace();
         break;
       case Normal:
+        log(CLASS_BODY, Debug, "Normal");
         arms(ArmMiddle, ArmMiddle);
         messageFunc(0, msg->getBuffer());
         normalFace();
@@ -76,6 +79,7 @@ private:
         arms(ArmDown, ArmDown);
         break;
       case Sleepy:
+        log(CLASS_BODY, Debug, "Sleepy");
         messageFunc(0, msg->getBuffer());
         sleepyFace();
         messageFunc(0, msg->getBuffer());
