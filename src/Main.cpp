@@ -174,7 +174,7 @@ void beSleepy() {
 int smoothlyTo(Servo *servo, int lastPos, int targetPos, int steps) {
   log(CLASS_MAIN, Info, "Smootlhy from %d to %d", lastPos, targetPos);
   for (int i = 1; i <= steps; i++) {
-    float factor = i / steps;
+    float factor = ((float)i) / steps;
     if (lastPos != targetPos) {
     	int v = lastPos + ((targetPos - lastPos) * factor);
       log(CLASS_MAIN, Info, "  v %d", v);
