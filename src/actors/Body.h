@@ -168,13 +168,17 @@ public:
         break;
       case (BodyConfigTime):
         setPropLong(setMode, targetValue, actualValue, (long*)&time);
-        freqConf.setCustom(time);
-        freqConf.setFrequency(CustomMoment);
+        if (setMode == SetValue) {
+          freqConf.setCustom(time);
+          freqConf.setFrequency(CustomMoment);
+        }
         break;
       case (BodyConfigCron):
         setPropLong(setMode, targetValue, actualValue, (long*)&cron);
-        freqConf.setCron(cron);
-        freqConf.setFrequency(CustomCron);
+        if (setMode == SetValue) {
+          freqConf.setCron(cron);
+          freqConf.setFrequency(CustomCron);
+        }
         break;
       default:
         break;
