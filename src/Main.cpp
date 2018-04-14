@@ -154,27 +154,27 @@ void beSmily() {
   lcd.clearDisplay();
   lcd.drawBitmap(0, 0, happy, 128, 64, WHITE);
   lcd.display();
-  delay(1000);
+  delay(1);
 }
 void beSad() {
   lcd.clearDisplay();
   lcd.drawBitmap(0, 0, sad, 128, 64, WHITE);
   lcd.display();
-  delay(1000);
+  delay(1);
 }
 
 void beNormal() {
   lcd.clearDisplay();
   lcd.drawBitmap(0, 0, normal, 128, 64, WHITE);
   lcd.display();
-  delay(1000);
+  delay(1);
 }
 
 void beSleepy() {
   lcd.clearDisplay();
   lcd.drawBitmap(0, 0, sleepy, 128, 64, WHITE);
   lcd.display();
-  delay(1000);
+  delay(1);
 }
 
 int smoothlyTo(Servo* servo, int lastPos, int targetPos, int steps) {
