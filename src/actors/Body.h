@@ -13,6 +13,7 @@
 enum BodyConfigState {
   BodyConfigMood = 0,      // if the led is on
   BodyConfigMsg,           // message
+  BodyConfigTime,           // time of acting
   BodyConfigStateDelimiter // delimiter of the configuration states
 };
 
@@ -33,6 +34,7 @@ private:
   void (*messageFunc)(int line, const char *msg);
   Buffer<LCD_LINE_LENGTH> *msg;
   Mood mood;
+  long time;
 
   bool isInitialized() {
     return smilyFace != NULL && sadFace != NULL && normalFace != NULL && sleepyFace != NULL && arms != NULL && messageFunc != NULL;
@@ -102,6 +104,7 @@ public:
     arms = NULL;
     messageFunc = NULL;
     mood = Sleepy;
+    time = 0;
     msg = new Buffer<LCD_LINE_LENGTH>("");
   }
 
@@ -143,6 +146,8 @@ public:
         return "mo";
       case (BodyConfigMsg):
         return "ms";
+      case (BodyConfigTime):
+        return "ti";
       default:
         return "";
     }
@@ -155,6 +160,11 @@ public:
         break;
       case (BodyConfigMsg):
         setPropValue(setMode, targetValue, actualValue, msg);
+        break;
+      case (BodyConfigTime):
+        setPropLong(setMode, targetValue, actualValue, (long*)&time);
+        freqConf.setCustom(time);
+        freqConf.setFrequency(CustomMoment);
         break;
       default:
         break;
