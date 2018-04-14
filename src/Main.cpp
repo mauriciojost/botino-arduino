@@ -140,8 +140,6 @@ void setupPins() {
   pinMode(LED1_PIN, OUTPUT);
   pinMode(SERVO0_PIN, OUTPUT);
   pinMode(BUTTON0_PIN, INPUT);
-
-  servoLeft.attach(SERVO0_PIN);
 }
 
 void beSmily() {
