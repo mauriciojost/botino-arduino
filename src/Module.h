@@ -4,7 +4,6 @@
 #include <main4ino/Actor.h>
 #include <actors/Messenger.h>
 #include <actors/Led.h>
-#include <actors/Lcd.h>
 #include <actors/Arm.h>
 #include <actors/Body.h>
 #include <main4ino/Clock.h>
@@ -29,13 +28,11 @@ private:
   Led *led1;
   Settings *settings;
   WebBot *bot;
-  Lcd *lcd;
   Body *body;
 
 public:
   Module() {
 
-    lcd = new Lcd("lc");
     msgr = new Messenger("m");
     led0 = new Led("l0", LED0_PIN);
     led1 = new Led("l1", LED1_PIN);
@@ -45,14 +42,13 @@ public:
 
     clock->setFactor(PERIOD_SEC);
 
-    actors = new Array<Actor *>(7);
+    actors = new Array<Actor *>(6);
     actors->set(0, (Actor *)clock);
     actors->set(1, (Actor *)msgr);
     actors->set(2, (Actor *)led0);
     actors->set(3, (Actor *)led1);
-    actors->set(4, (Actor *)lcd);
-    actors->set(5, (Actor *)settings);
-    actors->set(6, (Actor *)body);
+    actors->set(4, (Actor *)settings);
+    actors->set(5, (Actor *)body);
 
     bot = new WebBot(clock, actors);
     msgr->setBot(bot);
@@ -79,16 +75,8 @@ public:
     led1->setDigitalWriteFunction(digitalWriteFunction);
   }
 
-  void setBotStdoutWriteFunction(void (*stdOutWriteStringFunction)(const char *, const char *)) {
-    bot->setStdoutFunction(stdOutWriteStringFunction);
-  }
-
-  void setLcdStdoutWriteFunction(void (*stdOutWriteStringFunction)(int, const char *)) {
-    lcd->setStdoutFunction(stdOutWriteStringFunction);
-  }
-
-  void setFactor(float f) {
-    clock->setFactor(f);
+  Bot *getBot() {
+  	return bot;
   }
 
   Clock *getClock() {

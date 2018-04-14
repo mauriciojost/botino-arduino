@@ -107,11 +107,6 @@ void botDisplayOnLcd(const char *str1, const char *str2) {
   lcdPrintLine(str2, 1, CLEAR_FIRST);
 }
 
-void lcdDisplayOnLcd(int line, const char *str) {
-  int l = (line % 2) + 2;
-  lcdPrintLine(str, l, CLEAR_FIRST);
-}
-
 void messageOnLcd(int line, const char *str) {
   lcd.clearDisplay();
   lcd.setTextWrap(true);
@@ -177,10 +172,13 @@ void beSleepy() {
 }
 
 int smoothlyTo(Servo *servo, int lastPos, int targetPos, int steps) {
+  log(CLASS_MAIN, Info, "Smootlhy from %d to %d", lastPos, targetPos);
   for (int i = 1; i <= steps; i++) {
     float factor = i / steps;
     if (lastPos != targetPos) {
-      servo->write(lastPos + ((targetPos - lastPos) * factor));
+    	int v = lastPos + ((targetPos - lastPos) * factor);
+      log(CLASS_MAIN, Info, "  v %d", v);
+      servo->write(v);
     }
     delay(15);
   }
@@ -188,14 +186,17 @@ int smoothlyTo(Servo *servo, int lastPos, int targetPos, int steps) {
 }
 
 int arm(Servo *servo, ArmState a, int lastPos) {
+
+#define SERVO_ARM_STEPS 100
+
   // Right arm ignored for now
   switch (a) {
     case ArmUp:
-      return smoothlyTo(servo, lastPos, 0, 50); // oups, messed up with HW, TODO: FIXME
+      return smoothlyTo(servo, lastPos, 0, SERVO_ARM_STEPS); // oups, messed up with HW, TODO: FIXME
     case ArmMiddle:
-      return smoothlyTo(servo, lastPos, 90, 50);
+      return smoothlyTo(servo, lastPos, 90, SERVO_ARM_STEPS);
     case ArmDown:
-      return smoothlyTo(servo, lastPos, 180, 50);
+      return smoothlyTo(servo, lastPos, 180, SERVO_ARM_STEPS);
     default:
       return lastPos;
   }
@@ -230,8 +231,7 @@ void setup() {
 
   // Intialize the module
   m.setup();
-  m.setBotStdoutWriteFunction(botDisplayOnLcd);
-  m.setLcdStdoutWriteFunction(lcdDisplayOnLcd);
+  m.getBot()->setStdoutFunction(botDisplayOnLcd);
   m.setDigitalWriteFunction(digitalWrite);
 
   m.getBody()->setSmilyFace(beSmily);
