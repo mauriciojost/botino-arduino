@@ -169,13 +169,12 @@ void beSleepy() {
   delay(1);
 }
 
-int smoothlyTo(Servo *servo, int lastPos, int targetPos, int steps) {
-  log(CLASS_MAIN, Info, "Smootlhy from %d to %d", lastPos, targetPos);
+int smooth(Servo *servo, int lastPos, int targetPos, int steps) {
+  log(CLASS_MAIN, Info, "serv0 %d->%d", lastPos, targetPos);
   for (int i = 1; i <= steps; i++) {
     float factor = ((float)i) / steps;
     if (lastPos != targetPos) {
     	int v = lastPos + ((targetPos - lastPos) * factor);
-      log(CLASS_MAIN, Info, "  v %d", v);
       servo->write(v);
     }
     delay(15);
@@ -190,11 +189,11 @@ int arm(Servo *servo, ArmState a, int lastPos) {
   // Right arm ignored for now
   switch (a) {
     case ArmUp:
-      return smoothlyTo(servo, lastPos, 0, SERVO_ARM_STEPS); // oups, messed up with HW, TODO: FIXME
+      return smooth(servo, lastPos, 0, SERVO_ARM_STEPS); // oups, messed up with HW, TODO: FIXME
     case ArmMiddle:
-      return smoothlyTo(servo, lastPos, 90, SERVO_ARM_STEPS);
+      return smooth(servo, lastPos, 90, SERVO_ARM_STEPS);
     case ArmDown:
-      return smoothlyTo(servo, lastPos, 180, SERVO_ARM_STEPS);
+      return smooth(servo, lastPos, 180, SERVO_ARM_STEPS);
     default:
       return lastPos;
   }
