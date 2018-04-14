@@ -8,9 +8,11 @@
 #include <main4ino/Boolean.h>
 
 #define CLASS_BODY "BO"
+#define LCD_LINE_LENGTH 32
 
 enum BodyConfigState {
-  BodyConfigMood = 0,   // if the led is on
+  BodyConfigMood = 0,      // if the led is on
+  BodyConfigMsg,           // message
   BodyConfigStateDelimiter // delimiter of the configuration states
 };
 
@@ -22,10 +24,10 @@ enum ArmState {
 };
 
 enum Mood {
-  Normal = 0,
+  Sleepy = 0,
+  Normal,
   Sad,
   Happy,
-  Sleepy,
   BodyStateDelimiter
 };
 
@@ -40,24 +42,35 @@ private:
   void (*normalFace)();
   void (*sleepyFace)();
   void (*arms)(ArmState left, ArmState right);
+  void (*messageFunc)(int line, const char* msg);
+  Buffer<LCD_LINE_LENGTH> *msg;
   Mood mood;
 
   bool isInitialized() {
-  	return smilyFace != NULL && sadFace != NULL && normalFace != NULL && sleepyFace != NULL && arms != NULL;
+  	return smilyFace != NULL && sadFace != NULL && normalFace != NULL && sleepyFace != NULL && arms != NULL && messageFunc != NULL;
   }
 
   void actMood() {
   	switch (mood) {
   		case Happy:
+        arms(ArmUp, ArmUp);
+  			messageFunc(0, msg->getBuffer());
+        smilyFace();
+  			messageFunc(0, msg->getBuffer());
         smilyFace();
         arms(ArmUp, ArmUp);
         arms(ArmDown, ArmDown);
         arms(ArmUp, ArmUp);
         arms(ArmDown, ArmDown);
         arms(ArmUp, ArmUp);
+        arms(ArmDown, ArmDown);
         smilyFace();
         break;
   		case Sad:
+        arms(ArmUp, ArmUp);
+  			messageFunc(0, msg->getBuffer());
+        sadFace();
+  			messageFunc(0, msg->getBuffer());
         sadFace();
         arms(ArmUp, ArmUp);
         arms(ArmMiddle, ArmMiddle);
@@ -67,13 +80,18 @@ private:
         sadFace();
         break;
   		case Normal:
+        arms(ArmMiddle, ArmMiddle);
+  			messageFunc(0, msg->getBuffer());
+        normalFace();
+  			messageFunc(0, msg->getBuffer());
         normalFace();
         arms(ArmDown, ArmDown);
         break;
   		case Sleepy:
+  			messageFunc(0, msg->getBuffer());
         sleepyFace();
-        arms(ArmDown, ArmDown);
-        arms(ArmMiddle, ArmMiddle);
+  			messageFunc(0, msg->getBuffer());
+        sleepyFace();
         arms(ArmDown, ArmDown);
         sleepyFace();
         break;
@@ -92,7 +110,9 @@ public:
     normalFace = NULL;
     sleepyFace = NULL;
     arms = NULL;
-    mood = Normal;
+    messageFunc = NULL;
+    mood = Sleepy;
+    msg = new Buffer<LCD_LINE_LENGTH>("");
   }
 
   const char *getName() {
@@ -104,6 +124,7 @@ public:
   void setSmilyFace(void (*f)()) { smilyFace = f; }
   void setSadFace(void (*f)()) { sadFace = f; }
   void setArms(void (*f)(ArmState left, ArmState right)) { arms = f; }
+  void setMessageFunc(void (*f)(int line, const char* str)) { messageFunc = f; }
 
   void act() {
   	if (!isInitialized()) {
@@ -118,6 +139,8 @@ public:
     switch (propIndex) {
       case (BodyConfigMood):
         return "mo";
+      case (BodyConfigMsg):
+        return "ms";
       default:
         return "";
     }
@@ -127,6 +150,9 @@ public:
     switch (propIndex) {
       case (BodyConfigMood):
       	setPropInteger(setMode, targetValue, actualValue, (int*)&mood);
+        break;
+      case (BodyConfigMsg):
+      	setPropValue(setMode, targetValue, actualValue, msg);
         break;
       default:
       	break;

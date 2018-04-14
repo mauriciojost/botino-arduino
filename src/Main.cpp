@@ -42,7 +42,6 @@ volatile unsigned char ints = 0;
 void lcdInit() {
   lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   lcd.dim(true);
-  lcd.setTextWrap(false);
   delay(1);
 }
 
@@ -61,6 +60,7 @@ void lcdClear(int line) {
 void lcdPrintLine(const char *str, int line, bool clearFirst) {
   static unsigned int cnt = 0;
   static bool cleared = false;
+  lcd.setTextWrap(false);
   if (cnt++ % 100 == 0) {
     lcdInit();
   }
@@ -111,6 +111,18 @@ void botDisplayOnLcd(const char *str1, const char *str2) {
 void lcdDisplayOnLcd(int line, const char *str) {
   int l = (line % 2) + 2;
   lcdPrintLine(str, l, CLEAR_FIRST);
+}
+
+void messageOnLcd(int line, const char *str) {
+	lcd.clearDisplay();
+  lcd.setTextWrap(true);
+  lcd.setTextSize(2);
+  lcd.setTextColor(WHITE);
+  lcd.setCursor(0, line * 2 * 8);
+  lcd.println(str);
+  lcd.display();
+  delay(1);
+  delay(2000);
 }
 
 void logLine(const char *str) {
@@ -229,6 +241,7 @@ void setup() {
   m.getBody()->setNormalFace(beNormal);
   m.getBody()->setSleepyFace(beSleepy);
   m.getBody()->setArms(arms);
+  m.getBody()->setMessageFunc(messageOnLcd);
 
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, FALLING);
 }
