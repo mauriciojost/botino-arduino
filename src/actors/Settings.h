@@ -69,15 +69,20 @@ public:
   void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
       case (GlobalClearStackTraceState):
-      	setPropBoolean(setMode, targetValue, actualValue, &clearStackTrace); break;
+        setPropBoolean(setMode, targetValue, actualValue, &clearStackTrace);
+        break;
       case (GlobalLogLevelState):
-      	setPropInteger(setMode, targetValue, actualValue, &logLevel); break;
+        setPropInteger(setMode, targetValue, actualValue, &logLevel);
+        break;
       case (GlobalButtonPressedState):
-      	setPropInteger(setMode, targetValue, actualValue, &buttonPressed); break;
+        setPropInteger(setMode, targetValue, actualValue, &buttonPressed);
+        break;
       case (GlobalPeriodSecondsState):
-      	setPropInteger(setMode, targetValue, actualValue, &periodSeconds); break;
+        setPropInteger(setMode, targetValue, actualValue, &periodSeconds);
+        break;
       case (GlobalDisableLcdState):
-      	setPropBoolean(setMode, targetValue, actualValue, &disableLcd); break;
+        setPropBoolean(setMode, targetValue, actualValue, &disableLcd);
+        break;
       default:
         break;
     }
@@ -123,7 +128,6 @@ public:
   bool getDisableLcd() {
     return disableLcd;
   }
-
 };
 
 #endif // GLOBAL_INC

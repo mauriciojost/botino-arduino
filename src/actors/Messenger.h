@@ -89,7 +89,7 @@ public:
 
       if (json.containsKey("formatted")) {
 
-      	static bool fi = true;
+        static bool fi = true;
         Boolean autoAdjust(!fi);
         bot->getClock()->setProp(ClockConfigStateAutoAdjustFactor, SetValue, &autoAdjust, NULL);
         const char *formatted = json["formatted"].as<char *>();

@@ -102,7 +102,6 @@ public:
   Body *getBody() {
     return body;
   }
-
 };
 
 #endif // MODULE_INC

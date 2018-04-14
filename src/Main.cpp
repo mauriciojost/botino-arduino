@@ -24,7 +24,6 @@ extern "C" {
 #include "user_interface.h"
 }
 
-
 enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 
 #define DO_NOT_CLEAR_FIRST false
@@ -46,11 +45,11 @@ void lcdInit() {
 }
 
 void buttonPressed() {
-	ints++;
+  ints++;
 }
 
 void lcdClear() {
-	lcd.clearDisplay();
+  lcd.clearDisplay();
 }
 
 void lcdClear(int line) {
@@ -65,18 +64,18 @@ void lcdPrintLine(const char *str, int line, bool clearFirst) {
     lcdInit();
   }
 
-	bool disableLcd = m.getSettings()->getDisableLcd();
-	if (disableLcd) {
-		if (!cleared) {
+  bool disableLcd = m.getSettings()->getDisableLcd();
+  if (disableLcd) {
+    if (!cleared) {
       lcdClear();
       lcd.display();
       delay(1);
       cleared = true;
-		}
-		return;
-	}
+    }
+    return;
+  }
   if (clearFirst) {
-  	lcdClear(line);
+    lcdClear(line);
   }
   lcd.setTextSize(1);
   lcd.setTextColor(WHITE);
@@ -114,7 +113,7 @@ void lcdDisplayOnLcd(int line, const char *str) {
 }
 
 void messageOnLcd(int line, const char *str) {
-	lcd.clearDisplay();
+  lcd.clearDisplay();
   lcd.setTextWrap(true);
   lcd.setTextSize(2);
   lcd.setTextColor(WHITE);
@@ -177,38 +176,37 @@ void beSleepy() {
   delay(1);
 }
 
-int smoothlyTo(Servo* servo, int lastPos, int targetPos, int steps) {
-	for (int i = 1; i <= steps; i++) {
+int smoothlyTo(Servo *servo, int lastPos, int targetPos, int steps) {
+  for (int i = 1; i <= steps; i++) {
     float factor = i / steps;
     if (lastPos != targetPos) {
       servo->write(lastPos + ((targetPos - lastPos) * factor));
     }
     delay(15);
-	}
-	return targetPos;
+  }
+  return targetPos;
 }
 
-int arm(Servo* servo, ArmState a, int lastPos) {
+int arm(Servo *servo, ArmState a, int lastPos) {
   // Right arm ignored for now
   switch (a) {
-  	case ArmUp:
-  		return smoothlyTo(servo, lastPos, 0, 50); // oups, messed up with HW, TODO: FIXME
-  	case ArmMiddle:
-  		return smoothlyTo(servo, lastPos, 90, 50);
-  	case ArmDown:
-  		return smoothlyTo(servo, lastPos, 180, 50);
-  	default:
+    case ArmUp:
+      return smoothlyTo(servo, lastPos, 0, 50); // oups, messed up with HW, TODO: FIXME
+    case ArmMiddle:
+      return smoothlyTo(servo, lastPos, 90, 50);
+    case ArmDown:
+      return smoothlyTo(servo, lastPos, 180, 50);
+    default:
       return lastPos;
   }
-
 }
 
 void arms(ArmState left, ArmState right) {
-	static int rightPos = 0; // ignored for now
-	static int leftPos = 0;
-	servoLeft.attach(SERVO0_PIN);
-	leftPos = arm(&servoLeft, left, leftPos);
-	servoLeft.detach();
+  static int rightPos = 0; // ignored for now
+  static int leftPos = 0;
+  servoLeft.attach(SERVO0_PIN);
+  leftPos = arm(&servoLeft, left, leftPos);
+  servoLeft.detach();
 }
 
 void setup() {
@@ -245,7 +243,6 @@ void setup() {
 
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, FALLING);
 }
-
 
 /**
  * Read buttons from serial port
