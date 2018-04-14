@@ -28,6 +28,7 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 
 #define DO_NOT_CLEAR_FIRST false
 #define CLEAR_FIRST true
+#define DELAY_MS_SPI 2
 
 Module m;
 Servo servoLeft;
@@ -41,7 +42,7 @@ volatile unsigned char ints = 0;
 void lcdInit() {
   lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   lcd.dim(true);
-  delay(1);
+  delay(DELAY_MS_SPI);
 }
 
 void buttonPressed() {
@@ -69,7 +70,7 @@ void lcdPrintLine(const char *str, int line, bool clearFirst) {
     if (!cleared) {
       lcdClear();
       lcd.display();
-      delay(1);
+      delay(DELAY_MS_SPI);
       cleared = true;
     }
     return;
@@ -82,7 +83,7 @@ void lcdPrintLine(const char *str, int line, bool clearFirst) {
   lcd.setCursor(0, line * 8);
   lcd.println(str);
   lcd.display();
-  delay(1);
+  delay(DELAY_MS_SPI);
   cleared = false;
 }
 
@@ -115,7 +116,7 @@ void messageOnLcd(int line, const char *str) {
   lcd.setCursor(0, line * 2 * 8);
   lcd.println(str);
   lcd.display();
-  delay(1);
+  delay(DELAY_MS_SPI);
   delay(2000);
 }
 
@@ -146,27 +147,27 @@ void beSmily() {
   lcd.clearDisplay();
   lcd.drawBitmap(0, 0, happy, 128, 64, WHITE);
   lcd.display();
-  delay(1);
+  delay(DELAY_MS_SPI);
 }
 void beSad() {
   lcd.clearDisplay();
   lcd.drawBitmap(0, 0, sad, 128, 64, WHITE);
   lcd.display();
-  delay(1);
+  delay(DELAY_MS_SPI);
 }
 
 void beNormal() {
   lcd.clearDisplay();
   lcd.drawBitmap(0, 0, normal, 128, 64, WHITE);
   lcd.display();
-  delay(1);
+  delay(DELAY_MS_SPI);
 }
 
 void beSleepy() {
   lcd.clearDisplay();
   lcd.drawBitmap(0, 0, sleepy, 128, 64, WHITE);
   lcd.display();
-  delay(1);
+  delay(DELAY_MS_SPI);
 }
 
 int smooth(Servo *servo, int lastPos, int targetPos, int steps) {
