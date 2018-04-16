@@ -39,12 +39,6 @@ volatile unsigned char ints = 0;
 /***  CALLBACKS ***/
 /******************/
 
-void lcdInit() {
-  lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  lcd.dim(true);
-  delay(DELAY_MS_SPI);
-}
-
 void buttonPressed() {
   ints++;
 }
@@ -58,12 +52,8 @@ void lcdClear(int line) {
 }
 
 void lcdPrintLine(const char *str, int line, bool clearFirst) {
-  static unsigned int cnt = 0;
   static bool cleared = false;
   lcd.setTextWrap(false);
-  if (cnt++ % 100 == 0) {
-    lcdInit();
-  }
 
   bool disableLcd = m.getSettings()->getDisableLcd();
   if (disableLcd) {
@@ -209,6 +199,12 @@ void arms(ArmState left, ArmState right) {
   static int rightPos = 0; // ignored for now
   static int leftPos = 0;
   leftPos = arm(&servoLeft, left, leftPos, SERVO0_PIN);
+}
+
+void lcdInit() {
+  lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  lcd.dim(true);
+  delay(DELAY_MS_SPI);
 }
 
 void setup() {
