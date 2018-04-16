@@ -170,42 +170,45 @@ void beSleepy() {
   delay(DELAY_MS_SPI);
 }
 
-int smooth(Servo *servo, int lastPos, int targetPos, int steps) {
+int smooth(int pin, Servo *servo, int lastPos, int targetPos, int steps) {
   log(CLASS_MAIN, Info, "serv0 %d->%d", lastPos, targetPos);
-  for (int i = 1; i <= steps; i++) {
-    float factor = ((float)i) / steps;
-    if (lastPos != targetPos) {
-    	int v = lastPos + ((targetPos - lastPos) * factor);
-      servo->write(v);
+  if (lastPos != targetPos) {
+    servo->attach(pin);
+    for (int i = 1; i <= steps; i++) {
+      float factor = ((float)i) / steps;
+        int v = lastPos + ((targetPos - lastPos) * factor);
+        servo->write(v);
+      delay(15);
     }
-    delay(15);
+    servo->detach();
   }
   return targetPos;
 }
 
-int arm(Servo *servo, ArmState a, int lastPos) {
+int arm(Servo *servo, ArmState a, int lastPos, int pin) {
 
 #define SERVO_ARM_STEPS 100
+#define ARM_UP_SERVO_POS 0
+#define ARM_MIDDLE_SERVO_POS 90
+#define ARM_DOWN_SERVO_POS 180
 
   // Right arm ignored for now
   switch (a) {
     case ArmUp:
-      return smooth(servo, lastPos, 0, SERVO_ARM_STEPS); // oups, messed up with HW, TODO: FIXME
+      return smooth(pin, servo, lastPos, ARM_UP_SERVO_POS, SERVO_ARM_STEPS); // oups, messed up with HW, TODO: FIXME
     case ArmMiddle:
-      return smooth(servo, lastPos, 90, SERVO_ARM_STEPS);
+      return smooth(pin, servo, lastPos, ARM_MIDDLE_SERVO_POS, SERVO_ARM_STEPS);
     case ArmDown:
-      return smooth(servo, lastPos, 180, SERVO_ARM_STEPS);
+      return smooth(pin, servo, lastPos, ARM_DOWN_SERVO_POS, SERVO_ARM_STEPS);
     default:
-      return lastPos;
+    	return lastPos;
   }
 }
 
 void arms(ArmState left, ArmState right) {
   static int rightPos = 0; // ignored for now
   static int leftPos = 0;
-  servoLeft.attach(SERVO0_PIN);
-  leftPos = arm(&servoLeft, left, leftPos);
-  servoLeft.detach();
+  leftPos = arm(&servoLeft, left, leftPos, SERVO0_PIN);
 }
 
 void setup() {
