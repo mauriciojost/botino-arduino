@@ -126,14 +126,6 @@ void logLine(const char *str) {
 /***** SETUP *****/
 /*****************/
 
-void setupPins() {
-  log(CLASS_MAIN, Debug, "Setup pins");
-  pinMode(LED0_PIN, OUTPUT);
-  pinMode(LED1_PIN, OUTPUT);
-  pinMode(SERVO0_PIN, OUTPUT);
-  pinMode(SERVO1_PIN, OUTPUT);
-  pinMode(BUTTON0_PIN, INPUT);
-}
 
 void beSmily() {
   lcd.clearDisplay();
@@ -204,12 +196,6 @@ void arms(ArmState left, ArmState right) {
   rightPos = arm(&servoRight, right, rightPos, SERVO1_PIN);
 }
 
-void lcdInit() {
-  lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  lcd.dim(true);
-  delay(DELAY_MS_SPI);
-}
-
 void setup() {
   // Let HW startup
   delay(3 * 1000);
@@ -221,15 +207,23 @@ void setup() {
   SaveCrash.print();
 
   // Initialize the LCD
-  lcdInit();
+  lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  lcd.dim(true);
+  delay(DELAY_MS_SPI);
 
   // Intialize the logging framework
   setupLog(logLine);
 
-  // Initialize pins
-  setupPins();
+  log(CLASS_MAIN, Debug, "Setup pins");
+  pinMode(LED0_PIN, OUTPUT);
+  pinMode(LED1_PIN, OUTPUT);
+  //pinMode(LED2_PIN, OUTPUT);
+  //pinMode(LED3_PIN, OUTPUT);
+  //pinMode(SERVO0_PIN, OUTPUT);
+  //pinMode(SERVO1_PIN, OUTPUT);
+  //pinMode(BUTTON0_PIN, INPUT);
 
-  // Intialize the module
+  log(CLASS_MAIN, Debug, "Setup module");
   m.setup();
   m.getBot()->setStdoutFunction(botDisplayOnLcd);
   m.setDigitalWriteFunction(digitalWrite);
@@ -241,6 +235,7 @@ void setup() {
   m.getBody()->setArms(arms);
   m.getBody()->setMessageFunc(messageOnLcd);
 
+  log(CLASS_MAIN, Debug, "Setup interrupts");
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, FALLING);
 }
 
