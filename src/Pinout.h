@@ -38,19 +38,27 @@
 #define PIN_D11 GPIO9_PIN  // SDD2 / SD2 // cannot be used at all, internal
 #define PIN_D12 GPIO10_PIN // SDD3 / SD3 // can be used as input only
 
-// LEDS
+// LED0
 #define LED0_PIN PIN_D0
-#define LED1_PIN PIN_D3
-
-// SERVO
-#define SERVO0_PIN PIN_D7
-
-// BUTTON
-#define BUTTON0_PIN PIN_D4
 
 // I2C OLED 128x64
 // (Kuman 0.96inches I2C OLED 128x64 LCD screen)
 #define LCD_SCL_PIN PIN_D1
 #define LCD_SDA_PIN PIN_D2
+
+// LEDS
+#define LED1_PIN PIN_D3
+#define LED2_PIN PIN_D4
+#define LED3_PIN PIN_D5
+
+// FAN
+#define FAN_PIN PIN_D6
+
+// SERVOS
+#define SERVO0_PIN PIN_D7
+#define SERVO1_PIN PIN_D8
+
+// BUTTON
+#define BUTTON0_PIN PIN_D12
 
 #endif // PINOUT_INC
