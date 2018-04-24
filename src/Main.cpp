@@ -32,6 +32,7 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 
 Module m;
 Servo servoLeft;
+Servo servoRight;
 Adafruit_SSD1306 lcd(-1);
 volatile unsigned char ints = 0;
 
@@ -130,6 +131,7 @@ void setupPins() {
   pinMode(LED0_PIN, OUTPUT);
   pinMode(LED1_PIN, OUTPUT);
   pinMode(SERVO0_PIN, OUTPUT);
+  pinMode(SERVO1_PIN, OUTPUT);
   pinMode(BUTTON0_PIN, INPUT);
 }
 
@@ -196,9 +198,10 @@ int arm(Servo *servo, ArmState a, int lastPos, int pin) {
 }
 
 void arms(ArmState left, ArmState right) {
-  static int rightPos = 0; // ignored for now
+  static int rightPos = 0;
   static int leftPos = 0;
   leftPos = arm(&servoLeft, left, leftPos, SERVO0_PIN);
+  rightPos = arm(&servoRight, right, rightPos, SERVO1_PIN);
 }
 
 void lcdInit() {

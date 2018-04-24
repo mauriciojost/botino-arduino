@@ -26,6 +26,8 @@ private:
   Clock *clock;
   Led *led0;
   Led *led1;
+  Led *led2;
+  Led *led3;
   Settings *settings;
   WebBot *bot;
   Body *body;
@@ -36,19 +38,23 @@ public:
     msgr = new Messenger("m");
     led0 = new Led("l0", LED0_PIN);
     led1 = new Led("l1", LED1_PIN);
+    led2 = new Led("l2", LED2_PIN);
+    led3 = new Led("l3", LED3_PIN);
     clock = new Clock("c");
     settings = new Settings("g");
     body = new Body("b");
 
     clock->setFactor(PERIOD_SEC);
 
-    actors = new Array<Actor *>(6);
+    actors = new Array<Actor *>(8);
     actors->set(0, (Actor *)clock);
     actors->set(1, (Actor *)msgr);
     actors->set(2, (Actor *)led0);
     actors->set(3, (Actor *)led1);
-    actors->set(4, (Actor *)settings);
-    actors->set(5, (Actor *)body);
+    actors->set(4, (Actor *)led2);
+    actors->set(5, (Actor *)led3);
+    actors->set(6, (Actor *)settings);
+    actors->set(7, (Actor *)body);
 
     bot = new WebBot(clock, actors);
     msgr->setBot(bot);
@@ -73,6 +79,8 @@ public:
   void setDigitalWriteFunction(void (*digitalWriteFunction)(unsigned char pin, unsigned char value)) {
     led0->setDigitalWriteFunction(digitalWriteFunction);
     led1->setDigitalWriteFunction(digitalWriteFunction);
+    led2->setDigitalWriteFunction(digitalWriteFunction);
+    led3->setDigitalWriteFunction(digitalWriteFunction);
   }
 
   Bot *getBot() {
