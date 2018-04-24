@@ -52,13 +52,14 @@
 #define LED3_PIN PIN_D5
 
 // FAN
-#define FAN_PIN PIN_D6
+//#define FAN_PIN PIN_D6
 
 // SERVOS
 #define SERVO0_PIN PIN_D7
 #define SERVO1_PIN PIN_D8
 
 // BUTTON
-#define BUTTON0_PIN PIN_D12
+//#define BUTTON0_PIN PIN_D12
+#define BUTTON0_PIN PIN_D6
 
 #endif // PINOUT_INC

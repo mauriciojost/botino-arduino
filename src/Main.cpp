@@ -221,7 +221,7 @@ void setup() {
   pinMode(LED3_PIN, OUTPUT);
   pinMode(SERVO0_PIN, OUTPUT);
   pinMode(SERVO1_PIN, OUTPUT);
-  //pinMode(BUTTON0_PIN, INPUT);
+  pinMode(BUTTON0_PIN, INPUT);
 
   log(CLASS_MAIN, Debug, "Setup module");
   m.setup();
