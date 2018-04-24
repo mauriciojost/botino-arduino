@@ -122,11 +122,6 @@ void logLine(const char *str) {
   Serial.println(str);
 }
 
-/*****************/
-/***** SETUP *****/
-/*****************/
-
-
 void beSmily() {
   lcd.clearDisplay();
   lcd.drawBitmap(0, 0, happy, 128, 64, WHITE);
@@ -196,6 +191,11 @@ void arms(ArmState left, ArmState right) {
   rightPos = arm(&servoRight, right, rightPos, SERVO1_PIN);
 }
 
+
+/*****************/
+/***** SETUP *****/
+/*****************/
+
 void setup() {
   // Let HW startup
   delay(3 * 1000);
@@ -219,8 +219,8 @@ void setup() {
   pinMode(LED1_PIN, OUTPUT);
   pinMode(LED2_PIN, OUTPUT);
   pinMode(LED3_PIN, OUTPUT);
-  //pinMode(SERVO0_PIN, OUTPUT);
-  //pinMode(SERVO1_PIN, OUTPUT);
+  pinMode(SERVO0_PIN, OUTPUT);
+  pinMode(SERVO1_PIN, OUTPUT);
   //pinMode(BUTTON0_PIN, INPUT);
 
   log(CLASS_MAIN, Debug, "Setup module");
