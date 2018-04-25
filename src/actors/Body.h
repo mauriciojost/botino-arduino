@@ -47,40 +47,51 @@ private:
     switch (SEQVAL(c1, c2)) {
     	// faces
       case SEQVAL('f', 's'):
+        log(CLASS_BODY, Debug, "Smile");
         smilyFace();
         break;
       case SEQVAL('f', 'S'):
+        log(CLASS_BODY, Debug, "Sad");
         sadFace();
         break;
       case SEQVAL('f', 'n'):
+        log(CLASS_BODY, Debug, "Normal");
         normalFace();
         break;
       case SEQVAL('f', 'l'):
+        log(CLASS_BODY, Debug, "Sleepy");
         sleepyFace();
         break;
       // arms
       case SEQVAL('a', 'u'):
+        log(CLASS_BODY, Debug, "Arms up");
         arms(ArmUp, ArmUp);
         break;
       case SEQVAL('a', 'r'):
+        log(CLASS_BODY, Debug, "Arms down/up");
         arms(ArmDown, ArmUp);
         break;
       case SEQVAL('a', 'l'):
+        log(CLASS_BODY, Debug, "Arms up/down");
         arms(ArmUp, ArmDown);
         break;
       case SEQVAL('a', 'd'):
+        log(CLASS_BODY, Debug, "Arms down");
         arms(ArmDown, ArmDown);
         break;
       // messages
       case SEQVAL('m', '1'):
+        log(CLASS_BODY, Debug, "Message");
         messageFunc(0, msg->getBuffer());
         break;
       // misc
       case SEQVAL('w', 'a'):
+        log(CLASS_BODY, Debug, "Wait");
         delay(1000);
         break;
       // default
       default:
+        log(CLASS_BODY, Debug, "Invalid command");
         break;
     }
   }
@@ -128,10 +139,12 @@ public:
       return;
     }
     if (freqConf.matches()) {
+      log(CLASS_BODY, Debug, "Body up");
       const char* s = sequence0->getBuffer();
-    	for (int i = 0; i < strlen(s); i = i + 2) {
+      log(CLASS_BODY, Debug, "Seq: %s", s);
+      for (int i = 0; i < strlen(s); i+=2) {
         actSub(s[i], s[i + 1]);
-    	}
+      }
 
     }
   }
