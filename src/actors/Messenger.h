@@ -44,11 +44,13 @@ private:
   Timing freqConf; // configuration of the frequency at which this actor will get triggered
   Buffer<MAX_JSON_STR_LENGTH> staticBuffer;
   Buffer<MAX_URL_EFF_LENGTH> staticUrl;
+  wl_status_t (*initWifiFunc)();
 
 public:
   Messenger(const char *n) : freqConf(OnceEvery1Minute) {
     name = n;
     bot = NULL;
+    initWifiFunc = NULL;
   }
 
   void setBot(WebBot *b) {
@@ -60,13 +62,20 @@ public:
   }
 
   void act() {
-    if (bot == NULL) {
+    if (bot == NULL || initWifiFunc == NULL) {
+      log(CLASS_MESSENGER, Error, "Init needed");
       return;
     }
     if (freqConf.matches()) {
-      updateClockProperties();
-      updateBotProperties();
+    	wl_status_t wifiStatus = initWifiFunc();
+    	if (wifiStatus == WL_CONNECTED) {
+        updateClockProperties();
+        updateBotProperties();
+    	}
     }
+  }
+  void setInitWifi(wl_status_t (*f)()) {
+    initWifiFunc = f;
   }
 
   void updateClockProperties() {

@@ -191,6 +191,27 @@ void arms(ArmState left, ArmState right) {
   rightPos = arm(&servoRight, right, rightPos, SERVO1_PIN);
 }
 
+wl_status_t initWifi() {
+  int attemptsLeft = 10;
+  log(CLASS_MAIN, Info, "Connecting...");
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  while (true) {
+    wl_status_t status = WiFi.status();
+    log(CLASS_MAIN, Info, " attempts %d", attemptsLeft);
+    attemptsLeft--;
+    if (status == WL_CONNECTED) {
+      log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
+      return status;
+    }
+    if (attemptsLeft <= 0) {
+      log(CLASS_MAIN, Warn, "Connection failed %d", status);
+      return status;
+    }
+    delay(1500);
+  }
+}
+
 
 /*****************/
 /***** SETUP *****/
@@ -234,6 +255,7 @@ void setup() {
   m.getBody()->setSleepyFace(beSleepy);
   m.getBody()->setArms(arms);
   m.getBody()->setMessageFunc(messageOnLcd);
+  m.getMessenger()->setInitWifi(initWifi);
 
   log(CLASS_MAIN, Debug, "Setup interrupts");
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, FALLING);
@@ -259,26 +281,6 @@ ButtonPressed readButtons() {
   }
 }
 
-wl_status_t initWifi() {
-  int attemptsLeft = 10;
-  log(CLASS_MAIN, Info, "Connecting...");
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  while (true) {
-    wl_status_t status = WiFi.status();
-    log(CLASS_MAIN, Info, " attempts %d", attemptsLeft);
-    attemptsLeft--;
-    if (status == WL_CONNECTED) {
-      log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
-      return status;
-    }
-    if (attemptsLeft <= 0) {
-      log(CLASS_MAIN, Warn, "Connection failed %d", status);
-      return status;
-    }
-    delay(1500);
-  }
-}
 
 void lightSleep(unsigned long delayMs) {
   log(CLASS_MAIN, Info, "Li-sleep (%lu ms)...", delayMs);
@@ -297,12 +299,8 @@ void loop() {
 
   unsigned long t1 = millis();
 
-  wl_status_t wifiStatus = initWifi();
-
-  if (wifiStatus == WL_CONNECTED) {
-    ButtonPressed button = readButtons();
-    m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
-  }
+  ButtonPressed button = readButtons();
+  m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
 
   if (m.getSettings()->getClear()) {
     SaveCrash.clear();

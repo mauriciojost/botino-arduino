@@ -98,6 +98,10 @@ public:
   Body *getBody() {
     return body;
   }
+
+  Messenger *getMessenger() {
+  	return msgr;
+  }
 };
 
 #endif // MODULE_INC
