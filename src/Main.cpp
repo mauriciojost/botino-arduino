@@ -167,9 +167,9 @@ int smooth(int pin, Servo *servo, int lastPos, int targetPos, int steps) {
 int arm(Servo *servo, ArmState a, int lastPos, int pin) {
 
 #define SERVO_ARM_STEPS 100
-#define ARM_UP_SERVO_POS 0
+#define ARM_UP_SERVO_POS 180
 #define ARM_MIDDLE_SERVO_POS 90
-#define ARM_DOWN_SERVO_POS 180
+#define ARM_DOWN_SERVO_POS 0
 
   // Right arm ignored for now
   switch (a) {
