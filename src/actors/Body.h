@@ -8,17 +8,22 @@
 #include <main4ino/Boolean.h>
 
 #define CLASS_BODY "BO"
-#define LCD_LINE_LENGTH 32
-#define SEQUENCE_STR_LENGTH (2 * 8)
+#define MSG_MAX_LENGTH 32
+#define MAX_POSI_PER_MOVE 10 // maximum amount of positions per move
+#define POSI_STR_LENGTH 3 // characters that represent a position / state within a move
+#define MOVE_STR_LENGTH (POSI_STR_LENGTH * MAX_POSI_PER_MOVE)
 
 #define SEQVAL(a, b) (int)(((int)(a)) * 256 + (b))
 
 enum BodyConfigState {
-  BodyConfigMsg = 0,         // message
-  BodyConfigSeq0,           // sequence
-  BodyConfigTime,           // time of acting
-  BodyConfigCron,           // cron of acting
-  BodyConfigStateDelimiter // delimiter of the configuration states
+  BodyConfigMsg0 = 0,         // message 0
+  BodyConfigMsg1,             // message 1
+  BodyConfigMsg2,             // message 2
+  BodyConfigMsg3,             // message 3
+  BodyConfigMove,            // move
+  BodyConfigTime,             // time of acting
+  BodyConfigCron,             // cron of acting
+  BodyConfigStateDelimiter    // delimiter of the configuration states
 };
 
 enum ArmState { ArmUp = 0, ArmMiddle, ArmDown, ArmDelimiter };
@@ -34,8 +39,11 @@ private:
   void (*sleepyFace)();
   void (*arms)(ArmState left, ArmState right);
   void (*messageFunc)(int line, const char *msg);
-  Buffer<LCD_LINE_LENGTH> *msg;
-  Buffer<SEQUENCE_STR_LENGTH> *sequence0;
+  Buffer<MSG_MAX_LENGTH> *msg0;
+  Buffer<MSG_MAX_LENGTH> *msg1;
+  Buffer<MSG_MAX_LENGTH> *msg2;
+  Buffer<MSG_MAX_LENGTH> *msg3;
+  Buffer<MOVE_STR_LENGTH> *move;
   long time;
   long cron;
 
@@ -80,9 +88,21 @@ private:
         arms(ArmDown, ArmDown);
         break;
       // messages
+      case SEQVAL('m', '0'):
+        log(CLASS_BODY, Debug, "Message 0");
+        messageFunc(0, msg0->getBuffer());
+        break;
       case SEQVAL('m', '1'):
-        log(CLASS_BODY, Debug, "Message");
-        messageFunc(0, msg->getBuffer());
+        log(CLASS_BODY, Debug, "Message 1");
+        messageFunc(0, msg1->getBuffer());
+        break;
+      case SEQVAL('m', '2'):
+        log(CLASS_BODY, Debug, "Message 2");
+        messageFunc(0, msg2->getBuffer());
+        break;
+      case SEQVAL('m', '3'):
+        log(CLASS_BODY, Debug, "Message 3");
+        messageFunc(0, msg3->getBuffer());
         break;
       // misc
       case SEQVAL('w', 'a'):
@@ -107,8 +127,11 @@ public:
     messageFunc = NULL;
     time = 0L;
     cron = 0L;
-    msg = new Buffer<LCD_LINE_LENGTH>("msg");
-    sequence0 = new Buffer<SEQUENCE_STR_LENGTH>("m1auadfsfn");
+    msg0 = new Buffer<MSG_MAX_LENGTH>("0");
+    msg1 = new Buffer<MSG_MAX_LENGTH>("1");
+    msg2 = new Buffer<MSG_MAX_LENGTH>("2");
+    msg3 = new Buffer<MSG_MAX_LENGTH>("3");
+    move = new Buffer<MOVE_STR_LENGTH>("");
   }
 
   const char *getName() {
@@ -140,7 +163,7 @@ public:
     }
     if (freqConf.matches()) {
       log(CLASS_BODY, Debug, "Body up");
-      const char* s = sequence0->getBuffer();
+      const char* s = move->getBuffer();
       log(CLASS_BODY, Debug, "Seq: %s", s);
       for (int i = 0; i < strlen(s); i+=2) {
         actSub(s[i], s[i + 1]);
@@ -151,10 +174,16 @@ public:
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
-      case (BodyConfigMsg):
-        return "ms";
-      case (BodyConfigSeq0):
-        return "s0";
+      case (BodyConfigMsg0):
+        return "m0";
+      case (BodyConfigMsg1):
+        return "m1";
+      case (BodyConfigMsg2):
+        return "m2";
+      case (BodyConfigMsg3):
+        return "m3";
+      case (BodyConfigMove):
+        return "mo";
       case (BodyConfigTime):
         return "ti";
       case (BodyConfigCron):
@@ -166,11 +195,20 @@ public:
 
   void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
-      case (BodyConfigMsg):
-        setPropValue(setMode, targetValue, actualValue, msg);
+      case (BodyConfigMsg0):
+        setPropValue(setMode, targetValue, actualValue, msg0);
         break;
-      case (BodyConfigSeq0):
-        setPropValue(setMode, targetValue, actualValue, sequence0);
+      case (BodyConfigMsg1):
+        setPropValue(setMode, targetValue, actualValue, msg1);
+        break;
+      case (BodyConfigMsg2):
+        setPropValue(setMode, targetValue, actualValue, msg2);
+        break;
+      case (BodyConfigMsg3):
+        setPropValue(setMode, targetValue, actualValue, msg3);
+        break;
+      case (BodyConfigMove):
+        setPropValue(setMode, targetValue, actualValue, move);
         break;
       case (BodyConfigTime):
         setPropLong(setMode, targetValue, actualValue, (long*)&time);
