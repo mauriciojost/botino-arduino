@@ -98,14 +98,16 @@ public:
 
       if (json.containsKey("formatted")) {
 
-        Boolean autoAdjustTrue(true);
-        Boolean autoAdjustFalse(false);
-        bot->getClock()->setProp(ClockConfigStateAutoAdjustFactor, SetValue, &autoAdjustTrue, NULL);
-        bot->getClock()->setProp(ClockConfigStateAutoAdjustFactor, SetValue, &autoAdjustFalse, NULL);
-        const char *formatted = json["formatted"].as<char *>();
+        int y, mo, d, h, m, s;
+        const char *formatted = json["formatted"].as<char *>(); // example: 2018-04-26 21:32:30
+        log(CLASS_MESSENGER, Debug, "Retrieved: %s", formatted);
+        sscanf(formatted, "%04d-%02d-%02d %02d:%02d:%02d", &y, &mo, &d, &h, &m, &s);
         Buffer<8> time(formatted + 11);
-        bot->getClock()->setProp(ClockConfigStateHhMmSs, SetValue, &time, NULL);
-
+        bot->getClock()->setAutoAdjust(true);
+        bot->getClock()->set(DONT_CHANGE, h, m, s);
+        bot->getClock()->setAutoAdjust(false);
+        bot->getClock()->set(DONT_CHANGE, h, m, s);
+        log(CLASS_MESSENGER, Info, "Set time: %s", time.getBuffer());
       } else {
         log(CLASS_MESSENGER, Warn, "No 'formatted'");
       }
