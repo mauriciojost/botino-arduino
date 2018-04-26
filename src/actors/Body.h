@@ -13,6 +13,9 @@
 #define POSI_STR_LENGTH 3 // characters that represent a position / state within a move
 #define MOVE_STR_LENGTH (POSI_STR_LENGTH * MAX_POSI_PER_MOVE)
 
+#define ON 1
+#define OFF 0
+
 #define POSI_VALUE(a, b) (int)(((int)(a)) * 256 + (b))
 
 enum BodyConfigState {
@@ -39,6 +42,7 @@ private:
   void (*sleepyFace)();
   void (*arms)(ArmState left, ArmState right);
   void (*messageFunc)(int line, const char *msg);
+  void (*ledFunc)(unsigned char led, unsigned char v);
   Buffer<MSG_MAX_LENGTH> *msg0;
   Buffer<MSG_MAX_LENGTH> *msg1;
   Buffer<MSG_MAX_LENGTH> *msg2;
@@ -48,7 +52,13 @@ private:
   long cron;
 
   bool isInitialized() {
-    return smilyFace != NULL && sadFace != NULL && normalFace != NULL && sleepyFace != NULL && arms != NULL && messageFunc != NULL;
+    return smilyFace != NULL &&
+    		sadFace != NULL &&
+				normalFace != NULL &&
+				sleepyFace != NULL &&
+				arms != NULL &&
+        ledFunc != NULL &&
+				messageFunc != NULL;
   }
 
   void actSub(char c1, char c2) {
@@ -87,6 +97,10 @@ private:
         log(CLASS_BODY, Debug, "Arms down");
         arms(ArmDown, ArmDown);
         break;
+      case POSI_VALUE('a', 'm'):
+        log(CLASS_BODY, Debug, "Arms middle");
+        arms(ArmMiddle, ArmMiddle);
+        break;
       // messages
       case POSI_VALUE('m', '0'):
         log(CLASS_BODY, Debug, "Message 0");
@@ -105,9 +119,50 @@ private:
         messageFunc(0, msg3->getBuffer());
         break;
       // misc
-      case POSI_VALUE('w', 'a'):
-        log(CLASS_BODY, Debug, "Wait");
+      case POSI_VALUE('w', '1'):
+        log(CLASS_BODY, Debug, "Wait 1s");
         delay(1000);
+        break;
+      case POSI_VALUE('w', '2'):
+        log(CLASS_BODY, Debug, "Wait 2s");
+        delay(2000);
+        break;
+      case POSI_VALUE('w', '3'):
+        log(CLASS_BODY, Debug, "Wait 3s");
+        delay(3000);
+        break;
+      // leds
+      case POSI_VALUE('l', '0'):
+        log(CLASS_BODY, Debug, "Led 0 on");
+        ledFunc(0, ON);
+        break;
+      case POSI_VALUE('l', '1'):
+        log(CLASS_BODY, Debug, "Led 1 on");
+        ledFunc(1, ON);
+        break;
+      case POSI_VALUE('l', '2'):
+        log(CLASS_BODY, Debug, "Led 2 on");
+        ledFunc(2, ON);
+        break;
+      case POSI_VALUE('l', '3'):
+        log(CLASS_BODY, Debug, "Led 3 on");
+        ledFunc(3, ON);
+        break;
+      case POSI_VALUE('L', '0'):
+        log(CLASS_BODY, Debug, "Led 0 off");
+        ledFunc(0, OFF);
+        break;
+      case POSI_VALUE('L', '1'):
+        log(CLASS_BODY, Debug, "Led 1 off");
+        ledFunc(1, OFF);
+        break;
+      case POSI_VALUE('L', '2'):
+        log(CLASS_BODY, Debug, "Led 2 off");
+        ledFunc(2, OFF);
+        break;
+      case POSI_VALUE('L', '3'):
+        log(CLASS_BODY, Debug, "Led 3 off");
+        ledFunc(3, OFF);
         break;
       // default
       default:
@@ -125,6 +180,7 @@ public:
     sleepyFace = NULL;
     arms = NULL;
     messageFunc = NULL;
+    ledFunc = NULL;
     time = 0L;
     cron = 0L;
     msg0 = new Buffer<MSG_MAX_LENGTH>("0");
@@ -155,6 +211,9 @@ public:
   }
   void setMessageFunc(void (*f)(int line, const char *str)) {
     messageFunc = f;
+  }
+  void setLedFunc(void (*f)(unsigned char led, unsigned char v)) {
+    ledFunc = f;
   }
 
   void act() {

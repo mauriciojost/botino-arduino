@@ -212,6 +212,24 @@ wl_status_t initWifi() {
   }
 }
 
+void led(unsigned char led, unsigned char v) {
+	switch(led % 4) {
+		case 0:
+      digitalWrite(LED0_PIN, v);
+      break;
+		case 1:
+      digitalWrite(LED1_PIN, v);
+      break;
+		case 2:
+      digitalWrite(LED2_PIN, v);
+      break;
+		case 3:
+      digitalWrite(LED3_PIN, v);
+      break;
+		default:
+	}
+
+}
 
 /*****************/
 /***** SETUP *****/
@@ -247,7 +265,6 @@ void setup() {
   log(CLASS_MAIN, Debug, "Setup module");
   m.setup();
   m.getBot()->setStdoutFunction(botDisplayOnLcd);
-  m.setDigitalWriteFunction(digitalWrite);
 
   m.getBody()->setSmilyFace(beSmily);
   m.getBody()->setSadFace(beSad);
@@ -255,6 +272,7 @@ void setup() {
   m.getBody()->setSleepyFace(beSleepy);
   m.getBody()->setArms(arms);
   m.getBody()->setMessageFunc(messageOnLcd);
+  m.getBody()->setLedFunc(led);
   m.getMessenger()->setInitWifi(initWifi);
 
   log(CLASS_MAIN, Debug, "Setup interrupts");
