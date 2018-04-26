@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+pio -f -c atom serialports monitor --raw --port /dev/ttyUSB0 -b 115200 | lib_deps_external/log4ino-arduino/extras/pretty-log | ts | tee serial.log
