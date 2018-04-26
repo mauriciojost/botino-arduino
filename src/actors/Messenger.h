@@ -98,13 +98,13 @@ public:
 
       if (json.containsKey("formatted")) {
 
-        static bool fi = true;
-        Boolean autoAdjust(!fi);
-        bot->getClock()->setProp(ClockConfigStateAutoAdjustFactor, SetValue, &autoAdjust, NULL);
+        Boolean autoAdjustTrue(true);
+        Boolean autoAdjustFalse(false);
+        bot->getClock()->setProp(ClockConfigStateAutoAdjustFactor, SetValue, &autoAdjustTrue, NULL);
+        bot->getClock()->setProp(ClockConfigStateAutoAdjustFactor, SetValue, &autoAdjustFalse, NULL);
         const char *formatted = json["formatted"].as<char *>();
         Buffer<8> time(formatted + 11);
         bot->getClock()->setProp(ClockConfigStateHhMmSs, SetValue, &time, NULL);
-        fi = false;
 
       } else {
         log(CLASS_MESSENGER, Warn, "No 'formatted'");
