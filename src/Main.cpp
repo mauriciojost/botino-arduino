@@ -227,6 +227,7 @@ void led(unsigned char led, unsigned char v) {
       digitalWrite(LED3_PIN, v);
       break;
 		default:
+      break;
 	}
 
 }
