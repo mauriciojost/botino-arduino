@@ -13,7 +13,7 @@
 #define POSI_STR_LENGTH 3 // characters that represent a position / state within a move
 #define MOVE_STR_LENGTH (POSI_STR_LENGTH * MAX_POSI_PER_MOVE)
 
-#define SEQVAL(a, b) (int)(((int)(a)) * 256 + (b))
+#define POSI_VALUE(a, b) (int)(((int)(a)) * 256 + (b))
 
 enum BodyConfigState {
   BodyConfigMsg0 = 0,         // message 0
@@ -52,60 +52,60 @@ private:
   }
 
   void actSub(char c1, char c2) {
-    switch (SEQVAL(c1, c2)) {
+    switch (POSI_VALUE(c1, c2)) {
     	// faces
-      case SEQVAL('f', 's'):
+      case POSI_VALUE('f', 's'):
         log(CLASS_BODY, Debug, "Smile");
         smilyFace();
         break;
-      case SEQVAL('f', 'S'):
+      case POSI_VALUE('f', 'S'):
         log(CLASS_BODY, Debug, "Sad");
         sadFace();
         break;
-      case SEQVAL('f', 'n'):
+      case POSI_VALUE('f', 'n'):
         log(CLASS_BODY, Debug, "Normal");
         normalFace();
         break;
-      case SEQVAL('f', 'l'):
+      case POSI_VALUE('f', 'l'):
         log(CLASS_BODY, Debug, "Sleepy");
         sleepyFace();
         break;
       // arms
-      case SEQVAL('a', 'u'):
+      case POSI_VALUE('a', 'u'):
         log(CLASS_BODY, Debug, "Arms up");
         arms(ArmUp, ArmUp);
         break;
-      case SEQVAL('a', 'r'):
+      case POSI_VALUE('a', 'r'):
         log(CLASS_BODY, Debug, "Arms down/up");
         arms(ArmDown, ArmUp);
         break;
-      case SEQVAL('a', 'l'):
+      case POSI_VALUE('a', 'l'):
         log(CLASS_BODY, Debug, "Arms up/down");
         arms(ArmUp, ArmDown);
         break;
-      case SEQVAL('a', 'd'):
+      case POSI_VALUE('a', 'd'):
         log(CLASS_BODY, Debug, "Arms down");
         arms(ArmDown, ArmDown);
         break;
       // messages
-      case SEQVAL('m', '0'):
+      case POSI_VALUE('m', '0'):
         log(CLASS_BODY, Debug, "Message 0");
         messageFunc(0, msg0->getBuffer());
         break;
-      case SEQVAL('m', '1'):
+      case POSI_VALUE('m', '1'):
         log(CLASS_BODY, Debug, "Message 1");
         messageFunc(0, msg1->getBuffer());
         break;
-      case SEQVAL('m', '2'):
+      case POSI_VALUE('m', '2'):
         log(CLASS_BODY, Debug, "Message 2");
         messageFunc(0, msg2->getBuffer());
         break;
-      case SEQVAL('m', '3'):
+      case POSI_VALUE('m', '3'):
         log(CLASS_BODY, Debug, "Message 3");
         messageFunc(0, msg3->getBuffer());
         break;
       // misc
-      case SEQVAL('w', 'a'):
+      case POSI_VALUE('w', 'a'):
         log(CLASS_BODY, Debug, "Wait");
         delay(1000);
         break;
