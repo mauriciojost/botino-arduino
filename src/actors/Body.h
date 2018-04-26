@@ -18,6 +18,8 @@
 
 #define POSI_VALUE(a, b) (int)(((int)(a)) * 256 + (b))
 
+#define NRO_MSG 4
+
 enum BodyConfigState {
   BodyConfigMsg0 = 0,         // message 0
   BodyConfigMsg1,             // message 1
@@ -43,10 +45,7 @@ private:
   void (*arms)(ArmState left, ArmState right);
   void (*messageFunc)(int line, const char *msg);
   void (*ledFunc)(unsigned char led, unsigned char v);
-  Buffer<MSG_MAX_LENGTH> *msg0;
-  Buffer<MSG_MAX_LENGTH> *msg1;
-  Buffer<MSG_MAX_LENGTH> *msg2;
-  Buffer<MSG_MAX_LENGTH> *msg3;
+  Buffer<MSG_MAX_LENGTH> **msgs;
   Buffer<MOVE_STR_LENGTH> *move;
   long time;
   long cron;
@@ -61,7 +60,7 @@ private:
 				messageFunc != NULL;
   }
 
-  void actSub(char c1, char c2) {
+  void doMovePosition(char c1, char c2) {
     switch (POSI_VALUE(c1, c2)) {
     	// faces
       case POSI_VALUE('f', 's'):
@@ -104,19 +103,19 @@ private:
       // messages
       case POSI_VALUE('m', '0'):
         log(CLASS_BODY, Debug, "Message 0");
-        messageFunc(0, msg0->getBuffer());
+        messageFunc(0, msgs[0]->getBuffer());
         break;
       case POSI_VALUE('m', '1'):
         log(CLASS_BODY, Debug, "Message 1");
-        messageFunc(0, msg1->getBuffer());
+        messageFunc(0, msgs[1]->getBuffer());
         break;
       case POSI_VALUE('m', '2'):
         log(CLASS_BODY, Debug, "Message 2");
-        messageFunc(0, msg2->getBuffer());
+        messageFunc(0, msgs[2]->getBuffer());
         break;
       case POSI_VALUE('m', '3'):
         log(CLASS_BODY, Debug, "Message 3");
-        messageFunc(0, msg3->getBuffer());
+        messageFunc(0, msgs[3]->getBuffer());
         break;
       // misc
       case POSI_VALUE('w', '1'):
@@ -171,7 +170,15 @@ private:
     }
   }
 
+  void doMove(const char* s) {
+    log(CLASS_BODY, Debug, "Instr: %s", s);
+    for (int i = 0; i < strlen(s); i+=2) {
+      doMovePosition(s[i], s[i + 1]);
+    }
+  }
+
 public:
+
   Body(const char *n) : freqConf(OnceEvery1Minute) {
     name = n;
     smilyFace = NULL;
@@ -183,10 +190,10 @@ public:
     ledFunc = NULL;
     time = 0L;
     cron = 0L;
-    msg0 = new Buffer<MSG_MAX_LENGTH>("0");
-    msg1 = new Buffer<MSG_MAX_LENGTH>("1");
-    msg2 = new Buffer<MSG_MAX_LENGTH>("2");
-    msg3 = new Buffer<MSG_MAX_LENGTH>("3");
+    msgs = new Buffer<MSG_MAX_LENGTH>*[NRO_MSG];
+    for (int i = 0; i < NRO_MSG; i++) {
+      msgs[i] = new Buffer<MSG_MAX_LENGTH>("");
+    }
     move = new Buffer<MOVE_STR_LENGTH>("");
   }
 
@@ -222,12 +229,8 @@ public:
     }
     if (freqConf.matches()) {
       log(CLASS_BODY, Debug, "Body up");
-      const char* s = move->getBuffer();
-      log(CLASS_BODY, Debug, "Seq: %s", s);
-      for (int i = 0; i < strlen(s); i+=2) {
-        actSub(s[i], s[i + 1]);
-      }
-
+      const char* instructions = move->getBuffer();
+      doMove(instructions);
     }
   }
 
@@ -255,16 +258,16 @@ public:
   void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
       case (BodyConfigMsg0):
-        setPropValue(setMode, targetValue, actualValue, msg0);
+        setPropValue(setMode, targetValue, actualValue, msgs[0]);
         break;
       case (BodyConfigMsg1):
-        setPropValue(setMode, targetValue, actualValue, msg1);
+        setPropValue(setMode, targetValue, actualValue, msgs[1]);
         break;
       case (BodyConfigMsg2):
-        setPropValue(setMode, targetValue, actualValue, msg2);
+        setPropValue(setMode, targetValue, actualValue, msgs[2]);
         break;
       case (BodyConfigMsg3):
-        setPropValue(setMode, targetValue, actualValue, msg3);
+        setPropValue(setMode, targetValue, actualValue, msgs[3]);
         break;
       case (BodyConfigMove):
         setPropValue(setMode, targetValue, actualValue, move);
