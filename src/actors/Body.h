@@ -18,14 +18,18 @@
 
 #define POSI_VALUE(a, b) (int)(((int)(a)) * 256 + (b))
 
-#define NRO_MSG 4
+#define NRO_MSGS 4
+#define NRO_MOVES 4
 
 enum BodyConfigState {
   BodyConfigMsg0 = 0,         // message 0
   BodyConfigMsg1,             // message 1
   BodyConfigMsg2,             // message 2
   BodyConfigMsg3,             // message 3
-  BodyConfigMove,            // move
+  BodyConfigMove0,            // move 0
+  BodyConfigMove1,            // move 1
+  BodyConfigMove2,            // move 2
+  BodyConfigMove3,            // move 3
   BodyConfigTime,             // time of acting
   BodyConfigCron,             // cron of acting
   BodyConfigStateDelimiter    // delimiter of the configuration states
@@ -46,7 +50,7 @@ private:
   void (*messageFunc)(int line, const char *msg);
   void (*ledFunc)(unsigned char led, unsigned char v);
   Buffer<MSG_MAX_LENGTH> **msgs;
-  Buffer<MOVE_STR_LENGTH> *move;
+  Buffer<MOVE_STR_LENGTH> **moves;
   long time;
   long cron;
 
@@ -190,11 +194,14 @@ public:
     ledFunc = NULL;
     time = 0L;
     cron = 0L;
-    msgs = new Buffer<MSG_MAX_LENGTH>*[NRO_MSG];
-    for (int i = 0; i < NRO_MSG; i++) {
+    msgs = new Buffer<MSG_MAX_LENGTH>*[NRO_MSGS];
+    for (int i = 0; i < NRO_MSGS; i++) {
       msgs[i] = new Buffer<MSG_MAX_LENGTH>("");
     }
-    move = new Buffer<MOVE_STR_LENGTH>("");
+    moves = new Buffer<MOVE_STR_LENGTH>*[NRO_MOVES];
+    for (int i = 0; i < NRO_MOVES; i++) {
+      moves[i] = new Buffer<MOVE_STR_LENGTH>("");
+    }
   }
 
   const char *getName() {
@@ -229,23 +236,31 @@ public:
     }
     if (freqConf.matches()) {
       log(CLASS_BODY, Debug, "Body up");
-      const char* instructions = move->getBuffer();
-      doMove(instructions);
+      doMove(moves[0]->getBuffer());
+      doMove(moves[1]->getBuffer());
+      doMove(moves[2]->getBuffer());
+      doMove(moves[3]->getBuffer());
     }
   }
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
       case (BodyConfigMsg0):
-        return "m0";
+        return "ms0";
       case (BodyConfigMsg1):
-        return "m1";
+        return "ms1";
       case (BodyConfigMsg2):
-        return "m2";
+        return "ms2";
       case (BodyConfigMsg3):
+        return "ms3";
+      case (BodyConfigMove0):
+        return "m0";
+      case (BodyConfigMove1):
+        return "m1";
+      case (BodyConfigMove2):
+        return "m2";
+      case (BodyConfigMove3):
         return "m3";
-      case (BodyConfigMove):
-        return "mo";
       case (BodyConfigTime):
         return "ti";
       case (BodyConfigCron):
@@ -269,8 +284,17 @@ public:
       case (BodyConfigMsg3):
         setPropValue(setMode, targetValue, actualValue, msgs[3]);
         break;
-      case (BodyConfigMove):
-        setPropValue(setMode, targetValue, actualValue, move);
+      case (BodyConfigMove0):
+        setPropValue(setMode, targetValue, actualValue, moves[0]);
+        break;
+      case (BodyConfigMove1):
+        setPropValue(setMode, targetValue, actualValue, moves[1]);
+        break;
+      case (BodyConfigMove2):
+        setPropValue(setMode, targetValue, actualValue, moves[2]);
+        break;
+      case (BodyConfigMove3):
+        setPropValue(setMode, targetValue, actualValue, moves[3]);
         break;
       case (BodyConfigTime):
         setPropLong(setMode, targetValue, actualValue, (long*)&time);
