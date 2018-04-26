@@ -9,7 +9,7 @@
 #include <main4ino/Boolean.h>
 
 #define CLASS_LCD "LD"
-#define LCD_LINE_LENGTH 16
+#define MSG_MAX_LENGTH 16
 #define NRO_CHANNELS 2
 
 enum LcdConfigState {
@@ -28,11 +28,11 @@ private:
   int channel;
   Timing freqConf;
 
-  Buffer<LCD_LINE_LENGTH> *line0Chan0;
-  Buffer<LCD_LINE_LENGTH> *line1Chan0;
+  Buffer<MSG_MAX_LENGTH> *line0Chan0;
+  Buffer<MSG_MAX_LENGTH> *line1Chan0;
 
-  Buffer<LCD_LINE_LENGTH> *line0Chan1;
-  Buffer<LCD_LINE_LENGTH> *line1Chan1;
+  Buffer<MSG_MAX_LENGTH> *line0Chan1;
+  Buffer<MSG_MAX_LENGTH> *line1Chan1;
 
   void (*stdOutFunction)(int, const char *);
 
@@ -40,10 +40,10 @@ public:
   Lcd(const char *n) : freqConf(OnceEvery5Seconds) {
     name = n;
     channel = 0;
-    line0Chan0 = new Buffer<LCD_LINE_LENGTH>("");
-    line1Chan0 = new Buffer<LCD_LINE_LENGTH>("");
-    line0Chan1 = new Buffer<LCD_LINE_LENGTH>("");
-    line1Chan1 = new Buffer<LCD_LINE_LENGTH>("");
+    line0Chan0 = new Buffer<MSG_MAX_LENGTH>("");
+    line1Chan0 = new Buffer<MSG_MAX_LENGTH>("");
+    line0Chan1 = new Buffer<MSG_MAX_LENGTH>("");
+    line1Chan1 = new Buffer<MSG_MAX_LENGTH>("");
     stdOutFunction = NULL;
   }
 
