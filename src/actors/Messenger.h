@@ -87,9 +87,9 @@ public:
     staticBuffer.clear();
     staticBuffer.fill(TIMEZONE_DB_API_URL_BASE_GET, TIMEZONE_DB_KEY, TIMEZONE_DB_ZONE);
     client.begin(staticBuffer.getBuffer());
-    log(CLASS_MESSENGER, Info, "Url clk: %s", staticBuffer.getBuffer());
+    log(CLASS_MESSENGER, Info, "URL clk: %s", staticBuffer.getBuffer());
     errorCode = client.GET();
-    log(CLASS_MESSENGER, Info, "Get clk: %d", errorCode);
+    log(CLASS_MESSENGER, Info, "HTTP GET clk: %d", errorCode);
     if (errorCode > 0) {
       client.writeToStream(&s);
       client.end();
@@ -122,7 +122,7 @@ public:
     client->begin(url->getBuffer());
     client->addHeader("Content-Type", "application/json");
     client->addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
-    log(CLASS_MESSENGER, Info, "Connected dwt %s", url->getBuffer());
+    log(CLASS_MESSENGER, Info, "Connected DWT: %s", url->getBuffer());
   }
 
   void updateBotProperties() {
@@ -138,7 +138,7 @@ public:
     staticUrl.fill(DWEET_IO_API_URL_BASE_GET, DEVICE_NAME);
     setUpDweetClient(&client, &staticUrl);
     errorCode = client.GET();
-    log(CLASS_MESSENGER, Info, "Get dwt: %d", errorCode);
+    log(CLASS_MESSENGER, Info, "HTTP GET DWT: %d", errorCode);
     if (errorCode > 0) {
       client.writeToStream(&s);
       client.end();
@@ -164,11 +164,11 @@ public:
     bot->getPropsJsonFlat(&staticBuffer);
     staticUrl.clear();
     staticUrl.fill(DWEET_IO_API_URL_BASE_POST, DEVICE_NAME);
-    log(CLASS_MESSENGER, Info, "Post dwt: %s", staticBuffer.getBuffer());
+    log(CLASS_MESSENGER, Info, "HTTP POST DWT: %s", staticBuffer.getBuffer());
 
     setUpDweetClient(&client, &staticUrl);
     errorCode = client.POST(staticBuffer.getBuffer());
-    log(CLASS_MESSENGER, Info, "Pos dwt: %d", errorCode);
+    log(CLASS_MESSENGER, Info, "HTT POST DWT: %d", errorCode);
     if (errorCode > 0) {
       client.writeToStream(&Serial);
       client.end();

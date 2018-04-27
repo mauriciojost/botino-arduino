@@ -105,19 +105,19 @@ private:
         arms(ArmMiddle, ArmMiddle);
         break;
       // messages
-      case POSI_VALUE('m', '0'):
+      case POSI_VALUE('s', '0'):
         log(CLASS_BODY, Debug, "Message 0");
         messageFunc(0, msgs[0]->getBuffer());
         break;
-      case POSI_VALUE('m', '1'):
+      case POSI_VALUE('s', '1'):
         log(CLASS_BODY, Debug, "Message 1");
         messageFunc(0, msgs[1]->getBuffer());
         break;
-      case POSI_VALUE('m', '2'):
+      case POSI_VALUE('s', '2'):
         log(CLASS_BODY, Debug, "Message 2");
         messageFunc(0, msgs[2]->getBuffer());
         break;
-      case POSI_VALUE('m', '3'):
+      case POSI_VALUE('s', '3'):
         log(CLASS_BODY, Debug, "Message 3");
         messageFunc(0, msgs[3]->getBuffer());
         break;
@@ -169,14 +169,14 @@ private:
         break;
       // default
       default:
-        log(CLASS_BODY, Debug, "Invalid command");
+        log(CLASS_BODY, Debug, "Invalid pos: %c%c", c1, c2);
         break;
     }
   }
 
   void doMove(const char* s) {
     log(CLASS_BODY, Debug, "Instr: %s", s);
-    for (int i = 0; i < strlen(s); i+=2) {
+    for (int i = 0; i < strlen(s); i+=POSI_STR_LENGTH) {
       doMovePosition(s[i], s[i + 1]);
     }
   }
@@ -246,13 +246,13 @@ public:
   const char *getPropName(int propIndex) {
     switch (propIndex) {
       case (BodyConfigMsg0):
-        return "ms0";
+        return "s0";
       case (BodyConfigMsg1):
-        return "ms1";
+        return "s1";
       case (BodyConfigMsg2):
-        return "ms2";
+        return "s2";
       case (BodyConfigMsg3):
-        return "ms3";
+        return "s3";
       case (BodyConfigMove0):
         return "m0";
       case (BodyConfigMove1):
