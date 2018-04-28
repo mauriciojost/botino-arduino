@@ -19,7 +19,7 @@
 #define POSI_VALUE(a, b) (int)(((int)(a)) * 256 + (b))
 
 #define NRO_MSGS 4
-#define NRO_MOVES 4
+#define NRO_ROUTINES 4
 
 enum BodyConfigState {
   BodyConfigMsg0 = 0,         // message 0
@@ -30,18 +30,26 @@ enum BodyConfigState {
   BodyConfigMove1,            // move 1
   BodyConfigMove2,            // move 2
   BodyConfigMove3,            // move 3
-  BodyConfigTime,             // time of acting
-  BodyConfigCron,             // cron of acting
+  BodyConfigTime0,            // time/cron of acting for move 0
+  BodyConfigTime1,            // time/cron of acting for move 1
+  BodyConfigTime2,            // time/cron of acting for move 2
+  BodyConfigTime3,            // time/cron of acting for move 3
   BodyConfigStateDelimiter    // delimiter of the configuration states
 };
 
 enum ArmState { ArmUp = 0, ArmMiddle, ArmDown, ArmDelimiter };
 
+class Routine {
+public:
+  Buffer<MOVE_STR_LENGTH> move;
+  Timing timing;
+};
+
 class Body : public Actor {
 
 private:
   const char *name;
-  Timing freqConf;
+  Timing timing;
   void (*smilyFace)();
   void (*sadFace)();
   void (*normalFace)();
@@ -50,9 +58,8 @@ private:
   void (*messageFunc)(int line, const char *msg);
   void (*ledFunc)(unsigned char led, unsigned char v);
   Buffer<MSG_MAX_LENGTH> **msgs;
-  Buffer<MOVE_STR_LENGTH> **moves;
-  long time;
-  long cron;
+  Routine routines[NRO_ROUTINES];
+  long times[NRO_ROUTINES];
 
   bool isInitialized() {
     return smilyFace != NULL &&
@@ -64,7 +71,7 @@ private:
 				messageFunc != NULL;
   }
 
-  void doMovePosition(char c1, char c2) {
+  void doPosition(char c1, char c2) {
     switch (POSI_VALUE(c1, c2)) {
     	// faces
       case POSI_VALUE('f', 's'):
@@ -105,19 +112,19 @@ private:
         arms(ArmMiddle, ArmMiddle);
         break;
       // messages
-      case POSI_VALUE('s', '0'):
+      case POSI_VALUE('m', '0'):
         log(CLASS_BODY, Debug, "Message 0");
         messageFunc(0, msgs[0]->getBuffer());
         break;
-      case POSI_VALUE('s', '1'):
+      case POSI_VALUE('m', '1'):
         log(CLASS_BODY, Debug, "Message 1");
         messageFunc(0, msgs[1]->getBuffer());
         break;
-      case POSI_VALUE('s', '2'):
+      case POSI_VALUE('m', '2'):
         log(CLASS_BODY, Debug, "Message 2");
         messageFunc(0, msgs[2]->getBuffer());
         break;
-      case POSI_VALUE('s', '3'):
+      case POSI_VALUE('m', '3'):
         log(CLASS_BODY, Debug, "Message 3");
         messageFunc(0, msgs[3]->getBuffer());
         break;
@@ -177,13 +184,13 @@ private:
   void doMove(const char* s) {
     log(CLASS_BODY, Debug, "Instr: %s", s);
     for (int i = 0; i < strlen(s); i+=POSI_STR_LENGTH) {
-      doMovePosition(s[i], s[i + 1]);
+      doPosition(s[i], s[i + 1]);
     }
   }
 
 public:
 
-  Body(const char *n) : freqConf(OnceEvery1Minute) {
+  Body(const char *n) : timing(OnceEvery1Minute) {
     name = n;
     smilyFace = NULL;
     sadFace = NULL;
@@ -192,15 +199,12 @@ public:
     arms = NULL;
     messageFunc = NULL;
     ledFunc = NULL;
-    time = 0L;
-    cron = 0L;
     msgs = new Buffer<MSG_MAX_LENGTH>*[NRO_MSGS];
     for (int i = 0; i < NRO_MSGS; i++) {
       msgs[i] = new Buffer<MSG_MAX_LENGTH>("");
     }
-    moves = new Buffer<MOVE_STR_LENGTH>*[NRO_MOVES];
-    for (int i = 0; i < NRO_MOVES; i++) {
-      moves[i] = new Buffer<MOVE_STR_LENGTH>("");
+    for (int i = 0; i < NRO_ROUTINES; i++) {
+      times[i] = 0;
     }
   }
 
@@ -234,37 +238,40 @@ public:
     if (!isInitialized()) {
       return;
     }
-    if (freqConf.matches()) {
-      log(CLASS_BODY, Debug, "Body up");
-      doMove(moves[0]->getBuffer());
-      doMove(moves[1]->getBuffer());
-      doMove(moves[2]->getBuffer());
-      doMove(moves[3]->getBuffer());
+    log(CLASS_BODY, Debug, "Body up");
+    for (int i = 0; i < NRO_MSGS; i++) {
+    	while(routines[i].timing.catchesUp(timing.getCurrentTime())) {
+        doMove(routines[i].move.getBuffer());
+    	}
     }
   }
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
       case (BodyConfigMsg0):
-        return "s0";
-      case (BodyConfigMsg1):
-        return "s1";
-      case (BodyConfigMsg2):
-        return "s2";
-      case (BodyConfigMsg3):
-        return "s3";
-      case (BodyConfigMove0):
         return "m0";
-      case (BodyConfigMove1):
+      case (BodyConfigMsg1):
         return "m1";
-      case (BodyConfigMove2):
+      case (BodyConfigMsg2):
         return "m2";
-      case (BodyConfigMove3):
+      case (BodyConfigMsg3):
         return "m3";
-      case (BodyConfigTime):
-        return "ti";
-      case (BodyConfigCron):
-        return "cr";
+      case (BodyConfigMove0):
+        return "v0";
+      case (BodyConfigMove1):
+        return "v1";
+      case (BodyConfigMove2):
+        return "v2";
+      case (BodyConfigMove3):
+        return "v3";
+      case (BodyConfigTime0):
+        return "t0";
+      case (BodyConfigTime1):
+        return "t1";
+      case (BodyConfigTime2):
+        return "t2";
+      case (BodyConfigTime3):
+        return "t3";
       default:
         return "";
     }
@@ -285,29 +292,43 @@ public:
         setPropValue(setMode, targetValue, actualValue, msgs[3]);
         break;
       case (BodyConfigMove0):
-        setPropValue(setMode, targetValue, actualValue, moves[0]);
+        setPropValue(setMode, targetValue, actualValue, &routines[0].move);
         break;
       case (BodyConfigMove1):
-        setPropValue(setMode, targetValue, actualValue, moves[1]);
+        setPropValue(setMode, targetValue, actualValue, &routines[1].move);
         break;
       case (BodyConfigMove2):
-        setPropValue(setMode, targetValue, actualValue, moves[2]);
+        setPropValue(setMode, targetValue, actualValue, &routines[2].move);
         break;
       case (BodyConfigMove3):
-        setPropValue(setMode, targetValue, actualValue, moves[3]);
+        setPropValue(setMode, targetValue, actualValue, &routines[3].move);
         break;
-      case (BodyConfigTime):
-        setPropLong(setMode, targetValue, actualValue, (long*)&time);
+      case (BodyConfigTime0):
+        setPropLong(setMode, targetValue, actualValue, (long*)&times[0]);
         if (setMode == SetValue) {
-          freqConf.setCustom(time);
-          freqConf.setFrequency(CustomMoment);
+          routines[0].timing.setCustom(times[0]);
+          routines[0].timing.setFrequency(Custom);
         }
         break;
-      case (BodyConfigCron):
-        setPropLong(setMode, targetValue, actualValue, (long*)&cron);
+      case (BodyConfigTime1):
+        setPropLong(setMode, targetValue, actualValue, (long*)&times[1]);
         if (setMode == SetValue) {
-          freqConf.setCron(cron);
-          freqConf.setFrequency(CustomCron);
+          routines[1].timing.setCustom(times[1]);
+          routines[1].timing.setFrequency(Custom);
+        }
+        break;
+      case (BodyConfigTime2):
+        setPropLong(setMode, targetValue, actualValue, (long*)&times[2]);
+        if (setMode == SetValue) {
+          routines[2].timing.setCustom(times[2]);
+          routines[2].timing.setFrequency(Custom);
+        }
+        break;
+      case (BodyConfigTime3):
+        setPropLong(setMode, targetValue, actualValue, (long*)&times[3]);
+        if (setMode == SetValue) {
+          routines[3].timing.setCustom(times[3]);
+          routines[3].timing.setFrequency(Custom);
         }
         break;
       default:
@@ -326,7 +347,7 @@ public:
   }
 
   Timing *getFrequencyConfiguration() {
-    return &freqConf;
+    return &timing;
   }
 };
 
