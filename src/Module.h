@@ -37,8 +37,8 @@ public:
     body = new Body("b");
 
     actors = new Array<Actor *>(4);
-    actors->set(0, (Actor *)clock);
-    actors->set(1, (Actor *)msgr);
+    actors->set(0, (Actor *)msgr);
+    actors->set(1, (Actor *)clock);
     actors->set(2, (Actor *)settings);
     actors->set(3, (Actor *)body);
 
