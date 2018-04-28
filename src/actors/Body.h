@@ -308,32 +308,28 @@ public:
         setPropValue(setMode, targetValue, actualValue, &routines[3]->move);
         break;
       case (BodyConfigTime0):
-        setPropInteger(setMode, targetValue, actualValue, (int*)(&times[0]));
-        //setPropLong(setMode, targetValue, actualValue, (long*)(&times[0]));
+        setPropLong(setMode, targetValue, actualValue, (long*)(&times[0]));
         if (setMode == SetValue) {
           routines[0]->timing.setCustom(times[0]);
           routines[0]->timing.setFrequency(Custom);
         }
         break;
       case (BodyConfigTime1):
-        setPropInteger(setMode, targetValue, actualValue, (int*)(&times[1]));
-        //setPropLong(setMode, targetValue, actualValue, (long*)(times + 1));
+        setPropLong(setMode, targetValue, actualValue, (long*)(&times[1]));
         if (setMode == SetValue) {
           routines[1]->timing.setCustom(times[1]);
           routines[1]->timing.setFrequency(Custom);
         }
         break;
       case (BodyConfigTime2):
-        setPropInteger(setMode, targetValue, actualValue, (int*)(&times[2]));
-        //setPropLong(setMode, targetValue, actualValue, (long*)(times + 2));
+        setPropLong(setMode, targetValue, actualValue, (long*)(&times[2]));
         if (setMode == SetValue) {
           routines[2]->timing.setCustom(times[2]);
           routines[2]->timing.setFrequency(Custom);
         }
         break;
       case (BodyConfigTime3):
-        setPropInteger(setMode, targetValue, actualValue, (int*)(&times[3]));
-        //setPropLong(setMode, targetValue, actualValue, (long*)(times + 3));
+        setPropLong(setMode, targetValue, actualValue, (long*)(&times[3]));
         if (setMode == SetValue) {
           routines[3]->timing.setCustom(times[3]);
           routines[3]->timing.setFrequency(Custom);
