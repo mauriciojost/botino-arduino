@@ -278,6 +278,28 @@ void setup() {
 
   log(CLASS_MAIN, Debug, "Setup interrupts");
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, FALLING);
+
+  // Init test routine
+  digitalWrite(LED0_PIN, LOW);
+  digitalWrite(LED1_PIN, LOW);
+  digitalWrite(LED2_PIN, LOW);
+  beNormal();
+  arms(ArmUp, ArmUp);
+
+  delay(2000);
+  digitalWrite(LED0_PIN, HIGH);
+  digitalWrite(LED1_PIN, HIGH);
+  digitalWrite(LED2_PIN, HIGH);
+  beSmily();
+  arms(ArmMiddle, ArmMiddle);
+
+  delay(2000);
+  digitalWrite(LED0_PIN, LOW);
+  digitalWrite(LED1_PIN, LOW);
+  digitalWrite(LED2_PIN, LOW);
+  beSleepy();
+  arms(ArmDown, ArmDown);
+
 }
 
 /**
