@@ -73,7 +73,8 @@ private:
 
   void doPosition(char c1, char c2) {
     switch (POSI_VALUE(c1, c2)) {
-    	// faces
+
+    	// FACES
       case POSI_VALUE('f', 's'):
         log(CLASS_BODY, Debug, "Smile");
         smilyFace();
@@ -90,7 +91,8 @@ private:
         log(CLASS_BODY, Debug, "Sleepy");
         sleepyFace();
         break;
-      // arms
+
+      // ARMS
       case POSI_VALUE('a', 'u'):
         log(CLASS_BODY, Debug, "Arms up");
         arms(ArmUp, ArmUp);
@@ -117,7 +119,8 @@ private:
         log(CLASS_BODY, Debug, "Arms middle");
         arms(ArmMiddle, ArmMiddle);
         break;
-      // messages
+
+      // MESSAGES
       case POSI_VALUE('m', '0'):
         log(CLASS_BODY, Debug, "Message 0");
         messageFunc(0, msgs[0]->getBuffer());
@@ -134,7 +137,8 @@ private:
         log(CLASS_BODY, Debug, "Message 3");
         messageFunc(0, msgs[3]->getBuffer());
         break;
-      // misc
+
+      // WAITS
       case POSI_VALUE('w', '1'):
         log(CLASS_BODY, Debug, "Wait 1s");
         delay(1000);
@@ -147,7 +151,8 @@ private:
         log(CLASS_BODY, Debug, "Wait 3s");
         delay(3000);
         break;
-      // leds
+
+      // LEDS
       case POSI_VALUE('l', '0'):
         log(CLASS_BODY, Debug, "Led 0 on");
         ledFunc(0, ON);
@@ -172,7 +177,8 @@ private:
         log(CLASS_BODY, Debug, "Led 2 off");
         ledFunc(2, OFF);
         break;
-      // default
+
+      // DEFAULT
       default:
         log(CLASS_BODY, Debug, "Invalid pos: %c%c", c1, c2);
         break;
@@ -328,15 +334,11 @@ public:
     }
   }
 
-  int getNroProps() {
-    return BodyConfigStateDelimiter;
-  }
+  int getNroProps() { return BodyConfigStateDelimiter; }
 
   void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}
 
-  int getNroInfos() {
-    return 0;
-  }
+  int getNroInfos() { return 0; }
 
   Timing *getFrequencyConfiguration() {
     return &timing;
