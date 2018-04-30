@@ -107,6 +107,12 @@ private:
         log(CLASS_BODY, Debug, "Arms down");
         arms(ArmDown, ArmDown);
         break;
+      case POSI_VALUE('a', 'w'):
+        log(CLASS_BODY, Debug, "Arms waving");
+        arms(ArmDown, ArmDown);
+        arms(ArmUp, ArmUp);
+        arms(ArmDown, ArmDown);
+        break;
       case POSI_VALUE('a', 'm'):
         log(CLASS_BODY, Debug, "Arms middle");
         arms(ArmMiddle, ArmMiddle);
