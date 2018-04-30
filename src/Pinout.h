@@ -43,8 +43,8 @@
 
 // I2C OLED 128x64
 // (Kuman 0.96inches I2C OLED 128x64 LCD screen)
-#define LCD_SCL_PIN PIN_D1
-#define LCD_SDA_PIN PIN_D2
+#define LCD_SCL_PIN PIN_D1 // cannot be changed! (fixed in the library used)
+#define LCD_SDA_PIN PIN_D2 // same as above
 
 // LEDS
 #define LED1_PIN PIN_D3
