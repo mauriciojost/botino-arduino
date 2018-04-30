@@ -31,6 +31,32 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 #define DELAY_MS_SPI 2
 #define NRO_LEDS 3
 
+#ifndef SERVO_ARM_STEPS
+#define SERVO_ARM_STEPS 100
+#endif // SERVO_ARM_STEPS
+
+#ifndef ARM_UP_SERVO_POS
+#define ARM_UP_SERVO_POS 140
+#endif // ARM_UP_SERVO_POS
+
+#ifndef ARM_MIDDLE_SERVO_POS
+#define ARM_MIDDLE_SERVO_POS 90
+#endif // ARM_MIDDLE_SERVO_POS
+
+#ifndef ARM_DOWN_SERVO_POS
+#define ARM_DOWN_SERVO_POS 50
+#endif // ARM_DOWN_SERVO_POS
+
+#ifndef SERVO0_INVERTED
+#define SERVO0_INVERTED true
+#endif // SERVO0_INVERTED
+
+#ifndef SERVO1_INVERTED
+#define SERVO1_INVERTED false
+#endif // SERVO1_INVERTED
+
+#define INVERT(p, f) ((f ? 180 - p : p))
+
 
 Module m;
 Servo servoLeft;
@@ -166,21 +192,15 @@ int smooth(int pin, Servo *servo, int lastPos, int targetPos, int steps) {
   return targetPos;
 }
 
-int arm(Servo *servo, ArmState a, int lastPos, int pin) {
-
-#define SERVO_ARM_STEPS 100
-#define ARM_UP_SERVO_POS 180
-#define ARM_MIDDLE_SERVO_POS 90
-#define ARM_DOWN_SERVO_POS 0
-
+int arm(Servo *servo, ArmState a, int lastPos, int pin, bool inverted) {
   // Right arm ignored for now
   switch (a) {
     case ArmUp:
-      return smooth(pin, servo, lastPos, ARM_UP_SERVO_POS, SERVO_ARM_STEPS); // oups, messed up with HW, TODO: FIXME
+      return smooth(pin, servo, lastPos, INVERT(ARM_UP_SERVO_POS, inverted), SERVO_ARM_STEPS);
     case ArmMiddle:
-      return smooth(pin, servo, lastPos, ARM_MIDDLE_SERVO_POS, SERVO_ARM_STEPS);
+      return smooth(pin, servo, lastPos, INVERT(ARM_MIDDLE_SERVO_POS, inverted), SERVO_ARM_STEPS);
     case ArmDown:
-      return smooth(pin, servo, lastPos, ARM_DOWN_SERVO_POS, SERVO_ARM_STEPS);
+      return smooth(pin, servo, lastPos, INVERT(ARM_DOWN_SERVO_POS, inverted), SERVO_ARM_STEPS);
     default:
     	return lastPos;
   }
@@ -189,8 +209,8 @@ int arm(Servo *servo, ArmState a, int lastPos, int pin) {
 void arms(ArmState left, ArmState right) {
   static int rightPos = 0;
   static int leftPos = 0;
-  leftPos = arm(&servoLeft, left, leftPos, SERVO0_PIN);
-  rightPos = arm(&servoRight, right, rightPos, SERVO1_PIN);
+  leftPos = arm(&servoLeft, left, leftPos, SERVO0_PIN, SERVO0_INVERTED);
+  rightPos = arm(&servoRight, right, rightPos, SERVO1_PIN, SERVO1_INVERTED);
 }
 
 wl_status_t initWifi() {
