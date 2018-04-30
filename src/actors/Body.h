@@ -9,7 +9,7 @@
 
 #define CLASS_BODY "BO"
 #define MSG_MAX_LENGTH 32
-#define MAX_POSI_PER_MOVE 10 // maximum amount of positions per move
+#define MAX_POSI_PER_MOVE 15 // maximum amount of positions per move
 #define POSI_STR_LENGTH 3 // characters that represent a position / state within a move
 #define MOVE_STR_LENGTH (POSI_STR_LENGTH * MAX_POSI_PER_MOVE)
 
