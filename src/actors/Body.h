@@ -43,6 +43,7 @@ class Routine {
 public:
   Buffer<MOVE_STR_LENGTH> move;
   Timing timing;
+  long timingConf;
 };
 
 class Body : public Actor {
@@ -59,7 +60,6 @@ private:
   void (*ledFunc)(unsigned char led, unsigned char v);
   Buffer<MSG_MAX_LENGTH> **msgs;
   Routine **routines;
-  long times[NRO_ROUTINES];
 
   bool isInitialized() {
     return smilyFace != NULL &&
@@ -197,7 +197,9 @@ public:
     routines = new Routine*[NRO_ROUTINES];
     for (int i = 0; i < NRO_ROUTINES; i++) {
     	routines[i] = new Routine();
-      times[i] = 100000050L;
+      routines[i]->timingConf = 100000050L;
+      routines[i]->timing.setCustom(routines[i]->timingConf);
+      routines[i]->timing.setFrequency(Custom);
     }
   }
 
@@ -300,32 +302,20 @@ public:
         setPropValue(setMode, targetValue, actualValue, &routines[3]->move);
         break;
       case (BodyConfigTime0):
-        setPropLong(setMode, targetValue, actualValue, (long*)(&times[0]));
-        if (setMode == SetValue) {
-          routines[0]->timing.setCustom(times[0]);
-          routines[0]->timing.setFrequency(Custom);
-        }
+        setPropLong(setMode, targetValue, actualValue, &routines[0]->timingConf);
+        routines[0]->timing.setCustom(routines[0]->timingConf);
         break;
       case (BodyConfigTime1):
-        setPropLong(setMode, targetValue, actualValue, (long*)(&times[1]));
-        if (setMode == SetValue) {
-          routines[1]->timing.setCustom(times[1]);
-          routines[1]->timing.setFrequency(Custom);
-        }
+        setPropLong(setMode, targetValue, actualValue, &routines[1]->timingConf);
+        routines[1]->timing.setCustom(routines[1]->timingConf);
         break;
       case (BodyConfigTime2):
-        setPropLong(setMode, targetValue, actualValue, (long*)(&times[2]));
-        if (setMode == SetValue) {
-          routines[2]->timing.setCustom(times[2]);
-          routines[2]->timing.setFrequency(Custom);
-        }
+        setPropLong(setMode, targetValue, actualValue, &routines[2]->timingConf);
+        routines[2]->timing.setCustom(routines[2]->timingConf);
         break;
       case (BodyConfigTime3):
-        setPropLong(setMode, targetValue, actualValue, (long*)(&times[3]));
-        if (setMode == SetValue) {
-          routines[3]->timing.setCustom(times[3]);
-          routines[3]->timing.setFrequency(Custom);
-        }
+        setPropLong(setMode, targetValue, actualValue, &routines[3]->timingConf);
+        routines[3]->timing.setCustom(routines[3]->timingConf);
         break;
       default:
         break;
