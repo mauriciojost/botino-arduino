@@ -14,7 +14,8 @@
 #endif // PERIOD_SEC
 
 enum GlobalConfigState {
-  GlobalClearStackTraceState = 0,
+  GlobalShowSettings = 0,
+  GlobalClearStackTraceState,
   GlobalLogLevelState,
   GlobalButtonPressedState,
   GlobalPeriodSecondsState,
@@ -26,6 +27,7 @@ class Settings : public Actor {
 
 private:
   const char *name;
+  bool showSettings;
   bool clearStackTrace;
   int logLevel;
   int buttonPressed;
@@ -36,6 +38,7 @@ private:
 public:
   Settings(const char *n) : freqConf(Never) {
     name = n;
+    showSettings = false;
     clearStackTrace = false;
     logLevel = 0;
     buttonPressed = 0;
@@ -51,6 +54,8 @@ public:
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
+    	case (GlobalShowSettings):
+        return "sh";
       case (GlobalClearStackTraceState):
         return "cl";
       case (GlobalLogLevelState):
@@ -68,6 +73,9 @@ public:
 
   void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
+    	case (GlobalShowSettings):
+        setPropBoolean(setMode, targetValue, actualValue, &showSettings);
+        break;
       case (GlobalClearStackTraceState):
         setPropBoolean(setMode, targetValue, actualValue, &clearStackTrace);
         break;
@@ -89,16 +97,17 @@ public:
   }
 
   int getNroProps() {
-    return GlobalConfigStateDelimiter;
+    if (showSettings) {
+      return GlobalConfigStateDelimiter;
+    } else {
+      return (GlobalShowSettings + 1);
+    }
   }
 
-  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {
-    Boolean i(clearStackTrace);
-    info->load(&i);
-  }
+  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) { }
 
   int getNroInfos() {
-    return 1;
+    return 0;
   }
 
   Timing *getFrequencyConfiguration() {
