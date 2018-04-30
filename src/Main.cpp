@@ -29,6 +29,8 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 #define DO_NOT_CLEAR_FIRST false
 #define CLEAR_FIRST true
 #define DELAY_MS_SPI 2
+#define NRO_LEDS 3
+
 
 Module m;
 Servo servoLeft;
@@ -213,7 +215,9 @@ wl_status_t initWifi() {
 }
 
 void led(unsigned char led, unsigned char v) {
-	switch(led % 4) {
+  unsigned char l = led % NRO_LEDS;
+  log(CLASS_MAIN, Debug, "Led %d -> %d", (int)l, (int)v);
+	switch(l) {
 		case 0:
       digitalWrite(LED0_PIN, v);
       break;
@@ -222,9 +226,6 @@ void led(unsigned char led, unsigned char v) {
       break;
 		case 2:
       digitalWrite(LED2_PIN, v);
-      break;
-		case 3:
-      digitalWrite(LED3_PIN, v);
       break;
 		default:
       break;
@@ -258,7 +259,6 @@ void setup() {
   pinMode(LED0_PIN, OUTPUT);
   pinMode(LED1_PIN, OUTPUT);
   pinMode(LED2_PIN, OUTPUT);
-  pinMode(LED3_PIN, OUTPUT);
   pinMode(SERVO0_PIN, OUTPUT);
   pinMode(SERVO1_PIN, OUTPUT);
   pinMode(BUTTON0_PIN, INPUT);

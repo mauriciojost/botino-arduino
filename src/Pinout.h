@@ -49,7 +49,6 @@
 // LEDS
 #define LED1_PIN PIN_D3
 #define LED2_PIN PIN_D4
-#define LED3_PIN PIN_D5
 
 // FAN
 //#define FAN_PIN PIN_D6

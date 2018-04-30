@@ -154,10 +154,6 @@ private:
         log(CLASS_BODY, Debug, "Led 2 on");
         ledFunc(2, ON);
         break;
-      case POSI_VALUE('l', '3'):
-        log(CLASS_BODY, Debug, "Led 3 on");
-        ledFunc(3, ON);
-        break;
       case POSI_VALUE('L', '0'):
         log(CLASS_BODY, Debug, "Led 0 off");
         ledFunc(0, OFF);
@@ -169,10 +165,6 @@ private:
       case POSI_VALUE('L', '2'):
         log(CLASS_BODY, Debug, "Led 2 off");
         ledFunc(2, OFF);
-        break;
-      case POSI_VALUE('L', '3'):
-        log(CLASS_BODY, Debug, "Led 3 off");
-        ledFunc(3, OFF);
         break;
       // default
       default:
