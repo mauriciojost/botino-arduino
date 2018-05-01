@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This script will pull the dependency libraries from GitHub
 # using dependencies settings with platformio syntax: 
@@ -8,7 +8,7 @@
 # In an attempt to stop using platformio (community not big enough yet).
 
 ROOT_DIR=`dirname $(readlink -e $0)`
-CONFIG_FILE=$1
+CONFIG_FILE=${1:-dependencies.conf}
 LIBS_DIR=$ROOT_DIR/lib_deps_external
 SRC_DIR=$ROOT_DIR/src
 
