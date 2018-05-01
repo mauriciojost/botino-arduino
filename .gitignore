@@ -92,3 +92,5 @@
 /serial.log
 /lib_deps_external/main4ino-arduino-actors/
 /src/main4ino-actors
+/lib_deps_external/Adafruit-GFX-Library/
+/src/Fonts
