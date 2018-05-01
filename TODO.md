@@ -1,8 +1,5 @@
 # TODO
 
-- Create a library with standard reusable actors (Led, Arm, Lcd)
-- Fix the entangling of the physical arm threads
-- Separate physical channels for cables, and threads in main physical body
 - Package electronics without breadboard
 - Figure out wifi setup
 
@@ -17,3 +14,5 @@
 - Add a Buffer.sprintf("%d",s) for Buffer that is overflow-safe
 - Refactoring on Bot & friends to remove configurables totally (API otherwise is confusing)
 - Fix the position of the servo
+- Create a library with standard reusable actors (Led, Arm, Lcd)
+- Fix the entangling of the physical arm threads (separate physical channels for cables, and threads in main physical body)
