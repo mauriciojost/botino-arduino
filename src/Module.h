@@ -3,8 +3,6 @@
 
 #include <main4ino/Actor.h>
 #include <actors/Messenger.h>
-#include <actors/Led.h>
-#include <actors/Arm.h>
 #include <actors/Body.h>
 #include <main4ino/Clock.h>
 #include <main4ino/WebBot.h>
