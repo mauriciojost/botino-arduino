@@ -9,6 +9,7 @@
 #include "EspSaveCrash.h"
 #include <Pinout.h>
 #include "Images.h"
+#include "main4ino/Misc.h"
 
 #define CLASS_MAIN "MA"
 
