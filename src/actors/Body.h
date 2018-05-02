@@ -9,14 +9,14 @@
 
 #define CLASS_BODY "BO"
 #define MSG_MAX_LENGTH 32
-#define MAX_POSI_PER_MOVE 15 // maximum amount of positions per move
-#define POSI_STR_LENGTH 3 // characters that represent a position / state within a move
-#define MOVE_STR_LENGTH (POSI_STR_LENGTH * MAX_POSI_PER_MOVE)
+#define MAX_POSES_PER_MOVE 15 // maximum amount of positions per move
+#define POSE_STR_LENGTH 3 // characters that represent a position / state within a move
+#define MOVE_STR_LENGTH (POSE_STR_LENGTH * MAX_POSES_PER_MOVE)
 
 #define ON 1
 #define OFF 0
 
-#define POSI_VALUE(a, b) (int)(((int)(a)) * 256 + (b))
+#define GET_POSE(a, b) (int)(((int)(a)) * 256 + (b))
 
 #define NRO_MSGS 4
 #define NRO_ROUTINES 4
@@ -30,10 +30,10 @@ enum BodyConfigState {
   BodyConfigMove1,            // move 1
   BodyConfigMove2,            // move 2
   BodyConfigMove3,            // move 3
-  BodyConfigTime0,            // time/cron of acting for move 0
-  BodyConfigTime1,            // time/cron of acting for move 1
-  BodyConfigTime2,            // time/cron of acting for move 2
-  BodyConfigTime3,            // time/cron of acting for move 3
+  BodyConfigTime0,            // time/freq of acting for move 0
+  BodyConfigTime1,            // time/freq of acting for move 1
+  BodyConfigTime2,            // time/freq of acting for move 2
+  BodyConfigTime3,            // time/freq of acting for move 3
   BodyConfigStateDelimiter    // delimiter of the configuration states
 };
 
@@ -46,6 +46,20 @@ public:
   long timingConf;
 };
 
+/**
+ * Body, representative of the Botino physical robot.
+ *
+ * The robot can perform a few configurable routines at a given moment / frequency in time.
+ *
+ * A routine is made of:
+ * - a timing configuration (can be a frequency expression or a specific time of the day)
+ * - a move (a sequence of poses)
+ *
+ * A move can contain many poses. A pose can be both arms up, both arms down, a given face (sad, smily) or even some
+ * special conditions like illumination (red light) or control over the fan.
+ *
+ * Routines are configurable in both senses: timing and moves.
+ */
 class Body : public Actor {
 
 private:
@@ -63,7 +77,7 @@ private:
   Routine **routines;
 
   bool isInitialized() {
-    return smilyFace != NULL &&
+    bool init = smilyFace != NULL &&
     		sadFace != NULL &&
 				normalFace != NULL &&
 				sleepyFace != NULL &&
@@ -71,25 +85,29 @@ private:
 				arms != NULL &&
         ledFunc != NULL &&
 				messageFunc != NULL;
+    if (!init) {
+      log(CLASS_BODY, Warn, "No init!");
+    }
+    return init;
   }
 
-  void doPosition(char c1, char c2) {
-    switch (POSI_VALUE(c1, c2)) {
+  void performPose(char c1, char c2) {
+    switch (GET_POSE(c1, c2)) {
 
     	// FACES
-      case POSI_VALUE('f', 's'):
+      case GET_POSE('f', 's'):
         log(CLASS_BODY, Debug, "Smile");
         smilyFace();
         break;
-      case POSI_VALUE('f', 'S'):
+      case GET_POSE('f', 'S'):
         log(CLASS_BODY, Debug, "Sad");
         sadFace();
         break;
-      case POSI_VALUE('f', 'n'):
+      case GET_POSE('f', 'n'):
         log(CLASS_BODY, Debug, "Normal");
         normalFace();
         break;
-      case POSI_VALUE('f', 'l'):
+      case GET_POSE('f', 'l'):
         log(CLASS_BODY, Debug, "Sleepy");
         sleepyFace();
         break;
@@ -99,101 +117,101 @@ private:
         break;
 
       // ARMS
-      case POSI_VALUE('a', 'u'):
+      case GET_POSE('a', 'u'):
         log(CLASS_BODY, Debug, "Arms up");
         arms(ArmUp, ArmUp);
         break;
-      case POSI_VALUE('a', 'r'):
+      case GET_POSE('a', 'r'):
         log(CLASS_BODY, Debug, "Arms down/up");
         arms(ArmDown, ArmUp);
         break;
-      case POSI_VALUE('a', 'l'):
+      case GET_POSE('a', 'l'):
         log(CLASS_BODY, Debug, "Arms up/down");
         arms(ArmUp, ArmDown);
         break;
-      case POSI_VALUE('a', 'd'):
+      case GET_POSE('a', 'd'):
         log(CLASS_BODY, Debug, "Arms down");
         arms(ArmDown, ArmDown);
         break;
-      case POSI_VALUE('a', 'w'):
+      case GET_POSE('a', 'w'):
         log(CLASS_BODY, Debug, "Arms waving");
         arms(ArmDown, ArmDown);
         arms(ArmUp, ArmUp);
         arms(ArmDown, ArmDown);
         break;
-      case POSI_VALUE('a', 'm'):
+      case GET_POSE('a', 'm'):
         log(CLASS_BODY, Debug, "Arms middle");
         arms(ArmMiddle, ArmMiddle);
         break;
 
       // MESSAGES
-      case POSI_VALUE('m', '0'):
+      case GET_POSE('m', '0'):
         log(CLASS_BODY, Debug, "Message 0");
         messageFunc(0, msgs[0]->getBuffer());
         break;
-      case POSI_VALUE('m', '1'):
+      case GET_POSE('m', '1'):
         log(CLASS_BODY, Debug, "Message 1");
         messageFunc(0, msgs[1]->getBuffer());
         break;
-      case POSI_VALUE('m', '2'):
+      case GET_POSE('m', '2'):
         log(CLASS_BODY, Debug, "Message 2");
         messageFunc(0, msgs[2]->getBuffer());
         break;
-      case POSI_VALUE('m', '3'):
+      case GET_POSE('m', '3'):
         log(CLASS_BODY, Debug, "Message 3");
         messageFunc(0, msgs[3]->getBuffer());
         break;
 
       // WAITS
-      case POSI_VALUE('w', '1'):
+      case GET_POSE('w', '1'):
         log(CLASS_BODY, Debug, "Wait 1s");
         delay(1000);
         break;
-      case POSI_VALUE('w', '2'):
+      case GET_POSE('w', '2'):
         log(CLASS_BODY, Debug, "Wait 2s");
         delay(2000);
         break;
-      case POSI_VALUE('w', '3'):
+      case GET_POSE('w', '3'):
         log(CLASS_BODY, Debug, "Wait 3s");
         delay(3000);
         break;
 
-      // LEDS
-      case POSI_VALUE('l', '0'):
+      // LEDS ON / OFF
+      case GET_POSE('l', '0'):
         log(CLASS_BODY, Debug, "Led 0 on");
         ledFunc(0, ON);
         break;
-      case POSI_VALUE('l', '1'):
+      case GET_POSE('l', '1'):
         log(CLASS_BODY, Debug, "Led 1 on");
         ledFunc(1, ON);
         break;
-      case POSI_VALUE('l', '2'):
+      case GET_POSE('l', '2'):
         log(CLASS_BODY, Debug, "Led 2 on");
         ledFunc(2, ON);
         break;
-      case POSI_VALUE('L', '0'):
+      case GET_POSE('L', '0'):
         log(CLASS_BODY, Debug, "Led 0 off");
         ledFunc(0, OFF);
         break;
-      case POSI_VALUE('L', '1'):
+      case GET_POSE('L', '1'):
         log(CLASS_BODY, Debug, "Led 1 off");
         ledFunc(1, OFF);
         break;
-      case POSI_VALUE('L', '2'):
+      case GET_POSE('L', '2'):
         log(CLASS_BODY, Debug, "Led 2 off");
         ledFunc(2, OFF);
         break;
 
       // DEFAULT
       default:
-        log(CLASS_BODY, Debug, "Invalid pos: %c%c", c1, c2);
+        log(CLASS_BODY, Debug, "Invalid pose: %c%c", c1, c2);
         break;
     }
   }
 
-  void doMove(const char* s) {
-    for (int i = 0; i < strlen(s); i+=POSI_STR_LENGTH) {
-      doPosition(s[i], s[i + 1]);
+  void performMove(const char* s) {
+    for (int i = 0; i < strlen(s); i+=POSE_STR_LENGTH) {
+      performPose(s[i], s[i + 1]);
     }
   }
 
@@ -226,17 +244,17 @@ public:
     return name;
   }
 
-  void setSleepyFace(void (*f)()) {
-    sleepyFace = f;
-  }
-  void setNormalFace(void (*f)()) {
-    normalFace = f;
-  }
   void setSmilyFace(void (*f)()) {
     smilyFace = f;
   }
   void setSadFace(void (*f)()) {
     sadFace = f;
+  }
+  void setNormalFace(void (*f)()) {
+    normalFace = f;
+  }
+  void setSleepyFace(void (*f)()) {
+    sleepyFace = f;
   }
   void setClearFace(void (*f)()) {
     clearFace = f;
@@ -258,9 +276,10 @@ public:
     for (int i = 0; i < NRO_MSGS; i++) {
     	while(routines[i]->timing.catchesUp(timing.getCurrentTime())) {
     		if (routines[i]->timing.matches()) {
+          const long timing = routines[i]->timingConf;
           const char* move = routines[i]->move.getBuffer();
-          log(CLASS_BODY, Debug, "Routine: %d %s", i, move);
-          doMove(move);
+          log(CLASS_BODY, Debug, "Rne %d: %ld %s", i, timing, move);
+          performMove(move);
     		}
     	}
     }
