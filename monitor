@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 export PORT=$1
-pio -f -c atom serialports monitor --raw --port /dev/ttyUSB$PORT -b 115200 | lib_deps_external/log4ino-arduino/extras/pretty-log | ts | tee serial.log
+pio -f -c atom serialports monitor --raw --port /dev/ttyUSB$PORT -b 115200 | libs/log4ino-arduino/extras/pretty-log | ts | tee serial.log
