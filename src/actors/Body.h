@@ -175,6 +175,10 @@ private:
         log(CLASS_BODY, Debug, "Wait 3s");
         delay(3000);
         break;
+      case GET_POSE('w', '9'):
+        log(CLASS_BODY, Debug, "Wait 9s");
+        delay(9000);
+        break;
 
       // LEDS ON / OFF
       case GET_POSE('l', '0'):
