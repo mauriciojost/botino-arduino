@@ -85,9 +85,6 @@ private:
 				arms != NULL &&
         ledFunc != NULL &&
 				messageFunc != NULL;
-    if (!init) {
-      log(CLASS_BODY, Warn, "No init!");
-    }
     return init;
   }
 
@@ -273,9 +270,10 @@ public:
 
   void act() {
     if (!isInitialized()) {
+      log(CLASS_BODY, Warn, "No init!");
       return;
     }
-    for (int i = 0; i < NRO_MSGS; i++) {
+    for (int i = 0; i < NRO_ROUTINES; i++) {
     	while(routines[i]->timing.catchesUp(timing.getCurrentTime())) {
     		if (routines[i]->timing.matches()) {
           const long timing = routines[i]->timingConf;
