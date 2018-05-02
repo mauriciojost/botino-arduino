@@ -95,3 +95,5 @@
 /lib_deps_external/Adafruit-GFX-Library/
 /src/Fonts
 /.settings/PlatformIO Debugger.launch
+/lib_deps_external/Unity/
+/lib_deps_external/src
