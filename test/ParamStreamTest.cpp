@@ -36,7 +36,7 @@ void test_param_stream_behaviour() {
 int main() {
   UNITY_BEGIN();
   RUN_TEST(test_param_stream_behaviour);
-  UNITY_END();
+  return (UNITY_END());
 }
 
 #endif // UNIT_TEST
