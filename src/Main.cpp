@@ -151,6 +151,11 @@ void logLine(const char *str) {
   Serial.println(str);
 }
 
+void beClear() {
+  lcd.clearDisplay();
+  lcd.display();
+  delay(DELAY_MS_SPI);
+}
 void beSmily() {
   lcd.clearDisplay();
   lcd.drawBitmap(0, 0, happy, 128, 64, WHITE);
@@ -292,6 +297,7 @@ void setup() {
   m.getBody()->setSadFace(beSad);
   m.getBody()->setNormalFace(beNormal);
   m.getBody()->setSleepyFace(beSleepy);
+  m.getBody()->setClearFace(beClear);
   m.getBody()->setArms(arms);
   m.getBody()->setMessageFunc(messageOnLcd);
   m.getBody()->setLedFunc(led);

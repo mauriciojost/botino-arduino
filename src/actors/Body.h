@@ -55,6 +55,7 @@ private:
   void (*sadFace)();
   void (*normalFace)();
   void (*sleepyFace)();
+  void (*clearFace)();
   void (*arms)(ArmState left, ArmState right);
   void (*messageFunc)(int line, const char *msg);
   void (*ledFunc)(unsigned char led, unsigned char v);
@@ -66,6 +67,7 @@ private:
     		sadFace != NULL &&
 				normalFace != NULL &&
 				sleepyFace != NULL &&
+				clearFace != NULL &&
 				arms != NULL &&
         ledFunc != NULL &&
 				messageFunc != NULL;
@@ -90,6 +92,10 @@ private:
       case POSI_VALUE('f', 'l'):
         log(CLASS_BODY, Debug, "Sleepy");
         sleepyFace();
+        break;
+      case GET_POSE('f', 'c'):
+        log(CLASS_BODY, Debug, "Clear");
+        clearFace();
         break;
 
       // ARMS
@@ -199,6 +205,7 @@ public:
     sadFace = NULL;
     normalFace = NULL;
     sleepyFace = NULL;
+    clearFace = NULL;
     arms = NULL;
     messageFunc = NULL;
     ledFunc = NULL;
@@ -230,6 +237,9 @@ public:
   }
   void setSadFace(void (*f)()) {
     sadFace = f;
+  }
+  void setClearFace(void (*f)()) {
+    clearFace = f;
   }
   void setArms(void (*f)(ArmState left, ArmState right)) {
     arms = f;
