@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
-set -x
+#set -x
 
 function run_test() {
 
@@ -9,14 +9,16 @@ function run_test() {
 
   export flags="$2"
 
-  export headers=$(find * -name "*.h" | xargs -I% dirname % | uniq | grep -v test | grep -v unity | xargs -I% echo "-I %")
-  export src_c=$(find * -name "*.c" | grep -v test | grep -v unity | xargs -I% echo " %")
-  export src_cpp=$(find * -name "*.cpp" | grep -v test | grep -v unity | xargs -I% echo " %")
+  export exclude='Adafruit\|EspSaveCrash\|catch'
 
-  export headers_unity="-I libs/unity/src "
-  export src_unity="libs/unity/src/*.c"
+  export headers=$(find * -name "*.h" | xargs -I% dirname % | uniq | grep -v test | grep -v unity | grep -v "$exclude" | xargs -I% echo "-I %")
+  export src_c=$(find * -name "*.c" | grep -v test | grep -v unity | grep -v "$exclude"  | xargs -I% echo " %")
+  export src_cpp=$(find * -name "*.cpp" | grep -v test | grep -v unity | grep -v "$exclude" | xargs -I% echo " %")
 
-  g++ -o simulator.bin $flags $src_c $src_cpp $src_unity $main_src $headers $headers_unity
+  export headers_unity="-I lib_deps_external/Unity/src"
+  export src_unity="lib_deps_external/Unity/src/*.c"
+
+  g++ -Wno-deprecated-declarations -o simulator.bin $flags $src_c $src_cpp $src_unity $main_src $headers -I src $headers_unity
 
   ./simulator.bin
 
@@ -24,7 +26,10 @@ function run_test() {
 
 }
 
-general_flags="-D UNIT_TEST -D SUBCYCLES_2 -D LOG_LEVEL=0 -D BINARY_LEVEL"
+rm -fr lib_deps_external/Unity/examples
+
+
+general_flags="-D UNIT_TEST -D LOG_LEVEL=0 -D MAX_LOG_MSG_LENGTH=64"
 
 for f in $(find test -name *.cpp)
 do

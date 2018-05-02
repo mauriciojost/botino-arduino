@@ -1,6 +1,10 @@
 #ifndef BODY_INC
 #define BODY_INC
 
+#ifdef UNIT_TEST
+void delay(int) {}
+#endif // UNIT_TEST
+
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Value.h>
