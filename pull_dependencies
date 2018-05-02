@@ -9,7 +9,7 @@
 
 ROOT_DIR=`dirname $(readlink -e $0)`
 CONFIG_FILE=${1:-dependencies.conf}
-LIBS_DIR=$ROOT_DIR/lib_deps_external
+LIBS_DIR=$ROOT_DIR/libs
 SRC_DIR=$ROOT_DIR/src
 
 function pull_dependency() {

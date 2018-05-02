@@ -15,8 +15,8 @@ function run_test() {
   export src_c=$(find * -name "*.c" | grep -v test | grep -v unity | grep -v "$exclude"  | xargs -I% echo " %")
   export src_cpp=$(find * -name "*.cpp" | grep -v test | grep -v unity | grep -v "$exclude" | xargs -I% echo " %")
 
-  export headers_unity="-I lib_deps_external/Unity/src"
-  export src_unity="lib_deps_external/Unity/src/*.c"
+  export headers_unity="-I libs/Unity/src"
+  export src_unity="libs/Unity/src/*.c"
 
   g++ -Wno-deprecated-declarations -o simulator.bin $flags $src_c $src_cpp $src_unity $main_src $headers -I src $headers_unity
 
@@ -26,7 +26,7 @@ function run_test() {
 
 }
 
-rm -fr lib_deps_external/Unity/examples
+rm -fr libs/Unity/examples
 
 
 general_flags="-D UNIT_TEST -D LOG_LEVEL=0 -D OVERRUN_THRESHOLD_SECS=10000"

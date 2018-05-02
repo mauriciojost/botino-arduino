@@ -18,10 +18,10 @@
 /src/ArduinoJson.hpp
 /src/ESP8266HTTPClient.cpp
 /src/ESP8266HTTPClient.h
-/lib_deps_external/ArduinoJson/
-/lib_deps_external/log4ino-arduino/
-/lib_deps_external/main4ino-arduino/
-/lib_deps_external/Adafruit_SSD1306/
+/libs/ArduinoJson/
+/libs/log4ino-arduino/
+/libs/main4ino-arduino/
+/libs/Adafruit_SSD1306/
 /src/Adafruit_GFX.cpp
 /src/Adafruit_GFX.h
 /src/Adafruit_SPITFT.cpp
@@ -88,12 +88,12 @@
 /src/license.txt
 /src/EspSaveCrash.cpp
 /src/EspSaveCrash.h
-/lib_deps_external/EspSaveCrash/
+/libs/EspSaveCrash/
 /serial.log
-/lib_deps_external/main4ino-arduino-actors/
+/libs/main4ino-arduino-actors/
 /src/main4ino-actors
-/lib_deps_external/Adafruit-GFX-Library/
+/libs/Adafruit-GFX-Library/
 /src/Fonts
 /.settings/PlatformIO Debugger.launch
-/lib_deps_external/Unity/
-/lib_deps_external/src
+/libs/Unity/
+/libs/src
