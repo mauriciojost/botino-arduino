@@ -162,6 +162,15 @@ private:
         log(CLASS_BODY, Debug, "Message 3");
         messageFunc(0, msgs[3]->getBuffer());
         break;
+      case GET_POSE('m', 'c'): {
+        log(CLASS_BODY, Debug, "Message clock");
+        int h = GET_HOURS(timing.getCurrentTime());
+        int m = GET_MINUTES(timing.getCurrentTime());
+        Buffer<6> t("");
+        t.fill("%02d:%02d", h, m);
+        messageFunc(0, t.getBuffer());
+        break;
+      }
 
       // WAITS
       case GET_POSE('w', '1'):

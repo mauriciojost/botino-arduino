@@ -29,7 +29,7 @@ function run_test() {
 rm -fr lib_deps_external/Unity/examples
 
 
-general_flags="-D UNIT_TEST -D LOG_LEVEL=0 -D MAX_LOG_MSG_LENGTH=64"
+general_flags="-D UNIT_TEST -D LOG_LEVEL=0 -D OVERRUN_THRESHOLD_SECS=10000"
 
 for f in $(find test -name *.cpp)
 do
