@@ -73,8 +73,8 @@ private:
   void (*arms)(ArmState left, ArmState right);
   void (*messageFunc)(int line, const char *msg);
   void (*ledFunc)(unsigned char led, unsigned char v);
-  Buffer<MSG_MAX_LENGTH> **msgs;
-  Routine **routines;
+  Buffer<MSG_MAX_LENGTH> *msgs[NRO_MSGS];
+  Routine *routines[NRO_ROUTINES];
 
   bool isInitialized() {
     bool init = smilyFace != NULL &&
@@ -231,11 +231,9 @@ public:
     arms = NULL;
     messageFunc = NULL;
     ledFunc = NULL;
-    msgs = new Buffer<MSG_MAX_LENGTH>*[NRO_MSGS];
     for (int i = 0; i < NRO_MSGS; i++) {
       msgs[i] = new Buffer<MSG_MAX_LENGTH>("");
     }
-    routines = new Routine*[NRO_ROUTINES];
     for (int i = 0; i < NRO_ROUTINES; i++) {
     	routines[i] = new Routine();
       routines[i]->timingConf = 100000050L;
