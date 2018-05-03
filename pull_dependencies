@@ -34,7 +34,10 @@ function pull_dependency() {
   fi
   echo "Pulling: $giturl / $gitbranch (files: $gitfiles)"
   cd $LIBS_DIR
-  git clone -b "$gitbranch" "$giturl"
+  git clone "$giturl"
+  cd $gitproject
+  git checkout "$gitbranch"
+  cd ..
 
   local dep_dir="$gitproject"
   local src_dir="$SRC_DIR"
