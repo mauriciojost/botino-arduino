@@ -13,6 +13,14 @@
 
 #define CLASS_MAIN "MA"
 
+#ifndef WIFI_SSID_ORIG
+#error "Must provide WIFI_SSID_ORIG"
+#endif
+
+#ifndef WIFI_PASSWORD_ORIG
+#error "Must provide WIFI_PASSWORD_ORIG"
+#endif
+
 #ifndef WIFI_SSID
 #error "Must provide WIFI_SSID"
 #endif
@@ -64,6 +72,8 @@ Servo servoLeft;
 Servo servoRight;
 Adafruit_SSD1306 lcd(-1);
 volatile unsigned char ints = 0;
+const char *wifiSsid = NULL;
+const char *wifiPass = NULL;
 
 /******************/
 /***  CALLBACKS ***/
@@ -219,16 +229,16 @@ void arms(ArmState left, ArmState right) {
   rightPos = arm(&servoRight, right, rightPos, SERVO1_PIN, SERVO1_INVERTED);
 }
 
-wl_status_t initWifi() {
-  log(CLASS_MAIN, Info, "Connecting...");
+wl_status_t initWifi(const char* ssid, const char* pass) {
+  log(CLASS_MAIN, Info, "Connecting to %s ...", ssid);
 
   wl_status_t status = WiFi.status();
-  if (status != WL_CONNECTED) {
+  if (status == WL_CONNECTED) {
   	return status;
   }
 
   WiFi.mode(WIFI_STA);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  WiFi.begin(ssid, pass);
 
   int attemptsLeft = 10;
   while (true) {
@@ -245,6 +255,16 @@ wl_status_t initWifi() {
     }
     delay(1500);
   }
+}
+
+wl_status_t initOriginWifi() {
+  return initWifi(WIFI_SSID_ORIG, WIFI_PASSWORD_ORIG);
+}
+
+wl_status_t initSteadyWifi() {
+	wifiSsid = m.getSetupSync()->getSsid();
+	wifiPass = m.getSetupSync()->getPass();
+  return initWifi(wifiSsid, wifiPass);
 }
 
 void led(unsigned char led, unsigned char v) {
@@ -308,8 +328,10 @@ void setup() {
   m.getBody()->setArms(arms);
   m.getBody()->setMessageFunc(messageOnLcd);
   m.getBody()->setLedFunc(led);
-  m.getPropSync()->setInitWifi(initWifi);
-  m.getClockSync()->setInitWifi(initWifi);
+  m.getPropSync()->setInitWifi(initSteadyWifi);
+  m.getClockSync()->setInitWifi(initSteadyWifi);
+  m.getSetupSync()->setInitWifi(initSteadyWifi);
+  m.getSetupSync()->setInitWifiOrigin(initOriginWifi);
 
   log(CLASS_MAIN, Debug, "Setup interrupts");
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, FALLING);
