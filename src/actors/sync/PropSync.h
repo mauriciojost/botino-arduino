@@ -15,12 +15,10 @@
 #include <main4ino/Boolean.h>
 
 #define CLASS_PROPSYNC "PS"
-#define MAX_URL_EFF_LENGTH 100
 
 #define WAIT_BEFORE_REPOST_DWEETIO_MS 1500
-#define DWEET_IO_API_URL_BASE "http://dweet.io"
-#define DWEET_IO_API_URL_BASE_POST DWEET_IO_API_URL_BASE "/dweet/for/%s"                  // device
-#define DWEET_IO_API_URL_BASE_GET DWEET_IO_API_URL_BASE "/get/latest/dweet/for/%s-target" // device
+#define DWEET_IO_API_URL_POST "http://dweet.io/dweet/for/" DEVICE_NAME
+#define DWEET_IO_API_URL_GET "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-target"
 
 #ifndef DWEET_IO_API_TOKEN
 #error "Must provide DWEET_IO_API_TOKEN"
@@ -38,7 +36,6 @@ private:
   WebBot *bot;
   Timing freqConf; // configuration of the frequency at which this actor will get triggered
   Buffer<MAX_JSON_STR_LENGTH> staticBuffer;
-  Buffer<MAX_URL_EFF_LENGTH> staticUrl;
   wl_status_t (*initWifiFunc)();
 
 public:
@@ -72,11 +69,11 @@ public:
     initWifiFunc = f;
   }
 
-  void setUpDweetClient(HTTPClient *client, Buffer<MAX_URL_EFF_LENGTH> *url) {
-    client->begin(url->getBuffer());
+  void setUpDweetClient(HTTPClient *client, const char *url) {
+    client->begin(url);
     client->addHeader("Content-Type", "application/json");
     client->addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
-    log(CLASS_PROPSYNC, Info, "Connected DWT: %s", url->getBuffer());
+    log(CLASS_PROPSYNC, Info, "Connected DWT: %s", url);
   }
 
   void updateBotProperties() {
@@ -88,9 +85,7 @@ public:
     HTTPClient client;
 
     ParamStream s;
-    staticUrl.clear();
-    staticUrl.fill(DWEET_IO_API_URL_BASE_GET, DEVICE_NAME);
-    setUpDweetClient(&client, &staticUrl);
+    setUpDweetClient(&client, DWEET_IO_API_URL_GET);
     errorCode = client.GET();
     log(CLASS_PROPSYNC, Info, "HTTP GET DWT: %d", errorCode);
     if (errorCode > 0) {
@@ -116,11 +111,9 @@ public:
     }
 
     bot->getPropsJsonFlat(&staticBuffer);
-    staticUrl.clear();
-    staticUrl.fill(DWEET_IO_API_URL_BASE_POST, DEVICE_NAME);
-    log(CLASS_PROPSYNC, Info, "HTTP POST DWT: %s", staticBuffer.getBuffer());
+    log(CLASS_PROPSYNC, Info, "HTTP POST DWT: %s", DWEET_IO_API_URL_POST);
 
-    setUpDweetClient(&client, &staticUrl);
+    setUpDweetClient(&client, DWEET_IO_API_URL_POST);
     errorCode = client.POST(staticBuffer.getBuffer());
     log(CLASS_PROPSYNC, Info, "HTT POST DWT: %d", errorCode);
     if (errorCode > 0) {
