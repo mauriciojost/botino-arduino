@@ -308,7 +308,8 @@ void setup() {
   m.getBody()->setArms(arms);
   m.getBody()->setMessageFunc(messageOnLcd);
   m.getBody()->setLedFunc(led);
-  m.getMessenger()->setInitWifi(initWifi);
+  m.getPropSync()->setInitWifi(initWifi);
+  m.getClockSync()->setInitWifi(initWifi);
 
   log(CLASS_MAIN, Debug, "Setup interrupts");
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, FALLING);

@@ -2,7 +2,8 @@
 #define MODULE_INC
 
 #include <main4ino/Actor.h>
-#include <actors/Messenger.h>
+#include <actors/sync/ClockSync.h>
+#include <actors/sync/PropSync.h>
 #include <actors/Body.h>
 #include <main4ino/Clock.h>
 #include <main4ino/WebBot.h>
@@ -19,7 +20,8 @@
 class Module {
 
 private:
-  Messenger *msgr;
+  PropSync *propSync;
+  ClockSync *clockSync;
   Array<Actor *> *actors;
   Clock *clock;
   Settings *settings;
@@ -29,19 +31,24 @@ private:
 public:
   Module() {
 
-    msgr = new Messenger("m");
+    propSync = new PropSync("ps");
+    clockSync = new ClockSync("cs");
     clock = new Clock("c");
     settings = new Settings("g");
     body = new Body("b");
 
-    actors = new Array<Actor *>(4);
-    actors->set(0, (Actor *)msgr);
-    actors->set(1, (Actor *)clock);
-    actors->set(2, (Actor *)settings);
-    actors->set(3, (Actor *)body);
+    actors = new Array<Actor *>(5);
+    actors->set(0, (Actor *)propSync);
+    actors->set(1, (Actor *)clockSync);
+    actors->set(2, (Actor *)clock);
+    actors->set(3, (Actor *)settings);
+    actors->set(4, (Actor *)body);
 
     bot = new WebBot(clock, actors);
-    msgr->setBot(bot);
+
+    propSync->setBot(bot);
+    clockSync->setClock(bot->getClock());
+
     bot->setMode(RunMode);
   }
 
@@ -76,9 +83,14 @@ public:
     return body;
   }
 
-  Messenger *getMessenger() {
-  	return msgr;
+  PropSync *getPropSync() {
+  	return propSync;
   }
+
+  ClockSync *getClockSync() {
+  	return clockSync;
+  }
+
 };
 
 #endif // MODULE_INC
