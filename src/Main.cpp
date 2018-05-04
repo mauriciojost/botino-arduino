@@ -220,12 +220,19 @@ void arms(ArmState left, ArmState right) {
 }
 
 wl_status_t initWifi() {
-  int attemptsLeft = 10;
   log(CLASS_MAIN, Info, "Connecting...");
+
+  wl_status_t status = WiFi.status();
+  if (status != WL_CONNECTED) {
+  	return status;
+  }
+
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
+  int attemptsLeft = 10;
   while (true) {
-    wl_status_t status = WiFi.status();
+    status = WiFi.status();
     log(CLASS_MAIN, Info, " attempts %d", attemptsLeft);
     attemptsLeft--;
     if (status == WL_CONNECTED) {
