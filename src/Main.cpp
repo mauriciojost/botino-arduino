@@ -314,7 +314,7 @@ void setup() {
   log(CLASS_MAIN, Debug, "Setup interrupts");
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, FALLING);
 
-  // Init test routine
+  log(CLASS_MAIN, Debug, "Init HW test routine");
   digitalWrite(LED0_PIN, LOW);
   digitalWrite(LED1_PIN, LOW);
   digitalWrite(LED2_PIN, LOW);
