@@ -98,3 +98,6 @@
 /libs/Unity/
 /libs/src
 /libs/tiny-AES-c/
+/src/aes.c
+/src/aes.h
+/src/aes.hpp
