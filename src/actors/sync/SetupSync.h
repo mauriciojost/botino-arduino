@@ -13,7 +13,7 @@
 #include <actors/sync/ParamStream.h>
 #include <main4ino/Clock.h>
 #include <main4ino/Boolean.h>
-#include <aes.hpp>
+//#include <aes.hpp>
 
 #define CLASS_SETUPSYNC "SS"
 
@@ -30,6 +30,8 @@ class SetupSync : public Actor {
 
 private:
   const char *name;
+
+  const uint8_t* key = (uint8_t*)"1234567890123456"; // length 16
   char ssid[16];
   char pass[16];
   Timing freqConf; // configuration of the frequency at which this actor will get triggered
@@ -41,8 +43,10 @@ public:
     name = n;
     initWifiFunc = NULL;
     initWifiOriginFunc = NULL;
-    ssid[0] = 0;
-    pass[0] = 0;
+    ssid[0] = 'S';
+    ssid[1] = 0;
+    pass[0] = 'P';
+    pass[1] = 0;
   }
 
   const char *getName() {
@@ -104,15 +108,12 @@ public:
             if (content.containsKey("ssid")) {
               const char* s = content["ssid"].as<char *>();
               const char* p = content["pass"].as<char *>();
+              //struct AES_ctx ctx;
+              //AES_init_ctx(&ctx, key);
               strcpy(ssid, s);
               strcpy(pass, p);
-
-              uint8_t key[16 + 1] = { 0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c, 0 };
-              log(CLASS_SETUPSYNC, Debug, "Setup encryption");
-              struct AES_ctx ctx;
-              AES_init_ctx(&ctx, key);
-              AES_ECB_decrypt(&ctx, (const unsigned char*)pass);
-
+              //AES_ECB_decrypt(&ctx, (const unsigned char*)pass);
+              //log(CLASS_SETUPSYNC, Debug, "Got setup: %s / %s (%s)", s, p, pass);
             } else {
               log(CLASS_SETUPSYNC, Warn, "No 'ssid'");
             }
