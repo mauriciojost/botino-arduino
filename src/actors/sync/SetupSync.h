@@ -43,10 +43,9 @@ public:
     name = n;
     initWifiFunc = NULL;
     initWifiOriginFunc = NULL;
-    ssid[0] = 'S';
+    ssid[0] = 'X';
     ssid[1] = 0;
-    pass[0] = 'P';
-    pass[1] = 0;
+    pass[0] = 0;
   }
 
   const char *getName() {
@@ -113,7 +112,7 @@ public:
               strcpy(ssid, s);
               strcpy(pass, p);
               //AES_ECB_decrypt(&ctx, (const unsigned char*)pass);
-              //log(CLASS_SETUPSYNC, Debug, "Got setup: %s / %s (%s)", s, p, pass);
+              log(CLASS_SETUPSYNC, Debug, "Got setup: %s / %s (%s)", s, p, pass);
             } else {
               log(CLASS_SETUPSYNC, Warn, "No 'ssid'");
             }
