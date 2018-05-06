@@ -389,6 +389,8 @@ void loop() {
   unsigned long periodMs = m.getSettings()->getPeriodSeconds() * 1000;
   unsigned long spentPeriodMs = MINIM(POSIT(t2 - t1), periodMs);
   lightSleep(periodMs - spentPeriodMs);
+
+  log(CLASS_MAIN, Info, "Free heap: %ld", ESP.getFreeHeap());
 }
 
 #endif // UNIT_TEST
