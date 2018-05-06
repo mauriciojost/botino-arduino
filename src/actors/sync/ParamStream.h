@@ -62,6 +62,7 @@ public:
 
   void flush() {
     bytesReceived.clear();
+    jsonBuffer.clear();
   }
 
   JsonObject &parse() {
