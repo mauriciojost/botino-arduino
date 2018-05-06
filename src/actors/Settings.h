@@ -38,7 +38,7 @@ private:
 public:
   Settings(const char *n) : freqConf(Never) {
     name = n;
-    showSettings = false;
+    showSettings = true;
     clearStackTrace = false;
     logLevel = 0;
     buttonPressed = 0;

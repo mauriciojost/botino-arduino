@@ -7,7 +7,7 @@
 #include <actors/sync/SetupSync.h>
 #include <actors/Body.h>
 #include <main4ino/Clock.h>
-#include <main4ino/WebBot.h>
+#include <main4ino/SerBot.h>
 #include <main4ino/Array.h>
 #include <log4ino/Log.h>
 #include <Pinout.h>
@@ -27,7 +27,7 @@ private:
   Array<Actor *> *actors;
   Clock *clock;
   Settings *settings;
-  WebBot *bot;
+  SerBot *bot;
   Body *body;
 
 public:
@@ -48,7 +48,7 @@ public:
     actors->set(4, (Actor *)settings);
     actors->set(5, (Actor *)body);
 
-    bot = new WebBot(clock, actors);
+    bot = new SerBot(clock, actors);
 
     propSync->setBot(bot);
     clockSync->setClock(bot->getClock());

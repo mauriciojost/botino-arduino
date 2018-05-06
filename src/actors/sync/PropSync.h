@@ -3,7 +3,7 @@
 
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
-#include <main4ino/WebBot.h>
+#include <main4ino/SerBot.h>
 #include <main4ino/Misc.h>
 #ifndef UNIT_TEST
 #include <ESP8266WiFi.h>
@@ -17,8 +17,8 @@
 #define CLASS_PROPSYNC "PS"
 
 #define WAIT_BEFORE_REPOST_DWEETIO_MS 1500
-#define DWEET_IO_API_URL_POST "http://dweet.io/dweet/for/" DEVICE_NAME "-%s"
-#define DWEET_IO_API_URL_GET "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-target-%s"
+#define DWEET_IO_API_URL_POST "http://dweet.io/dweet/for/" DEVICE_NAME "-%s-current"
+#define DWEET_IO_API_URL_GET "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-%s-target"
 
 #ifndef DWEET_IO_API_TOKEN
 #error "Must provide DWEET_IO_API_TOKEN"
@@ -33,7 +33,7 @@ class PropSync : public Actor {
 
 private:
   const char *name;
-  WebBot *bot;
+  SerBot *bot;
   Timing freqConf; // configuration of the frequency at which this actor will get triggered
   Buffer<MAX_JSON_STR_LENGTH> staticBuffer;
   wl_status_t (*initWifiFunc)();
@@ -45,7 +45,7 @@ public:
     initWifiFunc = NULL;
   }
 
-  void setBot(WebBot *b) {
+  void setBot(SerBot *b) {
     bot = b;
   }
 

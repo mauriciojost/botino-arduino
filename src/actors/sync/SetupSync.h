@@ -3,7 +3,6 @@
 
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
-#include <main4ino/WebBot.h>
 #include <main4ino/Misc.h>
 #ifndef UNIT_TEST
 #include <ESP8266WiFi.h>

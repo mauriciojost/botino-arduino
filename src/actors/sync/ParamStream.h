@@ -3,7 +3,6 @@
 
 #include <log4ino/Log.h>
 #include <main4ino/Buffer.h>
-#include <main4ino/WebBot.h>
 #include <ArduinoJson.h>
 #include <stdio.h>
 #include <string.h>
@@ -14,6 +13,10 @@
 #endif // UNIT_TEST
 
 #define CLASS_PARAM_STREAM "PS"
+
+#ifndef MAX_JSON_STR_LENGTH
+#define MAX_JSON_STR_LENGTH 512
+#endif // MAX_JSON_STR_LENGTH
 
 #ifndef UNIT_TEST
 
