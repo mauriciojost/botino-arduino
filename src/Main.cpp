@@ -117,27 +117,6 @@ void lcdPrintLine(const char *str, int line, bool clearFirst) {
   cleared = false;
 }
 
-/*
- * LCD (128 x 64 pixels, 16 x 8 chars):
- *
- *   BOT X LINE 0
- *   BOT X LINE 1
- *
- *   LCD X LINE 0
- *   LCD X LINE 1
- *
- *   LOGS0
- *   LOGS1
- *   LOGS2
- *   LOGS3
- *
- * */
-
-void botDisplayOnLcd(const char *str1, const char *str2) {
-  lcdPrintLine(str1, 0, CLEAR_FIRST);
-  lcdPrintLine(str2, 1, CLEAR_FIRST);
-}
-
 void messageOnLcd(int line, const char *str) {
   lcd.clearDisplay();
   lcd.setTextWrap(true);
@@ -152,12 +131,11 @@ void messageOnLcd(int line, const char *str) {
 
 void logLine(const char *str) {
   static int i = 0;
-  int line = i + 4;
   if (i == 0) {
-    lcd.fillRect(0, 4 * 8, 128, 4 * 8, BLACK);
+    lcd.fillRect(0, 0, 128, 64, BLACK);
   }
-  i = (i + 1) % 4;
-  lcdPrintLine(str, line, CLEAR_FIRST);
+  i = (i + 1) % 8;
+  lcdPrintLine(str, i, CLEAR_FIRST);
   Serial.println(str);
 }
 
@@ -318,7 +296,6 @@ void setup() {
 
   log(CLASS_MAIN, Debug, "Setup module");
   m.setup();
-  m.getBot()->setStdoutFunction(botDisplayOnLcd);
 
   m.getBody()->setSmilyFace(beSmily);
   m.getBody()->setSadFace(beSad);
