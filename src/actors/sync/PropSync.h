@@ -17,8 +17,8 @@
 #define CLASS_PROPSYNC "PS"
 
 #define WAIT_BEFORE_REPOST_DWEETIO_MS 1500
-#define DWEET_IO_API_URL_POST "http://dweet.io/dweet/for/" DEVICE_NAME
-#define DWEET_IO_API_URL_GET "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-target"
+#define DWEET_IO_API_URL_POST "http://dweet.io/dweet/for/" DEVICE_NAME "-%s"
+#define DWEET_IO_API_URL_GET "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-target-%s"
 
 #ifndef DWEET_IO_API_TOKEN
 #error "Must provide DWEET_IO_API_TOKEN"
@@ -61,7 +61,9 @@ public:
     if (freqConf.matches()) {
     	wl_status_t wifiStatus = initWifiFunc();
     	if (wifiStatus == WL_CONNECTED) {
-        updateBotProperties();
+    		for (int i = 0; i < bot->getActors()->size(); i++) {
+          updateProps(i);
+    		}
     	}
     }
   }
@@ -76,7 +78,10 @@ public:
     log(CLASS_PROPSYNC, Info, "Connected DWT: %s", url);
   }
 
-  void updateBotProperties() {
+  void updateProps(int actorIndex) {
+  	Buffer<128> url;
+    Actor* actor = bot->getActors()->get(actorIndex);
+
 #ifndef UNIT_TEST
     int errorCode;
 
@@ -85,7 +90,8 @@ public:
     HTTPClient client;
 
     ParamStream s;
-    setUpDweetClient(&client, DWEET_IO_API_URL_GET);
+    url.fill(DWEET_IO_API_URL_GET, actor->getName());
+    setUpDweetClient(&client, url.getBuffer());
     errorCode = client.GET();
     log(CLASS_PROPSYNC, Info, "HTTP GET DWT: %d", errorCode);
     if (errorCode > 0) {
@@ -98,7 +104,7 @@ public:
         JsonObject &withJson = json["with"][0];
         if (withJson.containsKey("content")) {
           JsonObject &content = withJson["content"];
-          bot->setPropsJsonFlat(content);
+          bot->setPropsJson(content, actorIndex);
         } else {
           log(CLASS_PROPSYNC, Warn, "No 'content'");
         }
@@ -110,12 +116,12 @@ public:
       log(CLASS_PROPSYNC, Error, "! %s", client.errorToString(errorCode).c_str());
     }
 
-    bot->getPropsJsonFlat(&staticBuffer);
-    log(CLASS_PROPSYNC, Info, "HTTP POST DWT: %s", DWEET_IO_API_URL_POST);
+    bot->getPropsJson(&staticBuffer, actorIndex);
 
-    setUpDweetClient(&client, DWEET_IO_API_URL_POST);
+    url.fill(DWEET_IO_API_URL_POST, actor->getName());
+    setUpDweetClient(&client, url.getBuffer());
     errorCode = client.POST(staticBuffer.getBuffer());
-    log(CLASS_PROPSYNC, Info, "HTT POST DWT: %d", errorCode);
+    log(CLASS_PROPSYNC, Info, "HTT POST DWT: %s %d", url.getBuffer(), errorCode);
     if (errorCode > 0) {
       client.writeToStream(&Serial);
       client.end();
