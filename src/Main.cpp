@@ -314,23 +314,23 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, FALLING);
 
   log(CLASS_MAIN, Debug, "Init HW test routine");
+  digitalWrite(LED0_PIN, HIGH);
+  digitalWrite(LED1_PIN, HIGH);
+  digitalWrite(LED2_PIN, HIGH);
+  beNormal();
+  arms(ArmDown, ArmDown);
+
+  delay(2000);
   digitalWrite(LED0_PIN, LOW);
   digitalWrite(LED1_PIN, LOW);
   digitalWrite(LED2_PIN, LOW);
-  beNormal();
-  arms(ArmUp, ArmUp);
+  beSmily();
+  arms(ArmMiddle, ArmMiddle);
 
   delay(2000);
   digitalWrite(LED0_PIN, HIGH);
   digitalWrite(LED1_PIN, HIGH);
   digitalWrite(LED2_PIN, HIGH);
-  beSmily();
-  arms(ArmMiddle, ArmMiddle);
-
-  delay(2000);
-  digitalWrite(LED0_PIN, LOW);
-  digitalWrite(LED1_PIN, LOW);
-  digitalWrite(LED2_PIN, LOW);
   beSleepy();
   arms(ArmDown, ArmDown);
 
