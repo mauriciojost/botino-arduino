@@ -13,20 +13,12 @@
 
 #define CLASS_MAIN "MA"
 
-#ifndef WIFI_SSID_ORIG
-#error "Must provide WIFI_SSID_ORIG"
+#ifndef WIFI_SSID_INIT
+#error "Must provide WIFI_SSID_INIT"
 #endif
 
-#ifndef WIFI_PASSWORD_ORIG
-#error "Must provide WIFI_PASSWORD_ORIG"
-#endif
-
-#ifndef WIFI_SSID
-#error "Must provide WIFI_SSID"
-#endif
-
-#ifndef WIFI_PASSWORD
-#error "Must provide WIFI_PASSWORD"
+#ifndef WIFI_PASSWORD_INIT
+#error "Must provide WIFI_PASSWORD_INIT"
 #endif
 
 extern "C" {
@@ -235,11 +227,11 @@ wl_status_t initWifi(const char* ssid, const char* pass) {
   }
 }
 
-wl_status_t initOriginWifi() {
-  return initWifi(WIFI_SSID_ORIG, WIFI_PASSWORD_ORIG);
+wl_status_t initWifiInit() {
+  return initWifi(WIFI_SSID_INIT, WIFI_PASSWORD_INIT);
 }
 
-wl_status_t initSteadyWifi() {
+wl_status_t initWifiSteady() {
 	wifiSsid = m.getSetupSync()->getSsid();
 	wifiPass = m.getSetupSync()->getPass();
   return initWifi(wifiSsid, wifiPass);
@@ -305,10 +297,10 @@ void setup() {
   m.getBody()->setArms(arms);
   m.getBody()->setMessageFunc(messageOnLcd);
   m.getBody()->setLedFunc(led);
-  m.getPropSync()->setInitWifi(initSteadyWifi);
-  m.getClockSync()->setInitWifi(initSteadyWifi);
-  m.getSetupSync()->setInitWifi(initSteadyWifi);
-  m.getSetupSync()->setInitWifiOrigin(initOriginWifi);
+  m.getPropSync()->setInitWifi(initWifiSteady);
+  m.getClockSync()->setInitWifi(initWifiSteady);
+  m.getSetupSync()->setInitWifiSteady(initWifiSteady);
+  m.getSetupSync()->setInitWifiInit(initWifiInit);
 
   log(CLASS_MAIN, Debug, "Setup interrupts");
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, FALLING);

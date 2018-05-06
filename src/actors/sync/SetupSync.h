@@ -34,14 +34,14 @@ private:
   char ssid[16];
   char pass[16];
   Timing freqConf; // configuration of the frequency at which this actor will get triggered
-  wl_status_t (*initWifiFunc)();
-  wl_status_t (*initWifiOriginFunc)();
+  wl_status_t (*initWifiSteadyFunc)();
+  wl_status_t (*initWifiInitFunc)();
 
 public:
   SetupSync(const char *n) : freqConf(OnceEvery1Minute) {
     name = n;
-    initWifiFunc = NULL;
-    initWifiOriginFunc = NULL;
+    initWifiSteadyFunc = NULL;
+    initWifiInitFunc = NULL;
     ssid[0] = 'X';
     ssid[1] = 0;
     pass[0] = 0;
@@ -52,7 +52,7 @@ public:
   }
 
   void act() {
-    if (initWifiFunc == NULL || initWifiOriginFunc == NULL) {
+    if (initWifiSteadyFunc == NULL || initWifiInitFunc == NULL) {
       log(CLASS_SETUPSYNC, Error, "Init needed");
       return;
     }
@@ -61,25 +61,25 @@ public:
     }
   }
 
-  void setInitWifi(wl_status_t (*f)()) {
-    initWifiFunc = f;
+  void setInitWifiSteady(wl_status_t (*f)()) {
+    initWifiSteadyFunc = f;
   }
 
-  void setInitWifiOrigin(wl_status_t (*f)()) {
-    initWifiOriginFunc = f;
+  void setInitWifiInit(wl_status_t (*f)()) {
+    initWifiInitFunc = f;
   }
 
   void update() {
 #ifndef UNIT_TEST
     int errorCode;
 
-    wl_status_t status = initWifiFunc();
+    wl_status_t status = initWifiSteadyFunc();
     if (status == WL_CONNECTED) {
     	return; // nothing to be done, as already connected
     }
 
     // try connecting to alternative network and setup
-    status = initWifiOriginFunc();
+    status = initWifiInitFunc();
 
     if (status == WL_CONNECTED) {
 
