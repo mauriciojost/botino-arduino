@@ -33,12 +33,12 @@ private:
 public:
   Module() {
 
-    propSync = new PropSync("ps");
-    clockSync = new ClockSync("cs");
-    setupSync = new SetupSync("ss");
-    clock = new Clock("c");
-    settings = new Settings("g");
-    body = new Body("b");
+    propSync = new PropSync("propsync");
+    clockSync = new ClockSync("clocksync");
+    setupSync = new SetupSync("setupsync");
+    clock = new Clock("clock");
+    settings = new Settings("settings");
+    body = new Body("body");
 
     actors = new Array<Actor *>(6);
     actors->set(0, (Actor *)propSync);
