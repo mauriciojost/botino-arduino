@@ -16,7 +16,7 @@
 
 #define CLASS_PROPSYNC "PS"
 
-#define WAIT_BEFORE_REPOST_DWEETIO_MS 1500
+#define WAIT_BEFORE_HTTP_DWEETIO_MS 1500
 #define DWEET_IO_API_URL_POST "http://dweet.io/dweet/for/" DEVICE_NAME "-%s-current"
 #define DWEET_IO_API_URL_GET "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-%s-target"
 
@@ -25,7 +25,7 @@
 #endif
 
 /**
-* This actor exchanges status via HTTP to syncronize
+* This actor exchanges status via HTTP to synchronize
 * properties with target property values provided by an user
 * on a centralized server, polled regularly.
 */
@@ -37,7 +37,7 @@ private:
   Timing freqConf; // configuration of the frequency at which this actor will get triggered
   Buffer<128> urlAuxBuffer;
   Buffer<MAX_JSON_STR_LENGTH> jsonAuxBuffer;
-  ParamStream paramStream;
+  ParamStream httpBodyResponse;
   wl_status_t (*initWifiFunc)();
 
 public:
@@ -45,7 +45,6 @@ public:
     name = n;
     bot = NULL;
     initWifiFunc = NULL;
-    paramStream.flush();
   }
 
   void setBot(SerBot *b) {
@@ -74,34 +73,55 @@ public:
     initWifiFunc = f;
   }
 
-  void setUpDweetClient(HTTPClient *client, const char *url) {
-    client->begin(url);
-    client->addHeader("Content-Type", "application/json");
-    client->addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
-    log(CLASS_PROPSYNC, Info, "Connected: %s", url);
+  int httpGet(const char* url, ParamStream* response) {
+    HTTPClient client;
+    client.begin(url);
+    client.addHeader("Content-Type", "application/json");
+    client.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
+
+    int errorCode = client.GET();
+    log(CLASS_PROPSYNC, Info, "HTTP GET: %s %d", url, errorCode);
+
+    if (errorCode > 0) {
+    	response->flush();
+      client.writeToStream(response);
+    } else {
+      log(CLASS_PROPSYNC, Error, "! %s", client.errorToString(errorCode).c_str());
+    }
+    client.end();
+
+    return errorCode;
+  }
+
+  int httpPost(const char* url, const char* body, ParamStream* response) {
+    HTTPClient client;
+    client.begin(url);
+    client.addHeader("Content-Type", "application/json");
+    client.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
+
+    int errorCode = client.POST(body);
+    log(CLASS_PROPSYNC, Info, "HTT POST: %s %d", url, errorCode);
+
+    if (errorCode > 0) {
+    	response->flush();
+      client.writeToStream(response);
+    } else {
+      log(CLASS_PROPSYNC, Error, "! %s", client.errorToString(errorCode).c_str());
+    }
+    client.end();
+
+    return errorCode;
   }
 
   void updateProps(int actorIndex) {
     Actor* actor = bot->getActors()->get(actorIndex);
 
-#ifndef UNIT_TEST
-    int errorCode;
-
-    delay(WAIT_BEFORE_REPOST_DWEETIO_MS);
-
-    HTTPClient client;
+    delay(WAIT_BEFORE_HTTP_DWEETIO_MS);
 
     urlAuxBuffer.fill(DWEET_IO_API_URL_GET, actor->getName());
-    setUpDweetClient(&client, urlAuxBuffer.getBuffer());
-    errorCode = client.GET();
-    log(CLASS_PROPSYNC, Info, "HTTP GET: %s %d", urlAuxBuffer.getBuffer(), errorCode);
+    int errorCode = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
     if (errorCode > 0) {
-    	paramStream.flush();
-      client.writeToStream(&paramStream);
-      client.end();
-
-      JsonObject &json = paramStream.parse();
-
+      JsonObject &json = httpBodyResponse.parse();
       if (json.containsKey("with")) {
         JsonObject &withJson = json["with"][0];
         if (withJson.containsKey("content")) {
@@ -113,25 +133,14 @@ public:
       } else {
         log(CLASS_PROPSYNC, Warn, "No 'with'");
       }
-    } else {
-      log(CLASS_PROPSYNC, Error, "! %s", client.errorToString(errorCode).c_str());
     }
+
+    delay(WAIT_BEFORE_HTTP_DWEETIO_MS);
 
     bot->getPropsJson(&jsonAuxBuffer, actorIndex);
-
     urlAuxBuffer.fill(DWEET_IO_API_URL_POST, actor->getName());
-    setUpDweetClient(&client, urlAuxBuffer.getBuffer());
-    errorCode = client.POST(jsonAuxBuffer.getBuffer());
-    log(CLASS_PROPSYNC, Info, "HTT POST: %s %d", urlAuxBuffer.getBuffer(), errorCode);
-    if (errorCode > 0) {
-      client.writeToStream(&Serial);
-      client.end();
-      delay(WAIT_BEFORE_REPOST_DWEETIO_MS);
-    } else {
-      log(CLASS_PROPSYNC, Error, "! %s", client.errorToString(errorCode).c_str());
-    }
+    httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), &httpBodyResponse); // best effort
 
-#endif // UNIT_TEST
   }
 
   void setProp(int propIndex, SetMode set, const Value *targetValue, Value *actualValue) {}
