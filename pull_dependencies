@@ -1,11 +1,21 @@
 #!/usr/bin/env bash
 
-# This script will pull the dependency libraries from GitHub
-# using dependencies settings with platformio syntax: 
+# https://github.com/mauriciojost/mavarduino
+#
+# Mavarduino Dependency Manager
+# 
+# This script will pull the dependency libraries from GitHub or any 
+# other git public repo using the dependency settings with
+# an extended platformio-like syntax, for instance: 
 # - esp8266/Arduino#master
 # - mauriciojost/log4ino-arduino#1.0.0
 # - git@bitbucket.org:mauriciojost/main4ino-arduino.git#master
-# In an attempt to stop using platformio (community not big enough yet).
+# 
+# This is also an attempt to stop using platformio as: 
+# - the community support is not very mature yet
+# - as its dependency management features are not satisfactory
+#  - many interesting libraries do not publish to platformio
+#
 
 ROOT_DIR=`dirname $(readlink -e $0)`
 CONFIG_FILE=${1:-dependencies.conf}
@@ -32,6 +42,7 @@ function pull_dependency() {
   else 
     echo "Unkown syntax, discarding: $d"
   fi
+
   echo "Pulling: $giturl / $gitbranch (files: $gitfiles)"
   cd $LIBS_DIR
   git clone "$giturl"
@@ -47,15 +58,21 @@ function pull_dependency() {
 }
 
 
-
+echo "### Reading configuration file $CONFIG_FILE ..."
 source $CONFIG_FILE
 
+echo "### Pulling dependencies ..."
 rm -fr "$LIBS_DIR"
+find -type l -delete src/
 mkdir -p "$LIBS_DIR"
 for dep in $LIB_DEPS_EXTERNAL
 do
   pull_dependency "$dep"
 done
 
+
+echo "### Launching after pull script ..."
 cd $ROOT_DIR
 after_pull # Must be defined in the configuration file
+
+echo "### Done"
