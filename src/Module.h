@@ -56,12 +56,12 @@ public:
     bot->setMode(RunMode);
   }
 
-  void loop(bool mode, bool set, bool wdtWasTriggered) {
+  void loop(bool mode, bool set, bool cycle) {
 
     bool anyButtonPressed = mode || set;
     TimingInterrupt interruptType = TimingInterruptNone;
 
-    if (wdtWasTriggered) {
+    if (cycle) {
       interruptType = TimingInterruptCycle;
     }
 
