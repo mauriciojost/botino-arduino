@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+# Create a new release after bumping.
+
+export VERSION=`cat library.json |  jq  .version | sed 's/"//g'`
+export MAJOR=`echo $VERSION | awk -F'[.-]' '{printf $1}'`
+export MINOR=`echo $VERSION | awk -F'[.-]' '{printf $2}'`
+export PATCH=`echo $VERSION | awk -F'[.-]' '{printf $3}'`
+export BUMP=$1
+
+function inc() {
+  local i=$1
+  echo `echo $i + 1 | bc`
+}
+
+if [ "$BUMP" == "MAJOR" ]
+then
+  export NEW_MAJOR=`inc $MAJOR`
+  export NEW_MINOR=0
+  export NEW_PATCH=0
+elif [ "$BUMP" == "MINOR" ]
+then
+  export NEW_MAJOR=$MAJOR
+  export NEW_MINOR=`inc $MINOR`
+  export NEW_PATCH=0
+elif [ "$BUMP" == "PATCH" ]
+then
+  export NEW_MAJOR=$MAJOR
+  export NEW_MINOR=$MINOR
+  export NEW_PATCH=`inc $PATCH`
+fi
+
+export NEW_VERSION="$NEW_MAJOR.$NEW_MINOR.$NEW_PATCH"
+
+sed -i "s/$VERSION-SNAPSHOT/$NEW_VERSION/g" library.json 
+sed -i "s/$VERSION/$NEW_VERSION/g" library.json 
+
+# commit & tag
+git add library.json
+git commit -s -m "Bump to $NEW_VERSION"
+git tag "$NEW_VERSION" -m "$NEW_VERSION"
+git push 
+git push --tags
+
+sed -i "s/$NEW_VERSION/$NEW_VERSION-SNAPSHOT/g" library.json 
+
+
+git add library.json
+git commit -s -m "Bump to $NEW_VERSION"
+git push 
+
