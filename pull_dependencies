@@ -56,3 +56,6 @@ for dep in $LIB_DEPS_EXTERNAL
 do
   pull_dependency "$dep"
 done
+
+cd $ROOT_DIR
+after_pull # Must be defined in the configuration file
