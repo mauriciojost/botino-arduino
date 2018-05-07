@@ -1,6 +1,7 @@
 
 #ifndef UNIT_TEST
-#include <Main.h>
+#include <Arduino.h>
+#include <Module.h>
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
