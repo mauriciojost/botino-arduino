@@ -8,7 +8,6 @@
 #include <main4ino/Bot.h>
 #include <actors/sync/ParamStream.h>
 #include <main4ino/Clock.h>
-#include <main4ino/Boolean.h>
 
 #define CLASS_PROPSYNC "PS"
 
@@ -29,7 +28,7 @@ private:
   Buffer<128> urlAuxBuffer;
   Buffer<MAX_JSON_STR_LENGTH> jsonAuxBuffer;
   ParamStream httpBodyResponse;
-  wl_status_t (*initWifiFunc)();
+  bool (*initWifiFunc)();
   int (*httpGet)(const char* url, ParamStream* response);
   int (*httpPost)(const char* url, const char* body, ParamStream* response);
 
@@ -56,8 +55,8 @@ public:
       return;
     }
     if (freqConf.matches()) {
-    	wl_status_t wifiStatus = initWifiFunc();
-    	if (wifiStatus == WL_CONNECTED) {
+    	bool connected = initWifiFunc();
+    	if (connected) {
     		for (int i = 0; i < bot->getActors()->size(); i++) {
           updateProps(i);
     		}
@@ -65,7 +64,7 @@ public:
     }
   }
 
-  void setInitWifi(wl_status_t (*f)()) {
+  void setInitWifi(bool (*f)()) {
     initWifiFunc = f;
   }
 

@@ -210,12 +210,12 @@ void arms(ArmState left, ArmState right) {
   rightPos = arm(&servoRight, right, rightPos, SERVO1_PIN, SERVO1_INVERTED);
 }
 
-wl_status_t initWifi(const char* ssid, const char* pass) {
+bool initWifi(const char* ssid, const char* pass) {
   log(CLASS_MAIN, Info, "Connecting to %s ...", ssid);
 
   wl_status_t status = WiFi.status();
   if (status == WL_CONNECTED) {
-  	return status;
+  	return true; // connected
   }
 
   WiFi.mode(WIFI_STA);
@@ -228,17 +228,17 @@ wl_status_t initWifi(const char* ssid, const char* pass) {
     attemptsLeft--;
     if (status == WL_CONNECTED) {
       log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
-      return status;
+      return true; // connected
     }
     if (attemptsLeft <= 0) {
       log(CLASS_MAIN, Warn, "Connection failed %d", status);
-      return status;
+      return false; // not connected
     }
     delay(1500);
   }
 }
 
-wl_status_t initWifiInit() {
+bool initWifiInit() {
   return initWifi(WIFI_SSID_INIT, WIFI_PASSWORD_INIT);
 }
 
@@ -286,7 +286,7 @@ int httpPost(const char* url, const char* body, ParamStream* response) {
   return errorCode;
 }
 
-wl_status_t initWifiSteady() {
+bool initWifiSteady() {
 	wifiSsid = m.getSetupSync()->getSsid();
 	wifiPass = m.getSetupSync()->getPass();
   return initWifi(wifiSsid, wifiPass);

@@ -26,8 +26,8 @@ private:
   char ssid[16];
   char pass[16];
   Timing freqConf; // configuration of the frequency at which this actor will get triggered
-  wl_status_t (*initWifiSteadyFunc)();
-  wl_status_t (*initWifiInitFunc)();
+  bool (*initWifiSteadyFunc)();
+  bool (*initWifiInitFunc)();
   int (*httpGet)(const char* url, ParamStream* response);
 
 public:
@@ -55,11 +55,11 @@ public:
     }
   }
 
-  void setInitWifiSteady(wl_status_t (*f)()) {
+  void setInitWifiSteady(bool (*f)()) {
     initWifiSteadyFunc = f;
   }
 
-  void setInitWifiInit(wl_status_t (*f)()) {
+  void setInitWifiInit(bool (*f)()) {
     initWifiInitFunc = f;
   }
 
@@ -68,15 +68,15 @@ public:
   }
 
   void update() {
-    wl_status_t status = initWifiSteadyFunc();
-    if (status == WL_CONNECTED) {
+    bool connected = initWifiSteadyFunc();
+    if (connected) {
     	return; // nothing to be done, as already connected
     }
 
     // try connecting to alternative network and setup
-    status = initWifiInitFunc();
+    connected = initWifiInitFunc();
 
-    if (status == WL_CONNECTED) {
+    if (connected) {
       ParamStream s;
       int errorCode = httpGet(DWEET_IO_API_URL_BASE_GET, &s);
       if (errorCode > 0) {

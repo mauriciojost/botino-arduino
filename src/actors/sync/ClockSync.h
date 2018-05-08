@@ -29,7 +29,7 @@ private:
   const char *name;
   Clock *clock;
   Timing freqConf; // configuration of the frequency at which this actor will get triggered
-  wl_status_t (*initWifiFunc)();
+  bool (*initWifiFunc)();
   int (*httpGet)(const char* url, ParamStream* response);
 
 public:
@@ -54,14 +54,14 @@ public:
       return;
     }
     if (freqConf.matches()) {
-    	wl_status_t wifiStatus = initWifiFunc();
-    	if (wifiStatus == WL_CONNECTED) {
+    	bool connected = initWifiFunc();
+    	if (connected) {
         updateClockProperties();
     	}
     }
   }
 
-  void setInitWifi(wl_status_t (*f)()) {
+  void setInitWifi(bool (*f)()) {
     initWifiFunc = f;
   }
 
