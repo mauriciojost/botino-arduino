@@ -4,10 +4,6 @@
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Misc.h>
-#ifndef UNIT_TEST
-#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
-#endif // UNIT_TEST
 #include <actors/sync/ParamStream.h>
 #include <main4ino/Clock.h>
 #include <main4ino/Boolean.h>
@@ -34,12 +30,14 @@ private:
   Clock *clock;
   Timing freqConf; // configuration of the frequency at which this actor will get triggered
   wl_status_t (*initWifiFunc)();
+  int (*httpGet)(const char* url, ParamStream* response);
 
 public:
   ClockSync(const char *n) : freqConf(OnceEvery1Minute) {
     name = n;
     clock = NULL;
     initWifiFunc = NULL;
+    httpGet = NULL;
   }
 
   void setClock(Clock *c) {
@@ -51,7 +49,7 @@ public:
   }
 
   void act() {
-    if (clock == NULL || initWifiFunc == NULL) {
+    if (clock == NULL || initWifiFunc == NULL || httpGet == NULL) {
       log(CLASS_CLOCKSYNC, Error, "Init needed");
       return;
     }
@@ -62,26 +60,21 @@ public:
     	}
     }
   }
+
   void setInitWifi(wl_status_t (*f)()) {
     initWifiFunc = f;
   }
 
+  void setHttpGet(int (*h)(const char* url, ParamStream* response)) {
+  	httpGet = h;
+  }
+
   void updateClockProperties() {
     ParamStream s;
-    int errorCode;
-
-    HTTPClient client;
-    client.begin(TIMEZONE_DB_API_URL_GET);
-    errorCode = client.GET();
-    log(CLASS_CLOCKSYNC, Info, "HTTP GET %s: %d", TIMEZONE_DB_API_URL_GET, errorCode);
+    int errorCode = httpGet(TIMEZONE_DB_API_URL_GET, &s);
     if (errorCode > 0) {
-      client.writeToStream(&s);
-      client.end();
-
       JsonObject &json = s.parse();
-
       if (json.containsKey("formatted")) {
-
         int y, mo, d, h, m, s;
         const char *formatted = json["formatted"].as<char *>(); // example: 2018-04-26 21:32:30
         log(CLASS_CLOCKSYNC, Debug, "Retrieved: %s", formatted);
@@ -95,9 +88,6 @@ public:
       } else {
         log(CLASS_CLOCKSYNC, Warn, "No 'formatted'");
       }
-      s.flush();
-    } else {
-      log(CLASS_CLOCKSYNC, Error, "! %s", client.errorToString(errorCode).c_str());
     }
   }
 

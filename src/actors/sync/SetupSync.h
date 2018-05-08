@@ -4,10 +4,6 @@
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Misc.h>
-#ifndef UNIT_TEST
-#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
-#endif // UNIT_TEST
 #include <main4ino/Bot.h>
 #include <actors/sync/ParamStream.h>
 #include <main4ino/Clock.h>
@@ -17,10 +13,6 @@
 #define CLASS_SETUPSYNC "SS"
 
 #define DWEET_IO_API_URL_BASE_GET "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-setup"
-
-#ifndef DWEET_IO_API_TOKEN
-#error "Must provide DWEET_IO_API_TOKEN"
-#endif
 
 /**
 * This actor performs WIFI setup via HTTP.
@@ -36,6 +28,7 @@ private:
   Timing freqConf; // configuration of the frequency at which this actor will get triggered
   wl_status_t (*initWifiSteadyFunc)();
   wl_status_t (*initWifiInitFunc)();
+  int (*httpGet)(const char* url, ParamStream* response);
 
 public:
   SetupSync(const char *n) : freqConf(OnceEvery1Minute) {
@@ -45,6 +38,7 @@ public:
     ssid[0] = 'X';
     ssid[1] = 0;
     pass[0] = 0;
+    httpGet = NULL;
   }
 
   const char *getName() {
@@ -52,7 +46,7 @@ public:
   }
 
   void act() {
-    if (initWifiSteadyFunc == NULL || initWifiInitFunc == NULL) {
+    if (initWifiSteadyFunc == NULL || initWifiInitFunc == NULL || httpGet == NULL) {
       log(CLASS_SETUPSYNC, Error, "Init needed");
       return;
     }
@@ -69,10 +63,11 @@ public:
     initWifiInitFunc = f;
   }
 
-  void update() {
-#ifndef UNIT_TEST
-    int errorCode;
+  void setHttpGet(int (*h)(const char* url, ParamStream* response)) {
+  	httpGet = h;
+  }
 
+  void update() {
     wl_status_t status = initWifiSteadyFunc();
     if (status == WL_CONNECTED) {
     	return; // nothing to be done, as already connected
@@ -82,23 +77,10 @@ public:
     status = initWifiInitFunc();
 
     if (status == WL_CONNECTED) {
-
-      HTTPClient client;
       ParamStream s;
-
-      client.begin(DWEET_IO_API_URL_BASE_GET);
-      client.addHeader("Content-Type", "application/json");
-      client.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
-      log(CLASS_SETUPSYNC, Info, "Connected DWT: %s", DWEET_IO_API_URL_BASE_GET);
-
-      errorCode = client.GET();
-      log(CLASS_SETUPSYNC, Info, "HTTP GET DWT: %d", errorCode);
+      int errorCode = httpGet(DWEET_IO_API_URL_BASE_GET, &s);
       if (errorCode > 0) {
-        client.writeToStream(&s);
-        client.end();
-
         JsonObject &json = s.parse();
-
         if (json.containsKey("with")) {
           JsonObject &withJson = json["with"][0];
           if (withJson.containsKey("content")) {
@@ -121,12 +103,8 @@ public:
         } else {
           log(CLASS_SETUPSYNC, Warn, "No 'with'");
         }
-        s.flush();
-      } else {
-        log(CLASS_SETUPSYNC, Error, "! %s", client.errorToString(errorCode).c_str());
       }
     }
-#endif // UNIT_TEST
   }
 
   void setProp(int propIndex, SetMode set, const Value *targetValue, Value *actualValue) {}
