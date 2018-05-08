@@ -65,18 +65,14 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 
 #define WAIT_BEFORE_HTTP_MS 1500
 
-
-
 #define INVERT(p, f) ((f ? 180 - p : p))
-
 
 Module m;
 Servo servoLeft;
 Servo servoRight;
 Adafruit_SSD1306 lcd(-1);
 volatile unsigned char ints = 0;
-const char *wifiSsid = NULL;
-const char *wifiPass = NULL;
+HTTPClient httpClient;
 
 /******************/
 /***  CALLBACKS ***/
@@ -175,7 +171,7 @@ void beSleepy() {
 }
 
 int smooth(int pin, Servo *servo, int lastPos, int targetPos, int steps) {
-  log(CLASS_MAIN, Info, "serv0 %d->%d", lastPos, targetPos);
+  log(CLASS_MAIN, Info, "servo %d->%d", lastPos, targetPos);
   if (lastPos != targetPos) {
     servo->attach(pin);
     for (int i = 1; i <= steps; i++) {
@@ -190,7 +186,7 @@ int smooth(int pin, Servo *servo, int lastPos, int targetPos, int steps) {
 }
 
 int arm(Servo *servo, ArmState a, int lastPos, int pin, bool inverted) {
-  // Right arm ignored for now
+  log(CLASS_MAIN, Debug, "Arm move");
   switch (a) {
     case ArmUp:
       return smooth(pin, servo, lastPos, INVERT(ARM_UP_SERVO_POS, inverted), SERVO_ARM_STEPS);
@@ -206,6 +202,7 @@ int arm(Servo *servo, ArmState a, int lastPos, int pin, bool inverted) {
 void arms(ArmState left, ArmState right) {
   static int rightPos = 0;
   static int leftPos = 0;
+  log(CLASS_MAIN, Debug, "Arms move");
   leftPos = arm(&servoLeft, left, leftPos, SERVO0_PIN, SERVO0_INVERTED);
   rightPos = arm(&servoRight, right, rightPos, SERVO1_PIN, SERVO1_INVERTED);
 }
@@ -215,6 +212,7 @@ bool initWifi(const char* ssid, const char* pass) {
 
   wl_status_t status = WiFi.status();
   if (status == WL_CONNECTED) {
+    log(CLASS_MAIN, Debug, "Already connected, skipping");
   	return true; // connected
   }
 
@@ -239,25 +237,34 @@ bool initWifi(const char* ssid, const char* pass) {
 }
 
 bool initWifiInit() {
+  log(CLASS_PROPSYNC, Info, "Init wifi init %s", WIFI_SSID_INIT);
   return initWifi(WIFI_SSID_INIT, WIFI_PASSWORD_INIT);
 }
 
-int httpGet(const char* url, ParamStream* response) {
-  HTTPClient client;
-  client.begin(url);
-  client.addHeader("Content-Type", "application/json");
-  client.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
+bool initWifiSteady() {
+  const char *wifiSsid = m.getSetupSync()->getSsid();
+  const char *wifiPass = m.getSetupSync()->getPass();
+  log(CLASS_PROPSYNC, Info, "Init wifi steady %s", wifiSsid);
+  return initWifi(wifiSsid, wifiPass);
+}
 
-  int errorCode = client.GET();
+
+int httpGet(const char* url, ParamStream* response) {
+  log(CLASS_PROPSYNC, Debug, "HTTP GET");
+  httpClient.begin(url);
+  httpClient.addHeader("Content-Type", "application/json");
+  httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
+
+  int errorCode = httpClient.GET();
   log(CLASS_PROPSYNC, Info, "HTTP GET: %s %d", url, errorCode);
 
   if (errorCode > 0) {
     response->flush();
-    client.writeToStream(response);
+    httpClient.writeToStream(response);
   } else {
-    log(CLASS_PROPSYNC, Error, "! %s", client.errorToString(errorCode).c_str());
+    log(CLASS_PROPSYNC, Error, "! %s", httpClient.errorToString(errorCode).c_str());
   }
-  client.end();
+  httpClient.end();
 
   delay(WAIT_BEFORE_HTTP_MS);
 
@@ -265,31 +272,25 @@ int httpGet(const char* url, ParamStream* response) {
 }
 
 int httpPost(const char* url, const char* body, ParamStream* response) {
-  HTTPClient client;
-  client.begin(url);
-  client.addHeader("Content-Type", "application/json");
-  client.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
+  log(CLASS_PROPSYNC, Debug, "HTTP POST");
+  httpClient.begin(url);
+  httpClient.addHeader("Content-Type", "application/json");
+  httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
 
-  int errorCode = client.POST(body);
-  log(CLASS_PROPSYNC, Info, "HTT POST: %s %d", url, errorCode);
+  int errorCode = httpClient.POST(body);
+  log(CLASS_PROPSYNC, Info, "HTTP POST: %s %d", url, errorCode);
 
   if (errorCode > 0) {
     response->flush();
-    client.writeToStream(response);
+    httpClient.writeToStream(response);
   } else {
-    log(CLASS_PROPSYNC, Error, "! %s", client.errorToString(errorCode).c_str());
+    log(CLASS_PROPSYNC, Error, "! %s", httpClient.errorToString(errorCode).c_str());
   }
-  client.end();
+  httpClient.end();
 
   delay(WAIT_BEFORE_HTTP_MS);
 
   return errorCode;
-}
-
-bool initWifiSteady() {
-	wifiSsid = m.getSetupSync()->getSsid();
-	wifiPass = m.getSetupSync()->getPass();
-  return initWifi(wifiSsid, wifiPass);
 }
 
 void led(unsigned char led, unsigned char v) {
@@ -429,6 +430,7 @@ void loop() {
   m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
 
   if (m.getSettings()->getClear()) {
+    log(CLASS_MAIN, Debug, "Clearing save crash");
     SaveCrash.clear();
   }
 
