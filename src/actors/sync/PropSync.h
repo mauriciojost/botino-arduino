@@ -5,10 +5,6 @@
 #include <main4ino/Actor.h>
 #include <main4ino/SerBot.h>
 #include <main4ino/Misc.h>
-#ifndef UNIT_TEST
-#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
-#endif // UNIT_TEST
 #include <main4ino/Bot.h>
 #include <actors/sync/ParamStream.h>
 #include <main4ino/Clock.h>
@@ -16,13 +12,8 @@
 
 #define CLASS_PROPSYNC "PS"
 
-#define WAIT_BEFORE_HTTP_DWEETIO_MS 1500
 #define DWEET_IO_API_URL_POST "http://dweet.io/dweet/for/" DEVICE_NAME "-%s-current"
 #define DWEET_IO_API_URL_GET "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-%s-target"
-
-#ifndef DWEET_IO_API_TOKEN
-#error "Must provide DWEET_IO_API_TOKEN"
-#endif
 
 /**
 * This actor exchanges status via HTTP to synchronize
@@ -39,12 +30,16 @@ private:
   Buffer<MAX_JSON_STR_LENGTH> jsonAuxBuffer;
   ParamStream httpBodyResponse;
   wl_status_t (*initWifiFunc)();
+  int (*httpGet)(const char* url, ParamStream* response);
+  int (*httpPost)(const char* url, const char* body, ParamStream* response);
 
 public:
   PropSync(const char *n) : freqConf(OnceEvery1Minute) {
     name = n;
     bot = NULL;
     initWifiFunc = NULL;
+    httpGet = NULL;
+    httpPost = NULL;
   }
 
   void setBot(SerBot *b) {
@@ -56,7 +51,7 @@ public:
   }
 
   void act() {
-    if (bot == NULL || initWifiFunc == NULL) {
+    if (bot == NULL || initWifiFunc == NULL || httpGet == NULL || httpPost == NULL) {
       log(CLASS_PROPSYNC, Error, "Init needed");
       return;
     }
@@ -69,54 +64,21 @@ public:
     	}
     }
   }
+
   void setInitWifi(wl_status_t (*f)()) {
     initWifiFunc = f;
   }
 
-  int httpGet(const char* url, ParamStream* response) {
-    HTTPClient client;
-    client.begin(url);
-    client.addHeader("Content-Type", "application/json");
-    client.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
-
-    int errorCode = client.GET();
-    log(CLASS_PROPSYNC, Info, "HTTP GET: %s %d", url, errorCode);
-
-    if (errorCode > 0) {
-    	response->flush();
-      client.writeToStream(response);
-    } else {
-      log(CLASS_PROPSYNC, Error, "! %s", client.errorToString(errorCode).c_str());
-    }
-    client.end();
-
-    return errorCode;
+  void setHttpGet(int (*h)(const char* url, ParamStream* response)) {
+  	httpGet = h;
   }
 
-  int httpPost(const char* url, const char* body, ParamStream* response) {
-    HTTPClient client;
-    client.begin(url);
-    client.addHeader("Content-Type", "application/json");
-    client.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
-
-    int errorCode = client.POST(body);
-    log(CLASS_PROPSYNC, Info, "HTT POST: %s %d", url, errorCode);
-
-    if (errorCode > 0) {
-    	response->flush();
-      client.writeToStream(response);
-    } else {
-      log(CLASS_PROPSYNC, Error, "! %s", client.errorToString(errorCode).c_str());
-    }
-    client.end();
-
-    return errorCode;
+  void setHttpPost(int (*h)(const char* url, const char* body, ParamStream* response)) {
+  	httpPost = h;
   }
 
   void updateProps(int actorIndex) {
     Actor* actor = bot->getActors()->get(actorIndex);
-
-    delay(WAIT_BEFORE_HTTP_DWEETIO_MS);
 
     urlAuxBuffer.fill(DWEET_IO_API_URL_GET, actor->getName());
     int errorCode = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
@@ -134,8 +96,6 @@ public:
         log(CLASS_PROPSYNC, Warn, "No 'with'");
       }
     }
-
-    delay(WAIT_BEFORE_HTTP_DWEETIO_MS);
 
     bot->getPropsJson(&jsonAuxBuffer, actorIndex);
     urlAuxBuffer.fill(DWEET_IO_API_URL_POST, actor->getName());

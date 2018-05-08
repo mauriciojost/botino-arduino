@@ -6,6 +6,8 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
 #include <Servo.h>
 #include "EspSaveCrash.h"
 #include <Pinout.h>
@@ -56,6 +58,14 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 #ifndef SERVO1_INVERTED
 #define SERVO1_INVERTED false
 #endif // SERVO1_INVERTED
+
+#ifndef DWEET_IO_API_TOKEN
+#error "Must provide DWEET_IO_API_TOKEN"
+#endif
+
+#define WAIT_BEFORE_HTTP_MS 1500
+
+
 
 #define INVERT(p, f) ((f ? 180 - p : p))
 
@@ -232,6 +242,50 @@ wl_status_t initWifiInit() {
   return initWifi(WIFI_SSID_INIT, WIFI_PASSWORD_INIT);
 }
 
+int httpGet(const char* url, ParamStream* response) {
+  HTTPClient client;
+  client.begin(url);
+  client.addHeader("Content-Type", "application/json");
+  client.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
+
+  int errorCode = client.GET();
+  log(CLASS_PROPSYNC, Info, "HTTP GET: %s %d", url, errorCode);
+
+  if (errorCode > 0) {
+    response->flush();
+    client.writeToStream(response);
+  } else {
+    log(CLASS_PROPSYNC, Error, "! %s", client.errorToString(errorCode).c_str());
+  }
+  client.end();
+
+  delay(WAIT_BEFORE_HTTP_MS);
+
+  return errorCode;
+}
+
+int httpPost(const char* url, const char* body, ParamStream* response) {
+  HTTPClient client;
+  client.begin(url);
+  client.addHeader("Content-Type", "application/json");
+  client.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
+
+  int errorCode = client.POST(body);
+  log(CLASS_PROPSYNC, Info, "HTT POST: %s %d", url, errorCode);
+
+  if (errorCode > 0) {
+    response->flush();
+    client.writeToStream(response);
+  } else {
+    log(CLASS_PROPSYNC, Error, "! %s", client.errorToString(errorCode).c_str());
+  }
+  client.end();
+
+  delay(WAIT_BEFORE_HTTP_MS);
+
+  return errorCode;
+}
+
 wl_status_t initWifiSteady() {
 	wifiSsid = m.getSetupSync()->getSsid();
 	wifiPass = m.getSetupSync()->getPass();
@@ -299,6 +353,8 @@ void setup() {
   m.getBody()->setMessageFunc(messageOnLcd);
   m.getBody()->setLedFunc(led);
   m.getPropSync()->setInitWifi(initWifiSteady);
+  m.getPropSync()->setHttpPost(httpPost);
+  m.getPropSync()->setHttpGet(httpGet);
   m.getClockSync()->setInitWifi(initWifiSteady);
   m.getSetupSync()->setInitWifiSteady(initWifiSteady);
   m.getSetupSync()->setInitWifiInit(initWifiInit);
