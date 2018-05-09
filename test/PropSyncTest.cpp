@@ -14,28 +14,28 @@ void setUp() {}
 void tearDown() {}
 
 bool initWifi() {
-	return true; // always connected
+  return true; // always connected
 }
 
-int httpGet(const char* url, ParamStream* response) {
+int httpGet(const char *url, ParamStream *response) {
 
-	if (strcmp("http://dweet.io/get/latest/dweet/for/device1-clock-target", url) == 0) {
-		response->append("{\"with\":[{\"content\":{\"h\":3}}]}");
-	}
-	return 1;
+  if (strcmp("http://dweet.io/get/latest/dweet/for/device1-clock-target", url) == 0) {
+    response->append("{\"with\":[{\"content\":{\"h\":3}}]}");
+  }
+  return 1;
 }
 
-int httpPost(const char* url, const char* body, ParamStream* response) {
-	return 1;
+int httpPost(const char *url, const char *body, ParamStream *response) {
+  return 1;
 }
 
 void test_propsync_syncs_properties() {
-	Clock clock("clock");
+  Clock clock("clock");
 
-	Array<Actor*> actors(1);
-	actors.set(0, &clock);
+  Array<Actor *> actors(1);
+  actors.set(0, &clock);
 
-	SerBot b(&clock, &actors);
+  SerBot b(&clock, &actors);
 
   PropSync p("p");
   p.setBot(&b);
@@ -49,7 +49,6 @@ void test_propsync_syncs_properties() {
   p.act();
 
   TEST_ASSERT_EQUAL(3, GET_HOURS(clock.currentTime()));
-
 }
 
 int main() {

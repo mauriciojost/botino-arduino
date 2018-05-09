@@ -176,8 +176,8 @@ int smooth(int pin, Servo *servo, int lastPos, int targetPos, int steps) {
     servo->attach(pin);
     for (int i = 1; i <= steps; i++) {
       float factor = ((float)i) / steps;
-        int v = lastPos + ((targetPos - lastPos) * factor);
-        servo->write(v);
+      int v = lastPos + ((targetPos - lastPos) * factor);
+      servo->write(v);
       delay(15);
     }
     servo->detach();
@@ -195,7 +195,7 @@ int arm(Servo *servo, ArmState a, int lastPos, int pin, bool inverted) {
     case ArmDown:
       return smooth(pin, servo, lastPos, INVERT(ARM_DOWN_SERVO_POS, inverted), SERVO_ARM_STEPS);
     default:
-    	return lastPos;
+      return lastPos;
   }
 }
 
@@ -207,13 +207,13 @@ void arms(ArmState left, ArmState right) {
   rightPos = arm(&servoRight, right, rightPos, SERVO1_PIN, SERVO1_INVERTED);
 }
 
-bool initWifi(const char* ssid, const char* pass) {
+bool initWifi(const char *ssid, const char *pass) {
   log(CLASS_MAIN, Info, "Connecting to %s ...", ssid);
 
   wl_status_t status = WiFi.status();
   if (status == WL_CONNECTED) {
     log(CLASS_MAIN, Debug, "Already connected, skipping");
-  	return true; // connected
+    return true; // connected
   }
 
   WiFi.mode(WIFI_STA);
@@ -248,8 +248,7 @@ bool initWifiSteady() {
   return initWifi(wifiSsid, wifiPass);
 }
 
-
-int httpGet(const char* url, ParamStream* response) {
+int httpGet(const char *url, ParamStream *response) {
   log(CLASS_PROPSYNC, Debug, "HTTP GET");
   httpClient.begin(url);
   httpClient.addHeader("Content-Type", "application/json");
@@ -271,7 +270,7 @@ int httpGet(const char* url, ParamStream* response) {
   return errorCode;
 }
 
-int httpPost(const char* url, const char* body, ParamStream* response) {
+int httpPost(const char *url, const char *body, ParamStream *response) {
   log(CLASS_PROPSYNC, Debug, "HTTP POST");
   httpClient.begin(url);
   httpClient.addHeader("Content-Type", "application/json");
@@ -296,20 +295,19 @@ int httpPost(const char* url, const char* body, ParamStream* response) {
 void led(unsigned char led, unsigned char v) {
   unsigned char l = led % NRO_LEDS;
   log(CLASS_MAIN, Debug, "Led %d -> %d", (int)l, (int)v);
-	switch(l) {
-		case 0:
+  switch (l) {
+    case 0:
       digitalWrite(LED0_PIN, v);
       break;
-		case 1:
+    case 1:
       digitalWrite(LED1_PIN, v);
       break;
-		case 2:
+    case 2:
       digitalWrite(LED2_PIN, v);
       break;
-		default:
+    default:
       break;
-	}
-
+  }
 }
 
 /*****************/
@@ -385,7 +383,6 @@ void setup() {
   digitalWrite(LED2_PIN, HIGH);
   beSleepy();
   arms(ArmDown, ArmDown);
-
 }
 
 /**
@@ -407,7 +404,6 @@ ButtonPressed readButtons() {
     }
   }
 }
-
 
 void lightSleep(unsigned long delayMs) {
   log(CLASS_MAIN, Info, "Li-sleep (%lu ms)...", delayMs);

@@ -14,7 +14,7 @@ void delay(int) {}
 #define CLASS_BODY "BO"
 #define MSG_MAX_LENGTH 32
 #define MAX_POSES_PER_MOVE 15 // maximum amount of positions per move
-#define POSE_STR_LENGTH 3 // characters that represent a position / state within a move
+#define POSE_STR_LENGTH 3     // characters that represent a position / state within a move
 #define MOVE_STR_LENGTH (POSE_STR_LENGTH * MAX_POSES_PER_MOVE)
 
 #define ON 1
@@ -26,19 +26,19 @@ void delay(int) {}
 #define NRO_ROUTINES 4
 
 enum BodyConfigState {
-  BodyConfigMsg0 = 0,         // message 0
-  BodyConfigMsg1,             // message 1
-  BodyConfigMsg2,             // message 2
-  BodyConfigMsg3,             // message 3
-  BodyConfigMove0,            // move 0
-  BodyConfigMove1,            // move 1
-  BodyConfigMove2,            // move 2
-  BodyConfigMove3,            // move 3
-  BodyConfigTime0,            // time/freq of acting for move 0
-  BodyConfigTime1,            // time/freq of acting for move 1
-  BodyConfigTime2,            // time/freq of acting for move 2
-  BodyConfigTime3,            // time/freq of acting for move 3
-  BodyConfigStateDelimiter    // delimiter of the configuration states
+  BodyConfigMsg0 = 0,      // message 0
+  BodyConfigMsg1,          // message 1
+  BodyConfigMsg2,          // message 2
+  BodyConfigMsg3,          // message 3
+  BodyConfigMove0,         // move 0
+  BodyConfigMove1,         // move 1
+  BodyConfigMove2,         // move 2
+  BodyConfigMove3,         // move 3
+  BodyConfigTime0,         // time/freq of acting for move 0
+  BodyConfigTime1,         // time/freq of acting for move 1
+  BodyConfigTime2,         // time/freq of acting for move 2
+  BodyConfigTime3,         // time/freq of acting for move 3
+  BodyConfigStateDelimiter // delimiter of the configuration states
 };
 
 enum ArmState { ArmUp = 0, ArmMiddle, ArmDown, ArmDelimiter };
@@ -81,21 +81,15 @@ private:
   Routine *routines[NRO_ROUTINES];
 
   bool isInitialized() {
-    bool init = smilyFace != NULL &&
-    		sadFace != NULL &&
-				normalFace != NULL &&
-				sleepyFace != NULL &&
-				clearFace != NULL &&
-				arms != NULL &&
-        ledFunc != NULL &&
-				messageFunc != NULL;
+    bool init = smilyFace != NULL && sadFace != NULL && normalFace != NULL && sleepyFace != NULL && clearFace != NULL && arms != NULL &&
+                ledFunc != NULL && messageFunc != NULL;
     return init;
   }
 
   void performPose(char c1, char c2) {
     switch (GET_POSE(c1, c2)) {
 
-    	// FACES
+      // FACES
       case GET_POSE('f', 's'):
         log(CLASS_BODY, Debug, "Smile");
         smilyFace();
@@ -223,14 +217,13 @@ private:
     }
   }
 
-  void performMove(const char* s) {
-    for (int i = 0; i < strlen(s); i+=POSE_STR_LENGTH) {
+  void performMove(const char *s) {
+    for (int i = 0; i < strlen(s); i += POSE_STR_LENGTH) {
       performPose(s[i], s[i + 1]);
     }
   }
 
 public:
-
   Body(const char *n) : timing(OnceEvery1Minute) {
     name = n;
     smilyFace = NULL;
@@ -245,7 +238,7 @@ public:
       msgs[i] = new Buffer<MSG_MAX_LENGTH>("");
     }
     for (int i = 0; i < NRO_ROUTINES; i++) {
-    	routines[i] = new Routine();
+      routines[i] = new Routine();
       routines[i]->timingConf = 100000050L;
       routines[i]->timing.setCustom(routines[i]->timingConf);
       routines[i]->timing.setFrequency(Custom);
@@ -287,14 +280,14 @@ public:
       return;
     }
     for (int i = 0; i < NRO_ROUTINES; i++) {
-    	while(routines[i]->timing.catchesUp(timing.getCurrentTime())) {
-    		if (routines[i]->timing.matches()) {
+      while (routines[i]->timing.catchesUp(timing.getCurrentTime())) {
+        if (routines[i]->timing.matches()) {
           const long timing = routines[i]->timingConf;
-          const char* move = routines[i]->move.getBuffer();
+          const char *move = routines[i]->move.getBuffer();
           log(CLASS_BODY, Debug, "Rne %d: %ld %s", i, timing, move);
           performMove(move);
-    		}
-    	}
+        }
+      }
     }
   }
 
@@ -376,11 +369,15 @@ public:
     }
   }
 
-  int getNroProps() { return BodyConfigStateDelimiter; }
+  int getNroProps() {
+    return BodyConfigStateDelimiter;
+  }
 
   void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}
 
-  int getNroInfos() { return 0; }
+  int getNroInfos() {
+    return 0;
+  }
 
   Timing *getFrequencyConfiguration() {
     return &timing;

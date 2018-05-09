@@ -11,24 +11,24 @@ int faceCleared = 0;
 char msg[100];
 
 void setUp() {
-	faceCleared = 0;
+  faceCleared = 0;
   msg[0] = 0;
 }
 
 void tearDown() {}
 
 void beClear() {
-	faceCleared++;
+  faceCleared++;
 }
-void beSmily() { }
-void beSad() { }
-void beNormal() { }
-void beSleepy() { }
+void beSmily() {}
+void beSad() {}
+void beNormal() {}
+void beSleepy() {}
 void messageOnLcd(int line, const char *str) {
-	strcpy(msg, str);
+  strcpy(msg, str);
 }
-void arms(ArmState left, ArmState right) { }
-void led(unsigned char led, unsigned char v) { }
+void arms(ArmState left, ArmState right) {}
+void led(unsigned char led, unsigned char v) {}
 
 void test_body_shows_time() {
 
@@ -45,7 +45,7 @@ void test_body_shows_time() {
   b.setMessageFunc(messageOnLcd);
   b.setLedFunc(led);
 
-  Long time0(201010101); // every single second
+  Long time0(201010101);      // every single second
   Buffer<10> move0("mcXfcX"); // clock message (show current time) and face cleared
 
   b.setProp(BodyConfigTime0, SetValue, &time0, NULL);
@@ -54,13 +54,12 @@ void test_body_shows_time() {
   TEST_ASSERT_EQUAL(0, faceCleared);
   TEST_ASSERT_EQUAL_STRING("", msg);
 
-  Timing* t = b.getFrequencyConfiguration();
+  Timing *t = b.getFrequencyConfiguration();
   t->setCurrentTime(3600 * 2 + 60 * 33 + 10);
   b.act();
 
   TEST_ASSERT_EQUAL(t->getCurrentTime(), faceCleared);
   TEST_ASSERT_EQUAL_STRING("02:33", msg);
-
 }
 
 int main() {

@@ -72,7 +72,7 @@ public:
   void setup() {}
 
   Bot *getBot() {
-  	return bot;
+    return bot;
   }
 
   Clock *getClock() {
@@ -88,17 +88,16 @@ public:
   }
 
   PropSync *getPropSync() {
-  	return propSync;
+    return propSync;
   }
 
   ClockSync *getClockSync() {
-  	return clockSync;
+    return clockSync;
   }
 
   SetupSync *getSetupSync() {
-  	return setupSync;
+    return setupSync;
   }
-
 };
 
 #endif // MODULE_INC

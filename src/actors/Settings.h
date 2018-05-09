@@ -54,7 +54,7 @@ public:
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
-    	case (GlobalShowSettings):
+      case (GlobalShowSettings):
         return "sh";
       case (GlobalClearStackTraceState):
         return "cl";
@@ -73,7 +73,7 @@ public:
 
   void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
-    	case (GlobalShowSettings):
+      case (GlobalShowSettings):
         setPropBoolean(setMode, targetValue, actualValue, &showSettings);
         break;
       case (GlobalClearStackTraceState):
@@ -104,7 +104,7 @@ public:
     }
   }
 
-  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) { }
+  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}
 
   int getNroInfos() {
     return 0;
