@@ -32,7 +32,7 @@ void led(unsigned char led, unsigned char v) { }
 
 void test_body_shows_time() {
 
-	setLogLevel(Warn);
+  setLogLevel(Warn);
 
   Body b("b");
 
