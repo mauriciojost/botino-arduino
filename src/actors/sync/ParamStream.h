@@ -46,6 +46,10 @@ public:
     bytesReceived.append(b);
   }
 
+  void append(const char* str) {
+    bytesReceived.append(str);
+  }
+
   int available() {
     return bytesReceived.getLength();
   }
