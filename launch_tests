@@ -29,7 +29,10 @@ function run_test() {
 rm -fr libs/Unity/examples
 
 
-general_flags="-D UNIT_TEST -D LOG_LEVEL=0 -D OVERRUN_THRESHOLD_SECS=10000"
+general_flags="\
+  -D UNIT_TEST\
+  -D LOG_LEVEL=0\
+  -D OVERRUN_THRESHOLD_SECS=10000"
 
 for f in $(find test -name *.cpp)
 do
