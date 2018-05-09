@@ -32,6 +32,7 @@ rm -fr libs/Unity/examples
 general_flags="\
   -D UNIT_TEST\
   -D LOG_LEVEL=0\
+  -D DEVICE_NAME=\"device1\"\
   -D MAX_LOG_MSG_LENGTH=128\
   -D OVERRUN_THRESHOLD_SECS=10000"
 
