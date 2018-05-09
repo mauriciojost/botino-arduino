@@ -5,7 +5,7 @@
 #include <string.h>
 
 // Library being tested
-#include <actors/ParamStream.h>
+#include <actors/sync/ParamStream.h>
 
 void setUp() {}
 
