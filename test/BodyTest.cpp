@@ -32,6 +32,8 @@ void led(unsigned char led, unsigned char v) { }
 
 void test_body_shows_time() {
 
+	setLogLevel(Warn);
+
   Body b("b");
 
   b.setSmilyFace(beSmily);
