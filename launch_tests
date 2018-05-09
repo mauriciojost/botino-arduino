@@ -18,9 +18,10 @@ function run_test() {
   export headers_unity="-I libs/Unity/src"
   export src_unity="libs/Unity/src/*.c"
 
-  g++ -Wno-deprecated-declarations -o simulator.bin $flags $src_c $src_cpp $src_unity $main_src $headers -I src $headers_unity
+  g++ -Wno-deprecated-declarations -g -ggdb -o simulator.bin $flags $src_c $src_cpp $src_unity $main_src $headers -I src $headers_unity
 
   ./simulator.bin
+  #gdbtui simulator.bin
 
   rm ./simulator.bin
 
