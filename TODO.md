@@ -7,6 +7,7 @@
 - Use 3rd char for poses
 - LCD messages size can be controlled
 - Regularly reinitialize LCD (too fragile for now)
+- Show more KPIs about the internals (as freeheap) in the logs
 
 # DONE
 
