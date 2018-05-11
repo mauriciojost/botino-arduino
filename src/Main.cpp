@@ -13,6 +13,7 @@
 #include <Pinout.h>
 #include "Images.h"
 #include "main4ino/Misc.h"
+#include "RemoteDebug.h"
 
 #define CLASS_MAIN "MA"
 
@@ -73,6 +74,7 @@ Servo servoRight;
 Adafruit_SSD1306 lcd(-1);
 volatile unsigned char ints = 0;
 HTTPClient httpClient;
+RemoteDebug RDebug;
 
 /******************/
 /***  CALLBACKS ***/
@@ -136,6 +138,7 @@ void logLine(const char *str) {
   i = (i + 1) % 8;
   lcdPrintLine(str, i, CLEAR_FIRST);
   Serial.println(str);
+  RDebug.printf("%s\n", str);
 }
 
 void beClear() {
@@ -212,7 +215,7 @@ bool initWifi(const char *ssid, const char *pass) {
 
   wl_status_t status = WiFi.status();
   if (status == WL_CONNECTED) {
-    log(CLASS_MAIN, Debug, "Already connected, skipping");
+    log(CLASS_MAIN, Debug, "Already connected (%s), skipping", WiFi.localIP().toString().c_str());
     return true; // connected
   }
 
@@ -329,6 +332,9 @@ void setup() {
   lcd.dim(true);
   delay(DELAY_MS_SPI);
 
+  // Intialize the remote logging framework
+  RDebug.begin("ESP");
+
   // Intialize the logging framework
   setupLog(logLine);
 
@@ -433,6 +439,8 @@ void loop() {
   m.getSettings()->setButtonPressed((int)ints);
 
   setLogLevel((char)(m.getSettings()->getLogLevel() % 4));
+
+  RDebug.handle();
 
   unsigned long t2 = millis();
   unsigned long periodMs = m.getSettings()->getPeriodSeconds() * 1000;
