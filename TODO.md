@@ -3,11 +3,11 @@
 - Package electronics without breadboard
 - Figure out wifi setup
 - Use 3rd char for poses
-- LCD messages size can be controlled
 - Regularly reinitialize LCD (too fragile for now)
 
 # DONE
 
+- LCD messages size can be controlled
 - Make both arms operate simultaneously
 - Send logs over the network
 - Show more KPIs about the internals (as freeheap) in the logs
