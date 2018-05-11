@@ -6,6 +6,7 @@
 - Make both arms operate simultaneously
 - Use 3rd char for poses
 - LCD messages size can be controlled
+- Regularly reinitialize LCD (too fragile for now)
 
 # DONE
 
