@@ -101,3 +101,6 @@
 /src/aes.c
 /src/aes.h
 /src/aes.hpp
+/libs/RemoteDebug/
+/src/RemoteDebug.cpp
+/src/RemoteDebug.h
