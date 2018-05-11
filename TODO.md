@@ -2,15 +2,15 @@
 
 - Package electronics without breadboard
 - Figure out wifi setup
-- Send logs over the network
 - Make both arms operate simultaneously
 - Use 3rd char for poses
 - LCD messages size can be controlled
 - Regularly reinitialize LCD (too fragile for now)
-- Show more KPIs about the internals (as freeheap) in the logs
 
 # DONE
 
+- Send logs over the network
+- Show more KPIs about the internals (as freeheap) in the logs
 - Make all images have black background for consumption
 - Make easier the image creation
 - Improve the API regarding moves: if HAPPY, then allow to have a full control on a move of the arms and the faces used
