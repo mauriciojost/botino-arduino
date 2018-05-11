@@ -173,41 +173,41 @@ void beSleepy() {
   delay(DELAY_MS_SPI);
 }
 
-int smooth(int pin, Servo *servo, int lastPos, int targetPos, int steps) {
-  log(CLASS_MAIN, Info, "servo %d->%d", lastPos, targetPos);
-  if (lastPos != targetPos) {
-    servo->attach(pin);
-    for (int i = 1; i <= steps; i++) {
-      float factor = ((float)i) / steps;
-      int v = lastPos + ((targetPos - lastPos) * factor);
-      servo->write(v);
-      delay(15);
-    }
-    servo->detach();
-  }
-  return targetPos;
-}
-
-int arm(Servo *servo, ArmState a, int lastPos, int pin, bool inverted) {
-  log(CLASS_MAIN, Debug, "Arm move");
+int getServoPosition(ArmState a, bool inverted) {
   switch (a) {
     case ArmUp:
-      return smooth(pin, servo, lastPos, INVERT(ARM_UP_SERVO_POS, inverted), SERVO_ARM_STEPS);
+      return INVERT(ARM_UP_SERVO_POS, inverted);
     case ArmMiddle:
-      return smooth(pin, servo, lastPos, INVERT(ARM_MIDDLE_SERVO_POS, inverted), SERVO_ARM_STEPS);
+      return INVERT(ARM_MIDDLE_SERVO_POS, inverted);
     case ArmDown:
-      return smooth(pin, servo, lastPos, INVERT(ARM_DOWN_SERVO_POS, inverted), SERVO_ARM_STEPS);
+      return INVERT(ARM_DOWN_SERVO_POS, inverted);
     default:
-      return lastPos;
+      return 0;
   }
 }
 
 void arms(ArmState left, ArmState right) {
-  static int rightPos = 0;
-  static int leftPos = 0;
+  static int lastPosL = 0;
+  static int lastPosR = 0;
   log(CLASS_MAIN, Debug, "Arms move");
-  leftPos = arm(&servoLeft, left, leftPos, SERVO0_PIN, SERVO0_INVERTED);
-  rightPos = arm(&servoRight, right, rightPos, SERVO1_PIN, SERVO1_INVERTED);
+  int targetPosL = getServoPosition(left, SERVO0_INVERTED);
+  int targetPosR = getServoPosition(right, SERVO1_INVERTED);
+  servoLeft.attach(SERVO0_PIN);
+  servoRight.attach(SERVO1_PIN);
+  log(CLASS_MAIN, Info, "Servo left %d->%d", lastPosL, targetPosL);
+  log(CLASS_MAIN, Info, "Servo right %d->%d", lastPosR, targetPosR);
+  for (int i = 1; i <= SERVO_ARM_STEPS; i++) {
+    float factor = ((float)i) / SERVO_ARM_STEPS;
+    int vL = lastPosL + ((targetPosL - lastPosL) * factor);
+    int vR = lastPosR + ((targetPosR - lastPosR) * factor);
+    servoLeft.write(vL);
+    servoRight.write(vR);
+    delay(15);
+  }
+  lastPosL = targetPosL;
+  lastPosR = targetPosR;
+  servoLeft.detach();
+  servoRight.detach();
 }
 
 bool initWifi(const char *ssid, const char *pass) {

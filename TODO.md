@@ -2,13 +2,13 @@
 
 - Package electronics without breadboard
 - Figure out wifi setup
-- Make both arms operate simultaneously
 - Use 3rd char for poses
 - LCD messages size can be controlled
 - Regularly reinitialize LCD (too fragile for now)
 
 # DONE
 
+- Make both arms operate simultaneously
 - Send logs over the network
 - Show more KPIs about the internals (as freeheap) in the logs
 - Make all images have black background for consumption
