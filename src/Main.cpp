@@ -37,7 +37,7 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 #define NRO_LEDS 3
 
 #ifndef SERVO_ARM_STEPS
-#define SERVO_ARM_STEPS 100
+#define SERVO_ARM_STEPS 50
 #endif // SERVO_ARM_STEPS
 
 #ifndef ARM_UP_SERVO_POS
@@ -66,7 +66,7 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 
 #define WAIT_BEFORE_HTTP_MS 1500
 
-#define INVERT(p, f) ((f ? 180 - p : p))
+#define SERVO_INVERT_POS(p, f) ((f ? 180 - p : p))
 
 Module m;
 Servo servoLeft;
@@ -176,11 +176,11 @@ void beSleepy() {
 int getServoPosition(ArmState a, bool inverted) {
   switch (a) {
     case ArmUp:
-      return INVERT(ARM_UP_SERVO_POS, inverted);
+      return SERVO_INVERT_POS(ARM_UP_SERVO_POS, inverted);
     case ArmMiddle:
-      return INVERT(ARM_MIDDLE_SERVO_POS, inverted);
+      return SERVO_INVERT_POS(ARM_MIDDLE_SERVO_POS, inverted);
     case ArmDown:
-      return INVERT(ARM_DOWN_SERVO_POS, inverted);
+      return SERVO_INVERT_POS(ARM_DOWN_SERVO_POS, inverted);
     default:
       return 0;
   }
