@@ -176,27 +176,35 @@ private:
 
       // WAITS
       case GET_POSE('w', 't'):
-        int v = getInt(c3);
-        log(CLASS_BODY, Debug, "Wait %d s", v);
-        delay(v * 1000);
-        break;
+        {
+          int v = getInt(c3);
+          log(CLASS_BODY, Debug, "Wait %d s", v);
+          delay(v * 1000);
+          break;
+        }
 
       // LEDS ON / OFF
       case GET_POSE('l', '0'):
-      	int b = getBool(c3);
-        log(CLASS_BODY, Debug, "Led 0: %d", b);
-        ledFunc(0, b);
-        break;
+        {
+          int b = getBool(c3);
+          log(CLASS_BODY, Debug, "Led 0: %d", b);
+          ledFunc(0, b);
+          break;
+        }
       case GET_POSE('l', '1'):
-      	int b = getBool(c3);
-        log(CLASS_BODY, Debug, "Led 1: %d", b);
-        ledFunc(1, b);
-        break;
+        {
+          int b = getBool(c3);
+          log(CLASS_BODY, Debug, "Led 1: %d", b);
+          ledFunc(1, b);
+          break;
+        }
       case GET_POSE('l', '2'):
-      	int b = getBool(c3);
-        log(CLASS_BODY, Debug, "Led 2: %d", b);
-        ledFunc(2, b);
-        break;
+        {
+          int b = getBool(c3);
+          log(CLASS_BODY, Debug, "Led 2: %d", b);
+          ledFunc(2, b);
+          break;
+        }
 
       // DEFAULT
       default:
