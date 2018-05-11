@@ -2,6 +2,10 @@
 
 - Package electronics without breadboard
 - Figure out wifi setup
+- Send logs over the network
+- Make both arms operate simultaneously
+- Use 3rd char for poses
+- LCD messages size can be controlled
 
 # DONE
 
