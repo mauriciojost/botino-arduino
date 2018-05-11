@@ -15,6 +15,7 @@
 #include "main4ino/Misc.h"
 
 #define CLASS_MAIN "MA"
+#define REMOTE_LOG_LENGTH 4096
 
 #ifndef WIFI_SSID_INIT
 #error "Must provide WIFI_SSID_INIT"
@@ -73,6 +74,7 @@ Servo servoRight;
 Adafruit_SSD1306 lcd(-1);
 volatile unsigned char ints = 0;
 HTTPClient httpClient;
+Buffer<REMOTE_LOG_LENGTH> logs;
 
 /******************/
 /***  CALLBACKS ***/
@@ -136,6 +138,11 @@ void logLine(const char *str) {
   i = (i + 1) % 8;
   lcdPrintLine(str, i, CLEAR_FIRST);
   Serial.println(str);
+  logs.append(str);
+  logs.append("\n");
+  if (strlen(logs.getBuffer()) >= REMOTE_LOG_LENGTH - 10) {
+  	logs.clear();
+  }
 }
 
 void beClear() {
@@ -258,8 +265,10 @@ int httpGet(const char *url, ParamStream *response) {
   log(CLASS_PROPSYNC, Info, "HTTP GET: %s %d", url, errorCode);
 
   if (errorCode > 0) {
-    response->flush();
-    httpClient.writeToStream(response);
+  	if (response != NULL) {
+      response->flush();
+      httpClient.writeToStream(response);
+  	}
   } else {
     log(CLASS_PROPSYNC, Error, "! %s", httpClient.errorToString(errorCode).c_str());
   }
@@ -280,8 +289,10 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
   log(CLASS_PROPSYNC, Info, "HTTP POST: %s %d", url, errorCode);
 
   if (errorCode > 0) {
-    response->flush();
-    httpClient.writeToStream(response);
+  	if (response != NULL) {
+      response->flush();
+      httpClient.writeToStream(response);
+  	}
   } else {
     log(CLASS_PROPSYNC, Error, "! %s", httpClient.errorToString(errorCode).c_str());
   }
@@ -433,6 +444,8 @@ void loop() {
   m.getSettings()->setButtonPressed((int)ints);
 
   setLogLevel((char)(m.getSettings()->getLogLevel() % 4));
+
+  httpPost("http://10.0.0.8:5555/", logs.getBuffer(), NULL);
 
   unsigned long t2 = millis();
   unsigned long periodMs = m.getSettings()->getPeriodSeconds() * 1000;
