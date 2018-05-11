@@ -1,0 +1,12 @@
+{
+  "name": "botino",
+  "version": "1.0.0-SNAPSHOT",
+  "keywords": "botino, alarm, bot",
+  "description": "Cool alarm!",
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:mauriciojost/botino.git"
+  },
+  "frameworks": "arduino",
+  "platforms": "atmelavr,espressif8266,linux_x86_64"
+}
