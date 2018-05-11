@@ -118,10 +118,10 @@ void lcdPrintLine(const char *str, int line, bool clearFirst) {
   cleared = false;
 }
 
-void messageOnLcd(int line, const char *str) {
+void messageOnLcd(int line, const char *str, int size) {
   lcd.clearDisplay();
   lcd.setTextWrap(true);
-  lcd.setTextSize(2);
+  lcd.setTextSize(size);
   lcd.setTextColor(WHITE);
   lcd.setCursor(0, line * 2 * 8);
   lcd.println(str);

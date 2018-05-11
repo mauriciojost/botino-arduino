@@ -75,7 +75,7 @@ private:
   void (*sleepyFace)();
   void (*clearFace)();
   void (*arms)(ArmState left, ArmState right);
-  void (*messageFunc)(int line, const char *msg);
+  void (*messageFunc)(int line, const char *msg, int size);
   void (*ledFunc)(unsigned char led, unsigned char v);
   Buffer<MSG_MAX_LENGTH> *msgs[NRO_MSGS];
   Routine *routines[NRO_ROUTINES];
@@ -86,7 +86,11 @@ private:
     return init;
   }
 
-  void performPose(char c1, char c2) {
+  int getInt(char c) {
+  	return ABSOL(c - '0');
+  }
+
+  void performPose(char c1, char c2, char c3) {
     switch (GET_POSE(c1, c2)) {
 
       // FACES
@@ -142,19 +146,19 @@ private:
       // MESSAGES
       case GET_POSE('m', '0'):
         log(CLASS_BODY, Debug, "Message 0");
-        messageFunc(0, msgs[0]->getBuffer());
+        messageFunc(0, msgs[0]->getBuffer(), getInt(c3));
         break;
       case GET_POSE('m', '1'):
         log(CLASS_BODY, Debug, "Message 1");
-        messageFunc(0, msgs[1]->getBuffer());
+        messageFunc(0, msgs[1]->getBuffer(), getInt(c3));
         break;
       case GET_POSE('m', '2'):
         log(CLASS_BODY, Debug, "Message 2");
-        messageFunc(0, msgs[2]->getBuffer());
+        messageFunc(0, msgs[2]->getBuffer(), getInt(c3));
         break;
       case GET_POSE('m', '3'):
         log(CLASS_BODY, Debug, "Message 3");
-        messageFunc(0, msgs[3]->getBuffer());
+        messageFunc(0, msgs[3]->getBuffer(), getInt(c3));
         break;
       case GET_POSE('m', 'c'): {
         log(CLASS_BODY, Debug, "Message clock");
@@ -162,7 +166,7 @@ private:
         int m = GET_MINUTES(timing.getCurrentTime());
         Buffer<6> t("");
         t.fill("%02d:%02d", h, m);
-        messageFunc(0, t.getBuffer());
+        messageFunc(0, t.getBuffer(), getInt(c3));
         break;
       }
 
@@ -219,7 +223,7 @@ private:
 
   void performMove(const char *s) {
     for (int i = 0; i < strlen(s); i += POSE_STR_LENGTH) {
-      performPose(s[i], s[i + 1]);
+      performPose(s[i + 0], s[i + 1], s[i + 2]);
     }
   }
 
@@ -267,7 +271,7 @@ public:
   void setArms(void (*f)(ArmState left, ArmState right)) {
     arms = f;
   }
-  void setMessageFunc(void (*f)(int line, const char *str)) {
+  void setMessageFunc(void (*f)(int line, const char *str, int size)) {
     messageFunc = f;
   }
   void setLedFunc(void (*f)(unsigned char led, unsigned char v)) {
