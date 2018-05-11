@@ -63,7 +63,7 @@ source $CONFIG_FILE
 
 echo "### Pulling dependencies ..."
 rm -fr "$LIBS_DIR"
-find -type l -delete src/
+find ./src -type l -delete # delete symlinks
 mkdir -p "$LIBS_DIR"
 for dep in $LIB_DEPS_EXTERNAL
 do
