@@ -8,11 +8,13 @@
 #include <actors/sync/ParamStream.h>
 #include <main4ino/Clock.h>
 #include <main4ino/Boolean.h>
-//#include <aes.hpp>
+#include <AES.h>
 
 #define CLASS_SETUPSYNC "SS"
 
 #define DWEET_IO_API_URL_BASE_GET "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-setup"
+
+#define KEY_LENGTH 128
 
 /**
 * This actor performs WIFI setup via HTTP.
@@ -22,7 +24,6 @@ class SetupSync : public Actor {
 private:
   const char *name;
 
-  const uint8_t* key = (uint8_t*)"1234567890123456"; // length 16
   char ssid[16];
   char pass[16];
   Timing freqConf; // configuration of the frequency at which this actor will get triggered
@@ -30,13 +31,17 @@ private:
   bool (*initWifiInitFunc)();
   int (*httpGet)(const char* url, ParamStream* response);
 
+
+  AES aes ;
+  byte *key = (unsigned char*)"01234567890123456789012345678901"; // encryption key
+  unsigned long long int myIv = 36753562; // CBC initialization vector; real iv = iv x2 ex: 01234567 = 0123456701234567
+
 public:
   SetupSync(const char *n) : freqConf(OnceEvery1Minute) {
     name = n;
     initWifiSteadyFunc = NULL;
     initWifiInitFunc = NULL;
-    ssid[0] = 'X';
-    ssid[1] = 0;
+    ssid[0] = 0;
     pass[0] = 0;
     httpGet = NULL;
   }
@@ -46,6 +51,9 @@ public:
   }
 
   void act() {
+
+    aesTest();
+
     if (initWifiSteadyFunc == NULL || initWifiInitFunc == NULL || httpGet == NULL) {
       log(CLASS_SETUPSYNC, Error, "Init needed");
       return;
@@ -106,6 +114,35 @@ public:
       }
     }
   }
+
+  void aesTest () {
+
+    const char* plain = "http://www.arduinolab.net/ayptiondecryption-using-arduino-uno/"; // plaintext to encrypt
+  	int s = strlen(plain) + 1;
+
+    aes.iv_inc();
+
+    byte iv [N_BLOCK] ;
+    int plainPaddedLength = s  + (N_BLOCK - ((s - 1) % 16)); // length of padded plaintext [B]
+    const char* cipher [plainPaddedLength]; // ciphertext (encrypted plaintext)
+    const char* check [plainPaddedLength]; // decrypted plaintext
+
+    aes.set_IV(myIv);
+    aes.get_IV(iv);
+
+    aes.do_aes_encrypt((byte*)plain,s + 1,(byte*)cipher,key,KEY_LENGTH,iv);
+
+    aes.set_IV(myIv);
+    aes.get_IV(iv);
+
+    aes.do_aes_decrypt((byte*)cipher,aes.get_size(),(byte*)check,key,KEY_LENGTH,iv);
+    log(CLASS_SETUPSYNC, Debug, "Original: %s", plain);
+    log(CLASS_SETUPSYNC, Debug, "Encrypted: %s", cipher);
+    log(CLASS_SETUPSYNC, Debug, "Decrypted: %s", check);
+
+
+  }
+
 
   void setProp(int propIndex, SetMode set, const Value *targetValue, Value *actualValue) {}
 
