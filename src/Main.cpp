@@ -417,13 +417,6 @@ void lightSleep(unsigned long delayMs) {
   delay(delayMs);
 }
 
-void deepSleep(uint32_t delayUs) {
-  // RST to GPIO16
-  // Sometimes hangs https://github.com/esp8266/Arduino/issues/2049
-  log(CLASS_MAIN, Info, "De-sleep (%lu us)...", delayUs);
-  ESP.deepSleep(delayUs);
-}
-
 void loop() {
 
   unsigned long t1 = millis();
