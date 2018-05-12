@@ -96,7 +96,7 @@ void lcdPrintLine(const char *str, int line, bool clearFirst) {
   static bool cleared = false;
   lcd.setTextWrap(false);
 
-  bool disableLcd = m.getSettings()->getDisableLcd();
+  bool disableLcd = !m.getSettings()->getLcdDebug();
   if (disableLcd) {
     if (!cleared) {
       lcdClear();

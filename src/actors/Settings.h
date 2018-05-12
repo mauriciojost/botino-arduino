@@ -14,12 +14,11 @@
 #endif // PERIOD_SEC
 
 enum GlobalConfigState {
-  GlobalShowSettings = 0,
-  GlobalClearStackTraceState,
+  GlobalClearStackTraceState = 0,
   GlobalLogLevelState,
   GlobalButtonPressedState,
   GlobalPeriodSecondsState,
-  GlobalDisableLcdState,
+  GlobalLcdDebugState,
   GlobalConfigStateDelimiter // delimiter of the configuration states
 };
 
@@ -27,23 +26,21 @@ class Settings : public Actor {
 
 private:
   const char *name;
-  bool showSettings;
   bool clearStackTrace;
   int logLevel;
   int buttonPressed;
   int periodSeconds;
-  bool disableLcd;
+  bool lcdDebug;
   Timing freqConf;
 
 public:
   Settings(const char *n) : freqConf(Never) {
     name = n;
-    showSettings = true;
     clearStackTrace = false;
     logLevel = 0;
     buttonPressed = 0;
     periodSeconds = PERIOD_SEC;
-    disableLcd = true;
+    lcdDebug = false;
   }
 
   const char *getName() {
@@ -54,18 +51,16 @@ public:
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
-      case (GlobalShowSettings):
-        return "sh";
       case (GlobalClearStackTraceState):
         return "cl";
       case (GlobalLogLevelState):
-        return "ll";
+        return "logl";
       case (GlobalButtonPressedState):
         return "bp";
       case (GlobalPeriodSecondsState):
-        return "ps";
-      case (GlobalDisableLcdState):
-        return "di";
+        return "period";
+      case (GlobalLcdDebugState):
+        return "lcddebug";
       default:
         return "";
     }
@@ -73,9 +68,6 @@ public:
 
   void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
-      case (GlobalShowSettings):
-        setPropBoolean(setMode, targetValue, actualValue, &showSettings);
-        break;
       case (GlobalClearStackTraceState):
         setPropBoolean(setMode, targetValue, actualValue, &clearStackTrace);
         break;
@@ -88,8 +80,8 @@ public:
       case (GlobalPeriodSecondsState):
         setPropInteger(setMode, targetValue, actualValue, &periodSeconds);
         break;
-      case (GlobalDisableLcdState):
-        setPropBoolean(setMode, targetValue, actualValue, &disableLcd);
+      case (GlobalLcdDebugState):
+        setPropBoolean(setMode, targetValue, actualValue, &lcdDebug);
         break;
       default:
         break;
@@ -97,11 +89,7 @@ public:
   }
 
   int getNroProps() {
-    if (showSettings) {
-      return GlobalConfigStateDelimiter;
-    } else {
-      return (GlobalShowSettings + 1);
-    }
+    return GlobalConfigStateDelimiter;
   }
 
   void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}
@@ -134,8 +122,8 @@ public:
     return periodSeconds;
   }
 
-  bool getDisableLcd() {
-    return disableLcd;
+  bool getLcdDebug() {
+    return lcdDebug;
   }
 };
 
