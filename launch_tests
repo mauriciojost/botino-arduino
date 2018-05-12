@@ -14,9 +14,14 @@ function run_test() {
   export headers=$(find * -name "*.h" | xargs -I% dirname % | uniq | grep -v test | grep -v unity | grep -v "$exclude" | xargs -I% echo "-I %")
   export src_c=$(find * -name "*.c" | grep -v test | grep -v unity | grep -v "$exclude"  | xargs -I% echo " %")
   export src_cpp=$(find * -name "*.cpp" | grep -v test | grep -v unity | grep -v "$exclude" | xargs -I% echo " %")
+  export src_cpp=$(find -L src -name "*.cpp" | grep -v test | grep -v unity | grep -v libs | grep -v "$exclude" | xargs -I% echo " %")
 
   export headers_unity="-I libs/Unity/src"
   export src_unity="libs/Unity/src/*.c"
+
+  echo "HEADERS: $headers"
+  echo "SOURCES C: $src_c"
+  echo "SOURCES C++: $src_cpp"
 
   g++ -Wno-deprecated-declarations -g -ggdb -o simulator.bin $flags $src_c $src_cpp $src_unity $main_src $headers -I src $headers_unity
 
