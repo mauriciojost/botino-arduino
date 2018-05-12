@@ -24,7 +24,7 @@ void beSmily() {}
 void beSad() {}
 void beNormal() {}
 void beSleepy() {}
-void messageOnLcd(int line, const char *str) {
+void messageOnLcd(int line, const char *str, int s) {
   strcpy(msg, str);
 }
 void arms(ArmState left, ArmState right) {}
