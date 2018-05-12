@@ -9,6 +9,8 @@
 #include <main4ino/SerBot.h>
 #include <main4ino/Array.h>
 
+#define LOG_CLASS "TST"
+
 void setUp() {}
 
 void tearDown() {}
@@ -18,13 +20,15 @@ bool initWifiInit() {
 }
 
 bool initWifiSteady() {
-  return true; // always connected
+  return false; // not connected
 }
 
 int httpGet(const char *url, ParamStream *response) {
 
-  if (strcmp("http://dweet.io/get/latest/dweet/for/device1-clock-target", url) == 0) {
-    response->append("{\"with\":[{\"content\":{\"ssid\":\"pepe\", \"pass\":\"koko\"}}]}");
+  if (strcmp("http://dweet.io/get/latest/dweet/for/device1-setup", url) == 0) {
+    response->append("{\"with\":[{\"content\":{\"ssid\":\"pepe\", \"pass\":\"D4F7D5057AF81AE9A21186A7B484DB71\"}}]}");
+  } else {
+  	log(LOG_CLASS, Error, "Unknown: %s", url);
   }
   return 1;
 }
@@ -32,12 +36,6 @@ int httpGet(const char *url, ParamStream *response) {
 void test_setupsync_syncs_properties() {
 
   setLogLevel(Debug);
-  Clock clock("clock");
-
-  Array<Actor *> actors(1);
-  actors.set(0, &clock);
-
-  SerBot b(&clock, &actors);
 
   SetupSync p("s");
 
