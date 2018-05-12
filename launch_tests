@@ -9,7 +9,7 @@ function run_test() {
 
   export flags="$2"
 
-  export exclude='Adafruit\|EspSaveCrash\|catch'
+  export exclude='Adafruit\|EspSaveCrash\|catch\|RemoteDebug'
 
   export headers=$(find * -name "*.h" | xargs -I% dirname % | uniq | grep -v test | grep -v unity | grep -v "$exclude" | xargs -I% echo "-I %")
   export src_c=$(find * -name "*.c" | grep -v test | grep -v unity | grep -v "$exclude"  | xargs -I% echo " %")
