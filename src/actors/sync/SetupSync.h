@@ -33,8 +33,6 @@ private:
 
 
   AES aes ;
-  byte *key = (unsigned char*)"01234567890123456789012345678901"; // encryption key
-  unsigned long long int myIv = 36753562; // CBC initialization vector; real iv = iv x2 ex: 01234567 = 0123456701234567
 
 public:
   SetupSync(const char *n) : freqConf(OnceEvery1Minute) {
@@ -52,7 +50,10 @@ public:
 
   void act() {
 
-    aesTest();
+    const char* input = "http://www.arduinolab.net/ayptiondecryption-using-arduino-uno/"; // plaintext to encrypt
+    const char* plainKey = "01234567890123456789012345678901";
+
+    aesTest(input, plainKey);
 
     if (initWifiSteadyFunc == NULL || initWifiInitFunc == NULL || httpGet == NULL) {
       log(CLASS_SETUPSYNC, Error, "Init needed");
@@ -115,10 +116,10 @@ public:
     }
   }
 
-  void aesTest () {
+  void aesTest (const char* plainInput, const char* plainKey) {
 
-    const char* plain = "http://www.arduinolab.net/ayptiondecryption-using-arduino-uno/"; // plaintext to encrypt
-  	int s = strlen(plain) + 1;
+  	int s = strlen(plainInput) + 1;
+    unsigned long long int myIv = 36753562; // CBC initialization vector; real iv = iv x2 ex: 01234567 = 0123456701234567
 
     aes.iv_inc();
 
@@ -130,16 +131,15 @@ public:
     aes.set_IV(myIv);
     aes.get_IV(iv);
 
-    aes.do_aes_encrypt((byte*)plain,s + 1,(byte*)cipher,key,KEY_LENGTH,iv);
+    aes.do_aes_encrypt((byte*)plainInput,s + 1,(byte*)cipher,(byte*)plainKey,KEY_LENGTH,iv);
 
     aes.set_IV(myIv);
     aes.get_IV(iv);
 
-    aes.do_aes_decrypt((byte*)cipher,aes.get_size(),(byte*)check,key,KEY_LENGTH,iv);
-    log(CLASS_SETUPSYNC, Debug, "Original: %s", plain);
+    aes.do_aes_decrypt((byte*)cipher,aes.get_size(),(byte*)check,(byte*)plainKey,KEY_LENGTH,iv);
+    log(CLASS_SETUPSYNC, Debug, "Original: %s", plainInput);
     log(CLASS_SETUPSYNC, Debug, "Encrypted: %s", cipher);
     log(CLASS_SETUPSYNC, Debug, "Decrypted: %s", check);
-
 
   }
 
