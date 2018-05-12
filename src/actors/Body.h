@@ -95,121 +95,126 @@ private:
   }
 
   void performPose(char c1, char c2, char c3) {
-    switch (GET_POSE(c1, c2)) {
 
-      // FACES
-      case GET_POSE('f', 's'):
-        log(CLASS_BODY, Debug, "Smile");
-        smilyFace();
-        break;
-      case GET_POSE('f', 'S'):
-        log(CLASS_BODY, Debug, "Sad");
-        sadFace();
-        break;
-      case GET_POSE('f', 'n'):
-        log(CLASS_BODY, Debug, "Normal");
-        normalFace();
-        break;
-      case GET_POSE('f', 'l'):
-        log(CLASS_BODY, Debug, "Sleepy");
-        sleepyFace();
-        break;
-      case GET_POSE('f', 'c'):
-        log(CLASS_BODY, Debug, "Clear");
-        clearFace();
-        break;
-
-      // ARMS
-      case GET_POSE('a', 'u'):
-        log(CLASS_BODY, Debug, "Arms up");
-        arms(ArmUp, ArmUp);
-        break;
-      case GET_POSE('a', 'r'):
-        log(CLASS_BODY, Debug, "Arms down/up");
-        arms(ArmDown, ArmUp);
-        break;
-      case GET_POSE('a', 'l'):
-        log(CLASS_BODY, Debug, "Arms up/down");
-        arms(ArmUp, ArmDown);
-        break;
-      case GET_POSE('a', 'd'):
-        log(CLASS_BODY, Debug, "Arms down");
-        arms(ArmDown, ArmDown);
-        break;
-      case GET_POSE('a', 'w'):
-        log(CLASS_BODY, Debug, "Arms waving");
-        arms(ArmDown, ArmDown);
-        arms(ArmUp, ArmUp);
-        arms(ArmDown, ArmDown);
-        break;
-      case GET_POSE('a', 'm'):
-        log(CLASS_BODY, Debug, "Arms middle");
-        arms(ArmMiddle, ArmMiddle);
-        break;
-
-      // MESSAGES
-      case GET_POSE('m', '0'):
-        log(CLASS_BODY, Debug, "Message 0");
-        messageFunc(0, msgs[0]->getBuffer(), getInt(c3));
-        break;
-      case GET_POSE('m', '1'):
-        log(CLASS_BODY, Debug, "Message 1");
-        messageFunc(0, msgs[1]->getBuffer(), getInt(c3));
-        break;
-      case GET_POSE('m', '2'):
-        log(CLASS_BODY, Debug, "Message 2");
-        messageFunc(0, msgs[2]->getBuffer(), getInt(c3));
-        break;
-      case GET_POSE('m', '3'):
-        log(CLASS_BODY, Debug, "Message 3");
-        messageFunc(0, msgs[3]->getBuffer(), getInt(c3));
-        break;
-      case GET_POSE('m', 'c'): {
-        log(CLASS_BODY, Debug, "Message clock");
-        int h = GET_HOURS(timing.getCurrentTime());
-        int m = GET_MINUTES(timing.getCurrentTime());
-        Buffer<6> t("");
-        t.fill("%02d:%02d", h, m);
-        messageFunc(0, t.getBuffer(), getInt(c3));
-        break;
-      }
-
+    switch (c1) {
       // WAITS
-      case GET_POSE('w', 't'):
+      case 'w':
         {
-          int v = getInt(c3);
+          int v = getInt(c2);
           log(CLASS_BODY, Debug, "Wait %d s", v);
           delay(v * 1000);
           break;
         }
 
-      // LEDS ON / OFF
-      case GET_POSE('l', '0'):
-        {
-          int b = getBool(c3);
-          log(CLASS_BODY, Debug, "Led 0: %d", b);
-          ledFunc(0, b);
-          break;
-        }
-      case GET_POSE('l', '1'):
-        {
-          int b = getBool(c3);
-          log(CLASS_BODY, Debug, "Led 1: %d", b);
-          ledFunc(1, b);
-          break;
-        }
-      case GET_POSE('l', '2'):
-        {
-          int b = getBool(c3);
-          log(CLASS_BODY, Debug, "Led 2: %d", b);
-          ledFunc(2, b);
-          break;
-        }
-
-      // DEFAULT
       default:
-        log(CLASS_BODY, Debug, "Invalid pose: %c%c", c1, c2);
-        break;
+
+        switch (GET_POSE(c1, c2)) {
+
+          // FACES
+          case GET_POSE('f', 's'):
+            log(CLASS_BODY, Debug, "Smile");
+            smilyFace();
+            break;
+          case GET_POSE('f', 'S'):
+            log(CLASS_BODY, Debug, "Sad");
+            sadFace();
+            break;
+          case GET_POSE('f', 'n'):
+            log(CLASS_BODY, Debug, "Normal");
+            normalFace();
+            break;
+          case GET_POSE('f', 'l'):
+            log(CLASS_BODY, Debug, "Sleepy");
+            sleepyFace();
+            break;
+          case GET_POSE('f', 'c'):
+            log(CLASS_BODY, Debug, "Clear");
+            clearFace();
+            break;
+
+          // ARMS
+          case GET_POSE('a', 'u'):
+            log(CLASS_BODY, Debug, "Arms up");
+            arms(ArmUp, ArmUp);
+            break;
+          case GET_POSE('a', 'r'):
+            log(CLASS_BODY, Debug, "Arms down/up");
+            arms(ArmDown, ArmUp);
+            break;
+          case GET_POSE('a', 'l'):
+            log(CLASS_BODY, Debug, "Arms up/down");
+            arms(ArmUp, ArmDown);
+            break;
+          case GET_POSE('a', 'd'):
+            log(CLASS_BODY, Debug, "Arms down");
+            arms(ArmDown, ArmDown);
+            break;
+          case GET_POSE('a', 'w'):
+            log(CLASS_BODY, Debug, "Arms waving");
+            arms(ArmDown, ArmDown);
+            arms(ArmUp, ArmUp);
+            arms(ArmDown, ArmDown);
+            break;
+          case GET_POSE('a', 'm'):
+            log(CLASS_BODY, Debug, "Arms middle");
+            arms(ArmMiddle, ArmMiddle);
+            break;
+
+          // MESSAGES
+          case GET_POSE('m', '0'):
+            log(CLASS_BODY, Debug, "Message 0");
+            messageFunc(0, msgs[0]->getBuffer(), getInt(c3));
+            break;
+          case GET_POSE('m', '1'):
+            log(CLASS_BODY, Debug, "Message 1");
+            messageFunc(0, msgs[1]->getBuffer(), getInt(c3));
+            break;
+          case GET_POSE('m', '2'):
+            log(CLASS_BODY, Debug, "Message 2");
+            messageFunc(0, msgs[2]->getBuffer(), getInt(c3));
+            break;
+          case GET_POSE('m', '3'):
+            log(CLASS_BODY, Debug, "Message 3");
+            messageFunc(0, msgs[3]->getBuffer(), getInt(c3));
+            break;
+          case GET_POSE('m', 'c'): {
+            log(CLASS_BODY, Debug, "Message clock");
+            int h = GET_HOURS(timing.getCurrentTime());
+            int m = GET_MINUTES(timing.getCurrentTime());
+            Buffer<6> t("");
+            t.fill("%02d:%02d", h, m);
+            messageFunc(0, t.getBuffer(), getInt(c3));
+            break;
+          }
+
+          // LEDS ON / OFF
+          case GET_POSE('l', '0'):
+            {
+              int b = getBool(c3);
+              log(CLASS_BODY, Debug, "Led 0: %d", b);
+              ledFunc(0, b);
+              break;
+            }
+          case GET_POSE('l', '1'):
+            {
+              int b = getBool(c3);
+              log(CLASS_BODY, Debug, "Led 1: %d", b);
+              ledFunc(1, b);
+              break;
+            }
+          case GET_POSE('l', '2'):
+            {
+              int b = getBool(c3);
+              log(CLASS_BODY, Debug, "Led 2: %d", b);
+              ledFunc(2, b);
+              break;
+            }
+
+          // DEFAULT
+          default:
+            log(CLASS_BODY, Debug, "Invalid pose: %c%c%c", c1, c2, c3);
+            break;
+        }
     }
   }
 
