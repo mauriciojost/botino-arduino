@@ -2,11 +2,11 @@
 
 - Package electronics without breadboard
 - Figure out wifi setup
-- Use 3rd char for poses
 - Regularly reinitialize LCD (too fragile for now)
 
 # DONE
 
+- Use 3rd char for poses
 - LCD messages size can be controlled
 - Make both arms operate simultaneously
 - Send logs over the network
