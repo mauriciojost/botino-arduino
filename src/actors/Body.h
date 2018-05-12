@@ -190,21 +190,21 @@ private:
           // LEDS ON / OFF
           case GET_POSE('l', '0'):
             {
-              int b = getBool(c3);
+              bool b = !getBool(c3);
               log(CLASS_BODY, Debug, "Led 0: %d", b);
               ledFunc(0, b);
               break;
             }
           case GET_POSE('l', '1'):
             {
-              int b = getBool(c3);
+              bool b = !getBool(c3);
               log(CLASS_BODY, Debug, "Led 1: %d", b);
               ledFunc(1, b);
               break;
             }
           case GET_POSE('l', '2'):
             {
-              int b = getBool(c3);
+              bool b = !getBool(c3);
               log(CLASS_BODY, Debug, "Led 2: %d", b);
               ledFunc(2, b);
               break;
