@@ -104,3 +104,7 @@
 /libs/RemoteDebug/
 /src/RemoteDebug.cpp
 /src/RemoteDebug.h
+/libs/AES/
+/src/AES.cpp
+/src/AES.h
+/src/AES_config.h
