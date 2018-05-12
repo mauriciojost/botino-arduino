@@ -11,9 +11,8 @@ function run_test() {
 
   export exclude='Adafruit\|EspSaveCrash\|catch\|RemoteDebug'
 
-  export headers=$(find * -name "*.h" | xargs -I% dirname % | uniq | grep -v test | grep -v unity | grep -v "$exclude" | xargs -I% echo "-I %")
-  export src_c=$(find * -name "*.c" | grep -v test | grep -v unity | grep -v "$exclude"  | xargs -I% echo " %")
-  export src_cpp=$(find * -name "*.cpp" | grep -v test | grep -v unity | grep -v "$exclude" | xargs -I% echo " %")
+  export headers=$(find -L src -name "*.h" | xargs -I% dirname % | uniq | grep -v libs | grep -v test | grep -v unity | grep -v "$exclude" | xargs -I% echo "-I %")
+  export src_c=$(find -L src -name "*.c" | grep -v test | grep -v unity | grep -v libs |  grep -v "$exclude"  | xargs -I% echo " %")
   export src_cpp=$(find -L src -name "*.cpp" | grep -v test | grep -v unity | grep -v libs | grep -v "$exclude" | xargs -I% echo " %")
 
   export headers_unity="-I libs/Unity/src"
