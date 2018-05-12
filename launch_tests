@@ -18,9 +18,9 @@ function run_test() {
   export headers_unity="-I libs/Unity/src"
   export src_unity="libs/Unity/src/*.c"
 
-  echo "HEADERS: $headers"
-  echo "SOURCES C: $src_c"
-  echo "SOURCES C++: $src_cpp"
+  #echo "HEADERS: $headers"
+  #echo "SOURCES C: $src_c"
+  #echo "SOURCES C++: $src_cpp"
 
   g++ -Wno-deprecated-declarations -g -ggdb -o simulator.bin $flags $src_c $src_cpp $src_unity $main_src $headers -I src $headers_unity
 
@@ -38,7 +38,7 @@ general_flags="\
   -D UNIT_TEST\
   -D LOG_LEVEL=0\
   -D DEVICE_NAME=\"device1\"\
-  -D MAX_LOG_MSG_LENGTH=128\
+  -D MAX_LOG_MSG_LENGTH=256\
   -D OVERRUN_THRESHOLD_SECS=10000"
 
 for f in $(find test -name *.cpp)
