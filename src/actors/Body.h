@@ -76,13 +76,13 @@ private:
   void (*clearFace)();
   void (*arms)(ArmState left, ArmState right);
   void (*messageFunc)(int line, const char *msg, int size);
-  void (*ledFunc)(unsigned char led, unsigned char v);
+  void (*iosFunc)(unsigned char led, unsigned char v);
   Buffer<MSG_MAX_LENGTH> *msgs[NRO_MSGS];
   Routine *routines[NRO_ROUTINES];
 
   bool isInitialized() {
     bool init = smilyFace != NULL && sadFace != NULL && normalFace != NULL && sleepyFace != NULL && clearFace != NULL && arms != NULL &&
-                ledFunc != NULL && messageFunc != NULL;
+                iosFunc != NULL && messageFunc != NULL;
     return init;
   }
 
@@ -192,21 +192,28 @@ private:
             {
               bool b = !getBool(c3);
               log(CLASS_BODY, Debug, "Led 0: %d", b);
-              ledFunc(0, b);
+              iosFunc(0, b);
               break;
             }
           case GET_POSE('l', '1'):
             {
               bool b = !getBool(c3);
               log(CLASS_BODY, Debug, "Led 1: %d", b);
-              ledFunc(1, b);
+              iosFunc(1, b);
               break;
             }
           case GET_POSE('l', '2'):
             {
               bool b = !getBool(c3);
               log(CLASS_BODY, Debug, "Led 2: %d", b);
-              ledFunc(2, b);
+              iosFunc(2, b);
+              break;
+            }
+          case GET_POSE('l', 'f'):
+            {
+              bool b = !getBool(c3);
+              log(CLASS_BODY, Debug, "Fan: %d", b);
+              iosFunc(3, b); // TODO fix me (using led as fan, not clear)
               break;
             }
 
@@ -234,7 +241,7 @@ public:
     clearFace = NULL;
     arms = NULL;
     messageFunc = NULL;
-    ledFunc = NULL;
+    iosFunc = NULL;
     for (int i = 0; i < NRO_MSGS; i++) {
       msgs[i] = new Buffer<MSG_MAX_LENGTH>("");
     }
@@ -271,8 +278,8 @@ public:
   void setMessageFunc(void (*f)(int line, const char *str, int size)) {
     messageFunc = f;
   }
-  void setLedFunc(void (*f)(unsigned char led, unsigned char v)) {
-    ledFunc = f;
+  void setIosFunc(void (*f)(unsigned char led, unsigned char v)) {
+    iosFunc = f;
   }
 
   void act() {

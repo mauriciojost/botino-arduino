@@ -43,7 +43,7 @@ void test_body_shows_time() {
   b.setClearFace(beClear);
   b.setArms(arms);
   b.setMessageFunc(messageOnLcd);
-  b.setLedFunc(led);
+  b.setIosFunc(led);
 
   Long time0(201010101);      // every single second
   Buffer<10> move0("mcXfcX"); // clock message (show current time) and face cleared

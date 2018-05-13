@@ -51,7 +51,7 @@
 #define LED2_PIN PIN_D4
 
 // FAN
-//#define FAN_PIN PIN_D6
+#define FAN_PIN PIN_D6
 
 // SERVOS
 #define SERVO0_PIN PIN_D7

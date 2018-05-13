@@ -34,7 +34,7 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 #define DO_NOT_CLEAR_FIRST false
 #define CLEAR_FIRST true
 #define DELAY_MS_SPI 2
-#define NRO_LEDS 3
+#define NRO_IOS 4
 
 #ifndef SERVO_ARM_STEPS
 #define SERVO_ARM_STEPS 50
@@ -295,8 +295,8 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
   return errorCode;
 }
 
-void led(unsigned char led, unsigned char v) {
-  unsigned char l = led % NRO_LEDS;
+void ios(unsigned char led, unsigned char v) {
+  unsigned char l = led % NRO_IOS;
   log(CLASS_MAIN, Debug, "Led %d -> %d", (int)l, (int)v);
   switch (l) {
     case 0:
@@ -307,6 +307,9 @@ void led(unsigned char led, unsigned char v) {
       break;
     case 2:
       digitalWrite(LED2_PIN, v);
+      break;
+    case 3:
+      digitalWrite(FAN_PIN, v);
       break;
     default:
       break;
@@ -342,6 +345,7 @@ void setup() {
   pinMode(LED0_PIN, OUTPUT);
   pinMode(LED1_PIN, OUTPUT);
   pinMode(LED2_PIN, OUTPUT);
+  pinMode(FAN_PIN, OUTPUT);
   pinMode(SERVO0_PIN, OUTPUT);
   pinMode(SERVO1_PIN, OUTPUT);
   pinMode(BUTTON0_PIN, INPUT);
@@ -356,7 +360,7 @@ void setup() {
   m.getBody()->setClearFace(beClear);
   m.getBody()->setArms(arms);
   m.getBody()->setMessageFunc(messageOnLcd);
-  m.getBody()->setLedFunc(led);
+  m.getBody()->setIosFunc(ios);
   m.getPropSync()->setInitWifi(initWifiSteady);
   m.getPropSync()->setHttpPost(httpPost);
   m.getPropSync()->setHttpGet(httpGet);
@@ -373,6 +377,7 @@ void setup() {
   digitalWrite(LED0_PIN, HIGH);
   digitalWrite(LED1_PIN, HIGH);
   digitalWrite(LED2_PIN, HIGH);
+  digitalWrite(FAN_PIN, HIGH);
   beNormal();
   arms(ArmDown, ArmDown);
 
@@ -380,6 +385,7 @@ void setup() {
   digitalWrite(LED0_PIN, LOW);
   digitalWrite(LED1_PIN, LOW);
   digitalWrite(LED2_PIN, LOW);
+  digitalWrite(FAN_PIN, LOW);
   beSmily();
   arms(ArmMiddle, ArmMiddle);
 
@@ -387,6 +393,7 @@ void setup() {
   digitalWrite(LED0_PIN, HIGH);
   digitalWrite(LED1_PIN, HIGH);
   digitalWrite(LED2_PIN, HIGH);
+  digitalWrite(FAN_PIN, HIGH);
   beSleepy();
   arms(ArmDown, ArmDown);
 }
