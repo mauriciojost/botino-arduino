@@ -8,17 +8,15 @@
 #include <actors/sync/ParamStream.h>
 #include <main4ino/Clock.h>
 #include <main4ino/Boolean.h>
-#include <AES.h>
+#include <aes.h>
 
 #define CLASS_SETUPSYNC "SS"
 
 #define DWEET_IO_API_URL_BASE_GET "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-setup"
 
-#define KEY_LENGTH 128
+#define KEY_LENGTH 16 // AES128
 
 #define BUFF_SIZE 32
-
-
 
 /**
 * This actor performs WIFI setup via HTTP.
@@ -35,8 +33,8 @@ private:
   bool (*initWifiInitFunc)();
   int (*httpGet)(const char* url, ParamStream* response);
 
-  unsigned long long int myIv; // CBC initialization vector; real iv = iv x2 ex: 01234567 = 0123456701234567
-  AES aes ;
+  struct AES_ctx ctx;
+  unsigned char key[KEY_LENGTH]; // 15 chars + 1 null character
 
 public:
   SetupSync(const char *n) : freqConf(OnceEvery1Minute) {
@@ -46,8 +44,11 @@ public:
     ssid[0] = 0;
     pass[0] = 0;
     httpGet = NULL;
-    //myIv = 36753562;
-    myIv = 1;
+    for (int i = 0; i < KEY_LENGTH; i++) {
+      key[i] = i;
+    }
+    phex("Key", key);
+    AES_init_ctx(&ctx, key);
   }
 
   const char *getName() {
@@ -89,7 +90,7 @@ public:
   	}
   }
 
-  void hexstrcpy(byte* outputText, const char* inputHex) {
+  void hexstrcpy(unsigned char* outputText, const char* inputHex) {
   	int l = strlen(inputHex);
   	if (l % 2 == 0) {
       int i;
@@ -122,29 +123,18 @@ public:
             JsonObject &content = withJson["content"];
             if (content.containsKey("ssid")) {
 
-              const byte* plainKey = (byte*)"0000000000000000";
-
-              int plainPaddedLength = BUFF_SIZE  + (N_BLOCK - ((BUFF_SIZE - 1) % 16)); // length of padded plaintext [B]
-
-              char passEncHex[plainPaddedLength * 2];
-              byte passEnc[plainPaddedLength];
+              char passEncHex[KEY_LENGTH * 2 + 1];
 
               const char* s = content["ssid"].as<char *>();
               const char* p = content["pass"].as<char *>();
 
-              log(CLASS_SETUPSYNC, Warn, "KKK %s", p);
               strcpy(ssid, s);
               strcpy(passEncHex, p);
 
-              hexstrcpy(passEnc, passEncHex);
-              log(CLASS_SETUPSYNC, Warn, "KKK %s", passEnc);
+              hexstrcpy((unsigned char*)pass, passEncHex);
 
-              decrypt(passEnc, plainKey, (byte*)pass);
+              decrypt((unsigned char*)pass);
 
-              byte encrypted[plainPaddedLength];
-              byte decrypted[plainPaddedLength];
-              encrypt((byte*)"00", plainKey, encrypted);
-              decrypt(encrypted, plainKey, decrypted);
 
             } else {
               log(CLASS_SETUPSYNC, Warn, "No 'ssid'");
@@ -159,28 +149,32 @@ public:
     }
   }
 
-  void encrypt(const byte* plainInput, const byte* plainKey, byte* encrypted) {
-    byte iv [N_BLOCK] ;
-    aes.iv_inc();
-    aes.set_IV(myIv);
-    aes.get_IV(iv);
-    log(CLASS_SETUPSYNC, Debug, "IV: %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x", iv[0], iv[1], iv[2], iv[3], iv[4], iv[5], iv[6], iv[7], iv[8], iv[9], iv[10], iv[11], iv[12], iv[13], iv[14], iv[15]);
-    aes.do_aes_encrypt((byte*)plainInput,BUFF_SIZE + 1,(byte*)encrypted,(byte*)plainKey,KEY_LENGTH,iv);
-    log(CLASS_SETUPSYNC, Debug, "Original: %s", plainInput);
-    log(CLASS_SETUPSYNC, Debug, "Encrypted: %s", encrypted);
-    log(CLASS_SETUPSYNC, Debug, "Encrypted: %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x", encrypted[0], encrypted[1], encrypted[2], encrypted[3], encrypted[4], encrypted[5], encrypted[6], encrypted[7], encrypted[8], encrypted[9], encrypted[10], encrypted[11], encrypted[12], encrypted[13], encrypted[14], encrypted[15]);
+  void encrypt(const unsigned char* buffer) {
+    log(CLASS_SETUPSYNC, Debug, "Original: %s", buffer);
+    phex("Original buffer", buffer);
+    for (int i = 0; i < 1/*4*/; ++i) {
+      AES_ECB_encrypt(&ctx, buffer + (i * KEY_LENGTH));
+      phex("Encrypted buffer", buffer + (i * KEY_LENGTH));
+    }
+    log(CLASS_SETUPSYNC, Debug, "Encrypted: %s", buffer);
   }
 
-  void decrypt(const byte* encrypted, const byte* plainKey, byte* decrypted) {
-    byte iv [N_BLOCK] ;
-    aes.iv_inc();
-    aes.set_IV(myIv);
-    aes.get_IV(iv);
-    aes.do_aes_decrypt((byte*)encrypted,aes.get_size(),(byte*)decrypted,(byte*)plainKey,KEY_LENGTH,iv);
-    log(CLASS_SETUPSYNC, Debug, "Encrypted: %s", encrypted);
-    log(CLASS_SETUPSYNC, Debug, "Decrypted: %s", decrypted);
+  void decrypt(const unsigned char* buffer) {
+    log(CLASS_SETUPSYNC, Debug, "Encrypted: %s", buffer);
+    phex("Encrypted buffer", buffer);
+    AES_ECB_decrypt(&ctx, buffer);
+    log(CLASS_SETUPSYNC, Debug, "Decrypted: %s", buffer);
+    phex("Decrypted buffer", buffer);
   }
 
+  // Prints string as hex
+  void phex(const char* name, const unsigned char* str) {
+    uint8_t len = KEY_LENGTH;
+    log(CLASS_SETUPSYNC, Debug, "%s contains:", name);
+    for (int i = 0; i < len; ++i) {
+      log(CLASS_SETUPSYNC, Debug, " %.2x", str[i]);
+    }
+  }
 
   void setProp(int propIndex, SetMode set, const Value *targetValue, Value *actualValue) {}
 
