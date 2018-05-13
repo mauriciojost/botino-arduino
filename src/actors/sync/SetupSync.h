@@ -34,9 +34,8 @@ private:
   bool (*initWifiSteadyFunc)();
   bool (*initWifiInitFunc)();
   int (*httpGet)(const char* url, ParamStream* response);
+
   unsigned long long int myIv; // CBC initialization vector; real iv = iv x2 ex: 01234567 = 0123456701234567
-
-
   AES aes ;
 
 public:
@@ -47,7 +46,8 @@ public:
     ssid[0] = 0;
     pass[0] = 0;
     httpGet = NULL;
-    myIv = 36753562;
+    //myIv = 36753562;
+    myIv = 1;
   }
 
   const char *getName() {
@@ -77,7 +77,7 @@ public:
   	httpGet = h;
   }
 
-  int value(char v) {
+  unsigned char value(char v) {
   	if (v >= '0' && v <= '9') {
   		return v - '0';
   	} else if (v >= 'a' && v <= 'f') {
@@ -89,7 +89,7 @@ public:
   	}
   }
 
-  void hexstrcpy(char* outputText, const char* inputHex) {
+  void hexstrcpy(byte* outputText, const char* inputHex) {
   	int l = strlen(inputHex);
   	if (l % 2 == 0) {
       int i;
@@ -121,19 +121,29 @@ public:
           if (withJson.containsKey("content")) {
             JsonObject &content = withJson["content"];
             if (content.containsKey("ssid")) {
-              const char* s = content["ssid"].as<char *>();
-              const char* p = content["pass"].as<char *>();
-              strcpy(ssid, s);
-              strcpy(pass, p);
 
-              const char* input = "http://www.arduinolab.net/aypt";
-              const char* plainKey = "01234567890123456789012345678901";
+              const byte* plainKey = (byte*)"0000000000000000";
 
               int plainPaddedLength = BUFF_SIZE  + (N_BLOCK - ((BUFF_SIZE - 1) % 16)); // length of padded plaintext [B]
-              char encrypted [plainPaddedLength];
-              char decrypted [plainPaddedLength];
 
-              encrypt(input, plainKey, encrypted);
+              char passEncHex[plainPaddedLength * 2];
+              byte passEnc[plainPaddedLength];
+
+              const char* s = content["ssid"].as<char *>();
+              const char* p = content["pass"].as<char *>();
+
+              log(CLASS_SETUPSYNC, Warn, "KKK %s", p);
+              strcpy(ssid, s);
+              strcpy(passEncHex, p);
+
+              hexstrcpy(passEnc, passEncHex);
+              log(CLASS_SETUPSYNC, Warn, "KKK %s", passEnc);
+
+              decrypt(passEnc, plainKey, (byte*)pass);
+
+              byte encrypted[plainPaddedLength];
+              byte decrypted[plainPaddedLength];
+              encrypt((byte*)"00", plainKey, encrypted);
               decrypt(encrypted, plainKey, decrypted);
 
             } else {
@@ -149,17 +159,19 @@ public:
     }
   }
 
-  void encrypt(const char* plainInput, const char* plainKey, char* encrypted) {
+  void encrypt(const byte* plainInput, const byte* plainKey, byte* encrypted) {
     byte iv [N_BLOCK] ;
     aes.iv_inc();
     aes.set_IV(myIv);
     aes.get_IV(iv);
+    log(CLASS_SETUPSYNC, Debug, "IV: %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x", iv[0], iv[1], iv[2], iv[3], iv[4], iv[5], iv[6], iv[7], iv[8], iv[9], iv[10], iv[11], iv[12], iv[13], iv[14], iv[15]);
     aes.do_aes_encrypt((byte*)plainInput,BUFF_SIZE + 1,(byte*)encrypted,(byte*)plainKey,KEY_LENGTH,iv);
     log(CLASS_SETUPSYNC, Debug, "Original: %s", plainInput);
     log(CLASS_SETUPSYNC, Debug, "Encrypted: %s", encrypted);
+    log(CLASS_SETUPSYNC, Debug, "Encrypted: %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x", encrypted[0], encrypted[1], encrypted[2], encrypted[3], encrypted[4], encrypted[5], encrypted[6], encrypted[7], encrypted[8], encrypted[9], encrypted[10], encrypted[11], encrypted[12], encrypted[13], encrypted[14], encrypted[15]);
   }
 
-  void decrypt(const char* encrypted, const char* plainKey, char* decrypted) {
+  void decrypt(const byte* encrypted, const byte* plainKey, byte* decrypted) {
     byte iv [N_BLOCK] ;
     aes.iv_inc();
     aes.set_IV(myIv);

@@ -26,7 +26,7 @@ bool initWifiSteady() {
 int httpGet(const char *url, ParamStream *response) {
 
   if (strcmp("http://dweet.io/get/latest/dweet/for/device1-setup", url) == 0) {
-    response->append("{\"with\":[{\"content\":{\"ssid\":\"pepe\", \"pass\":\"D4F7D5057AF81AE9A21186A7B484DB71\"}}]}");
+    response->append("{\"with\":[{\"content\":{\"ssid\":\"pepe\", \"pass\":\"c34d4a7d13291613c675d8cc3362a46b\"}}]}");
   } else {
   	log(LOG_CLASS, Error, "Unknown: %s", url);
   }
