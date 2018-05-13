@@ -8,7 +8,7 @@
 #include <actors/sync/ParamStream.h>
 #include <main4ino/Clock.h>
 #include <main4ino/Boolean.h>
-#include <aes.h>
+#include <aes.hpp>
 
 #define CLASS_SETUPSYNC "SS"
 
