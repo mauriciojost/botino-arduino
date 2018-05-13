@@ -56,16 +56,6 @@ public:
 
   void act() {
 
-    const char* input = "http://www.arduinolab.net/aypt";
-    const char* plainKey = "01234567890123456789012345678901";
-
-    int plainPaddedLength = BUFF_SIZE  + (N_BLOCK - ((BUFF_SIZE - 1) % 16)); // length of padded plaintext [B]
-    char encrypted [plainPaddedLength];
-    char decrypted [plainPaddedLength];
-
-    encrypt(input, plainKey, encrypted);
-    decrypt(encrypted, plainKey, decrypted);
-
     if (initWifiSteadyFunc == NULL || initWifiInitFunc == NULL || httpGet == NULL) {
       log(CLASS_SETUPSYNC, Error, "Init needed");
       return;
@@ -133,12 +123,19 @@ public:
             if (content.containsKey("ssid")) {
               const char* s = content["ssid"].as<char *>();
               const char* p = content["pass"].as<char *>();
-              //struct AES_ctx ctx;
-              //AES_init_ctx(&ctx, key);
               strcpy(ssid, s);
               strcpy(pass, p);
-              //AES_ECB_decrypt(&ctx, (const unsigned char*)pass);
-              log(CLASS_SETUPSYNC, Debug, "Got setup: %s / %s (%s)", s, p, pass);
+
+              const char* input = "http://www.arduinolab.net/aypt";
+              const char* plainKey = "01234567890123456789012345678901";
+
+              int plainPaddedLength = BUFF_SIZE  + (N_BLOCK - ((BUFF_SIZE - 1) % 16)); // length of padded plaintext [B]
+              char encrypted [plainPaddedLength];
+              char decrypted [plainPaddedLength];
+
+              encrypt(input, plainKey, encrypted);
+              decrypt(encrypted, plainKey, decrypted);
+
             } else {
               log(CLASS_SETUPSYNC, Warn, "No 'ssid'");
             }
@@ -153,8 +150,8 @@ public:
   }
 
   void encrypt(const char* plainInput, const char* plainKey, char* encrypted) {
-    aes.iv_inc();
     byte iv [N_BLOCK] ;
+    aes.iv_inc();
     aes.set_IV(myIv);
     aes.get_IV(iv);
     aes.do_aes_encrypt((byte*)plainInput,BUFF_SIZE + 1,(byte*)encrypted,(byte*)plainKey,KEY_LENGTH,iv);
@@ -163,8 +160,8 @@ public:
   }
 
   void decrypt(const char* encrypted, const char* plainKey, char* decrypted) {
-    aes.iv_inc();
     byte iv [N_BLOCK] ;
+    aes.iv_inc();
     aes.set_IV(myIv);
     aes.get_IV(iv);
     aes.do_aes_decrypt((byte*)encrypted,aes.get_size(),(byte*)decrypted,(byte*)plainKey,KEY_LENGTH,iv);
