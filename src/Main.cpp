@@ -53,11 +53,11 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 #endif // ARM_DOWN_SERVO_POS
 
 #ifndef SERVO0_INVERTED
-#define SERVO0_INVERTED true
+#define SERVO0_INVERTED false
 #endif // SERVO0_INVERTED
 
 #ifndef SERVO1_INVERTED
-#define SERVO1_INVERTED false
+#define SERVO1_INVERTED true
 #endif // SERVO1_INVERTED
 
 #ifndef DWEET_IO_API_TOKEN
