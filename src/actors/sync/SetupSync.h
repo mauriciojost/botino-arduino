@@ -36,7 +36,7 @@ private:
   int (*httpGet)(const char* url, ParamStream* response);
 
   struct AES_ctx ctx;
-  unsigned char key[KEY_LENGTH];
+  uint8_t key[KEY_LENGTH];
 
 public:
   SetupSync(const char *n) : freqConf(OnceEvery1Minute) {
@@ -79,7 +79,7 @@ public:
   	httpGet = h;
   }
 
-  unsigned char hexToValue(char v) {
+  uint8_t hexToValue(char v) {
   	if (v >= '0' && v <= '9') {
   		return v - '0';
   	} else if (v >= 'a' && v <= 'f') {
@@ -91,7 +91,7 @@ public:
   	}
   }
 
-  void hexstrcpy(unsigned char* outputText, const char* inputHex) {
+  void hexstrcpy(uint8_t* outputText, const char* inputHex) {
   	int l = strlen(inputHex);
   	if (l % 2 == 0) {
       int i;
@@ -132,8 +132,8 @@ public:
               // PASS recovery (encrypted and hex encoded)
               const char* p = content["pass"].as<char *>();
               strcpy(passEncHex, p);
-              hexstrcpy((unsigned char*)pass, passEncHex);
-              decrypt((unsigned char*)pass);
+              hexstrcpy((uint8_t*)pass, passEncHex);
+              decrypt((uint8_t*)pass);
 
             } else {
               log(CLASS_SETUPSYNC, Warn, "No 'ssid'");
@@ -148,19 +148,19 @@ public:
     }
   }
 
-  void encrypt(const unsigned char* buffer) {
+  void encrypt(const uint8_t* buffer) {
     log(CLASS_SETUPSYNC, Debug, "Original: %s", buffer);
     for (int i = 0; i < N_BLOCKS; ++i) {
-    	const unsigned char* bufferBlock = buffer + (i * KEY_LENGTH);
+    	const uint8_t* bufferBlock = buffer + (i * KEY_LENGTH);
       phex("Original buffer", bufferBlock);
       AES_ECB_encrypt(&ctx, bufferBlock);
       phex("Encrypted buffer", bufferBlock);
     }
   }
 
-  void decrypt(const unsigned char* buffer) {
+  void decrypt(const uint8_t* buffer) {
     for (int i = 0; i < N_BLOCKS; ++i) {
-    	const unsigned char* bufferBlock = buffer + (i * KEY_LENGTH);
+    	const uint8_t* bufferBlock = buffer + (i * KEY_LENGTH);
       phex("Encrypted buffer", bufferBlock);
       AES_ECB_decrypt(&ctx, bufferBlock);
       phex("Decrypted buffer", bufferBlock);
@@ -169,7 +169,7 @@ public:
   }
 
   // Prints string as hex
-  void phex(const char* name, const unsigned char* str) {
+  void phex(const char* name, const uint8_t* str) {
     uint8_t len = KEY_LENGTH;
     log(CLASS_SETUPSYNC, Debug, "%s contains:", name);
     for (int i = 0; i < len; ++i) {
