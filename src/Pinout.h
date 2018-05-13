@@ -58,7 +58,6 @@
 #define SERVO1_PIN PIN_D8
 
 // BUTTON
-//#define BUTTON0_PIN PIN_D12
-#define BUTTON0_PIN PIN_D6
+#define BUTTON0_PIN PIN_D5
 
 #endif // PINOUT_INC
