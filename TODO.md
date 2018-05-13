@@ -1,11 +1,11 @@
 # TODO
 
 - Package electronics without breadboard
-- Figure out wifi setup
 - Regularly reinitialize LCD (too fragile for now)
 
 # DONE
 
+- Figure out wifi setup
 - Use 3rd char for poses
 - LCD messages size can be controlled
 - Make both arms operate simultaneously
