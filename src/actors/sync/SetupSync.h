@@ -16,6 +16,10 @@
 
 #define KEY_LENGTH 128
 
+#define BUFF_SIZE 32
+
+
+
 /**
 * This actor performs WIFI setup via HTTP.
 */
@@ -30,6 +34,7 @@ private:
   bool (*initWifiSteadyFunc)();
   bool (*initWifiInitFunc)();
   int (*httpGet)(const char* url, ParamStream* response);
+  unsigned long long int myIv; // CBC initialization vector; real iv = iv x2 ex: 01234567 = 0123456701234567
 
 
   AES aes ;
@@ -42,6 +47,7 @@ public:
     ssid[0] = 0;
     pass[0] = 0;
     httpGet = NULL;
+    myIv = 36753562;
   }
 
   const char *getName() {
@@ -50,10 +56,15 @@ public:
 
   void act() {
 
-    const char* input = "http://www.arduinolab.net/ayptiondecryption-using-arduino-uno/"; // plaintext to encrypt
+    const char* input = "http://www.arduinolab.net/aypt";
     const char* plainKey = "01234567890123456789012345678901";
 
-    aesTest(input, plainKey);
+    int plainPaddedLength = BUFF_SIZE  + (N_BLOCK - ((BUFF_SIZE - 1) % 16)); // length of padded plaintext [B]
+    char encrypted [plainPaddedLength];
+    char decrypted [plainPaddedLength];
+
+    encrypt(input, plainKey, encrypted);
+    decrypt(encrypted, plainKey, decrypted);
 
     if (initWifiSteadyFunc == NULL || initWifiInitFunc == NULL || httpGet == NULL) {
       log(CLASS_SETUPSYNC, Error, "Init needed");
@@ -74,6 +85,31 @@ public:
 
   void setHttpGet(int (*h)(const char* url, ParamStream* response)) {
   	httpGet = h;
+  }
+
+  int value(char v) {
+  	if (v >= '0' && v <= '9') {
+  		return v - '0';
+  	} else if (v >= 'a' && v <= 'f') {
+  		return v - 'a' + 10;
+  	} else if (v >= 'A' && v <= 'F') {
+  		return v - 'A' + 10;
+  	} else {
+  		return 0;
+  	}
+  }
+
+  void hexstrcpy(char* outputText, const char* inputHex) {
+  	int l = strlen(inputHex);
+  	if (l % 2 == 0) {
+      int i;
+  		for(i = 0; i < l; i = i + 2) {
+  			outputText[i / 2] = value(inputHex[i]) * 16 + value(inputHex[i + 1]);
+  		}
+  		outputText[i / 2] = 0;
+  	} else {
+  		outputText[0] = 0;
+  	}
   }
 
   void update() {
@@ -116,31 +152,24 @@ public:
     }
   }
 
-  void aesTest (const char* plainInput, const char* plainKey) {
-
-  	int s = strlen(plainInput) + 1;
-    unsigned long long int myIv = 36753562; // CBC initialization vector; real iv = iv x2 ex: 01234567 = 0123456701234567
-
+  void encrypt(const char* plainInput, const char* plainKey, char* encrypted) {
     aes.iv_inc();
-
     byte iv [N_BLOCK] ;
-    int plainPaddedLength = s  + (N_BLOCK - ((s - 1) % 16)); // length of padded plaintext [B]
-    const char* cipher [plainPaddedLength]; // ciphertext (encrypted plaintext)
-    const char* check [plainPaddedLength]; // decrypted plaintext
-
     aes.set_IV(myIv);
     aes.get_IV(iv);
-
-    aes.do_aes_encrypt((byte*)plainInput,s + 1,(byte*)cipher,(byte*)plainKey,KEY_LENGTH,iv);
-
-    aes.set_IV(myIv);
-    aes.get_IV(iv);
-
-    aes.do_aes_decrypt((byte*)cipher,aes.get_size(),(byte*)check,(byte*)plainKey,KEY_LENGTH,iv);
+    aes.do_aes_encrypt((byte*)plainInput,BUFF_SIZE + 1,(byte*)encrypted,(byte*)plainKey,KEY_LENGTH,iv);
     log(CLASS_SETUPSYNC, Debug, "Original: %s", plainInput);
-    log(CLASS_SETUPSYNC, Debug, "Encrypted: %s", cipher);
-    log(CLASS_SETUPSYNC, Debug, "Decrypted: %s", check);
+    log(CLASS_SETUPSYNC, Debug, "Encrypted: %s", encrypted);
+  }
 
+  void decrypt(const char* encrypted, const char* plainKey, char* decrypted) {
+    aes.iv_inc();
+    byte iv [N_BLOCK] ;
+    aes.set_IV(myIv);
+    aes.get_IV(iv);
+    aes.do_aes_decrypt((byte*)encrypted,aes.get_size(),(byte*)decrypted,(byte*)plainKey,KEY_LENGTH,iv);
+    log(CLASS_SETUPSYNC, Debug, "Encrypted: %s", encrypted);
+    log(CLASS_SETUPSYNC, Debug, "Decrypted: %s", decrypted);
   }
 
 
