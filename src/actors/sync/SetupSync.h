@@ -16,8 +16,6 @@
 
 #define KEY_LENGTH 16 // AES128
 
-#define BUFF_SIZE 32
-
 /**
 * This actor performs WIFI setup via HTTP.
 */
@@ -44,10 +42,9 @@ public:
     ssid[0] = 0;
     pass[0] = 0;
     httpGet = NULL;
-    for (int i = 0; i < KEY_LENGTH; i++) {
+    for (int i = 0; i < KEY_LENGTH; i++) { // TODO make configurable
       key[i] = i;
     }
-    phex("Key", key);
     AES_init_ctx(&ctx, key);
   }
 

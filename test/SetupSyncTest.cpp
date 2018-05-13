@@ -47,6 +47,9 @@ void test_setupsync_syncs_properties() {
 
   p.act();
 
+  TEST_ASSERT_EQUAL_STRING("pepe", p.getSsid());
+  TEST_ASSERT_EQUAL_STRING("hello", p.getPass());
+
 }
 
 int main() {
