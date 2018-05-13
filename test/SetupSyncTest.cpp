@@ -23,10 +23,20 @@ bool initWifiSteady() {
   return false; // not connected
 }
 
-int httpGet(const char *url, ParamStream *response) {
-
+int httpGetMockPassHello(const char *url, ParamStream *response) {
   if (strcmp("http://dweet.io/get/latest/dweet/for/device1-setup", url) == 0) {
+  	// Pass generated using function AES mode ECB with incremental hex key 000102...0f from http://aes.online-domain-tools.com/
     response->append("{\"with\":[{\"content\":{\"ssid\":\"pepe\", \"pass\":\"a3a5fcf64804dbb99b2781aebfe338c9\"}}]}");
+  } else {
+  	log(LOG_CLASS, Error, "Unknown: %s", url);
+  }
+  return 1;
+}
+
+int httpGetMockPassHelloMyLittleDarling(const char *url, ParamStream *response) {
+  if (strcmp("http://dweet.io/get/latest/dweet/for/device1-setup", url) == 0) {
+  	// Pass generated using function AES mode ECB with incremental hex key 000102...0f from http://aes.online-domain-tools.com/
+    response->append("{\"with\":[{\"content\":{\"ssid\":\"name\", \"pass\":\"85b22d5b7548a237ba28c87275324e54fab0417e6ea45b3236991933aa04d8af\"}}]}");
   } else {
   	log(LOG_CLASS, Error, "Unknown: %s", url);
   }
@@ -36,12 +46,11 @@ int httpGet(const char *url, ParamStream *response) {
 void test_setupsync_syncs_properties() {
 
   setLogLevel(Debug);
-
   SetupSync p("s");
 
   p.setInitWifiInit(initWifiInit);
   p.setInitWifiSteady(initWifiSteady);
-  p.setHttpGet(httpGet);
+  p.setHttpGet(httpGetMockPassHello);
 
   p.getFrequencyConfiguration()->setFrequency(OnceEvery1Second);
 
@@ -52,9 +61,28 @@ void test_setupsync_syncs_properties() {
 
 }
 
+void test_setupsync_syncs_properties_longer() {
+
+  setLogLevel(Debug);
+  SetupSync p("s");
+
+  p.setInitWifiInit(initWifiInit);
+  p.setInitWifiSteady(initWifiSteady);
+  p.setHttpGet(httpGetMockPassHelloMyLittleDarling);
+
+  p.getFrequencyConfiguration()->setFrequency(OnceEvery1Second);
+
+  p.act();
+
+  TEST_ASSERT_EQUAL_STRING("name", p.getSsid());
+  TEST_ASSERT_EQUAL_STRING("hello my little darling", p.getPass());
+
+}
+
 int main() {
   UNITY_BEGIN();
   RUN_TEST(test_setupsync_syncs_properties);
+  RUN_TEST(test_setupsync_syncs_properties_longer);
   return (UNITY_END());
 }
 

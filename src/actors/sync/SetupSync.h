@@ -16,6 +16,10 @@
 
 #define KEY_LENGTH 16 // AES128
 
+#define N_BLOCKS 2 // 2 times KEY_LENGTH
+
+#define ENCRYPTION_BUFFER_SIZE (N_BLOCKS * KEY_LENGTH + 1) // encryption zone + trailing null character
+
 /**
 * This actor performs WIFI setup via HTTP.
 */
@@ -24,15 +28,15 @@ class SetupSync : public Actor {
 private:
   const char *name;
 
-  char ssid[16];
-  char pass[16];
+  char ssid[ENCRYPTION_BUFFER_SIZE];
+  char pass[ENCRYPTION_BUFFER_SIZE];
   Timing freqConf; // configuration of the frequency at which this actor will get triggered
   bool (*initWifiSteadyFunc)();
   bool (*initWifiInitFunc)();
   int (*httpGet)(const char* url, ParamStream* response);
 
   struct AES_ctx ctx;
-  unsigned char key[KEY_LENGTH]; // 15 chars + 1 null character
+  unsigned char key[KEY_LENGTH];
 
 public:
   SetupSync(const char *n) : freqConf(OnceEvery1Minute) {
@@ -75,7 +79,7 @@ public:
   	httpGet = h;
   }
 
-  unsigned char value(char v) {
+  unsigned char hexToValue(char v) {
   	if (v >= '0' && v <= '9') {
   		return v - '0';
   	} else if (v >= 'a' && v <= 'f') {
@@ -92,7 +96,7 @@ public:
   	if (l % 2 == 0) {
       int i;
   		for(i = 0; i < l; i = i + 2) {
-  			outputText[i / 2] = value(inputHex[i]) * 16 + value(inputHex[i + 1]);
+  			outputText[i / 2] = hexToValue(inputHex[i]) * 16 + hexToValue(inputHex[i + 1]);
   		}
   		outputText[i / 2] = 0;
   	} else {
@@ -119,19 +123,17 @@ public:
           if (withJson.containsKey("content")) {
             JsonObject &content = withJson["content"];
             if (content.containsKey("ssid")) {
+              char passEncHex[ENCRYPTION_BUFFER_SIZE * 2]; // each character (including null ending trail) is represented using 2 chars
 
-              char passEncHex[KEY_LENGTH * 2 + 1];
-
+              // SSID recovery
               const char* s = content["ssid"].as<char *>();
-              const char* p = content["pass"].as<char *>();
-
               strcpy(ssid, s);
+
+              // PASS recovery (encrypted and hex encoded)
+              const char* p = content["pass"].as<char *>();
               strcpy(passEncHex, p);
-
               hexstrcpy((unsigned char*)pass, passEncHex);
-
               decrypt((unsigned char*)pass);
-
 
             } else {
               log(CLASS_SETUPSYNC, Warn, "No 'ssid'");
@@ -148,20 +150,22 @@ public:
 
   void encrypt(const unsigned char* buffer) {
     log(CLASS_SETUPSYNC, Debug, "Original: %s", buffer);
-    phex("Original buffer", buffer);
-    for (int i = 0; i < 1/*4*/; ++i) {
-      AES_ECB_encrypt(&ctx, buffer + (i * KEY_LENGTH));
-      phex("Encrypted buffer", buffer + (i * KEY_LENGTH));
+    for (int i = 0; i < N_BLOCKS; ++i) {
+    	const unsigned char* bufferBlock = buffer + (i * KEY_LENGTH);
+      phex("Original buffer", bufferBlock);
+      AES_ECB_encrypt(&ctx, bufferBlock);
+      phex("Encrypted buffer", bufferBlock);
     }
-    log(CLASS_SETUPSYNC, Debug, "Encrypted: %s", buffer);
   }
 
   void decrypt(const unsigned char* buffer) {
-    log(CLASS_SETUPSYNC, Debug, "Encrypted: %s", buffer);
-    phex("Encrypted buffer", buffer);
-    AES_ECB_decrypt(&ctx, buffer);
+    for (int i = 0; i < N_BLOCKS; ++i) {
+    	const unsigned char* bufferBlock = buffer + (i * KEY_LENGTH);
+      phex("Encrypted buffer", bufferBlock);
+      AES_ECB_decrypt(&ctx, bufferBlock);
+      phex("Decrypted buffer", bufferBlock);
+    }
     log(CLASS_SETUPSYNC, Debug, "Decrypted: %s", buffer);
-    phex("Decrypted buffer", buffer);
   }
 
   // Prints string as hex
