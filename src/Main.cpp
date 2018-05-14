@@ -138,6 +138,7 @@ void white() {
 
 void black() {
   lcd.clearDisplay();
+  lcd.invertDisplay(false);
   lcd.display();
   delay(DELAY_MS_SPI);
 }
