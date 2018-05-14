@@ -33,7 +33,7 @@ private:
   int (*httpGet)(const char* url, ParamStream* response);
 
 public:
-  ClockSync(const char *n) : freqConf(OnceEvery1Minute) {
+  ClockSync(const char *n) : freqConf(OnceEvery5Minutes) {
     name = n;
     clock = NULL;
     initWifiFunc = NULL;

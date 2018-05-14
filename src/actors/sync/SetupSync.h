@@ -143,7 +143,7 @@ private:
 
 public:
 
-  SetupSync(const char *n) : freqConf(OnceEvery1Minute) {
+  SetupSync(const char *n) : freqConf(OnceEvery5Minutes) {
     name = n;
     initWifiSteadyFunc = NULL;
     initWifiInitFunc = NULL;
