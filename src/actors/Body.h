@@ -71,7 +71,8 @@ private:
   void (*sadFace)();
   void (*normalFace)();
   void (*sleepyFace)();
-  void (*clearFace)();
+  void (*blackFace)();
+  void (*whiteFace)();
   void (*arms)(int left, int right);
   void (*messageFunc)(int line, const char *msg, int size);
   void (*iosFunc)(unsigned char led, unsigned char v);
@@ -79,7 +80,7 @@ private:
   Routine *routines[NRO_ROUTINES];
 
   bool isInitialized() {
-    bool init = smilyFace != NULL && sadFace != NULL && normalFace != NULL && sleepyFace != NULL && clearFace != NULL && arms != NULL &&
+    bool init = smilyFace != NULL && sadFace != NULL && normalFace != NULL && sleepyFace != NULL && blackFace != NULL && whiteFace != NULL && arms != NULL &&
                 iosFunc != NULL && messageFunc != NULL;
     return init;
   }
@@ -114,29 +115,36 @@ private:
       case 'F':
       	switch (c2) {
           case 's': // smile
-            log(CLASS_BODY, Debug, "Smile");
+            log(CLASS_BODY, Debug, "Smile face");
             smilyFace();
             break;
           case 'S': // sad
-            log(CLASS_BODY, Debug, "Sad");
+            log(CLASS_BODY, Debug, "Sad face");
             sadFace();
             break;
           case 'n': // normal
-            log(CLASS_BODY, Debug, "Normal");
+            log(CLASS_BODY, Debug, "Normal face");
             normalFace();
             break;
           case 'l': // sleepy
-            log(CLASS_BODY, Debug, "Sleepy");
+            log(CLASS_BODY, Debug, "Sleepy face");
             sleepyFace();
             break;
-          case 'c': // clear
-            log(CLASS_BODY, Debug, "Clear");
-            clearFace();
+          case 'c': // black
+            log(CLASS_BODY, Debug, "Black face");
+            blackFace();
+            break;
+          case 'w': // white
+            log(CLASS_BODY, Debug, "White face");
+            whiteFace();
+            break;
+          default:
+            log(CLASS_BODY, Debug, "Invalid face pose: %c%c%c", c1, c2, c3);
             break;
       	}
       	break;
 
-      // ARMS ('Add'): move both arms to a given position
+      // ARMS ('Add'): move both arms to a given position each
       case 'A':
         {
         	int l = getInt(c2);
@@ -176,6 +184,9 @@ private:
               messageFunc(0, t.getBuffer(), getInt(c3));
           	}
             break;
+          default:
+            log(CLASS_BODY, Debug, "Invalid message pose: %c%c%c", c1, c2, c3);
+            break;
           }
       	}
       	break;
@@ -211,6 +222,9 @@ private:
               iosFunc('f', b);
               break;
             }
+          default:
+            log(CLASS_BODY, Debug, "Invalid IO pose: %c%c%c", c1, c2, c3);
+            break;
       	}
       	break;
 
@@ -223,7 +237,7 @@ private:
             iosFunc('w', false);
             iosFunc('y', false);
             iosFunc('f', false);
-            clearFace();
+            blackFace();
             arms(0, 0);
             break;
 
@@ -248,7 +262,8 @@ public:
     sadFace = NULL;
     normalFace = NULL;
     sleepyFace = NULL;
-    clearFace = NULL;
+    blackFace = NULL;
+    whiteFace = NULL;
     arms = NULL;
     messageFunc = NULL;
     iosFunc = NULL;
@@ -279,8 +294,11 @@ public:
   void setSleepyFace(void (*f)()) {
     sleepyFace = f;
   }
-  void setClearFace(void (*f)()) {
-    clearFace = f;
+  void setBlackFace(void (*f)()) {
+    blackFace = f;
+  }
+  void setWhiteFace(void (*f)()) {
+    whiteFace = f;
   }
   void setArms(void (*f)(int left, int right)) {
     arms = f;

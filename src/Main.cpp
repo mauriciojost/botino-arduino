@@ -129,7 +129,14 @@ void logLine(const char *str) {
   RDebug.printf("%s\n", str);
 }
 
-void beClear() {
+void white() {
+  lcd.clearDisplay();
+  lcd.invertDisplay(true);
+  lcd.display();
+  delay(DELAY_MS_SPI);
+}
+
+void black() {
   lcd.clearDisplay();
   lcd.display();
   delay(DELAY_MS_SPI);
@@ -332,7 +339,8 @@ void setup() {
   m.getBody()->setSadFace(beSad);
   m.getBody()->setNormalFace(beNormal);
   m.getBody()->setSleepyFace(beSleepy);
-  m.getBody()->setClearFace(beClear);
+  m.getBody()->setBlackFace(black);
+  m.getBody()->setWhiteFace(white);
   m.getBody()->setArms(arms);
   m.getBody()->setMessageFunc(messageOnLcd);
   m.getBody()->setIosFunc(ios);

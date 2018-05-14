@@ -20,6 +20,7 @@ void tearDown() {}
 void beClear() {
   faceCleared++;
 }
+void beWhite() {}
 void beSmily() {}
 void beSad() {}
 void beNormal() {}
@@ -35,7 +36,8 @@ void initBody(Body* b) {
   b->setSadFace(beSad);
   b->setNormalFace(beNormal);
   b->setSleepyFace(beSleepy);
-  b->setClearFace(beClear);
+  b->setBlackFace(beClear);
+  b->setWhiteFace(beWhite);
   b->setArms(arms);
   b->setMessageFunc(messageOnLcd);
   b->setIosFunc(led);
@@ -49,7 +51,7 @@ void test_body_shows_time() {
   initBody(&b);
 
   Long time0(201010101);      // every single second
-  Buffer<10> move0("Mc.Fc."); // clock message (show current time) and face cleared
+  Buffer<10> move0("Mc.Fc."); // clock message (show current time) and face black
 
   b.setProp(BodyConfigTime0, SetValue, &time0, NULL);
   b.setProp(BodyConfigMove0, SetValue, &move0, NULL);
