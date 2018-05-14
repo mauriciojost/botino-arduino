@@ -5,13 +5,13 @@
 - Set more meaningful default values
 - Improve extensibility of the amount of routines (today it's too much work)
 - Add repeat for routines
-- Add more meaninfgul routine documentation (wXX)
-- Make a collection of routines to be readable
-- Add a pose where everything goes off (arms down, face off, lights off, fan off)
 
 
 # DONE
 
+- Add a pose where everything goes off (arms down, face off, lights off, fan off)
+- Add more meaninfgul routine documentation (wXX)
+- Make a collection of routines to be readable
 - Check why body.v0 routine gets limited to a few poses (rather than lots as expected) -> SerBot macro value
 - Rename poses so that they are more meaningful
 - Modify arms so that it receives a 0-9 value for each arm
