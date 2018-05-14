@@ -275,13 +275,13 @@ void ios(unsigned char led, unsigned char v) {
   log(CLASS_MAIN, Debug, "Led %c -> %d", (char)l, (int)v);
   switch (l) {
     case 'r':
-      digitalWrite(LEDR_PIN, v);
+      digitalWrite(LEDR_PIN, !v); // VCC hard-wired
       break;
     case 'w':
-      digitalWrite(LEDW_PIN, v);
+      digitalWrite(LEDW_PIN, !v); // VCC hard-wired
       break;
     case 'y':
-      digitalWrite(LEDY_PIN, v);
+      digitalWrite(LEDY_PIN, !v); // VCC hard-wired
       break;
     case 'f':
       digitalWrite(FAN_PIN, v);

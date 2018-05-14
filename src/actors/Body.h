@@ -93,10 +93,15 @@ private:
   }
 
   void performPose(char c1, char c2, char c3) {
+  	// In the coming documented code:
+  	// - 'c' stands for a predefined alpha-numerical character (any)
+  	// - 'd' stands for a digit (only one, so a value between 0 and 9 inclusive)
+  	// - 'b' stands for a character representing a boolean value (Y/y meaning true, other character meaning false)
+  	// - ' ' stands for any character (ignored)
 
     switch (c1) {
 
-      // WAITS (Wd.)
+      // WAITS ('Wd '): wait d number of seconds
       case 'W':
         {
           int v = getInt(c2);
@@ -105,33 +110,33 @@ private:
         }
         break;
 
-     // FACES (Fx.)
+     // FACES ('Fc '): show a given image in the LCD
       case 'F':
       	switch (c2) {
-          case 's':
+          case 's': // smile
             log(CLASS_BODY, Debug, "Smile");
             smilyFace();
             break;
-          case 'S':
+          case 'S': // sad
             log(CLASS_BODY, Debug, "Sad");
             sadFace();
             break;
-          case 'n':
+          case 'n': // normal
             log(CLASS_BODY, Debug, "Normal");
             normalFace();
             break;
-          case 'l':
+          case 'l': // sleepy
             log(CLASS_BODY, Debug, "Sleepy");
             sleepyFace();
             break;
-          case 'c':
+          case 'c': // clear
             log(CLASS_BODY, Debug, "Clear");
             clearFace();
             break;
       	}
       	break;
 
-      // ARMS (Ax.)
+      // ARMS ('Add'): move both arms to a given position
       case 'A':
         {
         	int l = getInt(c2);
@@ -141,65 +146,67 @@ private:
         }
       	break;
 
-     // MESSAGES (Mx.)
+     // MESSAGES ('Mc '): show certain messages in the LCD
       case 'M':
 
       	switch (c2) {
-          case '0':
+          case '0': // message 0
             log(CLASS_BODY, Debug, "Message 0");
             messageFunc(0, msgs[0]->getBuffer(), getInt(c3));
             break;
-          case '1':
+          case '1': // message 1
             log(CLASS_BODY, Debug, "Message 1");
             messageFunc(0, msgs[1]->getBuffer(), getInt(c3));
             break;
-          case '2':
+          case '2': // message 2
             log(CLASS_BODY, Debug, "Message 2");
             messageFunc(0, msgs[2]->getBuffer(), getInt(c3));
             break;
-          case '3':
+          case '3': // message 3
             log(CLASS_BODY, Debug, "Message 3");
             messageFunc(0, msgs[3]->getBuffer(), getInt(c3));
             break;
-          case 'c': {
-            log(CLASS_BODY, Debug, "Message clock");
-            int h = GET_HOURS(timing.getCurrentTime());
-            int m = GET_MINUTES(timing.getCurrentTime());
-            Buffer<6> t("");
-            t.fill("%02d:%02d", h, m);
-            messageFunc(0, t.getBuffer(), getInt(c3));
+          case 'c': { // message containing current time
+          	{
+              log(CLASS_BODY, Debug, "Message clock");
+              int h = GET_HOURS(timing.getCurrentTime());
+              int m = GET_MINUTES(timing.getCurrentTime());
+              Buffer<6> t("");
+              t.fill("%02d:%02d", h, m);
+              messageFunc(0, t.getBuffer(), getInt(c3));
+          	}
             break;
           }
       	}
       	break;
 
-      // IO (LEDS) (Lx.)
+      // IO ('Lc '): turn on/off certain IO devices, such as LEDS or the FAN (true = ON)
       case 'L':
       	switch (c2) {
-          case 'r':
+          case 'r': // red
             {
-              bool b = !getBool(c3); // 0 -> ON
+              bool b = getBool(c3);
               log(CLASS_BODY, Debug, "Led red: %d", b);
               iosFunc('r', b);
               break;
             }
-          case 'w':
+          case 'w': // white
             {
-              bool b = !getBool(c3); // 0 -> ON
+              bool b = getBool(c3);
               log(CLASS_BODY, Debug, "Led white: %d", b);
               iosFunc('w', b);
               break;
             }
-          case 'y':
+          case 'y': // yellow
             {
-              bool b = !getBool(c3); // 0 -> ON
+              bool b = getBool(c3);
               log(CLASS_BODY, Debug, "Led yellow: %d", b);
               iosFunc('y', b);
               break;
             }
-          case 'f':
+          case 'f': // fan
             {
-              bool b = getBool(c3); // 1 -> ON
+              bool b = getBool(c3);
               log(CLASS_BODY, Debug, "Fan: %d", b);
               iosFunc('f', b);
               break;
