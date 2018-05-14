@@ -69,7 +69,10 @@ RemoteDebug RDebug;
 /******************/
 
 void buttonPressed() {
+  digitalWrite(LEDW_PIN, HIGH);
   ints++;
+  delay(100);
+  digitalWrite(LEDW_PIN, LOW);
 }
 
 void lcdClear() {
