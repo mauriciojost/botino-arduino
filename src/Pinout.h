@@ -47,8 +47,8 @@
 #define LCD_SDA_PIN PIN_D2 // same as above
 
 // LEDS
-#define LEDW_PIN PIN_D3 // WHITE LED
-#define LEDY_PIN PIN_D4 // YELLOW LED
+#define LEDY_PIN PIN_D3 // YELLOW LED
+#define LEDW_PIN PIN_D4 // WHITE LED
 
 // FAN
 #define FAN_PIN PIN_D6
