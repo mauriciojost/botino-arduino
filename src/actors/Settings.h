@@ -40,7 +40,7 @@ public:
     logLevel = 0;
     buttonPressed = 0;
     periodSeconds = PERIOD_SEC;
-    lcdDebug = false;
+    lcdDebug = true;
   }
 
   const char *getName() {
