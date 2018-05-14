@@ -41,8 +41,6 @@ enum BodyConfigState {
   BodyConfigStateDelimiter // delimiter of the configuration states
 };
 
-enum ArmState { ArmUp = 0, ArmMiddle, ArmDown, ArmDelimiter };
-
 class Routine {
 public:
   Buffer<MOVE_STR_LENGTH> move;
@@ -74,7 +72,7 @@ private:
   void (*normalFace)();
   void (*sleepyFace)();
   void (*clearFace)();
-  void (*arms)(ArmState left, ArmState right);
+  void (*arms)(int left, int right);
   void (*messageFunc)(int line, const char *msg, int size);
   void (*iosFunc)(unsigned char led, unsigned char v);
   Buffer<MSG_MAX_LENGTH> *msgs[NRO_MSGS];
@@ -87,11 +85,11 @@ private:
   }
 
   int getInt(char c) {
-  	return ABSOL(c - '0');
+  	return ABSOL(c - '0') % 10;
   }
 
   bool getBool(char c) {
-  	return c == 'Y';
+  	return c == 'y' || c == 'Y';
   }
 
   void performPose(char c1, char c2, char c3) {
@@ -135,35 +133,12 @@ private:
 
       // ARMS (Ax.)
       case 'A':
-
-      	switch (c2) {
-          case 'u':
-            log(CLASS_BODY, Debug, "Arms up");
-            arms(ArmUp, ArmUp);
-            break;
-          case 'r':
-            log(CLASS_BODY, Debug, "Arms down/up");
-            arms(ArmDown, ArmUp);
-            break;
-          case 'l':
-            log(CLASS_BODY, Debug, "Arms up/down");
-            arms(ArmUp, ArmDown);
-            break;
-          case 'd':
-            log(CLASS_BODY, Debug, "Arms down");
-            arms(ArmDown, ArmDown);
-            break;
-          case 'w':
-            log(CLASS_BODY, Debug, "Arms waving");
-            arms(ArmDown, ArmDown);
-            arms(ArmUp, ArmUp);
-            arms(ArmDown, ArmDown);
-            break;
-          case 'm':
-            log(CLASS_BODY, Debug, "Arms middle");
-            arms(ArmMiddle, ArmMiddle);
-            break;
-      	}
+        {
+        	int l = getInt(c2);
+        	int r = getInt(c3);
+          log(CLASS_BODY, Debug, "Arms %d %d", l, r);
+          arms(l, r);
+        }
       	break;
 
      // MESSAGES (Mx.)
@@ -290,7 +265,7 @@ public:
   void setClearFace(void (*f)()) {
     clearFace = f;
   }
-  void setArms(void (*f)(ArmState left, ArmState right)) {
+  void setArms(void (*f)(int left, int right)) {
     arms = f;
   }
   void setMessageFunc(void (*f)(int line, const char *str, int size)) {

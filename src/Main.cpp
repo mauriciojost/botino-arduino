@@ -40,18 +40,6 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 #define SERVO_ARM_STEPS 50
 #endif // SERVO_ARM_STEPS
 
-#ifndef ARM_UP_SERVO_POS
-#define ARM_UP_SERVO_POS 140
-#endif // ARM_UP_SERVO_POS
-
-#ifndef ARM_MIDDLE_SERVO_POS
-#define ARM_MIDDLE_SERVO_POS 90
-#endif // ARM_MIDDLE_SERVO_POS
-
-#ifndef ARM_DOWN_SERVO_POS
-#define ARM_DOWN_SERVO_POS 50
-#endif // ARM_DOWN_SERVO_POS
-
 #ifndef SERVO0_INVERTED
 #define SERVO0_INVERTED false
 #endif // SERVO0_INVERTED
@@ -173,25 +161,12 @@ void beSleepy() {
   delay(DELAY_MS_SPI);
 }
 
-int getServoPosition(ArmState a, bool inverted) {
-  switch (a) {
-    case ArmUp:
-      return SERVO_INVERT_POS(ARM_UP_SERVO_POS, inverted);
-    case ArmMiddle:
-      return SERVO_INVERT_POS(ARM_MIDDLE_SERVO_POS, inverted);
-    case ArmDown:
-      return SERVO_INVERT_POS(ARM_DOWN_SERVO_POS, inverted);
-    default:
-      return 0;
-  }
-}
-
-void arms(ArmState left, ArmState right) {
+void arms(int left, int right) {
   static int lastPosL = 0;
   static int lastPosR = 0;
   log(CLASS_MAIN, Debug, "Arms move");
-  int targetPosL = getServoPosition(left, SERVO0_INVERTED);
-  int targetPosR = getServoPosition(right, SERVO1_INVERTED);
+  int targetPosL = SERVO_INVERT_POS((left % 10) * 18, SERVO0_INVERTED);
+  int targetPosR = SERVO_INVERT_POS((right % 10) * 18, SERVO1_INVERTED);
   servoLeft.attach(SERVO0_PIN);
   servoRight.attach(SERVO1_PIN);
   log(CLASS_MAIN, Info, "Servo left %d->%d", lastPosL, targetPosL);
@@ -379,7 +354,7 @@ void setup() {
   digitalWrite(LEDY_PIN, HIGH);
   digitalWrite(FAN_PIN, HIGH);
   beNormal();
-  arms(ArmDown, ArmDown);
+  arms(0, 0);
 
   delay(2000);
   digitalWrite(LEDR_PIN, LOW);
@@ -387,7 +362,7 @@ void setup() {
   digitalWrite(LEDY_PIN, LOW);
   digitalWrite(FAN_PIN, LOW);
   beSmily();
-  arms(ArmMiddle, ArmMiddle);
+  arms(5, 5);
 
   delay(2000);
   digitalWrite(LEDR_PIN, HIGH);
@@ -395,7 +370,7 @@ void setup() {
   digitalWrite(LEDY_PIN, HIGH);
   digitalWrite(FAN_PIN, HIGH);
   beSleepy();
-  arms(ArmDown, ArmDown);
+  arms(0, 0);
 }
 
 /**
