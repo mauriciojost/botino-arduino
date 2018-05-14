@@ -241,13 +241,13 @@ int httpGet(const char *url, ParamStream *response) {
   httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
 
   int errorCode = httpClient.GET();
-  log(CLASS_PROPSYNC, Info, "HTTP GET: %s %d", url, errorCode);
+  log(CLASS_MAIN, Info, "HTTP GET: %s %d", url, errorCode);
 
   if (errorCode > 0) {
     response->flush();
     httpClient.writeToStream(response);
   } else {
-    log(CLASS_PROPSYNC, Error, "! %s", httpClient.errorToString(errorCode).c_str());
+    log(CLASS_MAIN, Error, "! %s", httpClient.errorToString(errorCode).c_str());
   }
   httpClient.end();
 
@@ -263,13 +263,13 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
   httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
 
   int errorCode = httpClient.POST(body);
-  log(CLASS_PROPSYNC, Info, "HTTP POST: %s %d", url, errorCode);
+  log(CLASS_MAIN, Info, "HTTP POST: %s %d", url, errorCode);
 
   if (errorCode > 0) {
     response->flush();
     httpClient.writeToStream(response);
   } else {
-    log(CLASS_PROPSYNC, Error, "! %s", httpClient.errorToString(errorCode).c_str());
+    log(CLASS_MAIN, Error, "! %s", httpClient.errorToString(errorCode).c_str());
   }
   httpClient.end();
 
