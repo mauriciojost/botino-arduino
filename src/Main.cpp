@@ -126,8 +126,8 @@ void logLine(const char *str) {
   if (i == 0) {
     lcd.fillRect(0, 0, 128, 64, BLACK);
   }
-  i = (i + 1) % 8;
   lcdPrintLine(str, i, CLEAR_FIRST);
+  i = (i + 1) % 8;
   Serial.println(str);
   RDebug.printf("%s\n", str);
 }
