@@ -297,18 +297,18 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
 
 void ios(unsigned char led, unsigned char v) {
   unsigned char l = led % NRO_IOS;
-  log(CLASS_MAIN, Debug, "Led %d -> %d", (int)l, (int)v);
+  log(CLASS_MAIN, Debug, "Led %c -> %d", (char)l, (int)v);
   switch (l) {
-    case 0:
-      digitalWrite(LED0_PIN, v);
+    case 'r':
+      digitalWrite(LEDR_PIN, v);
       break;
-    case 1:
-      digitalWrite(LED1_PIN, v);
+    case 'w':
+      digitalWrite(LEDW_PIN, v);
       break;
-    case 2:
-      digitalWrite(LED2_PIN, v);
+    case 'y':
+      digitalWrite(LEDY_PIN, v);
       break;
-    case 3:
+    case 'f':
       digitalWrite(FAN_PIN, v);
       break;
     default:
@@ -342,9 +342,9 @@ void setup() {
   setupLog(logLine);
 
   log(CLASS_MAIN, Debug, "Setup pins");
-  pinMode(LED0_PIN, OUTPUT);
-  pinMode(LED1_PIN, OUTPUT);
-  pinMode(LED2_PIN, OUTPUT);
+  pinMode(LEDR_PIN, OUTPUT);
+  pinMode(LEDW_PIN, OUTPUT);
+  pinMode(LEDY_PIN, OUTPUT);
   pinMode(FAN_PIN, OUTPUT);
   pinMode(SERVO0_PIN, OUTPUT);
   pinMode(SERVO1_PIN, OUTPUT);
@@ -374,25 +374,25 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, FALLING);
 
   log(CLASS_MAIN, Debug, "Init HW test routine");
-  digitalWrite(LED0_PIN, HIGH);
-  digitalWrite(LED1_PIN, HIGH);
-  digitalWrite(LED2_PIN, HIGH);
+  digitalWrite(LEDR_PIN, HIGH);
+  digitalWrite(LEDW_PIN, HIGH);
+  digitalWrite(LEDY_PIN, HIGH);
   digitalWrite(FAN_PIN, HIGH);
   beNormal();
   arms(ArmDown, ArmDown);
 
   delay(2000);
-  digitalWrite(LED0_PIN, LOW);
-  digitalWrite(LED1_PIN, LOW);
-  digitalWrite(LED2_PIN, LOW);
+  digitalWrite(LEDR_PIN, LOW);
+  digitalWrite(LEDW_PIN, LOW);
+  digitalWrite(LEDY_PIN, LOW);
   digitalWrite(FAN_PIN, LOW);
   beSmily();
   arms(ArmMiddle, ArmMiddle);
 
   delay(2000);
-  digitalWrite(LED0_PIN, HIGH);
-  digitalWrite(LED1_PIN, HIGH);
-  digitalWrite(LED2_PIN, HIGH);
+  digitalWrite(LEDR_PIN, HIGH);
+  digitalWrite(LEDW_PIN, HIGH);
+  digitalWrite(LEDY_PIN, HIGH);
   digitalWrite(FAN_PIN, HIGH);
   beSleepy();
   arms(ArmDown, ArmDown);

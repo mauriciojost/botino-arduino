@@ -38,8 +38,8 @@
 #define PIN_D11 GPIO9_PIN  // SDD2 / SD2 // cannot be used at all, internal
 #define PIN_D12 GPIO10_PIN // SDD3 / SD3 // can be used as input only
 
-// LED0
-#define LED0_PIN PIN_D0
+// LEDS
+#define LEDR_PIN PIN_D0 // RED LED
 
 // I2C OLED 128x64
 // (Kuman 0.96inches I2C OLED 128x64 LCD screen)
@@ -47,8 +47,8 @@
 #define LCD_SDA_PIN PIN_D2 // same as above
 
 // LEDS
-#define LED1_PIN PIN_D3
-#define LED2_PIN PIN_D4
+#define LEDW_PIN PIN_D3 // WHITE LED
+#define LEDY_PIN PIN_D4 // YELLOW LED
 
 // FAN
 #define FAN_PIN PIN_D6

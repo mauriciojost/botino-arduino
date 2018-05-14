@@ -97,87 +97,96 @@ private:
   void performPose(char c1, char c2, char c3) {
 
     switch (c1) {
-      // WAITS
-      case 'w':
+
+      // WAITS (Wd.)
+      case 'W':
         {
           int v = getInt(c2);
           log(CLASS_BODY, Debug, "Wait %d s", v);
           delay(v * 1000);
-          break;
         }
+        break;
 
-      default:
-
-        switch (GET_POSE(c1, c2)) {
-
-          // FACES
-          case GET_POSE('f', 's'):
+     // FACES (Fx.)
+      case 'F':
+      	switch (c2) {
+          case 's':
             log(CLASS_BODY, Debug, "Smile");
             smilyFace();
             break;
-          case GET_POSE('f', 'S'):
+          case 'S':
             log(CLASS_BODY, Debug, "Sad");
             sadFace();
             break;
-          case GET_POSE('f', 'n'):
+          case 'n':
             log(CLASS_BODY, Debug, "Normal");
             normalFace();
             break;
-          case GET_POSE('f', 'l'):
+          case 'l':
             log(CLASS_BODY, Debug, "Sleepy");
             sleepyFace();
             break;
-          case GET_POSE('f', 'c'):
+          case 'c':
             log(CLASS_BODY, Debug, "Clear");
             clearFace();
             break;
+      	}
+      	break;
 
-          // ARMS
-          case GET_POSE('a', 'u'):
+      // ARMS (Ax.)
+      case 'A':
+
+      	switch (c2) {
+          case 'u':
             log(CLASS_BODY, Debug, "Arms up");
             arms(ArmUp, ArmUp);
             break;
-          case GET_POSE('a', 'r'):
+          case 'r':
             log(CLASS_BODY, Debug, "Arms down/up");
             arms(ArmDown, ArmUp);
             break;
-          case GET_POSE('a', 'l'):
+          case 'l':
             log(CLASS_BODY, Debug, "Arms up/down");
             arms(ArmUp, ArmDown);
             break;
-          case GET_POSE('a', 'd'):
+          case 'd':
             log(CLASS_BODY, Debug, "Arms down");
             arms(ArmDown, ArmDown);
             break;
-          case GET_POSE('a', 'w'):
+          case 'w':
             log(CLASS_BODY, Debug, "Arms waving");
             arms(ArmDown, ArmDown);
             arms(ArmUp, ArmUp);
             arms(ArmDown, ArmDown);
             break;
-          case GET_POSE('a', 'm'):
+          case 'm':
             log(CLASS_BODY, Debug, "Arms middle");
             arms(ArmMiddle, ArmMiddle);
             break;
+      	}
+      	break;
 
-          // MESSAGES
-          case GET_POSE('m', '0'):
+     // MESSAGES (Mx.)
+      case 'M':
+
+      	switch (c2) {
+          case '0':
             log(CLASS_BODY, Debug, "Message 0");
             messageFunc(0, msgs[0]->getBuffer(), getInt(c3));
             break;
-          case GET_POSE('m', '1'):
+          case '1':
             log(CLASS_BODY, Debug, "Message 1");
             messageFunc(0, msgs[1]->getBuffer(), getInt(c3));
             break;
-          case GET_POSE('m', '2'):
+          case '2':
             log(CLASS_BODY, Debug, "Message 2");
             messageFunc(0, msgs[2]->getBuffer(), getInt(c3));
             break;
-          case GET_POSE('m', '3'):
+          case '3':
             log(CLASS_BODY, Debug, "Message 3");
             messageFunc(0, msgs[3]->getBuffer(), getInt(c3));
             break;
-          case GET_POSE('m', 'c'): {
+          case 'c': {
             log(CLASS_BODY, Debug, "Message clock");
             int h = GET_HOURS(timing.getCurrentTime());
             int m = GET_MINUTES(timing.getCurrentTime());
@@ -186,37 +195,46 @@ private:
             messageFunc(0, t.getBuffer(), getInt(c3));
             break;
           }
+      	}
+      	break;
 
-          // LEDS ON / OFF
-          case GET_POSE('l', '0'):
+      // IO (LEDS) (Lx.)
+      case 'L':
+      	switch (c2) {
+          case 'r':
             {
-              bool b = !getBool(c3);
-              log(CLASS_BODY, Debug, "Led 0: %d", b);
-              iosFunc(0, b);
+              bool b = !getBool(c3); // 0 -> ON
+              log(CLASS_BODY, Debug, "Led red: %d", b);
+              iosFunc('r', b);
               break;
             }
-          case GET_POSE('l', '1'):
+          case 'w':
             {
-              bool b = !getBool(c3);
-              log(CLASS_BODY, Debug, "Led 1: %d", b);
-              iosFunc(1, b);
+              bool b = !getBool(c3); // 0 -> ON
+              log(CLASS_BODY, Debug, "Led white: %d", b);
+              iosFunc('w', b);
               break;
             }
-          case GET_POSE('l', '2'):
+          case 'y':
             {
-              bool b = !getBool(c3);
-              log(CLASS_BODY, Debug, "Led 2: %d", b);
-              iosFunc(2, b);
+              bool b = !getBool(c3); // 0 -> ON
+              log(CLASS_BODY, Debug, "Led yellow: %d", b);
+              iosFunc('y', b);
               break;
             }
-          case GET_POSE('l', 'f'):
+          case 'f':
             {
-              bool b = !getBool(c3);
+              bool b = getBool(c3); // 1 -> ON
               log(CLASS_BODY, Debug, "Fan: %d", b);
-              iosFunc(3, b); // TODO fix me (using led as fan, not clear)
+              iosFunc('f', b);
               break;
             }
+      	}
+      	break;
 
+      default:
+
+        switch (GET_POSE(c1, c2)) {
           // DEFAULT
           default:
             log(CLASS_BODY, Debug, "Invalid pose: %c%c%c", c1, c2, c3);
@@ -302,21 +320,21 @@ public:
   const char *getPropName(int propIndex) {
     switch (propIndex) {
       case (BodyConfigMsg0):
-        return "m0";
+        return "msg0";
       case (BodyConfigMsg1):
-        return "m1";
+        return "msg1";
       case (BodyConfigMsg2):
-        return "m2";
+        return "msg2";
       case (BodyConfigMsg3):
-        return "m3";
+        return "msg3";
       case (BodyConfigMove0):
-        return "v0";
+        return "mv0";
       case (BodyConfigMove1):
-        return "v1";
+        return "mv1";
       case (BodyConfigMove2):
-        return "v2";
+        return "mv2";
       case (BodyConfigMove3):
-        return "v3";
+        return "mv3";
       case (BodyConfigTime0):
         return "t0";
       case (BodyConfigTime1):
