@@ -27,7 +27,7 @@ void beSleepy() {}
 void messageOnLcd(int line, const char *str, int s) {
   strcpy(msg, str);
 }
-void arms(ArmState left, ArmState right) {}
+void arms(int left, int right) {}
 void led(unsigned char led, unsigned char v) {}
 
 void test_body_shows_time() {
@@ -46,7 +46,7 @@ void test_body_shows_time() {
   b.setIosFunc(led);
 
   Long time0(201010101);      // every single second
-  Buffer<10> move0("mcXfcX"); // clock message (show current time) and face cleared
+  Buffer<10> move0("Mc.Fc."); // clock message (show current time) and face cleared
 
   b.setProp(BodyConfigTime0, SetValue, &time0, NULL);
   b.setProp(BodyConfigMove0, SetValue, &move0, NULL);
