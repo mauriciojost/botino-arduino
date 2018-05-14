@@ -42,47 +42,6 @@ private:
   struct AES_ctx ctx;
   uint8_t key[KEY_LENGTH];
 
-public:
-  SetupSync(const char *n) : freqConf(OnceEvery1Minute) {
-    name = n;
-    initWifiSteadyFunc = NULL;
-    initWifiInitFunc = NULL;
-    ssid[0] = 0;
-    pass[0] = 0;
-    httpGet = NULL;
-    for (int i = 0; i < KEY_LENGTH; i++) { // TODO make configurable
-      key[i] = i;
-    }
-    AES_init_ctx(&ctx, key);
-  }
-
-  const char *getName() {
-    return name;
-  }
-
-  void act() {
-
-    if (initWifiSteadyFunc == NULL || initWifiInitFunc == NULL || httpGet == NULL) {
-      log(CLASS_SETUPSYNC, Error, "Init needed");
-      return;
-    }
-    if (freqConf.matches()) {
-      update();
-    }
-  }
-
-  void setInitWifiSteady(bool (*f)()) {
-    initWifiSteadyFunc = f;
-  }
-
-  void setInitWifiInit(bool (*f)()) {
-    initWifiInitFunc = f;
-  }
-
-  void setHttpGet(int (*h)(const char* url, ParamStream* response)) {
-  	httpGet = h;
-  }
-
   uint8_t hexToValue(char v) {
   	if (v >= '0' && v <= '9') {
   		return v - '0';
@@ -95,7 +54,7 @@ public:
   	}
   }
 
-  void hexstrcpy(uint8_t* outputText, const char* inputHex) {
+  void hexStrCpy(uint8_t* outputText, const char* inputHex) {
   	int l = strlen(inputHex);
   	if (l % 2 == 0) {
       int i;
@@ -136,7 +95,7 @@ public:
               // PASS recovery (encrypted and hex encoded)
               const char* p = content["pass"].as<char *>();
               strcpy(passEncHex, p);
-              hexstrcpy((uint8_t*)pass, passEncHex);
+              hexStrCpy((uint8_t*)pass, passEncHex);
               decrypt((uint8_t*)pass);
 
             } else {
@@ -179,6 +138,49 @@ public:
     for (int i = 0; i < len; ++i) {
       log(CLASS_SETUPSYNC, Debug, " %.2x", str[i]);
     }
+  }
+
+
+public:
+
+  SetupSync(const char *n) : freqConf(OnceEvery1Minute) {
+    name = n;
+    initWifiSteadyFunc = NULL;
+    initWifiInitFunc = NULL;
+    ssid[0] = 0;
+    pass[0] = 0;
+    httpGet = NULL;
+    for (int i = 0; i < KEY_LENGTH; i++) { // TODO make configurable
+      key[i] = i;
+    }
+    AES_init_ctx(&ctx, key);
+  }
+
+  const char *getName() {
+    return name;
+  }
+
+  void act() {
+
+    if (initWifiSteadyFunc == NULL || initWifiInitFunc == NULL || httpGet == NULL) {
+      log(CLASS_SETUPSYNC, Error, "Init needed");
+      return;
+    }
+    if (freqConf.matches()) {
+      update();
+    }
+  }
+
+  void setInitWifiSteady(bool (*f)()) {
+    initWifiSteadyFunc = f;
+  }
+
+  void setInitWifiInit(bool (*f)()) {
+    initWifiInitFunc = f;
+  }
+
+  void setHttpGet(int (*h)(const char* url, ParamStream* response)) {
+  	httpGet = h;
   }
 
   void setProp(int propIndex, SetMode set, const Value *targetValue, Value *actualValue) {}
