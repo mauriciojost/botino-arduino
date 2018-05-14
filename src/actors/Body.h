@@ -130,7 +130,7 @@ private:
             log(CLASS_BODY, Debug, "Sleepy face");
             sleepyFace();
             break;
-          case 'c': // black
+          case 'b': // black
             log(CLASS_BODY, Debug, "Black face");
             blackFace();
             break;
