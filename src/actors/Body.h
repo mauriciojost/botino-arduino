@@ -217,6 +217,16 @@ private:
       default:
 
         switch (GET_POSE(c1, c2)) {
+
+        	case GET_POSE('z', 'z'): // SWITCH OFF ('zz '): turn all power consuming components off
+            iosFunc('r', false);
+            iosFunc('w', false);
+            iosFunc('y', false);
+            iosFunc('f', false);
+            clearFace();
+            arms(0, 0);
+            break;
+
           // DEFAULT
           default:
             log(CLASS_BODY, Debug, "Invalid pose: %c%c%c", c1, c2, c3);
