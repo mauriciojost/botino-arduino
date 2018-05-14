@@ -358,28 +358,35 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, FALLING);
 
   log(CLASS_MAIN, Debug, "Init HW test routine");
-  digitalWrite(LEDR_PIN, HIGH);
-  digitalWrite(LEDW_PIN, HIGH);
-  digitalWrite(LEDY_PIN, HIGH);
-  digitalWrite(FAN_PIN, HIGH);
+  log(CLASS_MAIN, Debug, "...Face normal and smily");
   beNormal();
-  arms(0, 0);
-
-  delay(2000);
-  digitalWrite(LEDR_PIN, LOW);
-  digitalWrite(LEDW_PIN, LOW);
-  digitalWrite(LEDY_PIN, LOW);
-  digitalWrite(FAN_PIN, LOW);
+  delay(1000);
   beSmily();
-  arms(5, 5);
-
-  delay(2000);
+  delay(1000);
+  log(CLASS_MAIN, Debug, "...Arms down and up");
+  //arms(0, 0);
+  delay(1000);
+  //arms(2, 2);
+  delay(1000);
+  log(CLASS_MAIN, Debug, "...Red, yellow and white leds");
   digitalWrite(LEDR_PIN, HIGH);
-  digitalWrite(LEDW_PIN, HIGH);
+  delay(1000);
+  digitalWrite(LEDR_PIN, LOW);
+  delay(1000);
   digitalWrite(LEDY_PIN, HIGH);
+  delay(1000);
+  digitalWrite(LEDY_PIN, LOW);
+  delay(1000);
+  digitalWrite(LEDW_PIN, HIGH);
+  delay(1000);
+  digitalWrite(LEDW_PIN, LOW);
+  delay(1000);
+  log(CLASS_MAIN, Debug, "...Fan");
   digitalWrite(FAN_PIN, HIGH);
-  beSleepy();
-  arms(0, 0);
+  delay(1000);
+  digitalWrite(FAN_PIN, LOW);
+  delay(1000);
+
 }
 
 /**
