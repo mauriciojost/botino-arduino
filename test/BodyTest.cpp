@@ -30,20 +30,23 @@ void messageOnLcd(int line, const char *str, int s) {
 void arms(int left, int right) {}
 void led(unsigned char led, unsigned char v) {}
 
+void initBody(Body* b) {
+  b->setSmilyFace(beSmily);
+  b->setSadFace(beSad);
+  b->setNormalFace(beNormal);
+  b->setSleepyFace(beSleepy);
+  b->setClearFace(beClear);
+  b->setArms(arms);
+  b->setMessageFunc(messageOnLcd);
+  b->setIosFunc(led);
+}
+
 void test_body_shows_time() {
 
   setLogLevel(Warn);
 
   Body b("b");
-
-  b.setSmilyFace(beSmily);
-  b.setSadFace(beSad);
-  b.setNormalFace(beNormal);
-  b.setSleepyFace(beSleepy);
-  b.setClearFace(beClear);
-  b.setArms(arms);
-  b.setMessageFunc(messageOnLcd);
-  b.setIosFunc(led);
+  initBody(&b);
 
   Long time0(201010101);      // every single second
   Buffer<10> move0("Mc.Fc."); // clock message (show current time) and face cleared
