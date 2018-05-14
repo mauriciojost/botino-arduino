@@ -278,10 +278,9 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
   return errorCode;
 }
 
-void ios(unsigned char led, unsigned char v) {
-  unsigned char l = led % NRO_IOS;
-  log(CLASS_MAIN, Debug, "Led %c -> %d", (char)l, (int)v);
-  switch (l) {
+void ios(char led, bool v) {
+  log(CLASS_MAIN, Debug, "Led '%c' -> %d", led, (int)v);
+  switch (led) {
     case 'r':
       digitalWrite(LEDR_PIN, !v); // VCC hard-wired
       break;

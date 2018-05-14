@@ -75,7 +75,7 @@ private:
   void (*whiteFace)();
   void (*arms)(int left, int right);
   void (*messageFunc)(int line, const char *msg, int size);
-  void (*iosFunc)(unsigned char led, unsigned char v);
+  void (*iosFunc)(char led, bool v);
   Buffer<MSG_MAX_LENGTH> *msgs[NRO_MSGS];
   Routine *routines[NRO_ROUTINES];
 
@@ -306,7 +306,7 @@ public:
   void setMessageFunc(void (*f)(int line, const char *str, int size)) {
     messageFunc = f;
   }
-  void setIosFunc(void (*f)(unsigned char led, unsigned char v)) {
+  void setIosFunc(void (*f)(char led, bool v)) {
     iosFunc = f;
   }
 
