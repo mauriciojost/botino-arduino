@@ -10,6 +10,7 @@
 - Add more meaninfgul routine documentation (wXX)
 - Make a collection of routines to be readable
 - Add a pose where everything goes off (arms down, face off, lights off, fan off)
+- Modify arms so that it receives a 0-9 value for each arm
 
 
 # DONE
