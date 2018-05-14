@@ -173,8 +173,8 @@ void arms(int left, int right) {
   static int lastPosL = 0;
   static int lastPosR = 0;
   log(CLASS_MAIN, Debug, "Arms move");
-  int targetPosL = SERVO_INVERT_POS((left % 10) * 18, SERVO0_INVERTED);
-  int targetPosR = SERVO_INVERT_POS((right % 10) * 18, SERVO1_INVERTED);
+  int targetPosL = SERVO_INVERT_POS((left % 10) * 14 + 20, SERVO0_INVERTED);
+  int targetPosR = SERVO_INVERT_POS((right % 10) * 14 + 20, SERVO1_INVERTED);
   servoLeft.attach(SERVO0_PIN);
   servoRight.attach(SERVO1_PIN);
   log(CLASS_MAIN, Info, "Servo left %d->%d", lastPosL, targetPosL);
