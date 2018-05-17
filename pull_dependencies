@@ -17,6 +17,9 @@
 #  - many interesting libraries do not publish to platformio
 #
 
+set -x
+set -e
+
 ROOT_DIR=`dirname $(readlink -e $0)`
 CONFIG_FILE=${1:-dependencies.conf}
 LIBS_DIR=$ROOT_DIR/libs
