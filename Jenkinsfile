@@ -11,7 +11,7 @@ pipeline {
       //when { expression { env.BRANCH_NAME != 'master' } }
       steps {
         script {
-          sshagent(['bitbucket']) {
+          sshagent(['bitbucket_key']) {
             echo "My branch is: ${env.BRANCH_NAME}"
             sh 'export GIT_COMMITTER_NAME=mjost && export GIT_COMMITTER_EMAIL=mauriciojost@gmail.com && set && ./pull_dependencies'
             sh 'platformio run'
