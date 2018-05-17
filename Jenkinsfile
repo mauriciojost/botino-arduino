@@ -2,9 +2,11 @@
 // Scripted pipeline (not declarative)
 pipeline {
   agent {
-    docker { image 'mauriciojost/arduino-ci:latest' }
-    sshagent (credentials: ['deploy-dev']) {
-      sh 'ssh -o StrictHostKeyChecking=no -l cloudbees 192.168.1.106 uname -a'
+    docker { 
+      image 'mauriciojost/arduino-ci:latest' 
+      sshagent (credentials: ['deploy-dev']) {
+        sh 'ssh -o StrictHostKeyChecking=no -l cloudbees 192.168.1.106 uname -a'
+      }
     }
   }
   stages {
