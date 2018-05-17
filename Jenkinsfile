@@ -8,7 +8,7 @@ pipeline {
   }
   stages {
     stage('Build') {
-      when { expression { env.BRANCH_NAME != 'master' } }
+      //when { expression { env.BRANCH_NAME != 'master' } }
       steps {
         script {
           sshagent(['CREDENTIAL_NAME']) {
