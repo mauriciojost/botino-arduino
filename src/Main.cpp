@@ -68,6 +68,7 @@ RemoteDebug RDebug;
 /***  CALLBACKS ***/
 /******************/
 
+ICACHE_RAM_ATTR
 void buttonPressed() {
   ints++;
 }
