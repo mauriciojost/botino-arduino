@@ -29,7 +29,7 @@ void messageOnLcd(int line, const char *str, int s) {
   strcpy(msg, str);
 }
 void arms(int left, int right) {}
-void led(unsigned char led, unsigned char v) {}
+void led(char led, bool v) {}
 
 void initBody(Body* b) {
   b->setSmilyFace(beSmily);
@@ -51,7 +51,7 @@ void test_body_shows_time() {
   initBody(&b);
 
   Long time0(201010101);      // every single second
-  Buffer<10> move0("Mc.Fc."); // clock message (show current time) and face black
+  Buffer<10> move0("Mc.Fb."); // clock message (show current time) and face black
 
   b.setProp(BodyConfigTime0, SetValue, &time0, NULL);
   b.setProp(BodyConfigMove0, SetValue, &move0, NULL);
