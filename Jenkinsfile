@@ -13,6 +13,9 @@ pipeline {
         script {
           sshagent(['bitbucket_key']) {
             echo "My branch is: ${env.BRANCH_NAME}"
+            sh 'whoami'
+            echo "$USER"
+            echo "$UID"
             sh 'export GIT_COMMITTER_NAME=mjost && export GIT_COMMITTER_EMAIL=mauriciojost@gmail.com && set && ./pull_dependencies'
             sh 'platformio run'
           }
