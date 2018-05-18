@@ -15,8 +15,9 @@ pipeline {
             echo "My branch is: ${env.BRANCH_NAME}"
             sh 'whoami'
             sh 'pwd'
-            sh 'ls -lah'
-            sh 'ls -lah .ssh'
+            sh 'echo $HOME'
+            sh 'ls -lah $HOME'
+            sh 'ls -lah $HOME/.ssh'
             sh 'export GIT_COMMITTER_NAME=mjost && export GIT_COMMITTER_EMAIL=mauriciojost@gmail.com && set && ./pull_dependencies'
             sh 'platformio run'
           }
