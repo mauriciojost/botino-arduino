@@ -378,39 +378,35 @@ void setup() {
   log(CLASS_MAIN, Debug, "Setup interrupts");
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, FALLING);
 
-  log(CLASS_MAIN, Debug, "Init HW test routine");
-  log(CLASS_MAIN, Debug, "...Face normal and smily");
+  log(CLASS_MAIN, Debug, "Init HW test routine"); delay(2000);
+  log(CLASS_MAIN, Debug, "...Face normal"); delay(2000);
   beNormal();
-  delay(1000);
+  log(CLASS_MAIN, Debug, "...Face smily"); delay(2000);
   beSmily();
-  delay(2000);
-  log(CLASS_MAIN, Debug, "...Arms down and up");
+  log(CLASS_MAIN, Debug, "...Arms down"); delay(2000);
   arms(0, 0);
-  delay(2000);
-  arms(2, 2);
-  delay(2000);
+  log(CLASS_MAIN, Debug, "...Right arm up"); delay(2000);
+  arms(0, 9);
+  log(CLASS_MAIN, Debug, "...Left arm up"); delay(2000);
+  arms(9, 9);
+  log(CLASS_MAIN, Debug, "...Arms down"); delay(2000);
   arms(0, 0);
-  delay(2000);
-  log(CLASS_MAIN, Debug, "...Red led");
+  log(CLASS_MAIN, Debug, "...Red led on"); delay(2000);
   ios('r', true);
-  delay(2000);
+  log(CLASS_MAIN, Debug, "...Red led of"); delay(2000);
   ios('r', false);
-  delay(2000);
-  log(CLASS_MAIN, Debug, "...Yellow led");
+  log(CLASS_MAIN, Debug, "...Yellow led on"); delay(2000);
   ios('y', true);
-  delay(1000);
+  log(CLASS_MAIN, Debug, "...Yellow led off"); delay(2000);
   ios('y', false);
-  delay(2000);
-  log(CLASS_MAIN, Debug, "...White led");
+  log(CLASS_MAIN, Debug, "...White led on"); delay(2000);
   ios('w', true);
-  delay(1000);
+  log(CLASS_MAIN, Debug, "...White led off"); delay(2000);
   ios('w', false);
-  delay(2000);
-  log(CLASS_MAIN, Debug, "...Fan");
+  log(CLASS_MAIN, Debug, "...Fan on"); delay(2000);
   ios('f', true);
-  delay(2000);
+  log(CLASS_MAIN, Debug, "...Fan off"); delay(2000);
   ios('f', false);
-  delay(2000);
 
 }
 
