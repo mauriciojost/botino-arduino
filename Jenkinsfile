@@ -14,6 +14,7 @@ pipeline {
           sshagent(['bitbucket_key']) {
             echo "My branch is: ${env.BRANCH_NAME}"
             sh 'whoami'
+            sh 'pwd'
             sh 'ls -lah'
             sh 'ls -lah .ssh'
             sh 'export GIT_COMMITTER_NAME=mjost && export GIT_COMMITTER_EMAIL=mauriciojost@gmail.com && set && ./pull_dependencies'
