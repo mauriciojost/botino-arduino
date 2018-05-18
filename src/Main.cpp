@@ -45,8 +45,29 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 #endif // SERVO0_INVERTED
 
 #ifndef SERVO1_INVERTED
-#define SERVO1_INVERTED true
+#define SERVO1_INVERTED false
 #endif // SERVO1_INVERTED
+
+#define MAX_SERVO_STEPS 10
+
+#ifndef SERVO0_BASE_DEGREES
+#define SERVO0_BASE_DEGREES 10
+#endif // SERVO0_BASE_DEGREES
+
+#ifndef SERVO1_BASE_DEGREES
+#define SERVO1_BASE_DEGREES 10
+#endif // SERVO1_BASE_DEGREES
+
+#ifndef SERVO0_RANGE_DEGREES
+#define SERVO0_RANGE_DEGREES 140
+#endif // SERVO0_RANGE_DEGREES
+
+#ifndef SERVO1_RANGE_DEGREES
+#define SERVO1_RANGE_DEGREES 140
+#endif // SERVO1_RANGE_DEGREES
+
+#define SERVO0_STEP_DEGREES (SERVO0_RANGE_DEGREES / MAX_SERVO_STEPS)
+#define SERVO1_STEP_DEGREES (SERVO1_RANGE_DEGREES / MAX_SERVO_STEPS)
 
 #ifndef DWEET_IO_API_TOKEN
 #error "Must provide DWEET_IO_API_TOKEN"
@@ -54,7 +75,7 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 
 #define WAIT_BEFORE_HTTP_MS 1500
 
-#define SERVO_INVERT_POS(p, f) ((f ? 180 - p : p))
+#define SERVO_INVERT_POS(p, f) (((f) ? (180 - (p)) : (p)))
 
 Module m;
 Servo servoLeft;
@@ -173,9 +194,9 @@ void beSleepy() {
 void arms(int left, int right) {
   static int lastPosL = 0;
   static int lastPosR = 0;
-  log(CLASS_MAIN, Debug, "Arms move");
-  int targetPosL = SERVO_INVERT_POS((left % 10) * 14 + 20, SERVO0_INVERTED);
-  int targetPosR = SERVO_INVERT_POS((right % 10) * 14 + 20, SERVO1_INVERTED);
+  log(CLASS_MAIN, Debug, "Arms move: %d %d", left, right);
+  int targetPosL = SERVO_INVERT_POS(((POSIT(left) % MAX_SERVO_STEPS) * SERVO0_STEP_DEGREES) + SERVO0_BASE_DEGREES, SERVO0_INVERTED);
+  int targetPosR = SERVO_INVERT_POS(((POSIT(right) % MAX_SERVO_STEPS) * SERVO1_STEP_DEGREES) + SERVO1_BASE_DEGREES, SERVO1_INVERTED);
   servoLeft.attach(SERVO0_PIN);
   servoRight.attach(SERVO1_PIN);
   log(CLASS_MAIN, Info, "Servo left %d->%d", lastPosL, targetPosL);
