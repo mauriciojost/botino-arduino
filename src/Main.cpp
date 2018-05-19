@@ -469,6 +469,17 @@ void handleDebug() {
 
 }
 
+bool isActionPending() {
+  m.getSettings()->incrButtonPressed((int)ints);
+  if (ints > 0) {
+    digitalWrite(LEDW_PIN, !digitalRead(LEDW_PIN));
+    beSmily();
+    ints = 0;
+    return true;
+  }
+  return false;
+}
+
 void loop() {
 
   unsigned long t1 = millis();
@@ -486,13 +497,11 @@ void loop() {
   log(CLASS_MAIN, Info, "Li-sleep (%lu ms)...", restPeriodMs);
   while (restPeriodMs > 0) {
   	unsigned long fragToSleepMs = MINIM(restPeriodMs, FRAG_TO_SLEEP_MS_MAX);
-    restPeriodMs -= fragToSleepMs;
     lightSleep(fragToSleepMs);
 
-    m.getSettings()->incrButtonPressed((int)ints);
-    if (ints > 0) {
-      digitalWrite(LEDW_PIN, !digitalRead(LEDW_PIN));
-      ints = 0;
+    restPeriodMs -= fragToSleepMs;
+    if (isActionPending()) {
+    	break;
     }
   }
 }
