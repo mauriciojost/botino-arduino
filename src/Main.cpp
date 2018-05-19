@@ -331,9 +331,6 @@ void setup() {
   // Initialize the serial port
   Serial.begin(115200);
 
-  // Print exception raised during previous run (if any)
-  SaveCrash.print();
-
   // Initialize the LCD
   lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   lcd.dim(true);
@@ -415,19 +412,7 @@ void setup() {
  * TODO: make evolve to read physical buttons
  */
 ButtonPressed readButtons() {
-  if (Serial.available() > 0) {
-    int b = Serial.read();
-    switch (b) {
-      case 's':
-      case 'S':
-        return ButtonSetWasPressed;
-      case 'm':
-      case 'M':
-        return ButtonModeWasPressed;
-      default:
-        return NoButton;
-    }
-  }
+  return NoButton;
 }
 
 void lightSleep(unsigned long delayMs) {
@@ -436,30 +421,54 @@ void lightSleep(unsigned long delayMs) {
   delay(delayMs);
 }
 
+void handleDebug() {
+  Settings* s = m.getSettings();
+
+	// Handle stack-traces stored in memory
+  if (s->getClear()) {
+    log(CLASS_MAIN, Debug, "Clearing stack-traces");
+    SaveCrash.clear();
+  } else {
+  	if (SaveCrash.count() > 0) {
+      log(CLASS_MAIN, Warn, "Found stack-traces (!!!)");
+      SaveCrash.print();
+  	} else {
+      log(CLASS_MAIN, Debug, "No stack-traces");
+  	}
+  }
+
+  // Handle telnet log server
+  RDebug.handle();
+
+  // Handle log level as per settings
+  setLogLevel((char)(s->getLogLevel() % 4));
+
+  // Log chip information
+  log(CLASS_MAIN, Debug, "Chip ID: %ld", ESP.getChipId());
+  log(CLASS_MAIN, Debug, "Flash chip ID: %ld", ESP.getFlashChipId());
+  log(CLASS_MAIN, Debug, "CPU Freq [MHz]: %ld", ESP.getCpuFreqMHz());
+  log(CLASS_MAIN, Debug, "VCC: %ld", ESP.getVcc());
+  log(CLASS_MAIN, Debug, "Free heap: %ld", ESP.getFreeHeap());
+  log(CLASS_MAIN, Debug, "SDK version: %s", ESP.getSdkVersion());
+  log(CLASS_MAIN, Debug, "Cycle count: %ld", ESP.getCycleCount());
+  log(CLASS_MAIN, Debug, "Sketch size: %ld", ESP.getSketchSize());
+  log(CLASS_MAIN, Debug, "Free sketch space: %ld", ESP.getFreeSketchSpace());
+
+}
+
 void loop() {
 
   unsigned long t1 = millis();
 
   ButtonPressed button = readButtons();
+  m.getSettings()->setButtonPressed((int)ints);
   m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
 
-  if (m.getSettings()->getClear()) {
-    log(CLASS_MAIN, Debug, "Clearing save crash");
-    SaveCrash.clear();
-  }
+  handleDebug();
 
-  m.getSettings()->setButtonPressed((int)ints);
-
-  setLogLevel((char)(m.getSettings()->getLogLevel() % 4));
-
-  RDebug.handle();
-
-  unsigned long t2 = millis();
   unsigned long periodMs = m.getSettings()->getPeriodSeconds() * 1000;
-  unsigned long spentPeriodMs = MINIM(POSIT(t2 - t1), periodMs);
+  unsigned long spentPeriodMs = MINIM(POSIT(millis() - t1), periodMs);
   lightSleep(periodMs - spentPeriodMs);
-
-  log(CLASS_MAIN, Info, "Free heap: %ld", ESP.getFreeHeap());
 }
 
 #endif // UNIT_TEST
