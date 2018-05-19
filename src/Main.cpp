@@ -32,7 +32,6 @@ extern "C" {
 enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 
 #define DO_NOT_CLEAR_FIRST false
-#define CLEAR_FIRST true
 #define DELAY_MS_SPI 2
 #define NRO_IOS 4
 #define FRAG_TO_SLEEP_MS_MAX 500
@@ -104,30 +103,20 @@ void lcdClear(int line) {
   lcd.fillRect(0, line * 8, 128, 8, BLACK);
 }
 
-void lcdPrintLine(const char *str, int line, bool clearFirst) {
-  static bool cleared = false;
-  lcd.setTextWrap(false);
-
-  bool disableLcd = !m.getSettings()->getLcdDebug();
-  if (disableLcd) {
-    if (!cleared) {
-      lcdClear();
-      lcd.display();
-      delay(DELAY_MS_SPI);
-      cleared = true;
-    }
+void lcdPrintLogLine(const char *logStr, int line) {
+  bool lcdDebugEnabled = m.getSettings()->getLcdDebug();
+  if (!lcdDebugEnabled) {
     return;
   }
-  if (clearFirst) {
-    lcdClear(line);
-  }
+  lcd.setTextWrap(false);
+
+  lcdClear(line);
   lcd.setTextSize(1);
   lcd.setTextColor(WHITE);
   lcd.setCursor(0, line * 8);
-  lcd.println(str);
+  lcd.println(logStr);
   lcd.display();
   delay(DELAY_MS_SPI);
-  cleared = false;
 }
 
 void messageOnLcd(int line, const char *str, int size) {
@@ -147,7 +136,7 @@ void logLine(const char *str) {
   if (i == 0) {
     lcd.fillRect(0, 0, 128, 64, BLACK);
   }
-  lcdPrintLine(str, i, CLEAR_FIRST);
+  lcdPrintLogLine(str, i);
   i = (i + 1) % 8;
   Serial.println(str);
   RDebug.printf("%s\n", str);
