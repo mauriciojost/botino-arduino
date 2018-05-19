@@ -27,7 +27,7 @@ pipeline {
     stage('Test') {
       steps {
         echo "My branch is: ${env.BRANCH_NAME}"
-        sh './launch_tests'
+        sh './launch_testsX'
       }
     }
   }
