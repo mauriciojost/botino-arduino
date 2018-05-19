@@ -192,13 +192,19 @@ void beSleepy() {
 }
 
 void arms(int left, int right) {
-  static int lastPosL = 0;
-  static int lastPosR = 0;
+  static int lastPosL = -1;
+  static int lastPosR = -1;
+
   log(CLASS_MAIN, Debug, "Arms move: %d %d", left, right);
   int targetPosL = SERVO_INVERT_POS(((POSIT(left) % MAX_SERVO_STEPS) * SERVO0_STEP_DEGREES) + SERVO0_BASE_DEGREES, SERVO0_INVERTED);
   int targetPosR = SERVO_INVERT_POS(((POSIT(right) % MAX_SERVO_STEPS) * SERVO1_STEP_DEGREES) + SERVO1_BASE_DEGREES, SERVO1_INVERTED);
   servoLeft.attach(SERVO0_PIN);
   servoRight.attach(SERVO1_PIN);
+
+  // leave as target if first time
+  lastPosL = (lastPosL == -1 ? targetPosL : lastPosL);
+  lastPosR = (lastPosR == -1 ? targetPosR : lastPosR);
+
   log(CLASS_MAIN, Info, "Servo left %d->%d", lastPosL, targetPosL);
   log(CLASS_MAIN, Info, "Servo right %d->%d", lastPosR, targetPosR);
   for (int i = 1; i <= SERVO_ARM_STEPS; i++) {
