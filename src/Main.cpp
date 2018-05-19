@@ -444,15 +444,16 @@ void handleDebug() {
   setLogLevel((char)(s->getLogLevel() % 4));
 
   // Log chip information
-  log(CLASS_MAIN, Debug, "Chip ID: %ld", ESP.getChipId());
-  log(CLASS_MAIN, Debug, "Flash chip ID: %ld", ESP.getFlashChipId());
-  log(CLASS_MAIN, Debug, "CPU Freq [MHz]: %ld", ESP.getCpuFreqMHz());
-  log(CLASS_MAIN, Debug, "VCC: %ld", ESP.getVcc());
-  log(CLASS_MAIN, Debug, "Free heap: %ld", ESP.getFreeHeap());
+  log(CLASS_MAIN, Debug, "Chip ID: %lu", ESP.getChipId());
+  log(CLASS_MAIN, Debug, "Flash chip ID: %lu", ESP.getFlashChipId());
+  log(CLASS_MAIN, Debug, "CPU Freq [MHz]: %u", ESP.getCpuFreqMHz());
+  log(CLASS_MAIN, Debug, "VCC: %lu", ESP.getVcc());
+  log(CLASS_MAIN, Debug, "Free heap: %lu", ESP.getFreeHeap());
   log(CLASS_MAIN, Debug, "SDK version: %s", ESP.getSdkVersion());
-  log(CLASS_MAIN, Debug, "Cycle count: %ld", ESP.getCycleCount());
-  log(CLASS_MAIN, Debug, "Sketch size: %ld", ESP.getSketchSize());
-  log(CLASS_MAIN, Debug, "Free sketch space: %ld", ESP.getFreeSketchSpace());
+  log(CLASS_MAIN, Debug, "Cycle count: %lu", ESP.getCycleCount());
+  log(CLASS_MAIN, Debug, "Flash chip size: %lu", ESP.getFlashChipSize());
+  log(CLASS_MAIN, Debug, "Sketch size: %lu", ESP.getSketchSize());
+  log(CLASS_MAIN, Debug, "Free sketch space: %lu", ESP.getFreeSketchSpace());
 
 }
 
