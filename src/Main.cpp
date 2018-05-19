@@ -379,7 +379,7 @@ void setup() {
   m.getSetupSync()->setHttpGet(httpGet);
 
   log(CLASS_MAIN, Debug, "Setup interrupts");
-  attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, FALLING);
+  attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, RISING);
 
   log(CLASS_MAIN, Debug, "Init HW test routine"); delay(2000);
   ios('r', false);
