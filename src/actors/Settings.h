@@ -118,6 +118,10 @@ public:
     buttonPressed = v;
   }
 
+  void incrButtonPressed(int v) {
+    buttonPressed += v;
+  }
+
   int getPeriodSeconds() {
     return periodSeconds;
   }
