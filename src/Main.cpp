@@ -35,6 +35,8 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 #define CLEAR_FIRST true
 #define DELAY_MS_SPI 2
 #define NRO_IOS 4
+#define FRAG_TO_SLEEP_MS_MAX 500
+
 
 #ifndef SERVO_ARM_STEPS
 #define SERVO_ARM_STEPS 50
@@ -427,7 +429,6 @@ ButtonPressed readButtons() {
 }
 
 void lightSleep(unsigned long delayMs) {
-  log(CLASS_MAIN, Info, "Li-sleep (%lu ms)...", delayMs);
   wifi_set_sleep_type(LIGHT_SLEEP_T);
   delay(delayMs);
 }
@@ -473,14 +474,27 @@ void loop() {
   unsigned long t1 = millis();
 
   ButtonPressed button = readButtons();
-  m.getSettings()->setButtonPressed((int)ints);
   m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
 
   handleDebug();
 
   unsigned long periodMs = m.getSettings()->getPeriodSeconds() * 1000;
-  unsigned long spentPeriodMs = MINIM(POSIT(millis() - t1), periodMs);
-  lightSleep(periodMs - spentPeriodMs);
+
+  unsigned long spentPeriodMs = MINIM(millis() - t1, periodMs);
+  unsigned long restPeriodMs = POSIT(periodMs - spentPeriodMs);
+
+  log(CLASS_MAIN, Info, "Li-sleep (%lu ms)...", restPeriodMs);
+  while (restPeriodMs > 0) {
+  	unsigned long fragToSleepMs = MINIM(restPeriodMs, FRAG_TO_SLEEP_MS_MAX);
+    restPeriodMs -= fragToSleepMs;
+    lightSleep(fragToSleepMs);
+
+    m.getSettings()->incrButtonPressed((int)ints);
+    if (ints > 0) {
+      digitalWrite(LEDW_PIN, !digitalRead(LEDW_PIN));
+      ints = 0;
+    }
+  }
 }
 
 #endif // UNIT_TEST
