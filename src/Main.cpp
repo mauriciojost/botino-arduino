@@ -382,6 +382,11 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, FALLING);
 
   log(CLASS_MAIN, Debug, "Init HW test routine"); delay(2000);
+  ios('r', false);
+  ios('y', false);
+  ios('w', false);
+  ios('f', false);
+
   log(CLASS_MAIN, Debug, "...Face normal"); delay(2000);
   beNormal();
   log(CLASS_MAIN, Debug, "...Face smily"); delay(2000);
