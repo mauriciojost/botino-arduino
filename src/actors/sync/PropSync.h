@@ -46,7 +46,7 @@ public:
     initWifiFunc = NULL;
     httpGet = NULL;
     httpPost = NULL;
-    freqConf.setFrequency(Custom);
+    freqConf.setFrequency(OnceEvery1Minute);
     freq = 0; // never
   }
 
@@ -124,7 +124,10 @@ public:
     switch (propIndex) {
       case (PropSyncConfigFreq):
         setPropLong(setMode, targetValue, actualValue, &freq);
-        freqConf.setCustom(freq);
+        if (setMode == SetValue) {
+          freqConf.setCustom(freq);
+          freqConf.setFrequency(Custom);
+        }
         break;
       default:
         break;
