@@ -5,10 +5,14 @@
 - Set more meaningful default values
 - Improve extensibility of the amount of routines (today it's too much work)
 - Add repeat for routines
+- Make button execute a given configurable move too!
+- Add a move where you show a random fortune message
 
 
 # DONE
 
+- Make the servo startup smoothly
+- Support button
 - Add a pose where everything goes off (arms down, face off, lights off, fan off)
 - Add more meaninfgul routine documentation (wXX)
 - Make a collection of routines to be readable
