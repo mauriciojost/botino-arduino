@@ -403,7 +403,7 @@ void setup() {
   arms(0, 0);
   log(CLASS_MAIN, Debug, "...Red led on"); delay(2000);
   ios('r', true);
-  log(CLASS_MAIN, Debug, "...Red led of"); delay(2000);
+  log(CLASS_MAIN, Debug, "...Red led off"); delay(2000);
   ios('r', false);
   log(CLASS_MAIN, Debug, "...Yellow led on"); delay(2000);
   ios('y', true);
