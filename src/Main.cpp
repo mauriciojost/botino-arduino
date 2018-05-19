@@ -463,6 +463,9 @@ bool isActionPending() {
   if (ints > 0) {
     digitalWrite(LEDW_PIN, !digitalRead(LEDW_PIN));
     beSmily();
+    arms(9, 9);
+    delay(1000);
+    arms(0, 0);
     ints = 0;
     return true;
   }
