@@ -14,6 +14,12 @@
 #define DWEET_IO_API_URL_POST "http://dweet.io/dweet/for/" DEVICE_NAME "-%s-current"
 #define DWEET_IO_API_URL_GET "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-%s-target"
 
+enum PropSyncConfigState {
+  PropSyncConfigFreq = 0,
+  PropSyncConfigDelimiter // delimiter of the configuration states
+};
+
+
 /**
 * This actor exchanges status via HTTP to synchronize
 * properties with target property values provided by an user
@@ -31,14 +37,17 @@ private:
   bool (*initWifiFunc)();
   int (*httpGet)(const char* url, ParamStream* response);
   int (*httpPost)(const char* url, const char* body, ParamStream* response);
+  long freq; // custom frequency
 
 public:
-  PropSync(const char *n) : freqConf(OnceEvery1Minute) {
+  PropSync(const char *n) {
     name = n;
     bot = NULL;
     initWifiFunc = NULL;
     httpGet = NULL;
     httpPost = NULL;
+    freqConf.setFrequency(Custom);
+    freq = 0; // never
   }
 
   void setBot(SerBot *b) {
@@ -102,14 +111,28 @@ public:
 
   }
 
-  void setProp(int propIndex, SetMode set, const Value *targetValue, Value *actualValue) {}
-
-  int getNroProps() {
-    return 0;
+  const char *getPropName(int propIndex) {
+    switch (propIndex) {
+      case (PropSyncConfigFreq):
+        return "freq";
+      default:
+        return "";
+    }
   }
 
-  const char *getPropName(int propIndex) {
-    return "";
+  void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
+    switch (propIndex) {
+      case (PropSyncConfigFreq):
+        setPropLong(setMode, targetValue, actualValue, &freq);
+        freqConf.setCustom(freq);
+        break;
+      default:
+        break;
+    }
+  }
+
+  int getNroProps() {
+    return PropSyncConfigDelimiter;
   }
 
   void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}
