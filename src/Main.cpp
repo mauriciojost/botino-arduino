@@ -461,9 +461,9 @@ void handleDebug() {
 
 void reactButton() {
   if (ints > 0) {
-    digitalWrite(LEDW_PIN, HIGH);
     m.getSettings()->incrButtonPressed((int)ints);
   	m.getBody()->performMove(0);
+    digitalWrite(LEDW_PIN, HIGH);
     ints = 0;
   }
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Set up settings
-curl -XPOST 'http://dweet.io/dweet/for/dev1-settings-target?lcddebug=false&crashclear=false&loglevel=0'
+curl -XPOST 'http://dweet.io/dweet/for/dev1-settings-target?lcddebug=true&crashclear=false&loglevel=0'
 
 # Set up body
 curl -XPOST 'http://dweet.io/dweet/for/dev1-body-target?mv0=Fs.A99A00W1.Mc4&msg0=HI%20YOU&t0=000000000&mv1=zzzMc4&t1=201010160&msg1=1MIN'
