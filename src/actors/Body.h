@@ -94,15 +94,15 @@ private:
   }
 
   void performPose(char c1, char c2, char c3) {
-  	// In the coming documented code:
-  	// - 'c' stands for a predefined alpha-numerical character (any)
-  	// - 'd' stands for a digit (only one, so a value between 0 and 9 inclusive)
-  	// - 'b' stands for a character representing a boolean value (Y/y meaning true, other character meaning false)
-  	// - ' ' stands for any character (ignored)
+  	// Symbols of the poses documentation:
+  	// - 'c' stands for a predefined alpha-numerical character (any), examples: a 6 x O Y
+  	// - 'd' stands for a digit (only one, so a value between 0 and 9 inclusive), examples: 1 2 3 9 0
+  	// - 'b' stands for a character representing a boolean value (Y/y meaning true, other character meaning false), examples Y y N n
+  	// - '?' stands for any character that is not required for the pose (ignored)
 
     switch (c1) {
 
-      // WAITS ('Wd '): wait d number of seconds
+      // Wd? : WAIT -> wait d number of seconds
       case 'W':
         {
           int v = getInt(c2);
@@ -111,30 +111,36 @@ private:
         }
         break;
 
-     // FACES ('Fc '): show a given image in the LCD
+      // Fc? : FACES -> show a given image in the LCD
       case 'F':
       	switch (c2) {
-          case 's': // smile
+          // s -> smile
+          case 's':
             log(CLASS_BODY, Debug, "Smile face");
             smilyFace();
             break;
-          case 'S': // sad
+          // S -> sad
+          case 'S':
             log(CLASS_BODY, Debug, "Sad face");
             sadFace();
             break;
-          case 'n': // normal
+          // n -> normal
+          case 'n':
             log(CLASS_BODY, Debug, "Normal face");
             normalFace();
             break;
-          case 'l': // sleepy
+          // l -> sleepy
+          case 'l':
             log(CLASS_BODY, Debug, "Sleepy face");
             sleepyFace();
             break;
-          case 'b': // black
+          // b -> black
+          case 'b':
             log(CLASS_BODY, Debug, "Black face");
             blackFace();
             break;
-          case 'w': // white
+          // w -> white
+          case 'w':
             log(CLASS_BODY, Debug, "White face");
             whiteFace();
             break;
@@ -144,7 +150,7 @@ private:
       	}
       	break;
 
-      // ARMS ('Add'): move both arms to a given position each
+      // Add : ARMS -> move both arms to a given position each (left, then right)
       case 'A':
         {
         	int l = getInt(c2);
@@ -154,27 +160,31 @@ private:
         }
       	break;
 
-     // MESSAGES ('Mc '): show certain messages in the LCD
+      // Mc?: MESSAGES -> show certain messages in the LCD
       case 'M':
-
       	switch (c2) {
-          case '0': // message 0
+          // 0 -> show message 0
+          case '0':
             log(CLASS_BODY, Debug, "Message 0");
             messageFunc(0, msgs[0]->getBuffer(), getInt(c3));
             break;
-          case '1': // message 1
+          // 1 -> show message 1
+          case '1':
             log(CLASS_BODY, Debug, "Message 1");
             messageFunc(0, msgs[1]->getBuffer(), getInt(c3));
             break;
-          case '2': // message 2
+          // 2 -> show message 2
+          case '2':
             log(CLASS_BODY, Debug, "Message 2");
             messageFunc(0, msgs[2]->getBuffer(), getInt(c3));
             break;
-          case '3': // message 3
+          // 3 -> show message 3
+          case '3':
             log(CLASS_BODY, Debug, "Message 3");
             messageFunc(0, msgs[3]->getBuffer(), getInt(c3));
             break;
-          case 'c': { // message containing current time
+          // c -> show message containing current time
+          case 'c': {
           	{
               log(CLASS_BODY, Debug, "Message clock");
               int h = GET_HOURS(timing.getCurrentTime());
@@ -191,31 +201,35 @@ private:
       	}
       	break;
 
-      // IO ('Lc '): turn on/off certain IO devices, such as LEDS or the FAN (true = ON)
+      // Lcb: IO -> turn on/off a given IO device, such as LEDS or the FAN (true = ON)
       case 'L':
       	switch (c2) {
-          case 'r': // red
+          // r -> turn on/off led red
+          case 'r':
             {
               bool b = getBool(c3);
               log(CLASS_BODY, Debug, "Led red: %d", b);
               iosFunc('r', b);
               break;
             }
-          case 'w': // white
+          // w -> turn on/off led white
+          case 'w':
             {
               bool b = getBool(c3);
               log(CLASS_BODY, Debug, "Led white: %d", b);
               iosFunc('w', b);
               break;
             }
-          case 'y': // yellow
+          // y -> turn on/off led yellow
+          case 'y':
             {
               bool b = getBool(c3);
               log(CLASS_BODY, Debug, "Led yellow: %d", b);
               iosFunc('y', b);
               break;
             }
-          case 'f': // fan
+          // f -> turn on/off fan
+          case 'f':
             {
               bool b = getBool(c3);
               log(CLASS_BODY, Debug, "Fan: %d", b);
@@ -232,7 +246,8 @@ private:
 
         switch (GET_POSE(c1, c2)) {
 
-        	case GET_POSE('z', 'z'): // SWITCH OFF ('zz '): turn all power consuming components off
+          // zz?: SWITCH OFF -> turn all power consuming components off
+        	case GET_POSE('z', 'z'):
             iosFunc('r', false);
             iosFunc('w', false);
             iosFunc('y', false);
