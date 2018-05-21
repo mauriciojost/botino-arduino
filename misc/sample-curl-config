@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# Set up settings
+curl -XPOST 'http://dweet.io/dweet/for/dev1-settings-target?lcddebug=false&crashclear=false'
+
+# Set up body
+curl -XPOST 'http://dweet.io/dweet/for/dev1-body-target?mv0=zzzA75Fs.A20&t0=000000000&mv1=zzzLryM12W3.Fs.LrnMc4&t1=201010130&msg1=1MIN'
+
+# Set up properties synchronizer
+curl -XPOST 'http://dweet.io/dweet/for/dev1-propsync-target?freq=201010360'
+
