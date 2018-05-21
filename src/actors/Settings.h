@@ -52,11 +52,11 @@ public:
   const char *getPropName(int propIndex) {
     switch (propIndex) {
       case (GlobalClearStackTraceState):
-        return "cl";
+        return "crashclear";
       case (GlobalLogLevelState):
-        return "logl";
+        return "loglevel";
       case (GlobalButtonPressedState):
-        return "bp";
+        return "interrupts";
       case (GlobalPeriodSecondsState):
         return "period";
       case (GlobalLcdDebugState):
