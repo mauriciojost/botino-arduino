@@ -93,6 +93,7 @@ RemoteDebug RDebug;
 ICACHE_RAM_ATTR
 void buttonPressed() {
   ints++;
+  digitalWrite(LEDW_PIN, LOW);
 }
 
 void lcdClear() {
@@ -460,6 +461,7 @@ void handleDebug() {
 
 void reactButton() {
   if (ints > 0) {
+    digitalWrite(LEDW_PIN, HIGH);
     m.getSettings()->incrButtonPressed((int)ints);
   	m.getBody()->performMove(0);
     ints = 0;
