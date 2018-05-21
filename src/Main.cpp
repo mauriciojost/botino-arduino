@@ -458,18 +458,12 @@ void handleDebug() {
 
 }
 
-bool isActionPending() {
-  m.getSettings()->incrButtonPressed((int)ints);
+void reactButton() {
   if (ints > 0) {
-    digitalWrite(LEDW_PIN, !digitalRead(LEDW_PIN));
-    beSmily();
-    arms(9, 9);
-    delay(1000);
-    arms(0, 0);
+    m.getSettings()->incrButtonPressed((int)ints);
+  	m.getBody()->performMove(0);
     ints = 0;
-    return true;
   }
-  return false;
 }
 
 void loop() {

@@ -264,12 +264,6 @@ private:
     }
   }
 
-  void performMove(const char *s) {
-    for (int i = 0; i < strlen(s); i += POSE_STR_LENGTH) {
-      performPose(s[i + 0], s[i + 1], s[i + 2]);
-    }
-  }
-
 public:
   Body(const char *n) : timing(OnceEvery1Minute) {
     name = n;
@@ -287,7 +281,7 @@ public:
     }
     for (int i = 0; i < NRO_ROUTINES; i++) {
       routines[i] = new Routine();
-      routines[i]->timingConf = 100000050L;
+      routines[i]->timingConf = 0L; // Never
       routines[i]->timing.setCustom(routines[i]->timingConf);
       routines[i]->timing.setFrequency(Custom);
     }
@@ -336,7 +330,7 @@ public:
           const long timing = routines[i]->timingConf;
           const char *move = routines[i]->move.getBuffer();
           log(CLASS_BODY, Debug, "Rne %d: %ld %s", i, timing, move);
-          performMove(move);
+          performMove(i);
         }
       }
     }
@@ -433,6 +427,14 @@ public:
   Timing *getFrequencyConfiguration() {
     return &timing;
   }
+
+  void performMove(int routineIndex) {
+    const char *s = routines[routineIndex % NRO_ROUTINES]->move.getBuffer();
+    for (int i = 0; i < strlen(s); i += POSE_STR_LENGTH) {
+      performPose(s[i + 0], s[i + 1], s[i + 2]);
+    }
+  }
+
 };
 
 #endif // BODY_INC
