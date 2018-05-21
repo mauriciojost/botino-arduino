@@ -368,50 +368,22 @@ public:
   }
 
   void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
-    switch (propIndex) {
-      case (BodyConfigMsg0):
-        setPropValue(setMode, targetValue, actualValue, msgs[0]);
-        break;
-      case (BodyConfigMsg1):
-        setPropValue(setMode, targetValue, actualValue, msgs[1]);
-        break;
-      case (BodyConfigMsg2):
-        setPropValue(setMode, targetValue, actualValue, msgs[2]);
-        break;
-      case (BodyConfigMsg3):
-        setPropValue(setMode, targetValue, actualValue, msgs[3]);
-        break;
-      case (BodyConfigMove0):
-        setPropValue(setMode, targetValue, actualValue, &routines[0]->move);
-        break;
-      case (BodyConfigMove1):
-        setPropValue(setMode, targetValue, actualValue, &routines[1]->move);
-        break;
-      case (BodyConfigMove2):
-        setPropValue(setMode, targetValue, actualValue, &routines[2]->move);
-        break;
-      case (BodyConfigMove3):
-        setPropValue(setMode, targetValue, actualValue, &routines[3]->move);
-        break;
-      case (BodyConfigTime0):
-        setPropLong(setMode, targetValue, actualValue, &routines[0]->timingConf);
-        routines[0]->timing.setCustom(routines[0]->timingConf);
-        break;
-      case (BodyConfigTime1):
-        setPropLong(setMode, targetValue, actualValue, &routines[1]->timingConf);
-        routines[1]->timing.setCustom(routines[1]->timingConf);
-        break;
-      case (BodyConfigTime2):
-        setPropLong(setMode, targetValue, actualValue, &routines[2]->timingConf);
-        routines[2]->timing.setCustom(routines[2]->timingConf);
-        break;
-      case (BodyConfigTime3):
-        setPropLong(setMode, targetValue, actualValue, &routines[3]->timingConf);
-        routines[3]->timing.setCustom(routines[3]->timingConf);
-        break;
-      default:
-        break;
-    }
+  	if (propIndex >= BodyConfigMove0 && propIndex < (NRO_ROUTINES + BodyConfigMove0)) {
+      int i = (int)propIndex - (int)BodyConfigMove0;
+      setPropValue(setMode, targetValue, actualValue, &routines[i]->move);
+  	} else if (propIndex >= BodyConfigMsg0 && propIndex < (NRO_MSGS + BodyConfigMsg0)) {
+      int i = (int)propIndex - (int)BodyConfigMsg0;
+      setPropValue(setMode, targetValue, actualValue, msgs[i]);
+    } else if (propIndex >= BodyConfigTime0 && propIndex < (NRO_ROUTINES + BodyConfigTime0)) {
+      int i = (int)propIndex - (int)BodyConfigTime0;
+      setPropLong(setMode, targetValue, actualValue, &routines[i]->timingConf);
+      routines[i]->timing.setCustom(routines[i]->timingConf);
+  	} else {
+      switch (propIndex) {
+        default:
+          break;
+      }
+  	}
   }
 
   int getNroProps() {
