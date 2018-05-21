@@ -485,7 +485,6 @@ void loop() {
 
     reactButton();
   	unsigned long fragToSleepMs = MINIM(periodMs - spentMs, FRAG_TO_SLEEP_MS_MAX);
-    log(CLASS_MAIN, Debug, "Li-sleep (partial %lu ms)...", fragToSleepMs);
     lightSleep(fragToSleepMs);
 
     spentMs = millis() - t1;
