@@ -1,7 +1,6 @@
 # TODO
 
 - Package electronics without breadboard
-- Regularly reinitialize LCD (too fragile for now)
 - Set more meaningful default values
 - Improve extensibility of the amount of routines (today it's too much work)
 - Add repeat for routines
@@ -11,6 +10,7 @@
 
 # DONE
 
+- Regularly reinitialize LCD (too fragile for now) -> Not really needed if everything is well connected as now
 - Make the servo startup smoothly
 - Support button
 - Add a pose where everything goes off (arms down, face off, lights off, fan off)
