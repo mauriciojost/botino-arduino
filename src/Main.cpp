@@ -476,19 +476,18 @@ void loop() {
   handleDebug();
 
   unsigned long periodMs = m.getSettings()->getPeriodSeconds() * 1000;
+  unsigned long spentMs = 0;
 
-  unsigned long spentPeriodMs = MINIM(millis() - t1, periodMs);
-  unsigned long restPeriodMs = POSIT(periodMs - spentPeriodMs);
+  log(CLASS_MAIN, Info, "Li-sleep ( %lu ms)...", periodMs);
+  while(spentMs < periodMs) {
 
-  log(CLASS_MAIN, Info, "Li-sleep (%lu ms)...", restPeriodMs);
-  while (restPeriodMs > 0) {
-  	unsigned long fragToSleepMs = MINIM(restPeriodMs, FRAG_TO_SLEEP_MS_MAX);
+    reactButton();
+  	unsigned long fragToSleepMs = MINIM(periodMs - spentMs, FRAG_TO_SLEEP_MS_MAX);
+    log(CLASS_MAIN, Debug, "Li-sleep (partial %lu ms)...", fragToSleepMs);
     lightSleep(fragToSleepMs);
 
-    restPeriodMs -= fragToSleepMs;
-    if (isActionPending()) {
-    	break;
-    }
+    spentMs = millis() - t1;
+
   }
 }
 
