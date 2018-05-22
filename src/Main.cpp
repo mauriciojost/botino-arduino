@@ -216,6 +216,8 @@ bool initWifi(const char *ssid, const char *pass) {
     return true; // connected
   }
 
+  WiFi.persistent(false);
+  WiFi.mode(WIFI_OFF); // to be removed after SDK update to 1.5.4
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, pass);
 
