@@ -6,6 +6,9 @@
 - Add repeat for routines
 - Make button execute a given configurable move too!
 - Add a move where you show a random fortune message
+- Allow to define new images via API
+- Allow to combine moves (first move 0, then move 1 x 2 times)
+- Make the botino auto-document itself by publishing the instructions to a page
 
 
 # DONE
