@@ -32,8 +32,7 @@ extern "C" {
 enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 
 #define DO_NOT_CLEAR_FIRST false
-#define DELAY_MS_SPI 2
-#define NRO_IOS 4
+#define DELAY_MS_SPI 3
 #define FRAG_TO_SLEEP_MS_MAX 500
 
 
@@ -96,10 +95,6 @@ void buttonPressed() {
   digitalWrite(LEDW_PIN, LOW);
 }
 
-void lcdClear() {
-  lcd.clearDisplay();
-}
-
 void lcdClear(int line) {
   lcd.fillRect(0, line * 8, 128, 8, BLACK);
 }
@@ -129,7 +124,6 @@ void messageOnLcd(int line, const char *str, int size) {
   lcd.println(str);
   lcd.display();
   delay(DELAY_MS_SPI);
-  delay(2000);
 }
 
 void logLine(const char *str) {
@@ -410,14 +404,6 @@ void setup() {
 
 }
 
-/**
- * Read buttons from serial port
- * TODO: make evolve to read physical buttons
- */
-ButtonPressed readButtons() {
-  return NoButton;
-}
-
 void lightSleep(unsigned long delayMs) {
   wifi_set_sleep_type(LIGHT_SLEEP_T);
   delay(delayMs);
@@ -445,18 +431,6 @@ void handleDebug() {
   // Handle log level as per settings
   setLogLevel((char)(s->getLogLevel() % 4));
 
-  // Log chip information
-  log(CLASS_MAIN, Debug, "Chip ID: %lu", ESP.getChipId());
-  log(CLASS_MAIN, Debug, "Flash chip ID: %lu", ESP.getFlashChipId());
-  log(CLASS_MAIN, Debug, "CPU Freq [MHz]: %u", ESP.getCpuFreqMHz());
-  log(CLASS_MAIN, Debug, "VCC: %lu", ESP.getVcc());
-  log(CLASS_MAIN, Debug, "Free heap: %lu", ESP.getFreeHeap());
-  log(CLASS_MAIN, Debug, "SDK version: %s", ESP.getSdkVersion());
-  log(CLASS_MAIN, Debug, "Cycle count: %lu", ESP.getCycleCount());
-  log(CLASS_MAIN, Debug, "Flash chip size: %lu", ESP.getFlashChipSize());
-  log(CLASS_MAIN, Debug, "Sketch size: %lu", ESP.getSketchSize());
-  log(CLASS_MAIN, Debug, "Free sketch space: %lu", ESP.getFreeSketchSpace());
-
 }
 
 void reactButton() {
@@ -472,8 +446,7 @@ void loop() {
 
   unsigned long t1 = millis();
 
-  ButtonPressed button = readButtons();
-  m.loop(button == ButtonModeWasPressed, button == ButtonSetWasPressed, true);
+  m.loop(false, false, true);
 
   handleDebug();
 
