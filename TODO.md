@@ -9,6 +9,7 @@
 - Allow to define new images via API
 - Allow to combine moves (first move 0, then move 1 x 2 times)
 - Make the botino auto-document itself by publishing the instructions to a page
+- Version the docker images
 
 
 # DONE
