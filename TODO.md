@@ -13,6 +13,7 @@
 - Tell the name & chip ID during the init.
 - Tell the WIFI & pass you should set up in your hotspot phone for botino to access the internet.
 - Create script to set up wifi parameters for the first time.
+- Make a good pass and fix data types (avoid char, use better uint8 for instance)
 
 
 # DONE
