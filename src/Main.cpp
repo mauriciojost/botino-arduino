@@ -251,7 +251,6 @@ bool initWifiSteady() {
 }
 
 int httpGet(const char *url, ParamStream *response) {
-  log(CLASS_PROPSYNC, Debug, "HTTP GET");
   httpClient.begin(url);
   httpClient.addHeader("Content-Type", "application/json");
   httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
@@ -273,7 +272,6 @@ int httpGet(const char *url, ParamStream *response) {
 }
 
 int httpPost(const char *url, const char *body, ParamStream *response) {
-  log(CLASS_PROPSYNC, Debug, "HTTP POST");
   httpClient.begin(url);
   httpClient.addHeader("Content-Type", "application/json");
   httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
