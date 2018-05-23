@@ -10,6 +10,9 @@
 - Allow to combine moves (first move 0, then move 1 x 2 times)
 - Make the botino auto-document itself by publishing the instructions to a page
 - Version the docker images
+- Tell the name & chip ID during the init.
+- Tell the WIFI & pass you should set up in your hotspot phone for botino to access the internet.
+- Create script to set up wifi parameters for the first time.
 
 
 # DONE
