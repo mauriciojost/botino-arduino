@@ -98,15 +98,10 @@ uint8_t initImage[16] = {
 						 0b00000000, 0b00000000
 						 };
 
-/******************/
-/***  CALLBACKS ***/
-/******************/
 
-ICACHE_RAM_ATTR
-void buttonPressed() {
-  ints++;
-  digitalWrite(LEDW_PIN, LOW);
-}
+/********************/
+/*** HW FUNCTIONS ***/
+/********************/
 
 void lcdClear(int line) {
   lcd.fillRect(0, line * 8, 128, 8, BLACK);
@@ -126,6 +121,106 @@ void lcdPrintLogLine(const char *logStr, int line) {
   lcd.println(logStr);
   lcd.display();
   delay(DELAY_MS_SPI);
+}
+
+bool initWifi(const char *ssid, const char *pass) {
+  log(CLASS_MAIN, Info, "Connecting to %s ...", ssid);
+
+  wl_status_t status = WiFi.status();
+  if (status == WL_CONNECTED) {
+    log(CLASS_MAIN, Debug, "Already connected (%s), skipping", WiFi.localIP().toString().c_str());
+    return true; // connected
+  }
+
+  WiFi.persistent(false);
+  WiFi.mode(WIFI_OFF); // to be removed after SDK update to 1.5.4
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, pass);
+
+  int attemptsLeft = 10;
+  while (true) {
+    status = WiFi.status();
+    log(CLASS_MAIN, Info, " attempts %d", attemptsLeft);
+    attemptsLeft--;
+    if (status == WL_CONNECTED) {
+      log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
+      return true; // connected
+    }
+    if (attemptsLeft <= 0) {
+      log(CLASS_MAIN, Warn, "Connection failed %d", status);
+      return false; // not connected
+    }
+    delay(1500);
+  }
+}
+
+void bitmapToLcd(uint8_t bitmap[]) {
+	for (char yi=0; yi < 8; yi++) {
+    for (char xi=0; xi < 2; xi++) {
+    	uint8_t imgbyte = bitmap[yi * 2 + xi];
+    	for (char b = 0; b < 8; b++) {
+    		uint8_t color = (imgbyte << b) & 0b10000000;
+        int16_t xl = (int16_t)xi * 64 + (int16_t)b * 8;
+        int16_t yl = (int16_t)yi * 8;
+        uint16_t cl = color==0?BLACK:WHITE;
+        lcd.fillRect(xl, yl, 8, 8, cl);
+    	}
+    }
+	}
+}
+
+void lightSleep(unsigned long delayMs) {
+  wifi_set_sleep_type(LIGHT_SLEEP_T);
+  delay(delayMs);
+}
+
+void handleDebug() {
+  Settings* s = m.getSettings();
+
+	// Handle stack-traces stored in memory
+  if (s->getClear()) {
+    log(CLASS_MAIN, Debug, "Clearing stack-traces");
+    SaveCrash.clear();
+  } else {
+  	if (SaveCrash.count() > 0) {
+      log(CLASS_MAIN, Warn, "Found stack-traces (!!!)");
+      SaveCrash.print();
+  	} else {
+      log(CLASS_MAIN, Debug, "No stack-traces");
+  	}
+  }
+
+  // Handle telnet log server
+  RDebug.handle();
+
+  // Handle log level as per settings
+  setLogLevel((char)(s->getLogLevel() % 4));
+
+}
+
+void reactButton() {
+  int level = digitalRead(BUTTON0_PIN);
+  if (ints > 0 && level) {
+    log(CLASS_MAIN, Debug, "Button hold...");
+  } else if (ints > 0 && !level) { // pressed the button, but not currently being pressed
+    log(CLASS_MAIN, Debug, "Button quick...");
+    m.getSettings()->incrButtonPressed((int)ints);
+  	m.getBody()->performMove(0);
+    digitalWrite(LEDW_PIN, HIGH);
+    ints = 0;
+  }
+}
+
+
+
+/*****************/
+/*** CALLBACKS ***/
+/*****************/
+
+ICACHE_RAM_ATTR
+void buttonPressed() {
+  ints++;
+  digitalWrite(LEDW_PIN, LOW);
 }
 
 void messageOnLcd(int line, const char *str, int size) {
@@ -178,37 +273,6 @@ void arms(int left, int right) {
   lastPosR = targetPosR;
   servoLeft.detach();
   servoRight.detach();
-}
-
-bool initWifi(const char *ssid, const char *pass) {
-  log(CLASS_MAIN, Info, "Connecting to %s ...", ssid);
-
-  wl_status_t status = WiFi.status();
-  if (status == WL_CONNECTED) {
-    log(CLASS_MAIN, Debug, "Already connected (%s), skipping", WiFi.localIP().toString().c_str());
-    return true; // connected
-  }
-
-  WiFi.persistent(false);
-  WiFi.mode(WIFI_OFF); // to be removed after SDK update to 1.5.4
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, pass);
-
-  int attemptsLeft = 10;
-  while (true) {
-    status = WiFi.status();
-    log(CLASS_MAIN, Info, " attempts %d", attemptsLeft);
-    attemptsLeft--;
-    if (status == WL_CONNECTED) {
-      log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
-      return true; // connected
-    }
-    if (attemptsLeft <= 0) {
-      log(CLASS_MAIN, Warn, "Connection failed %d", status);
-      return false; // not connected
-    }
-    delay(1500);
-  }
 }
 
 bool initWifiInit() {
@@ -283,22 +347,6 @@ void ios(char led, bool v) {
     default:
       break;
   }
-}
-
-
-void bitmapToLcd(uint8_t bitmap[]) {
-	for (char yi=0; yi < 8; yi++) {
-    for (char xi=0; xi < 2; xi++) {
-    	uint8_t imgbyte = bitmap[yi * 2 + xi];
-    	for (char b = 0; b < 8; b++) {
-    		uint8_t color = (imgbyte << b) & 0b10000000;
-        int16_t xl = (int16_t)xi * 64 + (int16_t)b * 8;
-        int16_t yl = (int16_t)yi * 8;
-        uint16_t cl = color==0?BLACK:WHITE;
-        lcd.fillRect(xl, yl, 8, 8, cl);
-    	}
-    }
-	}
 }
 
 void lcdImg(char img, uint8_t bitmap[]) {
@@ -432,48 +480,6 @@ void setup() {
   log(CLASS_MAIN, Debug, "...Fan off"); delay(2000);
   ios('f', false);
 
-}
-
-void lightSleep(unsigned long delayMs) {
-  wifi_set_sleep_type(LIGHT_SLEEP_T);
-  delay(delayMs);
-}
-
-void handleDebug() {
-  Settings* s = m.getSettings();
-
-	// Handle stack-traces stored in memory
-  if (s->getClear()) {
-    log(CLASS_MAIN, Debug, "Clearing stack-traces");
-    SaveCrash.clear();
-  } else {
-  	if (SaveCrash.count() > 0) {
-      log(CLASS_MAIN, Warn, "Found stack-traces (!!!)");
-      SaveCrash.print();
-  	} else {
-      log(CLASS_MAIN, Debug, "No stack-traces");
-  	}
-  }
-
-  // Handle telnet log server
-  RDebug.handle();
-
-  // Handle log level as per settings
-  setLogLevel((char)(s->getLogLevel() % 4));
-
-}
-
-void reactButton() {
-  int level = digitalRead(BUTTON0_PIN);
-  if (ints > 0 && level) {
-    log(CLASS_MAIN, Debug, "Button hold...");
-  } else if (ints > 0 && !level) { // pressed the button, but not currently being pressed
-    log(CLASS_MAIN, Debug, "Button quick...");
-    m.getSettings()->incrButtonPressed((int)ints);
-  	m.getBody()->performMove(0);
-    digitalWrite(LEDW_PIN, HIGH);
-    ints = 0;
-  }
 }
 
 void loop() {
