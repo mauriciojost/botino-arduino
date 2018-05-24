@@ -464,7 +464,11 @@ void handleDebug() {
 }
 
 void reactButton() {
-  if (ints > 0) {
+  int level = digitalRead(BUTTON0_PIN);
+  if (ints > 0 && level) {
+    log(CLASS_MAIN, Debug, "Button hold...");
+  } else if (ints > 0 && !level) { // pressed the button, but not currently being pressed
+    log(CLASS_MAIN, Debug, "Button quick...");
     m.getSettings()->incrButtonPressed((int)ints);
   	m.getBody()->performMove(0);
     digitalWrite(LEDW_PIN, HIGH);
