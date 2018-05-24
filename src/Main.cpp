@@ -23,10 +23,12 @@
 
 #ifndef WIFI_SSID_INIT
 #error "Must provide WIFI_SSID_INIT"
+#define WIFI_SSID_INIT ""
 #endif
 
 #ifndef WIFI_PASSWORD_INIT
 #error "Must provide WIFI_PASSWORD_INIT"
+#define WIFI_PASSWORD_INIT ""
 #endif
 
 extern "C" {
@@ -444,6 +446,12 @@ void setup() {
   log(CLASS_MAIN, Error, "");
   log(CLASS_MAIN, Error, "NAME: %s", DEVICE_NAME);
   log(CLASS_MAIN, Error, "ID: %lu", ESP.getChipId());
+  log(CLASS_MAIN, Error, "");
+  delay(6000);
+
+  log(CLASS_MAIN, Error, "");
+  log(CLASS_MAIN, Error, "SSID: %s", WIFI_SSID_INIT);
+  log(CLASS_MAIN, Error, "PASS: %s", WIFI_PASSWORD_INIT);
   log(CLASS_MAIN, Error, "");
   delay(6000);
 
