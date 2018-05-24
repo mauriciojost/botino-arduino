@@ -17,14 +17,12 @@ void setUp() {
 
 void tearDown() {}
 
-void beClear() {
-  faceCleared++;
+void lcdImg(char img, uint8_t bitmap[]) {
+	if (img == 'b') {
+		faceCleared++;
+	}
 }
-void beWhite() {}
-void beSmily() {}
-void beSad() {}
-void beNormal() {}
-void beSleepy() {}
+
 void messageOnLcd(int line, const char *str, int s) {
   strcpy(msg, str);
 }
@@ -32,13 +30,8 @@ void arms(int left, int right) {}
 void led(char led, bool v) {}
 
 void initBody(Body* b) {
-  b->setSmilyFace(beSmily);
-  b->setSadFace(beSad);
-  b->setNormalFace(beNormal);
-  b->setSleepyFace(beSleepy);
-  b->setBlackFace(beClear);
-  b->setWhiteFace(beWhite);
-  b->setArms(arms);
+  b->setLcdImgFunc(lcdImg);
+  b->setArmsFunc(arms);
   b->setMessageFunc(messageOnLcd);
   b->setIosFunc(led);
 }

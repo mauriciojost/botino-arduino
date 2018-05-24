@@ -8,8 +8,10 @@ void delay(int) {}
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Value.h>
+#include <main4ino/Buffer.h>
 #include <main4ino/Integer.h>
 #include <main4ino/Boolean.h>
+#include <Hexer.h>
 
 #define CLASS_BODY "BO"
 #define MSG_MAX_LENGTH 32
@@ -24,6 +26,9 @@ void delay(int) {}
 
 #define NRO_MSGS 4
 #define NRO_ROUTINES 4
+#define NRO_IMGS 4
+
+#define IMG_SIZE_BYTES 16
 
 enum BodyConfigState {
   BodyConfigMsg0 = 0,      // message 0
@@ -34,6 +39,10 @@ enum BodyConfigState {
   BodyConfigMove1,         // move 1
   BodyConfigMove2,         // move 2
   BodyConfigMove3,         // move 3
+  BodyConfigImg0,          // img 0
+  BodyConfigImg1,          // img 1
+  BodyConfigImg2,          // img 2
+  BodyConfigImg3,          // img 3
   BodyConfigTime0,         // time/freq of acting for move 0
   BodyConfigTime1,         // time/freq of acting for move 1
   BodyConfigTime2,         // time/freq of acting for move 2
@@ -67,21 +76,17 @@ class Body : public Actor {
 private:
   const char *name;
   Timing timing;
-  void (*smilyFace)();
-  void (*sadFace)();
-  void (*normalFace)();
-  void (*sleepyFace)();
-  void (*blackFace)();
-  void (*whiteFace)();
   void (*arms)(int left, int right);
   void (*messageFunc)(int line, const char *msg, int size);
   void (*iosFunc)(char led, bool v);
+	void((*lcdImgFunc)(char img, uint8_t bitmap[]));
+
   Buffer<MSG_MAX_LENGTH> *msgs[NRO_MSGS];
   Routine *routines[NRO_ROUTINES];
+  uint8_t *images[NRO_IMGS];
 
   bool isInitialized() {
-    bool init = smilyFace != NULL && sadFace != NULL && normalFace != NULL && sleepyFace != NULL && blackFace != NULL && whiteFace != NULL && arms != NULL &&
-                iosFunc != NULL && messageFunc != NULL;
+    bool init = arms != NULL && iosFunc != NULL && messageFunc != NULL && lcdImgFunc != NULL;
     return init;
   }
 
@@ -114,38 +119,21 @@ private:
       // Fc? : FACES -> show a given image in the LCD
       case 'F':
       	switch (c2) {
-          // s -> smile
-          case 's':
-            log(CLASS_BODY, Debug, "Smile face");
-            smilyFace();
+          case '0':
+            lcdImgFunc(c2, images[0]); // custom face 0
             break;
-          // S -> sad
-          case 'S':
-            log(CLASS_BODY, Debug, "Sad face");
-            sadFace();
+          case '1':
+            lcdImgFunc(c2, images[1]); // custom face 1
             break;
-          // n -> normal
-          case 'n':
-            log(CLASS_BODY, Debug, "Normal face");
-            normalFace();
+          case '2':
+            lcdImgFunc(c2, images[2]); // custom face 2
             break;
-          // l -> sleepy
-          case 'l':
-            log(CLASS_BODY, Debug, "Sleepy face");
-            sleepyFace();
-            break;
-          // b -> black
-          case 'b':
-            log(CLASS_BODY, Debug, "Black face");
-            blackFace();
-            break;
-          // w -> white
-          case 'w':
-            log(CLASS_BODY, Debug, "White face");
-            whiteFace();
+          case '3':
+            lcdImgFunc(c2, images[3]); // custom face 3
             break;
           default:
-            log(CLASS_BODY, Debug, "Invalid face pose: %c%c%c", c1, c2, c3);
+            log(CLASS_BODY, Debug, "Fixed face '%c'", c2);
+            lcdImgFunc(c2, NULL);
             break;
       	}
       	break;
@@ -252,7 +240,6 @@ private:
             iosFunc('w', false);
             iosFunc('y', false);
             iosFunc('f', false);
-            blackFace();
             arms(0, 0);
             break;
 
@@ -267,15 +254,10 @@ private:
 public:
   Body(const char *n) : timing(OnceEvery1Minute) {
     name = n;
-    smilyFace = NULL;
-    sadFace = NULL;
-    normalFace = NULL;
-    sleepyFace = NULL;
-    blackFace = NULL;
-    whiteFace = NULL;
     arms = NULL;
     messageFunc = NULL;
     iosFunc = NULL;
+    lcdImgFunc = NULL;
     for (int i = 0; i < NRO_MSGS; i++) {
       msgs[i] = new Buffer<MSG_MAX_LENGTH>("");
     }
@@ -285,31 +267,20 @@ public:
       routines[i]->timing.setCustom(routines[i]->timingConf);
       routines[i]->timing.setFrequency(Custom);
     }
+
+    for (int i = 0; i < NRO_IMGS; i++) {
+      images[i] = new uint8_t[16];
+    }
   }
 
   const char *getName() {
     return name;
   }
 
-  void setSmilyFace(void (*f)()) {
-    smilyFace = f;
+	void setLcdImgFunc(void (*f)(char img, uint8_t bitmap[])) {
+  	lcdImgFunc = f;
   }
-  void setSadFace(void (*f)()) {
-    sadFace = f;
-  }
-  void setNormalFace(void (*f)()) {
-    normalFace = f;
-  }
-  void setSleepyFace(void (*f)()) {
-    sleepyFace = f;
-  }
-  void setBlackFace(void (*f)()) {
-    blackFace = f;
-  }
-  void setWhiteFace(void (*f)()) {
-    whiteFace = f;
-  }
-  void setArms(void (*f)(int left, int right)) {
+  void setArmsFunc(void (*f)(int left, int right)) {
     arms = f;
   }
   void setMessageFunc(void (*f)(int line, const char *str, int size)) {
@@ -354,7 +325,15 @@ public:
         return "mv2";
       case (BodyConfigMove3):
         return "mv3";
-      case (BodyConfigTime0):
+      case (BodyConfigImg0):
+        return "im0";
+      case (BodyConfigImg1):
+        return "im1";
+     case (BodyConfigImg2):
+        return "im2";
+     case (BodyConfigImg3):
+        return "im3";
+     case (BodyConfigTime0):
         return "t0";
       case (BodyConfigTime1):
         return "t1";
@@ -378,6 +357,15 @@ public:
       int i = (int)propIndex - (int)BodyConfigTime0;
       setPropLong(setMode, targetValue, actualValue, &routines[i]->timingConf);
       routines[i]->timing.setCustom(routines[i]->timingConf);
+    } else if (propIndex >= BodyConfigImg0 && propIndex < (NRO_IMGS + BodyConfigImg0)) {
+      int i = (int)propIndex - (int)BodyConfigImg0;
+      if (actualValue != NULL) {
+        actualValue->load("*");
+      }
+      if (setMode == SetValue) {
+        Buffer<IMG_SIZE_BYTES * 2> target(targetValue);
+        Hexer::hexStrCpy((uint8_t*)&images[i], target.getBuffer(), IMG_SIZE_BYTES);
+      }
   	} else {
       switch (propIndex) {
         default:

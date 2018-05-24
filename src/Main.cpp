@@ -85,7 +85,7 @@ volatile unsigned char ints = 0;
 HTTPClient httpClient;
 RemoteDebug RDebug;
 
-char iii[16] = {
+uint8_t testImg[16] = {
 						 0b00000000, 0b00000000,
 						 0b00000100, 0b00100000,
 						 0b00000000, 0b00000000,
@@ -137,25 +137,6 @@ void messageOnLcd(int line, const char *str, int size) {
   delay(DELAY_MS_SPI);
 }
 
-void imgToLcd(char img[]) {
-  lcd.clearDisplay();
-	for (char yi=0; yi < 8; yi++) {
-    for (char xi=0; xi < 2; xi++) {
-    	char imgbyte = img[yi * 2 + xi];
-    	for (char b = 0; b < 8; b++) {
-    		char color = (imgbyte << b) & 0b10000000;
-        int16_t xl = (int16_t)xi * 64 + (int16_t)b * 8;
-        int16_t yl = (int16_t)yi * 8;
-        uint16_t cl = color==0?BLACK:WHITE;
-        lcd.fillRect(xl, yl, 8, 8, cl);
-        //log(CLASS_MAIN, Info, "LCD xl=%d/yl=%d->color=%d", xl, yl, color);
-    	}
-    }
-	}
-  lcd.display();
-  delay(DELAY_MS_SPI);
-}
-
 void logLine(const char *str) {
   static int i = 0;
   if (i == 0) {
@@ -165,46 +146,6 @@ void logLine(const char *str) {
   i = (i + 1) % 8;
   Serial.println(str);
   RDebug.printf("%s\n", str);
-}
-
-void white() {
-  lcd.clearDisplay();
-  lcd.invertDisplay(true);
-  lcd.display();
-  delay(DELAY_MS_SPI);
-}
-
-void black() {
-  lcd.clearDisplay();
-  lcd.invertDisplay(false);
-  lcd.display();
-  delay(DELAY_MS_SPI);
-}
-void beSmily() {
-  lcd.clearDisplay();
-  lcd.drawBitmap(0, 0, happy, 128, 64, WHITE);
-  lcd.display();
-  delay(DELAY_MS_SPI);
-}
-void beSad() {
-  lcd.clearDisplay();
-  lcd.drawBitmap(0, 0, sad, 128, 64, WHITE);
-  lcd.display();
-  delay(DELAY_MS_SPI);
-}
-
-void beNormal() {
-  lcd.clearDisplay();
-  lcd.drawBitmap(0, 0, normal, 128, 64, WHITE);
-  lcd.display();
-  delay(DELAY_MS_SPI);
-}
-
-void beSleepy() {
-  lcd.clearDisplay();
-  lcd.drawBitmap(0, 0, sleepy, 128, 64, WHITE);
-  lcd.display();
-  delay(DELAY_MS_SPI);
 }
 
 void arms(int left, int right) {
@@ -342,6 +283,61 @@ void ios(char led, bool v) {
   }
 }
 
+
+void bitmapToLcd(uint8_t bitmap[]) {
+	for (char yi=0; yi < 8; yi++) {
+    for (char xi=0; xi < 2; xi++) {
+    	uint8_t imgbyte = bitmap[yi * 2 + xi];
+    	for (char b = 0; b < 8; b++) {
+    		uint8_t color = (imgbyte << b) & 0b10000000;
+        int16_t xl = (int16_t)xi * 64 + (int16_t)b * 8;
+        int16_t yl = (int16_t)yi * 8;
+        uint16_t cl = color==0?BLACK:WHITE;
+        lcd.fillRect(xl, yl, 8, 8, cl);
+    	}
+    }
+	}
+}
+
+void lcdImg(char img, uint8_t bitmap[]) {
+  log(CLASS_MAIN, Debug, "Img '%c'", img);
+  lcd.clearDisplay();
+  switch (img) {
+    case 'w': // white
+      log(CLASS_BODY, Debug, "White face");
+      lcd.invertDisplay(true);
+      break;
+    case 'b': // black
+      log(CLASS_BODY, Debug, "Black face");
+      lcd.invertDisplay(false);
+      break;
+    case 's': // smily
+      log(CLASS_BODY, Debug, "Smile face");
+      lcd.drawBitmap(0, 0, happy, 128, 64, WHITE);
+      break;
+    case 'S': // sad
+      log(CLASS_BODY, Debug, "Sad face");
+      lcd.drawBitmap(0, 0, sad, 128, 64, WHITE);
+      break;
+    case 'n': // sad
+      log(CLASS_BODY, Debug, "Normal face");
+      lcd.drawBitmap(0, 0, normal, 128, 64, WHITE);
+      break;
+    case 'z': // sleepy
+      log(CLASS_BODY, Debug, "Sleepy face");
+      lcd.drawBitmap(0, 0, sleepy, 128, 64, WHITE);
+      break;
+    default:
+      log(CLASS_BODY, Debug, "Custom face: %c", img);
+    	if (bitmap != NULL) {
+        bitmapToLcd(bitmap); // custom
+    	}
+      break;
+  }
+  lcd.display();
+  delay(DELAY_MS_SPI);
+}
+
 /*****************/
 /***** SETUP *****/
 /*****************/
@@ -376,13 +372,8 @@ void setup() {
   log(CLASS_MAIN, Debug, "Setup module");
   m.setup();
 
-  m.getBody()->setSmilyFace(beSmily);
-  m.getBody()->setSadFace(beSad);
-  m.getBody()->setNormalFace(beNormal);
-  m.getBody()->setSleepyFace(beSleepy);
-  m.getBody()->setBlackFace(black);
-  m.getBody()->setWhiteFace(white);
-  m.getBody()->setArms(arms);
+  m.getBody()->setLcdImgFunc(lcdImg);
+  m.getBody()->setArmsFunc(arms);
   m.getBody()->setMessageFunc(messageOnLcd);
   m.getBody()->setIosFunc(ios);
   m.getPropSync()->setInitWifi(initWifiSteady);
@@ -403,13 +394,8 @@ void setup() {
   ios('w', false);
   ios('f', false);
 
-  log(CLASS_MAIN, Debug, "...Face weird");
-  imgToLcd(iii);; delay(5000);
-
-  log(CLASS_MAIN, Debug, "...Face normal"); delay(2000);
-  beNormal();
-  log(CLASS_MAIN, Debug, "...Face smily"); delay(2000);
-  beSmily();
+  log(CLASS_MAIN, Debug, "...Face test"); delay(2000);
+  lcdImg('c', testImg);
   log(CLASS_MAIN, Debug, "...Arms down"); delay(2000);
   arms(0, 0);
   log(CLASS_MAIN, Debug, "...Right arm up"); delay(2000);
