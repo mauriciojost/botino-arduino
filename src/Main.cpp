@@ -35,10 +35,8 @@ extern "C" {
 
 enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 
-#define DO_NOT_CLEAR_FIRST false
 #define DELAY_MS_SPI 3
-#define FRAG_TO_SLEEP_MS_MAX 500
-
+#define FRAG_TO_SLEEP_MS_MAX 1000 // maximum sleeping time for which the module can be unresponsive
 
 #ifndef SERVO_ARM_STEPS
 #define SERVO_ARM_STEPS 50
