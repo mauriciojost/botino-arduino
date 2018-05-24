@@ -33,14 +33,24 @@ public:
   static void hexStrCpy(uint8_t* outputText, const char* inputHex, size_t l) {
   	if (l % 2 == 0) {
       int i;
+      log(CLASS_HEXER, Debug, "Parse hex: %s", inputHex);
   		for(i = 0; i < l; i = i + 2) {
   			outputText[i / 2] = hexToValue(inputHex[i]) * 16 + hexToValue(inputHex[i + 1]);
+        log(CLASS_HEXER, Debug, "  %.2x <- %c %c", outputText[i / 2], inputHex[i], inputHex[i+1]);
   		}
   		outputText[i / 2] = 0;
   	} else {
   		outputText[0] = 0;
   	}
   }
+
+  // Prints string as hex
+  static void printHex(const uint8_t* str, uint8_t len) {
+    for (int i = 0; i < len; ++i) {
+      log(CLASS_HEXER, Debug, " %.2x", str[i]);
+    }
+  }
+
 };
 
 #endif // HEXER_INC

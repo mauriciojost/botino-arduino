@@ -281,7 +281,7 @@ public:
     }
 
     for (int i = 0; i < NRO_IMGS; i++) {
-      images[i] = new uint8_t[16];
+      images[i] = new uint8_t[IMG_SIZE_BYTES];
       for (int j = 0; j < IMG_SIZE_BYTES; j++) {
       	images[i][j] = defaultImg[j];
       }
@@ -379,7 +379,7 @@ public:
       }
       if (setMode == SetValue) {
         Buffer<IMG_SIZE_BYTES * 2> target(targetValue); // 2 chars per actual bitmap byte
-        Hexer::hexStrCpy((uint8_t*)&images[i], target.getBuffer(), IMG_SIZE_BYTES);
+        Hexer::hexStrCpy((uint8_t*)images[i], target.getBuffer(), IMG_SIZE_BYTES * 2);
       }
   	} else {
       switch (propIndex) {
