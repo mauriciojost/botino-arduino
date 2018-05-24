@@ -5,14 +5,14 @@
 - Add a move where you show a random fortune message
 - Allow to combine moves (first move 0, then move 1 x 2 times)
 - Version the docker images
-- Tell the name & chip ID during the init.
-- Tell the WIFI & pass you should set up in your hotspot phone for botino to access the internet.
 - Create script to set up wifi parameters for the first time.
 - Make a good pass and fix data types (avoid char, use better uint8 for instance)
 
 
 # DONE
 
+- Tell the WIFI & pass you should set up in your hotspot phone for botino to access the internet.
+- Tell the name & chip ID during the init.
 - Make the botino auto-document itself by publishing the instructions to a page -> Too complex, better simply improve the README.md
 - Allow to define new images via API
 - Set more meaningful default values -> Not clear after 2 weeks I wrote it, discarding
