@@ -143,8 +143,6 @@ private:
           case '3':
             lcdImgFunc('c', images[3]); // custom face 3
             break;
-          case '3':
-            break;
           default:
             log(CLASS_BODY, Debug, "Fixed face '%c'", c2);
             lcdImgFunc(c2, NULL);
