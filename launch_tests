@@ -41,6 +41,8 @@ general_flags="\
   -D MAX_LOG_MSG_LENGTH=256\
   -D OVERRUN_THRESHOLD_SECS=10000"
 
+platformio run
+
 for f in $(find test -name *.cpp)
 do
   echo ""
