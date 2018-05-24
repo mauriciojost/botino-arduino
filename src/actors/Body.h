@@ -30,6 +30,18 @@ void delay(int) {}
 
 #define IMG_SIZE_BYTES 16
 
+uint8_t defaultImg[16] = {
+						 0b00000000, 0b00000000,
+						 0b00000100, 0b00100000,
+						 0b00000000, 0b00000000,
+						 0b00000000, 0b00000000,
+						 0b00000100, 0b00100000,
+						 0b00000111, 0b11100000,
+						 0b00000000, 0b00000000,
+						 0b00000000, 0b00000000
+						 };
+
+
 enum BodyConfigState {
   BodyConfigMsg0 = 0,      // message 0
   BodyConfigMsg1,          // message 1
@@ -272,6 +284,9 @@ public:
 
     for (int i = 0; i < NRO_IMGS; i++) {
       images[i] = new uint8_t[16];
+      for (int j = 0; j < IMG_SIZE_BYTES; j++) {
+      	images[i][j] = defaultImg[j];
+      }
     }
   }
 
