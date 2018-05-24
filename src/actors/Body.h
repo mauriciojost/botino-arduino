@@ -120,16 +120,18 @@ private:
       case 'F':
       	switch (c2) {
           case '0':
-            lcdImgFunc(c2, images[0]); // custom face 0
+            lcdImgFunc('c', images[0]); // custom face 0
             break;
           case '1':
-            lcdImgFunc(c2, images[1]); // custom face 1
+            lcdImgFunc('c', images[1]); // custom face 1
             break;
           case '2':
-            lcdImgFunc(c2, images[2]); // custom face 2
+            lcdImgFunc('c', images[2]); // custom face 2
             break;
           case '3':
-            lcdImgFunc(c2, images[3]); // custom face 3
+            lcdImgFunc('c', images[3]); // custom face 3
+            break;
+          case '3':
             break;
           default:
             log(CLASS_BODY, Debug, "Fixed face '%c'", c2);
@@ -363,7 +365,7 @@ public:
         actualValue->load("*");
       }
       if (setMode == SetValue) {
-        Buffer<IMG_SIZE_BYTES * 2> target(targetValue);
+        Buffer<IMG_SIZE_BYTES * 2> target(targetValue); // 2 chars per actual bitmap byte
         Hexer::hexStrCpy((uint8_t*)&images[i], target.getBuffer(), IMG_SIZE_BYTES);
       }
   	} else {

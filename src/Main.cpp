@@ -327,11 +327,14 @@ void lcdImg(char img, uint8_t bitmap[]) {
       log(CLASS_BODY, Debug, "Sleepy face");
       lcd.drawBitmap(0, 0, sleepy, 128, 64, WHITE);
       break;
-    default:
+    case 'c': // custom
       log(CLASS_BODY, Debug, "Custom face: %c", img);
     	if (bitmap != NULL) {
         bitmapToLcd(bitmap); // custom
     	}
+      break;
+    default:
+      log(CLASS_BODY, Debug, "Unknown face: %c", img);
       break;
   }
   lcd.display();
