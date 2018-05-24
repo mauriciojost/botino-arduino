@@ -85,6 +85,17 @@ volatile unsigned char ints = 0;
 HTTPClient httpClient;
 RemoteDebug RDebug;
 
+char iii[16] = {
+						 0b00000000, 0b00000000,
+						 0b00000100, 0b00100000,
+						 0b00000000, 0b00000000,
+						 0b00000000, 0b00000000,
+						 0b00000100, 0b00100000,
+						 0b00000111, 0b11100000,
+						 0b00000000, 0b00000000,
+						 0b00000000, 0b00000000
+						 };
+
 /******************/
 /***  CALLBACKS ***/
 /******************/
@@ -122,6 +133,25 @@ void messageOnLcd(int line, const char *str, int size) {
   lcd.setTextColor(WHITE);
   lcd.setCursor(0, line * 2 * 8);
   lcd.println(str);
+  lcd.display();
+  delay(DELAY_MS_SPI);
+}
+
+void imgToLcd(char img[]) {
+  lcd.clearDisplay();
+	for (char yi=0; yi < 8; yi++) {
+    for (char xi=0; xi < 2; xi++) {
+    	char imgbyte = img[yi * 2 + xi];
+    	for (char b = 0; b < 8; b++) {
+    		char color = (imgbyte << b) & 0b10000000;
+        int16_t xl = (int16_t)xi * 64 + (int16_t)b * 8;
+        int16_t yl = (int16_t)yi * 8;
+        uint16_t cl = color==0?BLACK:WHITE;
+        lcd.fillRect(xl, yl, 8, 8, cl);
+        //log(CLASS_MAIN, Info, "LCD xl=%d/yl=%d->color=%d", xl, yl, color);
+    	}
+    }
+	}
   lcd.display();
   delay(DELAY_MS_SPI);
 }
@@ -372,6 +402,9 @@ void setup() {
   ios('y', false);
   ios('w', false);
   ios('f', false);
+
+  log(CLASS_MAIN, Debug, "...Face weird");
+  imgToLcd(iii);; delay(5000);
 
   log(CLASS_MAIN, Debug, "...Face normal"); delay(2000);
   beNormal();
