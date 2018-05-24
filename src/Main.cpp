@@ -1,4 +1,8 @@
-
+/**
+ * This file aims to be the only HW specific source code file in the whole project.
+ * The rest of the classes (and the 100% of their code) should be testeable without need
+ * of Arduino specific HW.
+ */
 #ifndef UNIT_TEST
 #include <Arduino.h>
 #include <Module.h>
