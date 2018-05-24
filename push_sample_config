@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 
+DEVICE=dev1
+
 PRETTY='python -m json.tool'
 
 # Set up settings
-curl -XPOST 'http://dweet.io/dweet/for/dev1-settings-target?lcddebug=true&crashclear=false&loglevel=0' | $PRETTY
+curl -XPOST "http://dweet.io/dweet/for/$DEVICE-settings-target?lcddebug=true&crashclear=false&loglevel=0" | $PRETTY
 
 # Set up body
-curl -XPOST 'http://dweet.io/dweet/for/dev1-body-target?mv0=Fs.A99A00W1.Mc4&msg0=HI%20YOU&t0=000000000&mv1=zzzMc4&t1=201010160&msg1=1MIN' | $PRETTY
+curl -XPOST "http://dweet.io/dweet/for/$DEVICE-body-target?mv0=F0.W4.Fs.W1.Mc4&msg0=HI%20YOU&t0=000000000&mv1=zzzMc4&t1=201010160&msg1=1MIN&im0=0000ffff0000000000000000ffff0000" | $PRETTY
 
 # Set up properties synchronizer
-curl -XPOST 'http://dweet.io/dweet/for/dev1-propsync-target?freq=201011060' | $PRETTY
+curl -XPOST "http://dweet.io/dweet/for/$DEVICE-propsync-target?freq=201010160" | $PRETTY
 
