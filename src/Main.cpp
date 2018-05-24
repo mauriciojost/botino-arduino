@@ -393,6 +393,12 @@ void setup() {
   log(CLASS_MAIN, Debug, "Setup interrupts");
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, RISING);
 
+  log(CLASS_MAIN, Error, "");
+  log(CLASS_MAIN, Error, "NAME: %s", DEVICE_NAME);
+  log(CLASS_MAIN, Error, "ID: %lu", ESP.getChipId());
+  log(CLASS_MAIN, Error, "");
+  delay(6000);
+
   log(CLASS_MAIN, Debug, "Init HW test routine"); delay(2000);
   ios('r', false);
   ios('y', false);
