@@ -87,14 +87,14 @@ volatile unsigned char ints = 0;
 HTTPClient httpClient;
 RemoteDebug RDebug;
 
-uint8_t testImg[16] = {
-						 0b00000000, 0b00000000,
-						 0b00000100, 0b00100000,
-						 0b00000000, 0b00000000,
-						 0b00000000, 0b00000000,
-						 0b00000100, 0b00100000,
-						 0b00000111, 0b11100000,
-						 0b00000000, 0b00000000,
+uint8_t initImage[16] = {
+						 0b01110000, 0b00000000,
+						 0b01001000, 0b00000000,
+						 0b01001000, 0b00000000,
+						 0b01110000, 0b01000000,
+						 0b01001000, 0b11100000,
+						 0b01001000, 0b01000000,
+						 0b01110000, 0b00110000,
 						 0b00000000, 0b00000000
 						 };
 
@@ -400,7 +400,7 @@ void setup() {
   ios('f', false);
 
   log(CLASS_MAIN, Debug, "...Face test"); delay(2000);
-  lcdImg('c', testImg);
+  lcdImg('c', initImage);
   log(CLASS_MAIN, Debug, "...Arms down"); delay(2000);
   arms(0, 0);
   log(CLASS_MAIN, Debug, "...Right arm up"); delay(2000);
