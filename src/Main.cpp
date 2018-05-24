@@ -89,7 +89,7 @@ volatile unsigned char ints = 0;
 HTTPClient httpClient;
 RemoteDebug RDebug;
 
-uint8_t initImage[16] = {
+uint8_t initImage[IMG_SIZE_BYTES] = {
 						 0b01110000, 0b00000000,
 						 0b01001000, 0b00000000,
 						 0b01001000, 0b00000000,
@@ -380,8 +380,9 @@ void lcdImg(char img, uint8_t bitmap[]) {
       lcd.drawBitmap(0, 0, sleepy, 128, 64, WHITE);
       break;
     case 'c': // custom
-      log(CLASS_BODY, Debug, "Custom face: %c", img);
+      log(CLASS_BODY, Debug, "Custom face", img);
     	if (bitmap != NULL) {
+        Hexer::printHex(bitmap, IMG_SIZE_BYTES);
         bitmapToLcd(bitmap); // custom
     	}
       break;
