@@ -8,6 +8,7 @@
 #include <actors/sync/ParamStream.h>
 #include <main4ino/Clock.h>
 #include <main4ino/Boolean.h>
+#include <Hexer.h>
 #ifdef UNIT_TEST
 #include <aes.h> // in C code
 #else
@@ -42,31 +43,6 @@ private:
   struct AES_ctx ctx;
   uint8_t key[KEY_LENGTH];
 
-  uint8_t hexToValue(char v) {
-  	if (v >= '0' && v <= '9') {
-  		return v - '0';
-  	} else if (v >= 'a' && v <= 'f') {
-  		return v - 'a' + 10;
-  	} else if (v >= 'A' && v <= 'F') {
-  		return v - 'A' + 10;
-  	} else {
-  		return 0;
-  	}
-  }
-
-  void hexStrCpy(uint8_t* outputText, const char* inputHex) {
-  	int l = strlen(inputHex);
-  	if (l % 2 == 0) {
-      int i;
-  		for(i = 0; i < l; i = i + 2) {
-  			outputText[i / 2] = hexToValue(inputHex[i]) * 16 + hexToValue(inputHex[i + 1]);
-  		}
-  		outputText[i / 2] = 0;
-  	} else {
-  		outputText[0] = 0;
-  	}
-  }
-
   void update() {
     bool connected = initWifiSteadyFunc();
     if (connected) {
@@ -95,7 +71,7 @@ private:
               // PASS recovery (encrypted and hex encoded)
               const char* p = content["pass"].as<char *>();
               strcpy(passEncHex, p);
-              hexStrCpy((uint8_t*)pass, passEncHex);
+              Hexer::hexStrCpy((uint8_t*)pass, passEncHex);
               decrypt((uint8_t*)pass);
 
             } else {
