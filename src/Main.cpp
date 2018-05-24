@@ -444,14 +444,18 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, RISING);
 
   log(CLASS_MAIN, Error, "");
+  log(CLASS_MAIN, Error, "");
   log(CLASS_MAIN, Error, "NAME: %s", DEVICE_NAME);
   log(CLASS_MAIN, Error, "ID: %lu", ESP.getChipId());
+  log(CLASS_MAIN, Error, "");
   log(CLASS_MAIN, Error, "");
   delay(6000);
 
   log(CLASS_MAIN, Error, "");
+  log(CLASS_MAIN, Error, "");
   log(CLASS_MAIN, Error, "SSID: %s", WIFI_SSID_INIT);
   log(CLASS_MAIN, Error, "PASS: %s", WIFI_PASSWORD_INIT);
+  log(CLASS_MAIN, Error, "");
   log(CLASS_MAIN, Error, "");
   delay(6000);
 
