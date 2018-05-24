@@ -1,14 +1,9 @@
 # TODO
 
 - Package electronics without breadboard
-- Set more meaningful default values
-- Improve extensibility of the amount of routines (today it's too much work)
 - Add repeat for routines
-- Make button execute a given configurable move too!
 - Add a move where you show a random fortune message
-- Allow to define new images via API
 - Allow to combine moves (first move 0, then move 1 x 2 times)
-- Make the botino auto-document itself by publishing the instructions to a page
 - Version the docker images
 - Tell the name & chip ID during the init.
 - Tell the WIFI & pass you should set up in your hotspot phone for botino to access the internet.
@@ -18,6 +13,11 @@
 
 # DONE
 
+- Make the botino auto-document itself by publishing the instructions to a page -> Too complex, better simply improve the README.md
+- Allow to define new images via API
+- Set more meaningful default values -> Not clear after 2 weeks I wrote it, discarding
+- Make button execute a given configurable move too!
+- Improve extensibility of the amount of routines (today it's too much work)
 - Regularly reinitialize LCD (too fragile for now) -> Not really needed if everything is well connected as now
 - Make the servo startup smoothly
 - Support button
