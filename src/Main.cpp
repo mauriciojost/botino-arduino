@@ -441,6 +441,7 @@ void setup() {
   m.getClockSync()->setHttpGet(httpGet);
   m.getSetupSync()->setInitWifiSteady(initWifiSteady);
   m.getSetupSync()->setInitWifiInit(initWifiInit);
+  m.getSetupSync()->setMessageFunc(messageOnLcd);
   m.getSetupSync()->setHttpGet(httpGet);
 
   log(CLASS_MAIN, Debug, "Setup interrupts");

@@ -39,6 +39,7 @@ private:
   bool (*initWifiSteadyFunc)();
   bool (*initWifiInitFunc)();
   int (*httpGet)(const char* url, ParamStream* response);
+  void (*messageFunc)(int line, const char *msg, int size);
 
   struct AES_ctx ctx;
   uint8_t key[KEY_LENGTH];
@@ -46,6 +47,12 @@ private:
   void update() {
     bool connected = initWifiSteadyFunc();
     if (connected) {
+    	bool firstTime = true;
+    	if (firstTime) {
+        messageFunc(0, "WIFI SETUP OK", 2);
+        delay(10000);
+    	}
+    	firstTime = false;
     	return; // nothing to be done, as already connected
     }
 
@@ -126,6 +133,7 @@ public:
     ssid[0] = 0;
     pass[0] = 0;
     httpGet = NULL;
+    messageFunc = NULL;
     for (int i = 0; i < KEY_LENGTH; i++) { // TODO make configurable
       key[i] = i;
     }
@@ -138,7 +146,7 @@ public:
 
   void act() {
 
-    if (initWifiSteadyFunc == NULL || initWifiInitFunc == NULL || httpGet == NULL) {
+    if (initWifiSteadyFunc == NULL || initWifiInitFunc == NULL || httpGet == NULL || messageFunc == NULL) {
       log(CLASS_SETUPSYNC, Error, "Init needed");
       return;
     }
@@ -157,6 +165,10 @@ public:
 
   void setHttpGet(int (*h)(const char* url, ParamStream* response)) {
   	httpGet = h;
+  }
+
+  void setMessageFunc(void (*f)(int line, const char *msg, int size)) {
+  	messageFunc = f;
   }
 
   void setProp(int propIndex, SetMode set, const Value *targetValue, Value *actualValue) {}
