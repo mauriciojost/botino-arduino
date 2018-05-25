@@ -111,15 +111,69 @@ private:
   }
 
   void performPose(char c1, char c2, char c3) {
-  	// Symbols of the poses documentation:
-  	// - 'c' stands for a predefined alpha-numerical character (any), examples: a 6 x O Y
-  	// - 'd' stands for a digit (only one, so a value between 0 and 9 inclusive), examples: 1 2 3 9 0
-  	// - 'b' stands for a character representing a boolean value (Y/y meaning true, other character meaning false), examples Y y N n
-  	// - '?' stands for any character that is not required for the pose (ignored)
+
+  	/*
+
+    POSES (3 char codes)
+    --------------------
+
+
+    WAIT POSES: wait d number of seconds (example 'W1.' waits 1 second)
+    Codes:
+      W1. : wait 1 second
+      ...
+      W9. : wait 9 seconds
+
+
+    FACE POSES: show a given image in the LCD
+    Codes:
+      Fw. : Face White
+      Fb. : Face Black
+      Fs. : Face Smily
+      FS. : Face Sad
+      Fn. : Face Normal
+      Fz. : Face Zleepy
+      F0. : Face custom 0
+      F1. : Face custom 1
+      F2. : Face custom 2
+      F3. : Face custom 3
+
+
+    ARMS POSES: move both arms to a given position each (left, then right)
+    Codes:
+      A00 : Move left and right arms to respective position 0 and 0 (both down)
+      ...
+      A90 : Move left and right arms to respective position 9 and 0 (left arm up)
+      ...
+      A99 : Move left and right arms to respective position 0 and 9 (both up)
+
+
+    MESSAGE POSES: show a certain message in the LCD with a given font size
+    Codes:
+      M01 : show message 0 with font size 1
+      M12 : show message 1 with font size 2
+      ...
+      M32 : show message 3 with font size 2
+      Mc2 : show message containing current time with font size 2
+
+
+    IO POSES: turn on/off a given IO device, such as LEDS or the FAN (on = y, off = n)
+    Codes:
+      Lry : turn on (y) the Red led
+      Lrn : turn off (n) the Red led
+      Lwy : turn on (y) led White
+      Lyy : turn on (y) led Yellow
+      Lfy : turn on (y) Fan
+
+
+    SPECIAL POSES
+    Codes:
+      zz. : turn all power consuming components off
+
+    */
 
     switch (c1) {
 
-      // Wd? : WAIT -> wait d number of seconds
       case 'W':
         {
           int v = getInt(c2);
@@ -128,29 +182,44 @@ private:
         }
         break;
 
-      // Fc? : FACES -> show a given image in the LCD
       case 'F':
       	switch (c2) {
           case '0':
-            lcdImgFunc('c', images[0]); // custom face 0
+            lcdImgFunc('c', images[0]);
             break;
           case '1':
-            lcdImgFunc('c', images[1]); // custom face 1
+            lcdImgFunc('c', images[1]);
             break;
           case '2':
-            lcdImgFunc('c', images[2]); // custom face 2
+            lcdImgFunc('c', images[2]);
             break;
           case '3':
-            lcdImgFunc('c', images[3]); // custom face 3
+            lcdImgFunc('c', images[3]);
+            break;
+          case 'w':
+            lcdImgFunc('w', NULL);
+            break;
+          case 'b':
+            lcdImgFunc('b', NULL);
+            break;
+          case 's':
+            lcdImgFunc('s', NULL);
+            break;
+          case 'S':
+            lcdImgFunc('S', NULL);
+            break;
+          case 'n':
+            lcdImgFunc('n', NULL);
+            break;
+          case 'z':
+            lcdImgFunc('z', NULL);
             break;
           default:
-            log(CLASS_BODY, Debug, "Fixed face '%c'", c2);
-            lcdImgFunc(c2, NULL);
+            log(CLASS_BODY, Debug, "Unknown face '%c'", c2);
             break;
       	}
       	break;
 
-      // Add : ARMS -> move both arms to a given position each (left, then right)
       case 'A':
         {
         	int l = getInt(c2);
@@ -160,30 +229,24 @@ private:
         }
       	break;
 
-      // Mc?: MESSAGES -> show certain messages in the LCD
       case 'M':
       	switch (c2) {
-          // 0 -> show message 0
           case '0':
             log(CLASS_BODY, Debug, "Message 0");
             messageFunc(0, msgs[0]->getBuffer(), getInt(c3));
             break;
-          // 1 -> show message 1
           case '1':
             log(CLASS_BODY, Debug, "Message 1");
             messageFunc(0, msgs[1]->getBuffer(), getInt(c3));
             break;
-          // 2 -> show message 2
           case '2':
             log(CLASS_BODY, Debug, "Message 2");
             messageFunc(0, msgs[2]->getBuffer(), getInt(c3));
             break;
-          // 3 -> show message 3
           case '3':
             log(CLASS_BODY, Debug, "Message 3");
             messageFunc(0, msgs[3]->getBuffer(), getInt(c3));
             break;
-          // c -> show message containing current time
           case 'c': {
           	{
               log(CLASS_BODY, Debug, "Message clock");
@@ -201,10 +264,8 @@ private:
       	}
       	break;
 
-      // Lcb: IO -> turn on/off a given IO device, such as LEDS or the FAN (true = ON)
       case 'L':
       	switch (c2) {
-          // r -> turn on/off led red
           case 'r':
             {
               bool b = getBool(c3);
@@ -212,7 +273,6 @@ private:
               iosFunc('r', b);
               break;
             }
-          // w -> turn on/off led white
           case 'w':
             {
               bool b = getBool(c3);
@@ -220,7 +280,6 @@ private:
               iosFunc('w', b);
               break;
             }
-          // y -> turn on/off led yellow
           case 'y':
             {
               bool b = getBool(c3);
@@ -228,7 +287,6 @@ private:
               iosFunc('y', b);
               break;
             }
-          // f -> turn on/off fan
           case 'f':
             {
               bool b = getBool(c3);
@@ -246,7 +304,6 @@ private:
 
         switch (GET_POSE(c1, c2)) {
 
-          // zz?: SWITCH OFF -> turn all power consuming components off
         	case GET_POSE('z', 'z'):
             iosFunc('r', false);
             iosFunc('w', false);
@@ -325,7 +382,7 @@ public:
   const char *getPropName(int propIndex) {
     switch (propIndex) {
       case (BodyConfigMsg0):
-        return "msg0";
+        return "msg0"; // message 0 (for any routine)
       case (BodyConfigMsg1):
         return "msg1";
       case (BodyConfigMsg2):
@@ -333,7 +390,7 @@ public:
       case (BodyConfigMsg3):
         return "msg3";
       case (BodyConfigMove0):
-        return "mv0";
+        return "mv0"; // move 0 (for routine 0)
       case (BodyConfigMove1):
         return "mv1";
       case (BodyConfigMove2):
@@ -341,7 +398,7 @@ public:
       case (BodyConfigMove3):
         return "mv3";
       case (BodyConfigImg0):
-        return "im0";
+        return "im0"; // image 0 (for any routine)
       case (BodyConfigImg1):
         return "im1";
      case (BodyConfigImg2):
@@ -349,7 +406,7 @@ public:
      case (BodyConfigImg3):
         return "im3";
      case (BodyConfigTime0):
-        return "t0";
+        return "t0"; // timing 0 (for routine 0)
       case (BodyConfigTime1):
         return "t1";
       case (BodyConfigTime2):
