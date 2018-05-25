@@ -4,23 +4,10 @@ This is a cool-geek-fully-configurable alarm project.
 
 Features:
 
-- WIFI setup
+- Innovative design
 - Setup via the internet / JSON
-- Clock display
-- Several messages
-- Several moves, which are a sequence of poses.
-- Several poses available, including among others:
-  - A given face expression (sad, smile, sleepy, ...)
-  - Several given custom LCD images 
-  - A given LCD message from the ones above
-  - A LCD display inversion
-  - A current-time display
-  - 3 individually controlled LEDs
-  - 2 individually controlled 10-position arms
-  - 1 fan
-  - Delays from 1 to 9 seconds
-- Several routines, each containing a frequency/time of triggering, and a move to perform
-- A button that triggers a move
+- Several configurable alarms
+- Highly customizable routines: face expressions, LCD custom images, messages, LEDs, arms, fan, among others.
 
 ## 1. Get It Started
 
@@ -40,26 +27,86 @@ Interaction with *Botino* is done via the Internet.
 
 You are the boss. You tell *Botino* what to do via HTTP queries. There are several settings you can tune. 
 
-#### General Settings
+*Botino*'s internal components are called actors. Each actor has a precise role, and a set of properties
+you can tune to get the behaviour you want.
 
-Using the name of your botino, write to the following URLs to change its behavior:
+#### Actor urls
 
-HTTP GET: http://dweet.io/get/latest/dweet/for/DEVICENAME-settings-target
-HTTP POST: http://dweet.io/get/latest/dweet/for/DEVICENAME-settings-current
+Any actor can be read or writen via the internet, performing HTTP verbs on defined URLS.
 
-#### Body Settings
+Just replace `DEVICENAME` with your device name, and `ACTORNAME` with the name of the actor you want to read/write.
 
-Using the name of your botino, write to the following URLs to change its behavior:
+To get the current status of the actor: 
 
-HTTP GET: http://dweet.io/get/latest/dweet/for/DEVICENAME-body-current
-HTTP POST: http://dweet.io/get/latest/dweet/for/DEVICENAME-body-target
+```
+HTTP GET: http://dweet.io/get/latest/dweet/for/DEVICENAME-ACTORNAME-target
+```
+
+To change the current status of the actor (follow the same schema as observed with GET):
+
+```
+HTTP POST: http://dweet.io/get/latest/dweet/for/DEVICENAME-ACTORNAME-current
+```
+
+#### Actor: Settings
+
+This actor is in charge of gather general purpose settings, mostly for development purposes. 
+
+Properties: see [here for more information](src/actors/Settings.h)
+
+#### Actor: Body
+
+This actor is the core of the alarm. 
+
+The most important concept is the routine. A routine is an move triggered at a specific moment. To define a routine it is
+required to have a move (to perform when it's time) and a timing (to determine when to perform).
+
+Properties: 
+
+- `tX` timing X (X from 0 to 3): timing for the corresponding routine X (see the timing documentation)
+- `mvX` move X (X from 0 to 3): move for the routine X, as a list of consecutive 3 letter-code for poses (see the poses documentation)
+- `msgX` message X (X from 0 to 3): examples are "HI", "HELLO", they can be displayed using a given pose
+- `imX` image X (X from 0 to 3): image in hexadecimal format, it can be displayed using a pose, see the image generator below for more information
+
+Properties: see [here for more information](src/actors/Body.h)
+
+[Image generator](https://docs.google.com/spreadsheets/d/1jXa9mFxeiN_bUji_WiCPKO_gB6pxQUeQ5QxgoSINqdc/edit#gid=0)
 
 
 # 2. Other information
 
+## Poses
+
+A pose is a status of a device. For instance a LED on, a fan off, a message in the LCD, etc.
+
+A sequence of poses make a move, which together with a timing make a routine. 
+
+Properties: see [here for more information](src/actors/Body.h)
+
 ## Timing
 
-Timing
+The frequency at which a given actor will act depends on its timing configuration. It can normally be set up as any other property of the actor.
+
+A timing is expressed as an integer value. It is possible to specify several types of timing: 
+
+### Never
+
+Simply `0` value.
+
+### Concrete date-time
+
+Simply `1DDHHMMSS` (DD for days, HH for hours, MM for minutes, SS for seconds). 
+
+For instance, if you want the actor to wake up at 15h00 any day, just set its frequency to `177150000` (read as 1 for concrete date-time mode, 77 for any day, 15 for 15h, 00 for 00m, and 00 for 00s).
+
+### Frequency
+
+Simply `2DDHHMMSS`. 
+
+The actor will act when the actual time component modulo the provided component equals zero. 
+
+For example: if you want the actor to wake up every 2 hours, just set its frequency to `201026060` (read as 2 for frequency mode, 01 for any day as any day modulo 1 will give 0, 02 for every 2 hours as pair hours modulo 2 will give 0 while odd hours will give 1 so no matching, 60 for matching only at 00m, and 00 for matching only at 00s).
+
 
 # 3. Contribute
 
