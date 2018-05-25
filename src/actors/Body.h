@@ -1,16 +1,13 @@
 #ifndef BODY_INC
 #define BODY_INC
 
-#ifdef UNIT_TEST
-void delay(int) {}
-#endif // UNIT_TEST
-
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Value.h>
 #include <main4ino/Buffer.h>
 #include <main4ino/Integer.h>
 #include <main4ino/Boolean.h>
+#include <main4ino/Misc.h>
 #include <Hexer.h>
 
 #define CLASS_BODY "BO"
