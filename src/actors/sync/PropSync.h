@@ -46,7 +46,7 @@ public:
     initWifiFunc = NULL;
     httpGet = NULL;
     httpPost = NULL;
-    freqConf.setFrequency(OnceEvery5Minutes);
+    freqConf.setFrequency(OnceEvery1Minute);
     freq = 0; // never
   }
 
