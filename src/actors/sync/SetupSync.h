@@ -21,6 +21,11 @@
 
 #define KEY_LENGTH 16 // AES128
 
+#ifndef ENCRYPT_KEY
+#define ENCRYPT_KEY "00112233445566778899aabbccddeeff"
+#endif // ENCRYPT_KEY
+
+
 #define N_BLOCKS 2 // 2 times KEY_LENGTH
 
 #define ENCRYPTION_BUFFER_SIZE (N_BLOCKS * KEY_LENGTH + 1) // encryption zone + trailing null character
@@ -49,7 +54,8 @@ private:
     if (connected) {
     	bool firstTime = true;
     	if (firstTime) {
-        messageFunc(0, "WIFI SETUP OK", 2);
+        log(CLASS_SETUPSYNC, Info, "WIFI SETUP OK!");
+        messageFunc(0, "WIFI SETUP OK!", 2);
         delay(10000);
     	}
     	firstTime = false;
@@ -134,9 +140,7 @@ public:
     pass[0] = 0;
     httpGet = NULL;
     messageFunc = NULL;
-    for (int i = 0; i < KEY_LENGTH; i++) { // TODO make configurable
-      key[i] = i;
-    }
+		Hexer::hexStrCpy(key, ENCRYPT_KEY, KEY_LENGTH * 2);
     AES_init_ctx(&ctx, key);
   }
 

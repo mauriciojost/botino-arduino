@@ -8,6 +8,7 @@
 - Create script to set up wifi parameters for the first time.
 - Make a good pass and fix data types (avoid char, use better uint8 for instance)
 - Create a way to ease the image creation
+- Make key for WIFI pass encryption configurable
 
 
 # DONE
