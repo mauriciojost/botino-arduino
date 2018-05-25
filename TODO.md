@@ -7,12 +7,12 @@
 - Version the docker images
 - Create script to set up wifi parameters for the first time.
 - Make a good pass and fix data types (avoid char, use better uint8 for instance)
-- Create a way to ease the image creation
-- Make key for WIFI pass encryption configurable
 
 
 # DONE
 
+- Create a way to ease the image creation -> spreadsheet
+- Make key for WIFI pass encryption configurable
 - Tell the WIFI & pass you should set up in your hotspot phone for botino to access the internet.
 - Tell the name & chip ID during the init.
 - Make the botino auto-document itself by publishing the instructions to a page -> Too complex, better simply improve the README.md
