@@ -5,11 +5,26 @@ DEVICE=dev1
 PRETTY='python -m json.tool'
 
 # Set up settings
-curl -XPOST "http://dweet.io/dweet/for/$DEVICE-settings-target?lcddebug=true&crashclear=false&loglevel=0" | $PRETTY
+url="http://dweet.io/dweet/for/$DEVICE-settings-target?"
+url+='lcddebug=true&'
+url+='crashclear=false&'
+url+='loglevel=0' 
+
+curl -XPOST $url | $PRETTY
 
 # Set up body
-curl -XPOST "http://dweet.io/dweet/for/$DEVICE-body-target?mv0=F0.W4.Fs.W1.Mc4&msg0=HI%20YOU&t0=000000000&mv1=zzzMc4&t1=201010160&msg1=1MIN&im0=0000ffff0000000000000000ffff0000" | $PRETTY
+url="http://dweet.io/dweet/for/$DEVICE-body-target?"
+url+="mv0=F0.W4.Fs.W1.Mc4&"
+url+="msg0=HI%20YOU&t0=000000000&"
+url+="mv1=zzzMc4&t1=201010160&"
+url+="msg1=1MIN&"
+url+="im0=0000024022442244200410080FF00000" 
+
+curl -XPOST $url | $PRETTY
 
 # Set up properties synchronizer
-curl -XPOST "http://dweet.io/dweet/for/$DEVICE-propsync-target?freq=201010160" | $PRETTY
+url="http://dweet.io/dweet/for/$DEVICE-propsync-target?"
+url+="freq=201010160"
+
+curl -XPOST $url | $PRETTY
 
