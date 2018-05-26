@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+PRETTY='python -m json.tool'
+
+DEVICE=$1
+WIFI_SSID=$2
+WIFI_PASSWORD=$3
+KEY=$4
+
+echo "# Creating input file (content $WIFI_PASSWORD)..."
+echo "$WIFI_PASSWORD" > body.bin
+
+echo "# Input file..."
+cat body.bin
+
+echo "# Encrypting file (key $KEY)..."
+echo $KEY | xxd -r -p | openssl enc -aes-128-ecb -nosalt -pass stdin -in body.bin -out body.ecb.bin  
+
+echo "# Showing output file..."
+WIFI_PASSWORD_ENCRYPTED=`xxd -l 120 -ps -c 20 body.ecb.bin`
+
+# Set up settings
+url="http://dweet.io/dweet/for/$DEVICE-setupsync-target?"
+url+="ssid=$WIFI_SSID&"
+url+="pass=$WIFI_PASSWORD_ENCRYPTED"
+echo $url
+curl -XPOST $url | $PRETTY
+
+echo "# Done."
