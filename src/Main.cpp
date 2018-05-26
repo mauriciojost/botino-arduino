@@ -211,7 +211,9 @@ void reactButton() {
   } else if (ints > 0 && !level) { // pressed the button, but not currently being pressed
     log(CLASS_MAIN, Debug, "Button quick (%d)...", ints);
     m.getSettings()->incrButtonPressed((int)ints);
-  	m.getBody()->performMove(0);
+    int routine = (int)random(0, NRO_ROUTINES);
+    log(CLASS_MAIN, Debug, "Routine %d...", routine);
+  	m.getBody()->performMove(routine);
   }
   digitalWrite(LEDW_PIN, HIGH);
   ints = 0;
