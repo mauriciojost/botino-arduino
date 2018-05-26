@@ -5,7 +5,7 @@ PRETTY='python -m json.tool'
 DEVICE=$1
 WIFI_SSID=$2
 WIFI_PASSWORD=$3
-KEY=$4
+KEY=${4:-11112233445566778899aabbccddeeff}
 
 echo "# Creating input file (content $WIFI_PASSWORD)..."
 echo "$WIFI_PASSWORD" > body.bin
