@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+DEVICE=$1
+
+PRETTY='python -m json.tool'
+
+# Set up general settings
+url="http://dweet.io/dweet/for/$DEVICE-settings-target?"
+url+='lcddebug=true&' # turn on LCD DEBUG (show logs in LCD)
+url+='crashclear=false&' # do not clear debug info (stacktraces) from device
+url+='loglevel=0' # log level to DEBUG (lowest)
+
+curl -XPOST $url | $PRETTY
+
+# Set up body
+url="http://dweet.io/dweet/for/$DEVICE-body-target?"
+url+="mv0=F0.W4.Fs.W1.Mc4&" # move 0
+url+="msg0=HI%20YOU&t0=000000000&" # message 0
+url+="mv1=zzzMc4&t1=201010160&" # move 1
+url+="msg1=1MIN&" # message 1
+url+="im0=0000024022442244200410080FF00000" # image 0
+
+curl -XPOST $url | $PRETTY
+
+# Set up properties synchronizer
+url="http://dweet.io/dweet/for/$DEVICE-propsync-target?"
+url+="freq=201010560" # sync all properties every 5 minutes
+
+curl -XPOST $url | $PRETTY
+
