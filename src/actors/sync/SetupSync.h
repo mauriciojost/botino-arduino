@@ -22,7 +22,7 @@
 #define KEY_LENGTH 16 // AES128
 
 #ifndef ENCRYPT_KEY
-#define ENCRYPT_KEY "11112233445566778899aabbccddeeff"
+#error "Must define ENCRYPT_KEY"
 #endif // ENCRYPT_KEY
 
 
@@ -52,7 +52,7 @@ private:
   void (*messageFunc)(int line, const char *msg, int size);
 
   struct AES_ctx ctx;
-  uint8_t key[KEY_LENGTH + 1]; // represented as a string, so N chars + 1 trailing null char
+  uint8_t key[KEY_LENGTH]; // represented as a string, so N chars + 1 trailing null char
 
   void update() {
     bool connected = initWifiSteadyFunc();
@@ -142,9 +142,6 @@ public:
     freqConf.setFrequency(OnceEvery1Minute);
 		Hexer::hexToByte(key, ENCRYPT_KEY, KEY_LENGTH * 2);
     AES_init_ctx(&ctx, key);
-
-    //log(CLASS_HEXER, Debug, "Using key:");
-    //logHex(CLASS_HEXER, Debug, (unsigned char *)key, KEY_LENGTH);
   }
 
   const char *getName() {
