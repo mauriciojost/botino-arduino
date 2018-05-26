@@ -399,7 +399,7 @@ void lcdImg(char img, uint8_t bitmap[]) {
 /*****************/
 
 void setup() {
-  Buffer<30> aux;
+  Buffer<32> aux;
 
   // Let HW startup
   delay(3 * 1000);
