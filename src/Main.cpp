@@ -175,7 +175,7 @@ void handleDebug() {
   Settings* s = m.getSettings();
 
 	// Handle stack-traces stored in memory
-  if (s->getClear()) {
+  if (s->getClear() && SaveCrash.count() > 0) {
     log(CLASS_MAIN, Debug, "Clearing stack-traces");
     SaveCrash.clear();
   } else {
