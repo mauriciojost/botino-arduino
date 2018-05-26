@@ -16,9 +16,9 @@ url="http://dweet.io/dweet/for/$DEVICE-body-target?"
 url+="im0=0000024022442244200410080FF00000&" # image 0 smily
 url+="im1=00001EF0021000000000000007E00000&" # image 0 doubtful
 url+="im2=00000280129010100FE0014001400080&" # image 0 mischeavious
-url+="msg0=KEEP%20CALM%20AND%20GIT%20PUSH&" # message 0
-url+="msg1=A%20BUG%20LIVES%20IN%20ME&" # message 1
-url+="msg2=KEEP%20IT%20CLEAN&" # message 2
+url+="msg0=KEEP%20CALM%0AAND%20GIT%20PUSH&" # message 0
+url+="msg1=A%20BUG%0ALIVES%0AIN%20ME&" # message 1
+url+="msg2=KEEP%20IT%0ACLEAN&" # message 2
 url+="mv0=A99A90A09F0.W4.M02W5.Mc4A00&" # move 0
 url+="mv1=A99A90A09F1.W4.M12W5.Mc4A00&" # move 1
 url+="mv2=A99A90A09F2.W4.M22W5.Mc4A00&" # move 2
