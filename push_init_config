@@ -6,18 +6,25 @@ PRETTY='python -m json.tool'
 
 # Set up general settings
 url="http://dweet.io/dweet/for/$DEVICE-settings-target?"
-url+='lcddebug=true&' # turn on LCD DEBUG (show logs in LCD)
+url+='lcddebug=false&' # turn on LCD DEBUG (show logs in LCD)
 url+='crashclear=false&' # do not clear debug info (stacktraces) from device
 url+='loglevel=0' # log level to DEBUG (lowest)
 curl -XPOST $url | $PRETTY
 
 # Set up body
 url="http://dweet.io/dweet/for/$DEVICE-body-target?"
-url+="mv0=F0.W4.Fs.W1.Mc4&" # move 0
-url+="msg0=HI%20YOU&t0=000000000&" # message 0
-url+="mv1=zzzMc4&t1=201010160&" # move 1
-url+="msg1=1MIN&" # message 1
-url+="im0=0000024022442244200410080FF00000" # image 0
+url+="im0=0000024022442244200410080FF00000&" # image 0 smily
+url+="im1=00001EF0021000000000000007E00000&" # image 0 doubtful
+url+="im2=00000280129010100FE0014001400080&" # image 0 mischeavious
+url+="msg0=KEEP%20CALM%20AND%20GIT%20PUSH&" # message 0
+url+="msg1=A%20BUG%20LIVES%20IN%20ME&" # message 1
+url+="msg2=KEEP%20IT%20CLEAN&" # message 2
+url+="mv0=A99A90A09F0.W4.M02W5.Mc4A00&" # move 0
+url+="mv1=A99A90A09F1.W4.M12W5.Mc4A00&" # move 1
+url+="mv2=A99A90A09F2.W4.M22W5.Mc4A00&" # move 2
+url+="t0=201011160&" # timing 0
+url+="t1=201011060&" # timing 1
+url+="t2=201012060&" # timing 2
 curl -XPOST $url | $PRETTY
 
 # Set up properties synchronizer
