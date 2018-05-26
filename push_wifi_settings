@@ -19,7 +19,7 @@ echo $KEY | xxd -r -p > pass
 openssl enc -aes-128-ecb -nosalt -K $KEY -in body.bin -out body.ecb.bin  
 
 echo "# Showing output file..."
-WIFI_PASSWORD_ENCRYPTED=`xxd -l 120 -ps -c 20 body.ecb.bin`
+WIFI_PASSWORD_ENCRYPTED=`xxd -ps body.ecb.bin`
 
 # Set up settings
 url="http://dweet.io/dweet/for/$DEVICE-setup?"
