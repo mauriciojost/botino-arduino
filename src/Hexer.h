@@ -25,21 +25,14 @@ private:
 
 public:
 
-  static void hexStrCpy(uint8_t* outputText, const char* inputHex) {
-  	int l = strlen(inputHex);
-    hexStrCpy(outputText, inputHex, l);
-  }
-
-  static void hexStrCpy(uint8_t* outputText, const char* inputHex, size_t l) {
-  	if (l % 2 != 0) {
-  		outputText[0] = 0;
+  static void hexToByte(uint8_t* bytes, const char* inputHex, size_t inputLen) {
+  	if (inputLen % 2 != 0) {
+      log(CLASS_HEXER, Error, "Bad hexa string (odd %d)", inputLen);
+  	} else {
+      for(int i = 0; i < inputLen; i = i + 2) {
+        bytes[i / 2] = hexToValue(inputHex[i]) * 16 + hexToValue(inputHex[i + 1]);
+      }
   	}
-
-    int i;
-    for(i = 0; i < l; i = i + 2) {
-      outputText[i / 2] = hexToValue(inputHex[i]) * 16 + hexToValue(inputHex[i + 1]);
-    }
-    outputText[l / 2] = 0;
   }
 
 };

@@ -89,8 +89,10 @@ private:
               // PASS recovery (encrypted and hex encoded)
               const char* p = content["pass"].as<char *>();
               strcpy(passEncHex, p);
-              Hexer::hexStrCpy((uint8_t*)pass, passEncHex);
+              Hexer::hexToByte((uint8_t*)pass, passEncHex, MINIM(strlen(passEncHex), ENCRYPTION_BUFFER_SIZE * 2));
               decrypt((uint8_t*)pass);
+
+              log(CLASS_SETUPSYNC, Debug, "GOT: %s %s ", ssid, pass);
 
             } else {
               log(CLASS_SETUPSYNC, Warn, "No 'ssid'");
@@ -138,8 +140,11 @@ public:
     httpGet = NULL;
     messageFunc = NULL;
     freqConf.setFrequency(OnceEvery1Minute);
-		Hexer::hexStrCpy(key, ENCRYPT_KEY, KEY_LENGTH * 2);
+		Hexer::hexToByte(key, ENCRYPT_KEY, KEY_LENGTH * 2);
     AES_init_ctx(&ctx, key);
+
+    //log(CLASS_HEXER, Debug, "Using key:");
+    //logHex(CLASS_HEXER, Debug, (unsigned char *)key, KEY_LENGTH);
   }
 
   const char *getName() {
