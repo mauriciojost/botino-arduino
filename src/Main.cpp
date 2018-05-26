@@ -377,7 +377,7 @@ void lcdImg(char img, uint8_t bitmap[]) {
     case 'c': // custom
       log(CLASS_BODY, Debug, "Custom face", img);
     	if (bitmap != NULL) {
-        Hexer::printHex(bitmap, IMG_SIZE_BYTES);
+        logHex(CLASS_BODY, Debug, bitmap, IMG_SIZE_BYTES);
         bitmapToLcd(bitmap); // custom
     	}
       break;

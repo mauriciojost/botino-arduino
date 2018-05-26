@@ -106,34 +106,26 @@ private:
   }
 
   void encrypt(const uint8_t* buffer) {
-    log(CLASS_SETUPSYNC, Debug, "Original: %s", buffer);
+    log(CLASS_SETUPSYNC, Debug, "Original: ");
+    logHex(CLASS_SETUPSYNC, Debug, buffer, ENCRYPTION_BUFFER_SIZE);
     for (int i = 0; i < N_BLOCKS; ++i) {
     	const uint8_t* bufferBlock = buffer + (i * KEY_LENGTH);
-      phex("Original buffer", bufferBlock);
       AES_ECB_encrypt(&ctx, bufferBlock);
-      phex("Encrypted buffer", bufferBlock);
     }
+    log(CLASS_SETUPSYNC, Debug, "Encrypted: ");
+    logHex(CLASS_SETUPSYNC, Debug, buffer, ENCRYPTION_BUFFER_SIZE);
   }
 
   void decrypt(const uint8_t* buffer) {
+    log(CLASS_SETUPSYNC, Debug, "Encrypted: ");
+    logHex(CLASS_SETUPSYNC, Debug, buffer, ENCRYPTION_BUFFER_SIZE);
     for (int i = 0; i < N_BLOCKS; ++i) {
     	const uint8_t* bufferBlock = buffer + (i * KEY_LENGTH);
-      phex("Encrypted buffer", bufferBlock);
       AES_ECB_decrypt(&ctx, bufferBlock);
-      phex("Decrypted buffer", bufferBlock);
     }
-    log(CLASS_SETUPSYNC, Debug, "Decrypted: %s", buffer);
+    log(CLASS_SETUPSYNC, Debug, "Decrypted: ");
+    logHex(CLASS_SETUPSYNC, Debug, buffer, ENCRYPTION_BUFFER_SIZE);
   }
-
-  // Prints string as hex
-  void phex(const char* name, const uint8_t* str) {
-    uint8_t len = KEY_LENGTH;
-    log(CLASS_SETUPSYNC, Debug, "%s contains:", name);
-    for (int i = 0; i < len; ++i) {
-      log(CLASS_SETUPSYNC, Debug, " %.2x", str[i]);
-    }
-  }
-
 
 public:
 

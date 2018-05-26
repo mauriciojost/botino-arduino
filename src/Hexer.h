@@ -44,13 +44,6 @@ public:
   	}
   }
 
-  // Prints string as hex
-  static void printHex(const uint8_t* str, uint8_t len) {
-    for (int i = 0; i < len; ++i) {
-      log(CLASS_HEXER, Debug, " %.2x", str[i]);
-    }
-  }
-
 };
 
 #endif // HEXER_INC
