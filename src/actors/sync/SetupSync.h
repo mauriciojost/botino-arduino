@@ -30,6 +30,11 @@
 
 #define ENCRYPTION_BUFFER_SIZE (N_BLOCKS * KEY_LENGTH + 1) // encryption zone + trailing null character
 
+enum SetupSyncConfigState {
+  SetupSyncConfigFreq = 0,
+  SetupSyncConfigDelimiter // delimiter of the configuration states
+};
+
 /**
 * This actor performs WIFI setup via HTTP.
 */
@@ -132,7 +137,7 @@ private:
 
 public:
 
-  SetupSync(const char *n) : freqConf(OnceEvery5Minutes) {
+  SetupSync(const char *n) {
     name = n;
     initWifiSteadyFunc = NULL;
     initWifiInitFunc = NULL;
@@ -140,6 +145,7 @@ public:
     pass[0] = 0;
     httpGet = NULL;
     messageFunc = NULL;
+    freqConf.setFrequency(OnceEvery1Minute);
 		Hexer::hexStrCpy(key, ENCRYPT_KEY, KEY_LENGTH * 2);
     AES_init_ctx(&ctx, key);
   }
@@ -175,14 +181,34 @@ public:
   	messageFunc = f;
   }
 
-  void setProp(int propIndex, SetMode set, const Value *targetValue, Value *actualValue) {}
+  void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
+    switch (propIndex) {
+      case (SetupSyncConfigFreq):
+        {
+          long freq = freqConf.getCustom();
+          setPropLong(setMode, targetValue, actualValue, &freq);
+          if (setMode == SetValue) {
+            freqConf.setCustom(freq);
+            freqConf.setFrequency(Custom);
+          }
+        }
+        break;
+      default:
+        break;
+    }
+  }
 
   int getNroProps() {
-    return 0;
+    return SetupSyncConfigDelimiter;
   }
 
   const char *getPropName(int propIndex) {
-    return "";
+    switch (propIndex) {
+      case (SetupSyncConfigFreq):
+        return "freq";
+      default:
+        return "";
+    }
   }
 
   void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}

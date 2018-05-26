@@ -37,7 +37,6 @@ private:
   bool (*initWifiFunc)();
   int (*httpGet)(const char* url, ParamStream* response);
   int (*httpPost)(const char* url, const char* body, ParamStream* response);
-  long freq; // custom frequency
 
 public:
   PropSync(const char *n) {
@@ -47,7 +46,6 @@ public:
     httpGet = NULL;
     httpPost = NULL;
     freqConf.setFrequency(OnceEvery1Minute);
-    freq = 0; // never
   }
 
   void setBot(SerBot *b) {
@@ -123,10 +121,13 @@ public:
   void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
       case (PropSyncConfigFreq):
-        setPropLong(setMode, targetValue, actualValue, &freq);
-        if (setMode == SetValue) {
-          freqConf.setCustom(freq);
-          freqConf.setFrequency(Custom);
+        {
+          long freq = freqConf.getCustom();
+          setPropLong(setMode, targetValue, actualValue, &freq);
+          if (setMode == SetValue) {
+            freqConf.setCustom(freq);
+            freqConf.setFrequency(Custom);
+          }
         }
         break;
       default:
