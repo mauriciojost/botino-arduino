@@ -507,8 +507,9 @@ void loop() {
   handleDebug();
 
   unsigned long periodMs = m.getSettings()->getPeriodSeconds() * 1000;
-  unsigned long spentMs = 0;
+  unsigned long spentMs = millis() - t1;
 
+  log(CLASS_MAIN, Info, "Duty cycle: %lu / %lu", spentMs, periodMs);
   log(CLASS_MAIN, Info, "Li-sleep ( %lu ms)...", periodMs);
   while(spentMs < periodMs) {
 
