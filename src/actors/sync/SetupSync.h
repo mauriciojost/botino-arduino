@@ -49,7 +49,6 @@ private:
   bool (*initWifiSteadyFunc)();
   bool (*initWifiInitFunc)();
   int (*httpGet)(const char* url, ParamStream* response);
-  void (*messageFunc)(int line, const char *msg, int size);
 
   struct AES_ctx ctx;
   uint8_t key[KEY_LENGTH]; // represented as a string, so N chars + 1 trailing null char
@@ -57,13 +56,6 @@ private:
   void update() {
     bool connected = initWifiSteadyFunc();
     if (connected) {
-    	bool firstTime = true;
-    	if (firstTime) {
-        log(CLASS_SETUPSYNC, Info, "WIFI SETUP OK!");
-        messageFunc(0, "WIFI SETUP OK!", 2);
-        delay(10000);
-    	}
-    	firstTime = false;
     	return; // nothing to be done, as already connected
     }
 
@@ -138,7 +130,6 @@ public:
     strcpy(ssid, "???");
     strcpy(pass, "???");
     httpGet = NULL;
-    messageFunc = NULL;
     freqConf.setFrequency(OnceEvery1Minute);
 		Hexer::hexToByte(key, ENCRYPT_KEY, KEY_LENGTH * 2);
     AES_init_ctx(&ctx, key);
@@ -150,7 +141,7 @@ public:
 
   void act() {
 
-    if (initWifiSteadyFunc == NULL || initWifiInitFunc == NULL || httpGet == NULL || messageFunc == NULL) {
+    if (initWifiSteadyFunc == NULL || initWifiInitFunc == NULL || httpGet == NULL) {
       log(CLASS_SETUPSYNC, Error, "Init needed");
       return;
     }
@@ -169,10 +160,6 @@ public:
 
   void setHttpGet(int (*h)(const char* url, ParamStream* response)) {
   	httpGet = h;
-  }
-
-  void setMessageFunc(void (*f)(int line, const char *msg, int size)) {
-  	messageFunc = f;
   }
 
   void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {

@@ -125,18 +125,27 @@ void lcdPrintLogLine(const char *logStr, int line) {
   delay(DELAY_MS_SPI);
 }
 
-bool initWifi(const char *ssid, const char *pass) {
+bool initWifi(const char *ssid, const char *pass, bool skipIfConnected) {
+  wl_status_t status;
   log(CLASS_MAIN, Info, "Connecting to %s ...", ssid);
 
-  WiFi.persistent(false);
-  WiFi.mode(WIFI_OFF); // to be removed after SDK update to 1.5.4
+  if (skipIfConnected) {
+    status = WiFi.status();
+    if (status == WL_CONNECTED) {
+      log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
+      return true; // connected
+    }
+  } else {
+    WiFi.persistent(false);
+    WiFi.mode(WIFI_OFF); // to be removed after SDK update to 1.5.4
+  }
+
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, pass);
 
-  wl_status_t status;
   int attemptsLeft = 10;
   while (true) {
-    delay(1500);
+    delay(2500);
     status = WiFi.status();
     log(CLASS_MAIN, Info, " attempts %d", attemptsLeft);
     attemptsLeft--;
@@ -274,14 +283,21 @@ void arms(int left, int right) {
 
 bool initWifiInit() {
   log(CLASS_PROPSYNC, Info, "Init wifi init %s", WIFI_SSID_INIT);
-  return initWifi(WIFI_SSID_INIT, WIFI_PASSWORD_INIT);
+  return initWifi(WIFI_SSID_INIT, WIFI_PASSWORD_INIT, false);
 }
 
 bool initWifiSteady() {
+	bool connectedOnce = false;
   const char *wifiSsid = m.getSetupSync()->getSsid();
   const char *wifiPass = m.getSetupSync()->getPass();
   log(CLASS_PROPSYNC, Info, "Init wifi steady %s", wifiSsid);
-  return initWifi(wifiSsid, wifiPass);
+  bool connected = initWifi(wifiSsid, wifiPass, connectedOnce);
+  if (connected && !connectedOnce) { // first time
+  	messageOnLcd(0, "WIFI SETUP OK", 2);
+  	delay(10 * 1000);
+  }
+  connectedOnce = connectedOnce || connected;
+  return connected;
 }
 
 int httpGet(const char *url, ParamStream *response) {
@@ -436,7 +452,6 @@ void setup() {
   m.getClockSync()->setHttpGet(httpGet);
   m.getSetupSync()->setInitWifiSteady(initWifiSteady);
   m.getSetupSync()->setInitWifiInit(initWifiInit);
-  m.getSetupSync()->setMessageFunc(messageOnLcd);
   m.getSetupSync()->setHttpGet(httpGet);
 
   log(CLASS_MAIN, Debug, "Setup interrupts");
