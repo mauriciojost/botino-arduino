@@ -128,16 +128,16 @@ void lcdPrintLogLine(const char *logStr, int line) {
 bool initWifi(const char *ssid, const char *pass) {
   log(CLASS_MAIN, Info, "Connecting to %s ...", ssid);
 
+  WiFi.persistent(false);
+  WiFi.mode(WIFI_OFF); // to be removed after SDK update to 1.5.4
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, pass);
+
   wl_status_t status = WiFi.status();
   if (status == WL_CONNECTED) {
     log(CLASS_MAIN, Debug, "Already connected (%s), skipping", WiFi.localIP().toString().c_str());
     return true; // connected
   }
-
-  WiFi.persistent(false);
-  WiFi.mode(WIFI_OFF); // to be removed after SDK update to 1.5.4
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, pass);
 
   int attemptsLeft = 10;
   while (true) {
