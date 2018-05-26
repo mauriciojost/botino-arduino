@@ -141,8 +141,8 @@ public:
     name = n;
     initWifiSteadyFunc = NULL;
     initWifiInitFunc = NULL;
-    ssid[0] = 0;
-    pass[0] = 0;
+    strcpy(ssid, "???");
+    strcpy(pass, "???");
     httpGet = NULL;
     messageFunc = NULL;
     freqConf.setFrequency(OnceEvery1Minute);

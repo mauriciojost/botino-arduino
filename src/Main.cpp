@@ -133,14 +133,10 @@ bool initWifi(const char *ssid, const char *pass) {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, pass);
 
-  wl_status_t status = WiFi.status();
-  if (status == WL_CONNECTED) {
-    log(CLASS_MAIN, Debug, "Already connected (%s), skipping", WiFi.localIP().toString().c_str());
-    return true; // connected
-  }
-
+  wl_status_t status;
   int attemptsLeft = 10;
   while (true) {
+    delay(1500);
     status = WiFi.status();
     log(CLASS_MAIN, Info, " attempts %d", attemptsLeft);
     attemptsLeft--;
@@ -152,7 +148,6 @@ bool initWifi(const char *ssid, const char *pass) {
       log(CLASS_MAIN, Warn, "Connection failed %d", status);
       return false; // not connected
     }
-    delay(1500);
   }
 }
 
