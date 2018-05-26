@@ -80,7 +80,7 @@ public:
  *
  * Routines are configurable in both senses: timing and moves.
  */
-class Body : public Actor, Hexer {
+class Body : public Actor {
 
 private:
   const char *name;
@@ -433,7 +433,7 @@ public:
       }
       if (setMode == SetValue) {
         Buffer<IMG_SIZE_BYTES * 2> target(targetValue); // 2 chars per actual bitmap byte
-        hexStrCpy((uint8_t*)images[i], target.getBuffer(), IMG_SIZE_BYTES * 2);
+        Hexer::hexStrCpy((uint8_t*)images[i], target.getBuffer(), IMG_SIZE_BYTES * 2);
       }
   	} else {
       switch (propIndex) {
