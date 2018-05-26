@@ -110,3 +110,5 @@
 /src/AES_config.h
 /html/
 /latex/
+/body.bin
+/body.ecb.bin

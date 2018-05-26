@@ -22,7 +22,7 @@
 #define KEY_LENGTH 16 // AES128
 
 #ifndef ENCRYPT_KEY
-#define ENCRYPT_KEY "00112233445566778899aabbccddeeff"
+#define ENCRYPT_KEY "11112233445566778899aabbccddeeff"
 #endif // ENCRYPT_KEY
 
 
