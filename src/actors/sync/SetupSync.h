@@ -52,7 +52,7 @@ private:
   void (*messageFunc)(int line, const char *msg, int size);
 
   struct AES_ctx ctx;
-  uint8_t key[KEY_LENGTH];
+  uint8_t key[KEY_LENGTH + 1]; // represented as a string, so N chars + 1 trailing null char
 
   void update() {
     bool connected = initWifiSteadyFunc();
