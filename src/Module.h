@@ -21,9 +21,9 @@
 class Module {
 
 private:
+  SetupSync *setupSync;
   PropSync *propSync;
   ClockSync *clockSync;
-  SetupSync *setupSync;
   Array<Actor *> *actors;
   Clock *clock;
   Settings *settings;
@@ -33,17 +33,17 @@ private:
 public:
   Module() {
 
+    setupSync = new SetupSync("setupsync");
     propSync = new PropSync("propsync");
     clockSync = new ClockSync("clocksync");
-    setupSync = new SetupSync("setupsync");
     clock = new Clock("clock");
     settings = new Settings("settings");
     body = new Body("body");
 
     actors = new Array<Actor *>(6);
-    actors->set(0, (Actor *)propSync);
-    actors->set(1, (Actor *)clockSync);
-    actors->set(2, (Actor *)setupSync);
+    actors->set(0, (Actor *)setupSync);
+    actors->set(1, (Actor *)propSync);
+    actors->set(2, (Actor *)clockSync);
     actors->set(3, (Actor *)clock);
     actors->set(4, (Actor *)settings);
     actors->set(5, (Actor *)body);
@@ -87,6 +87,10 @@ public:
     return body;
   }
 
+  SetupSync *getSetupSync() {
+    return setupSync;
+  }
+
   PropSync *getPropSync() {
     return propSync;
   }
@@ -95,9 +99,6 @@ public:
     return clockSync;
   }
 
-  SetupSync *getSetupSync() {
-    return setupSync;
-  }
 };
 
 #endif // MODULE_INC
