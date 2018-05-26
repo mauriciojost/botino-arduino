@@ -36,12 +36,10 @@ public:
   	}
 
     int i;
-    log(CLASS_HEXER, Debug, "Parse hex: %s", inputHex);
     for(i = 0; i < l; i = i + 2) {
       outputText[i / 2] = hexToValue(inputHex[i]) * 16 + hexToValue(inputHex[i + 1]);
     }
-    outputText[i / 2] = 0;
-    logHex(CLASS_HEXER, Debug, outputText, l / 2);
+    outputText[l / 2] = 0;
   }
 
 };
