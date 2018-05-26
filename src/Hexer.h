@@ -7,11 +7,14 @@
 
 /**
 * This class is a helper for hexadecimal transformations.
+*
+* To be inherited.
 */
 class Hexer {
 
 private:
-  static uint8_t hexToValue(char v) {
+
+  uint8_t hexToValue(char v) {
   	if (v >= '0' && v <= '9') {
   		return v - '0';
   	} else if (v >= 'a' && v <= 'f') {
@@ -25,12 +28,12 @@ private:
 
 public:
 
-  static void hexStrCpy(uint8_t* outputText, const char* inputHex) {
+  void hexStrCpy(uint8_t* outputText, const char* inputHex) {
   	int l = strlen(inputHex);
     hexStrCpy(outputText, inputHex, l);
   }
 
-  static void hexStrCpy(uint8_t* outputText, const char* inputHex, size_t l) {
+  void hexStrCpy(uint8_t* outputText, const char* inputHex, size_t l) {
   	if (l % 2 == 0) {
       int i;
       //log(CLASS_HEXER, Debug, "Parse hex: %s", inputHex);
@@ -45,7 +48,7 @@ public:
   }
 
   // Prints string as hex
-  static void printHex(const uint8_t* str, uint8_t len) {
+  void printHex(const uint8_t* str, uint8_t len) {
     for (int i = 0; i < len; ++i) {
       log(CLASS_HEXER, Debug, " %.2x", str[i]);
     }

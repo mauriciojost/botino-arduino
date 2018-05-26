@@ -38,7 +38,7 @@ enum SetupSyncConfigState {
 /**
 * This actor performs WIFI setup via HTTP.
 */
-class SetupSync : public Actor {
+class SetupSync : public Actor, Hexer {
 
 private:
   const char *name;
@@ -89,7 +89,7 @@ private:
               // PASS recovery (encrypted and hex encoded)
               const char* p = content["pass"].as<char *>();
               strcpy(passEncHex, p);
-              Hexer::hexStrCpy((uint8_t*)pass, passEncHex);
+              hexStrCpy((uint8_t*)pass, passEncHex);
               decrypt((uint8_t*)pass);
 
             } else {
@@ -146,7 +146,7 @@ public:
     httpGet = NULL;
     messageFunc = NULL;
     freqConf.setFrequency(OnceEvery1Minute);
-		Hexer::hexStrCpy(key, ENCRYPT_KEY, KEY_LENGTH * 2);
+		hexStrCpy(key, ENCRYPT_KEY, KEY_LENGTH * 2);
     AES_init_ctx(&ctx, key);
   }
 
