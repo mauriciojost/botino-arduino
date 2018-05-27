@@ -305,7 +305,7 @@ int httpGet(const char *url, ParamStream *response) {
   httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
 
   int errorCode = httpClient.GET();
-  log(CLASS_MAIN, Info, "GET:%d%s", errorCode, url);
+  log(CLASS_MAIN, Info, "GET:%d %s", errorCode, url);
 
   if (errorCode > 0) {
     response->flush();
@@ -326,7 +326,7 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
   httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
 
   int errorCode = httpClient.POST(body);
-  log(CLASS_MAIN, Info, "POST:%d%s", errorCode, url);
+  log(CLASS_MAIN, Info, "POST:%d %s", errorCode, url);
 
   if (errorCode > 0) {
     response->flush();
@@ -457,10 +457,10 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, RISING);
 
   log(CLASS_MAIN, Debug, "Infos");
-  aux.fill("NAME: %s", DEVICE_NAME); messageOnLcd(0, aux.getBuffer(), 2); delay(3000);
-  aux.fill("ID: %d", ESP.getChipId()); messageOnLcd(0, aux.getBuffer(), 2); delay(3000);
-  aux.fill("SSID: %s", WIFI_SSID_INIT); messageOnLcd(0, aux.getBuffer(), 2); delay(3000);
-  aux.fill("PASS: %s", WIFI_PASSWORD_INIT); messageOnLcd(0, aux.getBuffer(), 2); delay(3000);
+  aux.fill("NAME:\n %s", DEVICE_NAME); messageOnLcd(0, aux.getBuffer(), 2); delay(3000);
+  aux.fill("ID:\n %d", ESP.getChipId()); messageOnLcd(0, aux.getBuffer(), 2); delay(3000);
+  aux.fill("SSID:\n %s", WIFI_SSID_INIT); messageOnLcd(0, aux.getBuffer(), 2); delay(3000);
+  aux.fill("PASS:\n %s", WIFI_PASSWORD_INIT); messageOnLcd(0, aux.getBuffer(), 2); delay(3000);
 
   log(CLASS_MAIN, Debug, "HW test"); delay(2000);
   ios('r', false);
