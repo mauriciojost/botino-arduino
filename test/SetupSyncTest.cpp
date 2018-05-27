@@ -23,10 +23,6 @@ bool initWifiSteady() {
   return false; // not connected
 }
 
-void messageFunc(int line, const char *msg, int size) {
-  log(LOG_CLASS, Info, "MSG (size %d): %s", size, msg);
-}
-
 int httpGetMockPassHello(const char *url, ParamStream *response) {
   if (strcmp("http://dweet.io/get/latest/dweet/for/device1-setup", url) == 0) {
   	// Pass generated using function AES mode ECB with incremental hex key 000102...0f from http://aes.online-domain-tools.com/
@@ -56,7 +52,6 @@ void test_setupsync_syncs_properties() {
   p.setInitWifiSteady(initWifiSteady);
   p.setHttpGet(httpGetMockPassHello);
   p.setHttpGet(httpGetMockPassHello);
-  p.setMessageFunc(messageFunc);
 
   p.getFrequencyConfiguration()->setFrequency(OnceEvery1Second);
 
@@ -75,7 +70,6 @@ void test_setupsync_syncs_properties_longer() {
   p.setInitWifiInit(initWifiInit);
   p.setInitWifiSteady(initWifiSteady);
   p.setHttpGet(httpGetMockPassHelloMyLittleDarling);
-  p.setMessageFunc(messageFunc);
 
   p.getFrequencyConfiguration()->setFrequency(OnceEvery1Second);
 
