@@ -289,7 +289,7 @@ bool initWifiInit() {
 }
 
 bool initWifiSteady() {
-	bool connectedOnce = false;
+	static bool connectedOnce = false;
   const char *wifiSsid = m.getSetupSync()->getSsid();
   const char *wifiPass = m.getSetupSync()->getPass();
   log(CLASS_PROPSYNC, Info, "Init wifi steady %s", wifiSsid);
