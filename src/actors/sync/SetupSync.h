@@ -85,7 +85,7 @@ private:
               Hexer::hexToByte((uint8_t*)pass, passEncHex, MINIM(strlen(passEncHex), ENCRYPTION_BUFFER_SIZE * 2));
               decrypt((uint8_t*)pass);
 
-              log(CLASS_SETUPSYNC, Debug, "GOT: %s %s ", ssid, pass);
+              log(CLASS_SETUPSYNC, Debug, "SETUP:%s/***", ssid);
 
             } else {
               log(CLASS_SETUPSYNC, Warn, "No 'ssid'");
