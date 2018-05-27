@@ -56,6 +56,7 @@ private:
   void update() {
     bool connected = initWifiSteadyFunc();
     if (connected) {
+    	freqConf.setFrequency(Never);
     	return; // nothing to be done, as already connected
     }
 
