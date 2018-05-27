@@ -428,12 +428,12 @@ public:
       routines[i]->timing.setCustom(routines[i]->timingConf);
     } else if (propIndex >= BodyConfigImg0 && propIndex < (NRO_IMGS + BodyConfigImg0)) {
       int i = (int)propIndex - (int)BodyConfigImg0;
-      if (actualValue != NULL) {
-        actualValue->load("*");
-      }
       if (setMode == SetValue) {
         Buffer<IMG_SIZE_BYTES * 2> target(targetValue); // 2 chars per actual bitmap byte
         Hexer::hexToByte((uint8_t*)images[i], target.getBuffer(), MINIM((strlen(target.getBuffer())), (IMG_SIZE_BYTES * 2)));
+      }
+      if (actualValue != NULL) {
+        actualValue->load("*");
       }
   	} else {
       switch (propIndex) {
