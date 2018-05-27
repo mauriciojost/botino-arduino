@@ -292,6 +292,7 @@ bool initWifiSteady() {
   bool connected = initWifi(wifiSsid, wifiPass, connectedOnce);
   if (connected && !connectedOnce) { // first time
   	messageOnLcd(0, "WIFI SETUP OK", 2);
+    log(CLASS_MAIN, Info, "WIFI SETUP OK");
   	delay(10 * 1000);
   }
   connectedOnce = connectedOnce || connected;
