@@ -109,18 +109,19 @@ void lcdClear(int line) {
   lcd.fillRect(0, line * 8, 128, 8, BLACK);
 }
 
-void lcdPrintLogLine(const char *logStr, int line) {
-  bool lcdDebugEnabled = m.getSettings()->getLcdDebug();
-  if (!lcdDebugEnabled) {
+void lcdPrintLogLine(const char *logStr) {
+  if (!m.getSettings()->getLcdDebug()) {
     return;
   }
+  static int line = 0;
   lcd.setTextWrap(false);
-
-  lcdClear(line);
+  lcdClear(line); // clear line
   lcd.setTextSize(1);
   lcd.setTextColor(WHITE);
   lcd.setCursor(0, line * 8);
   lcd.println(logStr);
+  line = (line + 1) % 8;
+  lcdClear(line); // clear next line too (to indicate move)
   lcd.display();
   delay(DELAY_MS_SPI);
 }
@@ -243,12 +244,7 @@ void messageOnLcd(int line, const char *str, int size) {
 }
 
 void logLine(const char *str) {
-  static int i = 0;
-  if (i == 0) {
-    lcd.fillRect(0, 0, 128, 64, BLACK);
-  }
-  lcdPrintLogLine(str, i);
-  i = (i + 1) % 8;
+  lcdPrintLogLine(str);
   Serial.println(str);
   RDebug.printf("%s\n", str);
 }
