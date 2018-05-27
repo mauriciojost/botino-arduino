@@ -204,6 +204,7 @@ void handleDebug() {
 }
 
 void reactButton() {
+	delay(100); // avoid bouncing
   int level = digitalRead(BUTTON0_PIN);
   if (ints > 0 && level) {
     log(CLASS_MAIN, Debug, "Btn.hold(%d)...", ints);
