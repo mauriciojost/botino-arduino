@@ -127,7 +127,7 @@ void lcdPrintLogLine(const char *logStr, int line) {
 
 bool initWifi(const char *ssid, const char *pass, bool skipIfConnected) {
   wl_status_t status;
-  log(CLASS_MAIN, Info, "Connecting to %s ...", ssid);
+  log(CLASS_MAIN, Info, "Conn. to %s...", ssid);
 
   if (skipIfConnected) {
     status = WiFi.status();
@@ -146,14 +146,14 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected) {
   while (true) {
     delay(3000);
     status = WiFi.status();
-    log(CLASS_MAIN, Info, " attempts %d", attemptsLeft);
+    log(CLASS_MAIN, Info, " ..retry(%d)", attemptsLeft);
     attemptsLeft--;
     if (status == WL_CONNECTED) {
       log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
       return true; // connected
     }
     if (attemptsLeft < 0) {
-      log(CLASS_MAIN, Warn, "Connection failed %d", status);
+      log(CLASS_MAIN, Warn, "Conn. failed %d", status);
       return false; // not connected
     }
   }
@@ -184,14 +184,14 @@ void handleDebug() {
 
 	// Handle stack-traces stored in memory
   if (s->getClear() && SaveCrash.count() > 0) {
-    log(CLASS_MAIN, Debug, "Clearing stack-traces");
+    log(CLASS_MAIN, Debug, "Clearing stack-trcs");
     SaveCrash.clear();
   } else {
   	if (SaveCrash.count() > 0) {
-      log(CLASS_MAIN, Warn, "Found stack-traces (!!!)");
+      log(CLASS_MAIN, Warn, "Stack-trcs (!!!)");
       SaveCrash.print();
   	} else {
-      log(CLASS_MAIN, Debug, "No stack-traces");
+      log(CLASS_MAIN, Debug, "No stack-trcs");
   	}
   }
 
@@ -206,9 +206,9 @@ void handleDebug() {
 void reactButton() {
   int level = digitalRead(BUTTON0_PIN);
   if (ints > 0 && level) {
-    log(CLASS_MAIN, Debug, "Button hold (%d)...", ints);
+    log(CLASS_MAIN, Debug, "Btn.hold(%d)...", ints);
   } else if (ints > 0 && !level) { // pressed the button, but not currently being pressed
-    log(CLASS_MAIN, Debug, "Button quick (%d)...", ints);
+    log(CLASS_MAIN, Debug, "Btn.quick(%d)...", ints);
     m.getSettings()->incrButtonPressed((int)ints);
     int routine = (int)random(0, NRO_ROUTINES);
     log(CLASS_MAIN, Debug, "Routine %d...", routine);
@@ -256,7 +256,7 @@ void arms(int left, int right) {
   static int lastPosL = -1;
   static int lastPosR = -1;
 
-  log(CLASS_MAIN, Debug, "Arms move: %d %d", left, right);
+  log(CLASS_MAIN, Debug, "Arms>%d&%d", left, right);
   int targetPosL = SERVO_INVERT_POS(((POSIT(left) % MAX_SERVO_STEPS) * SERVO0_STEP_DEGREES) + SERVO0_BASE_DEGREES, SERVO0_INVERTED);
   int targetPosR = SERVO_INVERT_POS(((POSIT(right) % MAX_SERVO_STEPS) * SERVO1_STEP_DEGREES) + SERVO1_BASE_DEGREES, SERVO1_INVERTED);
   servoLeft.attach(SERVO0_PIN);
@@ -266,8 +266,8 @@ void arms(int left, int right) {
   lastPosL = (lastPosL == -1 ? targetPosL : lastPosL);
   lastPosR = (lastPosR == -1 ? targetPosR : lastPosR);
 
-  log(CLASS_MAIN, Info, "Servo left %d->%d", lastPosL, targetPosL);
-  log(CLASS_MAIN, Info, "Servo right %d->%d", lastPosR, targetPosR);
+  log(CLASS_MAIN, Info, "Sv.L%d>%d", lastPosL, targetPosL);
+  log(CLASS_MAIN, Info, "Sv.R%d>%d", lastPosR, targetPosR);
   for (int i = 1; i <= SERVO_ARM_STEPS; i++) {
     float factor = ((float)i) / SERVO_ARM_STEPS;
     int vL = lastPosL + ((targetPosL - lastPosL) * factor);
@@ -283,7 +283,7 @@ void arms(int left, int right) {
 }
 
 bool initWifiInit() {
-  log(CLASS_PROPSYNC, Info, "Init wifi init %s", WIFI_SSID_INIT);
+  log(CLASS_PROPSYNC, Info, "W.init %s", WIFI_SSID_INIT);
   return initWifi(WIFI_SSID_INIT, WIFI_PASSWORD_INIT, false);
 }
 
@@ -291,7 +291,7 @@ bool initWifiSteady() {
 	static bool connectedOnce = false;
   const char *wifiSsid = m.getSetupSync()->getSsid();
   const char *wifiPass = m.getSetupSync()->getPass();
-  log(CLASS_PROPSYNC, Info, "Init wifi steady %s", wifiSsid);
+  log(CLASS_PROPSYNC, Info, "W.steady %s", wifiSsid);
   bool connected = initWifi(wifiSsid, wifiPass, connectedOnce);
   if (connected && !connectedOnce) { // first time
   	messageOnLcd(0, "WIFI SETUP OK", 2);
@@ -307,7 +307,7 @@ int httpGet(const char *url, ParamStream *response) {
   httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
 
   int errorCode = httpClient.GET();
-  log(CLASS_MAIN, Info, "HTTP GET: %s %d", url, errorCode);
+  log(CLASS_MAIN, Info, "GET:%d%s", errorCode, url);
 
   if (errorCode > 0) {
     response->flush();
@@ -328,7 +328,7 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
   httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
 
   int errorCode = httpClient.POST(body);
-  log(CLASS_MAIN, Info, "HTTP POST: %s %d", url, errorCode);
+  log(CLASS_MAIN, Info, "POST:%d%s", errorCode, url);
 
   if (errorCode > 0) {
     response->flush();
@@ -344,7 +344,7 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
 }
 
 void ios(char led, bool v) {
-  log(CLASS_MAIN, Debug, "Led '%c' -> %d", led, (int)v);
+  log(CLASS_MAIN, Debug, "Led'%c'->%d", led, (int)v);
   switch (led) {
     case 'r':
       digitalWrite(LEDR_PIN, !v); // VCC hard-wired
@@ -399,7 +399,7 @@ void lcdImg(char img, uint8_t bitmap[]) {
     	}
       break;
     default:
-      log(CLASS_BODY, Debug, "Unknown face: %c", img);
+      log(CLASS_BODY, Debug, "Face?: %c", img);
       break;
   }
   lcd.display();
@@ -458,43 +458,43 @@ void setup() {
   log(CLASS_MAIN, Debug, "Setup interrupts");
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, RISING);
 
-  log(CLASS_MAIN, Debug, "Display device info");
+  log(CLASS_MAIN, Debug, "Infos");
   aux.fill("NAME: %s", DEVICE_NAME); messageOnLcd(0, aux.getBuffer(), 2); delay(3000);
   aux.fill("ID: %d", ESP.getChipId()); messageOnLcd(0, aux.getBuffer(), 2); delay(3000);
   aux.fill("SSID: %s", WIFI_SSID_INIT); messageOnLcd(0, aux.getBuffer(), 2); delay(3000);
   aux.fill("PASS: %s", WIFI_PASSWORD_INIT); messageOnLcd(0, aux.getBuffer(), 2); delay(3000);
 
-  log(CLASS_MAIN, Debug, "Init HW test routine"); delay(2000);
+  log(CLASS_MAIN, Debug, "HW test"); delay(2000);
   ios('r', false);
   ios('y', false);
   ios('w', false);
   ios('f', false);
 
-  log(CLASS_MAIN, Debug, "...Face test"); delay(2000);
+  log(CLASS_MAIN, Debug, "..Face test"); delay(2000);
   lcdImg('c', initImage);
-  log(CLASS_MAIN, Debug, "...Arms down"); delay(2000);
+  log(CLASS_MAIN, Debug, "..Arms down"); delay(2000);
   arms(0, 0);
-  log(CLASS_MAIN, Debug, "...Right arm up"); delay(2000);
+  log(CLASS_MAIN, Debug, "..R. arm up"); delay(2000);
   arms(0, 9);
-  log(CLASS_MAIN, Debug, "...Left arm up"); delay(2000);
+  log(CLASS_MAIN, Debug, "..Left arm up"); delay(2000);
   arms(9, 9);
-  log(CLASS_MAIN, Debug, "...Arms down"); delay(2000);
+  log(CLASS_MAIN, Debug, "..Arms down"); delay(2000);
   arms(0, 0);
-  log(CLASS_MAIN, Debug, "...Red led on"); delay(2000);
+  log(CLASS_MAIN, Debug, "..Red led on"); delay(2000);
   ios('r', true);
-  log(CLASS_MAIN, Debug, "...Red led off"); delay(2000);
+  log(CLASS_MAIN, Debug, "..Red led off"); delay(2000);
   ios('r', false);
-  log(CLASS_MAIN, Debug, "...Yellow led on"); delay(2000);
+  log(CLASS_MAIN, Debug, "..Y. led on"); delay(2000);
   ios('y', true);
-  log(CLASS_MAIN, Debug, "...Yellow led off"); delay(2000);
+  log(CLASS_MAIN, Debug, "..Y. led off"); delay(2000);
   ios('y', false);
-  log(CLASS_MAIN, Debug, "...White led on"); delay(2000);
+  log(CLASS_MAIN, Debug, "..W. led on"); delay(2000);
   ios('w', true);
-  log(CLASS_MAIN, Debug, "...White led off"); delay(2000);
+  log(CLASS_MAIN, Debug, "..W. led off"); delay(2000);
   ios('w', false);
-  log(CLASS_MAIN, Debug, "...Fan on"); delay(2000);
+  log(CLASS_MAIN, Debug, "..Fan on"); delay(2000);
   ios('f', true);
-  log(CLASS_MAIN, Debug, "...Fan off"); delay(2000);
+  log(CLASS_MAIN, Debug, "..Fan off"); delay(2000);
   ios('f', false);
 
 }
@@ -510,8 +510,8 @@ void loop() {
   unsigned long periodMs = m.getSettings()->getPeriodSeconds() * 1000;
   unsigned long spentMs = millis() - t1;
 
-  log(CLASS_MAIN, Info, "Duty cycle: %lu / %lu", spentMs, periodMs);
-  log(CLASS_MAIN, Info, "Li-sleep ( %lu ms)...", periodMs);
+  log(CLASS_MAIN, Info, "D.C.:%0.2f", (float)spentMs/periodMs);
+  log(CLASS_MAIN, Info, "L.Sleep(%lums)...", periodMs);
   while(spentMs < periodMs) {
 
     reactButton();
