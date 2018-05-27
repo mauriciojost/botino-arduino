@@ -6,25 +6,29 @@ PRETTY='python -m json.tool'
 
 # Set up general settings
 url="http://dweet.io/dweet/for/$DEVICE-settings-target?"
-url+='lcddebug=false&' # turn on LCD DEBUG (show logs in LCD)
+url+='lcddebug=true&' # turn on LCD DEBUG (show logs in LCD)
 url+='crashclear=false&' # do not clear debug info (stacktraces) from device
 url+='loglevel=0' # log level to DEBUG (lowest)
 curl -XPOST $url | $PRETTY
 
 # Set up body
 url="http://dweet.io/dweet/for/$DEVICE-body-target?"
-url+="im0=0000024022442244200410080FF00000&" # image 0 smily
-url+="im1=00001EF0021000000000000007E00000&" # image 0 doubtful
-url+="im2=00000280129010100FE0014001400080&" # image 0 mischeavious
-url+="msg0=KEEP%20CALM%0AAND%20GIT%20PUSH&" # message 0
-url+="msg1=A%20BUG%0ALIVES%0AIN%20ME&" # message 1
-url+="msg2=KEEP%20IT%0ACLEAN&" # message 2
-url+="mv0=A99A90A09F0.W4.M02W5.Mc4A00&" # move 0
-url+="mv1=A99A90A09F1.W4.M12W5.Mc4A00&" # move 1
-url+="mv2=A99A90A09F2.W4.M22W5.Mc4A00&" # move 2
-url+="t0=201011160&" # timing 0
-url+="t1=201011060&" # timing 1
-url+="t2=201012060&" # timing 2
+url+="im0=0000024022442244200410080FF00000&" # image smily
+url+="im1=00001EF0021000000000000007E00000&" # image doubtful
+url+="im2=00000280129010100FE0014001400080&" # image mischeavious
+url+="im3=00F00280129010100FE0014001400080&" # image x
+url+="msg0=KEEP%20CALM%0AAND%20GIT%20PUSH&" # message
+url+="msg1=A%20BUG%0ALIVES%0AIN%20ME&" # message
+url+="msg2=KEEP%20IT%0ACLEAN&" # message
+url+="msg3=KEEP%20ME%0ACHARGED&" # message
+url+="mv0=A99A90A09F0.W4.M02W5.Mc4A00&" # move
+url+="mv1=A99A90A09F1.W4.M12W5.Mc4A00&" # move
+url+="mv2=A99A90A09F2.W4.M22W5.Mc4A00&" # move
+url+="mv3=F3.A99A90A09W4.M32W5.Mc4A00&" # move
+url+="t0=201012160&" # timing
+url+="t1=201012260&" # timing
+url+="t2=201012360&" # timing
+url+="t3=201012460&" # timing 
 curl -XPOST $url | $PRETTY
 
 # Set up properties synchronizer
@@ -34,6 +38,6 @@ curl -XPOST $url | $PRETTY
 
 # Set up setup synchronizer (for wifi setup)
 url="http://dweet.io/dweet/for/$DEVICE-setupsync-target?"
-url+="freq=201010560" # sync all properties every 5 minutes
+url+="freq=201012060" # sync all properties every 5 minutes
 curl -XPOST $url | $PRETTY
 
