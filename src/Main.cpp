@@ -131,12 +131,14 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected) {
   log(CLASS_MAIN, Info, "Conn. to %s...", ssid);
 
   if (skipIfConnected) {
+    log(CLASS_MAIN, Info, "Conn.?");
     status = WiFi.status();
     if (status == WL_CONNECTED) {
       log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
       return true; // connected
     }
   } else {
+    log(CLASS_MAIN, Info, "W.Off.");
     WiFi.mode(WIFI_OFF); // to be removed after SDK update to 1.5.4
   }
 
