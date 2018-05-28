@@ -512,7 +512,7 @@ void loop() {
   unsigned long periodMs = m.getSettings()->getPeriodSeconds() * 1000;
   unsigned long spentMs = millis() - t1;
 
-  log(CLASS_MAIN, Info, "D.C.:%0.2f", (float)spentMs/periodMs);
+  log(CLASS_MAIN, Info, "D.C.:%0.3f", (float)spentMs/periodMs);
   log(CLASS_MAIN, Info, "L.Sleep(%lums)...", periodMs);
   while(spentMs < periodMs) {
 
