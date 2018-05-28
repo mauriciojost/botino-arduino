@@ -414,8 +414,6 @@ void lcdImg(char img, uint8_t bitmap[]) {
 /*****************/
 
 void setup() {
-  Buffer<32> aux;
-
   // Let HW startup
   delay(3 * 1000);
 
@@ -462,6 +460,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, RISING);
 
   log(CLASS_MAIN, Debug, "Infos");
+  Buffer<32> aux;
   aux.fill("NAME:\n %s", DEVICE_NAME); messageOnLcd(0, aux.getBuffer(), 2); delay(3000);
   aux.fill("ID:\n %d", ESP.getChipId()); messageOnLcd(0, aux.getBuffer(), 2); delay(3000);
   aux.fill("SSID:\n %s", WIFI_SSID_INIT); messageOnLcd(0, aux.getBuffer(), 2); delay(3000);
