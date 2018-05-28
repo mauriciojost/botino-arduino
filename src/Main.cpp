@@ -145,7 +145,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected) {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, pass);
 
-  int attemptsLeft = 4;
+  int attemptsLeft = 5;
   while (true) {
     delay(3000);
     status = WiFi.status();
