@@ -183,19 +183,19 @@ private:
       case 'F':
       	switch (c2) {
           case '0':
-            lcdImgFunc('c', images[0]);
+            lcdImgFunc('c', images[0]); // custom 0
             break;
           case '1':
-            lcdImgFunc('c', images[1]);
+            lcdImgFunc('c', images[1]); // custom 1
             break;
           case '2':
-            lcdImgFunc('c', images[2]);
+            lcdImgFunc('c', images[2]); // custom 2
             break;
           case '3':
-            lcdImgFunc('c', images[3]);
+            lcdImgFunc('c', images[3]); // custom 3
             break;
           case 'w':
-            lcdImgFunc('w', NULL);
+            lcdImgFunc('w', NULL); // white
             break;
           case 'b':
             lcdImgFunc('b', NULL); // black
@@ -204,19 +204,19 @@ private:
             lcdImgFunc('l', NULL); // clear
             break;
           case 's':
-            lcdImgFunc('s', NULL);
+            lcdImgFunc('s', NULL); // smile
             break;
           case 'S':
-            lcdImgFunc('S', NULL);
+            lcdImgFunc('S', NULL); // sad
             break;
           case 'n':
-            lcdImgFunc('n', NULL);
+            lcdImgFunc('n', NULL); // normal
             break;
           case 'z':
-            lcdImgFunc('z', NULL);
+            lcdImgFunc('z', NULL); // sleepy
             break;
           default:
-            log(CLASS_BODY, Debug, "Unknown face '%c'", c2);
+            log(CLASS_BODY, Debug, "Face '%c'?", c2);
             break;
       	}
       	break;
@@ -225,7 +225,7 @@ private:
         {
         	int l = getInt(c2);
         	int r = getInt(c3);
-          log(CLASS_BODY, Debug, "Arms %d %d", l, r);
+          log(CLASS_BODY, Debug, "Arms %d&%d", l, r);
           arms(l, r);
         }
       	break;
@@ -233,24 +233,24 @@ private:
       case 'M':
       	switch (c2) {
           case '0':
-            log(CLASS_BODY, Debug, "Message 0");
+            log(CLASS_BODY, Debug, "Msg 0");
             messageFunc(0, msgs[0]->getBuffer(), getInt(c3));
             break;
           case '1':
-            log(CLASS_BODY, Debug, "Message 1");
+            log(CLASS_BODY, Debug, "Msg 1");
             messageFunc(0, msgs[1]->getBuffer(), getInt(c3));
             break;
           case '2':
-            log(CLASS_BODY, Debug, "Message 2");
+            log(CLASS_BODY, Debug, "Msg 2");
             messageFunc(0, msgs[2]->getBuffer(), getInt(c3));
             break;
           case '3':
-            log(CLASS_BODY, Debug, "Message 3");
+            log(CLASS_BODY, Debug, "Msg 3");
             messageFunc(0, msgs[3]->getBuffer(), getInt(c3));
             break;
           case 'c': {
           	{
-              log(CLASS_BODY, Debug, "Message clock");
+              log(CLASS_BODY, Debug, "Msg clock");
               int h = GET_HOURS(timing.getCurrentTime());
               int m = GET_MINUTES(timing.getCurrentTime());
               Buffer<6> t("");
@@ -259,7 +259,7 @@ private:
           	}
             break;
           default:
-            log(CLASS_BODY, Debug, "Invalid message pose: %c%c%c", c1, c2, c3);
+            log(CLASS_BODY, Debug, "Inv.M.pose:%c%c%c", c1, c2, c3);
             break;
           }
       	}
@@ -296,7 +296,7 @@ private:
               break;
             }
           default:
-            log(CLASS_BODY, Debug, "Invalid IO pose: %c%c%c", c1, c2, c3);
+            log(CLASS_BODY, Debug, "Inv.IO.pose:%c%c%c", c1, c2, c3);
             break;
       	}
       	break;
@@ -438,7 +438,7 @@ public:
         Hexer::hexToByte((uint8_t*)images[i], target.getBuffer(), MINIM((strlen(target.getBuffer())), (IMG_SIZE_BYTES * 2)));
       }
       if (actualValue != NULL) {
-        actualValue->load("*");
+        actualValue->load("<*>");
       }
   	} else {
       switch (propIndex) {
