@@ -477,9 +477,9 @@ void setup() {
   log(CLASS_MAIN, Debug, "..Arms down"); delay(2000);
   arms(0, 0);
   log(CLASS_MAIN, Debug, "..R. arm up"); delay(2000);
-  arms(0, 9);
+  arms(0, 3);
   log(CLASS_MAIN, Debug, "..Left arm up"); delay(2000);
-  arms(9, 9);
+  arms(3, 3);
   log(CLASS_MAIN, Debug, "..Arms down"); delay(2000);
   arms(0, 0);
   log(CLASS_MAIN, Debug, "..Red led on"); delay(2000);
