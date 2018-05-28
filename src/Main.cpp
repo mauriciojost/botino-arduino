@@ -292,10 +292,18 @@ bool initWifiSteady() {
   const char *wifiPass = m.getSetupSync()->getPass();
   log(CLASS_PROPSYNC, Info, "W.steady %s", wifiSsid);
   bool connected = initWifi(wifiSsid, wifiPass, connectedOnce);
-  if (connected && !connectedOnce) { // first time
-  	messageOnLcd(0, "WIFI SETUP OK", 2);
-    log(CLASS_MAIN, Info, "WIFI SETUP OK");
-  	delay(10 * 1000);
+  if (!connectedOnce) {
+    messageOnLcd(0, "TRYING WIFI", 2);
+    delay(1 * 2000);
+    messageOnLcd(0, wifiSsid, 2);
+    delay(1 * 2000);
+    messageOnLcd(0, wifiPass, 2);
+    delay(1 * 2000);
+    if (connected) { // first time
+      messageOnLcd(0, "WIFI SETUP OK", 2);
+      log(CLASS_MAIN, Info, "WIFI SETUP OK");
+      delay(10 * 1000);
+    }
   }
   connectedOnce = connectedOnce || connected;
   return connected;
