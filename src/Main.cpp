@@ -363,7 +363,6 @@ void ios(char led, bool v) {
 
 void lcdImg(char img, uint8_t bitmap[]) {
   log(CLASS_MAIN, Debug, "Img '%c'", img);
-  lcd.clearDisplay();
   switch (img) {
     case 'w': // white
       log(CLASS_BODY, Debug, "White face");
@@ -372,6 +371,10 @@ void lcdImg(char img, uint8_t bitmap[]) {
     case 'b': // black
       log(CLASS_BODY, Debug, "Black face");
       lcd.invertDisplay(false);
+      break;
+    case 'l': // clear
+      log(CLASS_BODY, Debug, "Clear face");
+      lcd.clearDisplay();
       break;
     case 's': // smily
       log(CLASS_BODY, Debug, "Smile face");
@@ -467,6 +470,7 @@ void setup() {
   ios('y', false);
   ios('w', false);
   ios('f', false);
+  lcdImg('l', NULL);
 
   log(CLASS_MAIN, Debug, "..Face test"); delay(2000);
   lcdImg('c', initImage);

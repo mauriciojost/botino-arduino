@@ -126,6 +126,7 @@ private:
     Codes:
       Fw. : Face White
       Fb. : Face Black
+      Fl. : Face cLear
       Fs. : Face Smily
       FS. : Face Sad
       Fn. : Face Normal
@@ -197,7 +198,10 @@ private:
             lcdImgFunc('w', NULL);
             break;
           case 'b':
-            lcdImgFunc('b', NULL);
+            lcdImgFunc('b', NULL); // black
+            break;
+          case 'l':
+            lcdImgFunc('l', NULL); // clear
             break;
           case 's':
             lcdImgFunc('s', NULL);
@@ -301,7 +305,8 @@ private:
 
         switch (GET_POSE(c1, c2)) {
 
-        	case GET_POSE('z', 'z'):
+        	case GET_POSE('Z', 'z'):
+            lcdImgFunc('l', NULL);
             iosFunc('r', false);
             iosFunc('w', false);
             iosFunc('y', false);
