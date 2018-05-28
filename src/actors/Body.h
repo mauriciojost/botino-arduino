@@ -166,7 +166,7 @@ private:
 
     SPECIAL POSES
     Codes:
-      zz. : turn all power consuming components off
+      Zz. : turn all power consuming components off
 
     */
 
