@@ -464,8 +464,12 @@ public:
 
   void performMove(int routineIndex) {
     const char *s = routines[routineIndex % NRO_ROUTINES]->move.getBuffer();
-    for (int i = 0; i < strlen(s); i += POSE_STR_LENGTH) {
-      performPose(s[i + 0], s[i + 1], s[i + 2]);
+    performMove(s);
+  }
+
+  void performMove(const char* routine) {
+    for (int i = 0; i < strlen(routine); i += POSE_STR_LENGTH) {
+      performPose(routine[i + 0], routine[i + 1], routine[i + 2]);
     }
   }
 
