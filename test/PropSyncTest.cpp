@@ -10,6 +10,9 @@
 // Being tested
 #include <actors/sync/PropSync.h>
 
+#define JSON_PREFIX "{\"with\":[{\"content\":"
+#define JSON_SUFFIX "}]}"
+
 void setUp() {}
 
 void tearDown() {}
@@ -21,9 +24,9 @@ bool initWifi() {
 int httpGet(const char *url, ParamStream *response) {
 
   if (strcmp("http://dweet.io/get/latest/dweet/for/device1-clock-target", url) == 0) {
-    response->append("{\"with\":[{\"content\":{\"h\":3}}]}");
+    response->append(JSON_PREFIX "{\"h\":3}" JSON_SUFFIX);
   } else if (strcmp("http://dweet.io/get/latest/dweet/for/device1-body-target", url) == 0) {
-    response->append("{"
+    response->append(JSON_PREFIX "{"
     "\"im0\":\"00000280129010100FE0014001400080\","
     "\"im1\":\"00001EF0021000000000000007E00000\","
     "\"im2\":\"00000280129010100FE0014001400080\","
@@ -40,7 +43,7 @@ int httpGet(const char *url, ParamStream *response) {
     "\"t1\":\"201016060\","
     "\"t2\":\"201016060\","
     "\"t3\":\"201016060\""
-    "}");
+    "}" JSON_SUFFIX);
   }
   return 1;
 }
