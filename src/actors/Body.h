@@ -462,14 +462,21 @@ public:
     return &timing;
   }
 
-  void performMove(int routineIndex) {
-    const char *s = routines[routineIndex % NRO_ROUTINES]->move.getBuffer();
-    performMove(s);
+  const char* getMove(int moveIndex) {
+  	return routines[moveIndex % NRO_ROUTINES]->move.getBuffer();
   }
 
-  void performMove(const char* routine) {
-    for (int i = 0; i < strlen(routine); i += POSE_STR_LENGTH) {
-      performPose(routine[i + 0], routine[i + 1], routine[i + 2]);
+  void performMove(int moveIndex) {
+    performMove(getMove(moveIndex));
+  }
+
+  void performMove(const char* move) {
+    if (strlen(move) % POSE_STR_LENGTH != 0) {
+      log(CLASS_BODY, Warn, "Bad move: %s", move);
+      return;
+    }
+    for (int i = 0; i < strlen(move); i += POSE_STR_LENGTH) {
+      performPose(move[i + 0], move[i + 1], move[i + 2]);
     }
   }
 
