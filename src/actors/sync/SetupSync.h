@@ -36,7 +36,7 @@ enum SetupSyncConfigState {
 };
 
 /**
-* This actor performs WIFI setup via HTTP.
+* This actor performs the setup of sensitive information via HTTP (via encryption).
 */
 class SetupSync : public Actor {
 
@@ -72,18 +72,22 @@ private:
           JsonObject &withJson = json["with"][0];
           if (withJson.containsKey("content")) {
             JsonObject &content = withJson["content"];
-            if (content.containsKey("ssid")) {
-              char passEncHex[ENCRYPTION_BUFFER_SIZE * 2]; // each character (including null ending trail) is represented using 2 chars
+            if (content.containsKey("ssid") && content.containsKey("pass")) {
+              char aux[ENCRYPTION_BUFFER_SIZE * 2]; // each character (including null ending trail) is represented using 2 chars
 
-              // SSID recovery
+              // SSID recovery (encrypted and hex encoded)
               const char* s = content["ssid"].as<char *>();
-              strcpy(ssid, s);
+              strcpy(aux, s);
+              Hexer::hexToByte((uint8_t*)ssid, aux, MINIM(strlen(aux), ENCRYPTION_BUFFER_SIZE * 2));
+              decrypt((uint8_t*)ssid);
+              ssid[ENCRYPTION_BUFFER_SIZE - 1] = 0;
 
               // PASS recovery (encrypted and hex encoded)
               const char* p = content["pass"].as<char *>();
-              strcpy(passEncHex, p);
-              Hexer::hexToByte((uint8_t*)pass, passEncHex, MINIM(strlen(passEncHex), ENCRYPTION_BUFFER_SIZE * 2));
+              strcpy(aux, p);
+              Hexer::hexToByte((uint8_t*)pass, aux, MINIM(strlen(aux), ENCRYPTION_BUFFER_SIZE * 2));
               decrypt((uint8_t*)pass);
+              pass[ENCRYPTION_BUFFER_SIZE - 1] = 0;
 
               log(CLASS_SETUPSYNC, Debug, "SETUP:%s/***", ssid);
 
@@ -128,8 +132,8 @@ public:
     name = n;
     initWifiSteadyFunc = NULL;
     initWifiInitFunc = NULL;
-    strcpy(ssid, "???");
-    strcpy(pass, "???");
+    ssid[0] = 0;
+    pass[0] = 0;
     httpGet = NULL;
     freqConf.setFrequency(OnceEvery1Minute);
 		Hexer::hexToByte(key, ENCRYPT_KEY, KEY_LENGTH * 2);
@@ -209,6 +213,10 @@ public:
 
   Timing *getFrequencyConfiguration() {
     return &freqConf;
+  }
+
+  bool isInitialized() {
+  	return ssid[0] != 0 && pass[0] != 0;
   }
 };
 
