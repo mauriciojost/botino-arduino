@@ -104,7 +104,7 @@ private:
   }
 
   bool getBool(char c) {
-  	return c == 'y' || c == 'Y' || c == 't' || c == 'T';
+  	return c == 'y' || c == 'Y' || c == 't' || c == 'T' || c == '1';
   }
 
   void performPose(char c1, char c2, char c3) {
