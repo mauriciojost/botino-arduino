@@ -287,26 +287,32 @@ bool initWifiInit() {
 }
 
 bool initWifiSteady() {
+  SetupSync* s = m.getSetupSync();
 	static bool connectedOnce = false;
-  const char *wifiSsid = m.getSetupSync()->getSsid();
-  const char *wifiPass = m.getSetupSync()->getPass();
-  log(CLASS_PROPSYNC, Info, "W.steady %s", wifiSsid);
-  bool connected = initWifi(wifiSsid, wifiPass, connectedOnce);
-  if (!connectedOnce) {
-    messageOnLcd(0, "TRYING WIFI", 2);
-    delay(1 * 2000);
-    messageOnLcd(0, wifiSsid, 2);
-    delay(1 * 2000);
-    messageOnLcd(0, wifiPass, 2);
-    delay(1 * 2000);
-    if (connected) { // first time
-      messageOnLcd(0, "WIFI SETUP OK", 2);
-      log(CLASS_MAIN, Info, "WIFI SETUP OK");
-      delay(10 * 1000);
+	if (s->isInitialized()) {
+    const char *wifiSsid = s->getSsid();
+    const char *wifiPass = s->getPass();
+    log(CLASS_PROPSYNC, Info, "W.steady %s", wifiSsid);
+    bool connected = initWifi(wifiSsid, wifiPass, connectedOnce);
+    if (!connectedOnce) {
+      messageOnLcd(0, "SETUP...", 2);
+      delay(1 * 2000);
+      messageOnLcd(0, wifiSsid, 2);
+      delay(1 * 2000);
+      messageOnLcd(0, wifiPass, 2);
+      delay(1 * 2000);
+      if (connected) { // first time
+        messageOnLcd(0, "SETUP OK", 2);
+        log(CLASS_MAIN, Info, "SETUP OK");
+        delay(10 * 1000);
+      }
     }
-  }
-  connectedOnce = connectedOnce || connected;
-  return connected;
+    connectedOnce = connectedOnce || connected;
+    return connected;
+	} else {
+    log(CLASS_PROPSYNC, Info, "W.steady not ready");
+		return false;
+	}
 }
 
 int httpGet(const char *url, ParamStream *response) {
