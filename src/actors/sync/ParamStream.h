@@ -12,7 +12,7 @@
 #include <Stream.h>
 #endif // UNIT_TEST
 
-#define CLASS_PARAM_STREAM "PS"
+#define CLASS_PARAM_STREAM "PR"
 
 #ifndef MAX_JSON_STR_LENGTH
 #define MAX_JSON_STR_LENGTH 512

@@ -9,7 +9,7 @@
 #include <actors/sync/ParamStream.h>
 #include <main4ino/Clock.h>
 
-#define CLASS_PROPSYNC "PS"
+#define CLASS_PROPSYNC "PY"
 
 #define DWEET_IO_API_URL_POST "http://dweet.io/dweet/for/" DEVICE_NAME "-%s-current"
 #define DWEET_IO_API_URL_GET "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-%s-target"
