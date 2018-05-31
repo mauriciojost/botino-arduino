@@ -37,7 +37,6 @@ rm -fr libs/Unity/examples
 general_flags="\
   -D UNIT_TEST\
   -D LOG_LEVEL=0\
-  -D MAX_EFF_STR_LENGTH=64\
   -D DEVICE_NAME=\"device1\"\
   -D MAX_LOG_MSG_LENGTH=1024\
   -D ENCRYPT_KEY=\"000102030405060708090a0b0c0d0e0f\"\
