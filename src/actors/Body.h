@@ -25,6 +25,10 @@
 #define NRO_ROUTINES 4
 #define NRO_IMGS 4
 
+#define ARM_SLOW_STEPS 100
+#define ARM_NORMAL_STEPS 40
+#define ARM_FAST_STEPS 20
+
 #define IMG_SIZE_BYTES 16
 
 uint8_t defaultImg[16] = {
@@ -85,7 +89,7 @@ class Body : public Actor {
 private:
   const char *name;
   Timing timing;
-  void (*arms)(int left, int right);
+  void (*arms)(int left, int right, int steps);
   void (*messageFunc)(int line, const char *msg, int size);
   void (*iosFunc)(char led, bool v);
 	void((*lcdImgFunc)(char img, uint8_t bitmap[]));
@@ -137,13 +141,17 @@ private:
       F3. : Face custom 3
 
 
-    ARMS POSES: move both arms to a given position each (left, then right)
+    ARMS POSES: move both arms to a given position each (left, then right) (A=fast, B=normal, C=slow)
     Codes:
-      A00 : Move left and right arms to respective position 0 and 0 (both down)
+      A00 : Move left and right arms to respective position 0 and 0 (both down) at high speed
       ...
-      A90 : Move left and right arms to respective position 9 and 0 (left arm up)
+      A90 : Move left and right arms to respective position 9 and 0 (left arm up) at high speed
       ...
-      A99 : Move left and right arms to respective position 0 and 9 (both up)
+      A99 : Move left and right arms to respective position 9 and 9 (both up) at high speed
+
+      B99 : Move left and right arms to respective position 9 and 9 (both up) at normal speed
+
+      C99 : Move left and right arms to respective position 9 and 9 (both up) at low speed
 
 
     MESSAGE POSES: show a certain message in the LCD with a given font size
@@ -225,11 +233,26 @@ private:
         {
         	int l = getInt(c2);
         	int r = getInt(c3);
-          log(CLASS_BODY, Debug, "Arms %d&%d", l, r);
-          arms(l, r);
+          log(CLASS_BODY, Debug, "Armsf %d&%d", l, r);
+          arms(l, r, ARM_FAST_STEPS);
         }
       	break;
-
+      case 'B':
+        {
+        	int l = getInt(c2);
+        	int r = getInt(c3);
+          log(CLASS_BODY, Debug, "Armsn %d&%d", l, r);
+          arms(l, r, ARM_NORMAL_STEPS);
+        }
+      	break;
+      case 'C':
+        {
+        	int l = getInt(c2);
+        	int r = getInt(c3);
+          log(CLASS_BODY, Debug, "Armss %d&%d", l, r);
+          arms(l, r, ARM_SLOW_STEPS);
+        }
+      	break;
       case 'M':
       	switch (c2) {
           case '0':
@@ -311,7 +334,7 @@ private:
             iosFunc('w', false);
             iosFunc('y', false);
             iosFunc('f', false);
-            arms(0, 0);
+            arms(0, 0, ARM_SLOW_STEPS);
             break;
 
           // DEFAULT
@@ -354,7 +377,7 @@ public:
 	void setLcdImgFunc(void (*f)(char img, uint8_t bitmap[])) {
   	lcdImgFunc = f;
   }
-  void setArmsFunc(void (*f)(int left, int right)) {
+  void setArmsFunc(void (*f)(int left, int right, int steps)) {
     arms = f;
   }
   void setMessageFunc(void (*f)(int line, const char *str, int size)) {

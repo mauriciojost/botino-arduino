@@ -40,10 +40,6 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 #define DELAY_MS_SPI 3
 #define FRAG_TO_SLEEP_MS_MAX 2000 // maximum sleeping time for which the module can be unresponsive
 
-#ifndef SERVO_ARM_STEPS
-#define SERVO_ARM_STEPS 50
-#endif // SERVO_ARM_STEPS
-
 #ifndef SERVO0_INVERTED
 #define SERVO0_INVERTED false
 #endif // SERVO0_INVERTED
@@ -251,7 +247,7 @@ void logLine(const char *str) {
   RDebug.printf("%s\n", str);
 }
 
-void arms(int left, int right) {
+void arms(int left, int right, int steps) {
   static int lastPosL = -1;
   static int lastPosR = -1;
 
@@ -267,8 +263,8 @@ void arms(int left, int right) {
 
   log(CLASS_MAIN, Info, "Sv.L%d>%d", lastPosL, targetPosL);
   log(CLASS_MAIN, Info, "Sv.R%d>%d", lastPosR, targetPosR);
-  for (int i = 1; i <= SERVO_ARM_STEPS; i++) {
-    float factor = ((float)i) / SERVO_ARM_STEPS;
+  for (int i = 1; i <= steps; i++) {
+    float factor = ((float)i) / steps;
     int vL = lastPosL + ((targetPosL - lastPosL) * factor);
     int vR = lastPosR + ((targetPosR - lastPosR) * factor);
     servoLeft.write(vL);
@@ -490,13 +486,13 @@ void setup() {
   log(CLASS_MAIN, Debug, "..Face test"); delay(2000);
   lcdImg('c', initImage);
   log(CLASS_MAIN, Debug, "..Arms down"); delay(2000);
-  arms(0, 0);
+  arms(0, 0, 100);
   log(CLASS_MAIN, Debug, "..R. arm up"); delay(2000);
-  arms(0, 3);
+  arms(0, 3, 100);
   log(CLASS_MAIN, Debug, "..Left arm up"); delay(2000);
-  arms(3, 3);
+  arms(3, 3, 100);
   log(CLASS_MAIN, Debug, "..Arms down"); delay(2000);
-  arms(0, 0);
+  arms(0, 0, 100);
   log(CLASS_MAIN, Debug, "..Red led on"); delay(2000);
   ios('r', true);
   log(CLASS_MAIN, Debug, "..Red led off"); delay(2000);
