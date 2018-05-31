@@ -63,6 +63,32 @@ enum BodyConfigState {
   BodyConfigStateDelimiter // delimiter of the configuration states
 };
 
+#define MOVE_DANCE0 \
+  "Lwy"\
+  "Fs."\
+	"B09"\
+	"B90"\
+  "Lwn"\
+  "Fw."\
+	"B09"\
+	"B90"\
+  "Lwy"\
+  "Fb."\
+	"B55"
+
+#define MOVE_DANCE1 \
+  "Lwy"\
+  "Fs."\
+	"B09"\
+	"B90"\
+  "Lwn"\
+  "Fw."\
+	"B09"\
+	"B90"\
+  "Lwy"\
+  "Fb."\
+	"B55"
+
 class Routine {
 public:
   Buffer<MOVE_STR_LENGTH> move;
@@ -118,12 +144,17 @@ private:
     POSES (3 char codes)
     --------------------
 
-
-    WAIT POSES: wait d number of seconds (example 'W1.' waits 1 second)
+    ARMS POSES: move both arms to a given position each (left, then right) (A=fast, B=normal, C=slow)
     Codes:
-      W1. : wait 1 second
+      A00 : Move left and right arms to respective position 0 and 0 (both down) at high speed
       ...
-      W9. : wait 9 seconds
+      A90 : Move left and right arms to respective position 9 and 0 (left arm up) at high speed
+      ...
+      A99 : Move left and right arms to respective position 9 and 9 (both up) at high speed
+
+      B99 : Move left and right arms to respective position 9 and 9 (both up) at normal speed
+
+      C99 : Move left and right arms to respective position 9 and 9 (both up) at low speed
 
 
     FACE POSES: show a given image in the LCD
@@ -141,17 +172,13 @@ private:
       F3. : Face custom 3
 
 
-    ARMS POSES: move both arms to a given position each (left, then right) (A=fast, B=normal, C=slow)
+    IO POSES: turn on/off a given IO device, such as LEDS or the FAN (on = y, off = n)
     Codes:
-      A00 : Move left and right arms to respective position 0 and 0 (both down) at high speed
-      ...
-      A90 : Move left and right arms to respective position 9 and 0 (left arm up) at high speed
-      ...
-      A99 : Move left and right arms to respective position 9 and 9 (both up) at high speed
-
-      B99 : Move left and right arms to respective position 9 and 9 (both up) at normal speed
-
-      C99 : Move left and right arms to respective position 9 and 9 (both up) at low speed
+      Lry : turn on (y) the Red led
+      Lrn : turn off (n) the Red led
+      Lwy : turn on (y) led White
+      Lyy : turn on (y) led Yellow
+      Lfy : turn on (y) Fan
 
 
     MESSAGE POSES: show a certain message in the LCD with a given font size
@@ -162,14 +189,17 @@ private:
       M32 : show message 3 with font size 2
       Mc2 : show message containing current time with font size 2
 
-
-    IO POSES: turn on/off a given IO device, such as LEDS or the FAN (on = y, off = n)
+    COMPOSED POSES: dances and other predefined moves usable as poses
     Codes:
-      Lry : turn on (y) the Red led
-      Lrn : turn off (n) the Red led
-      Lwy : turn on (y) led White
-      Lyy : turn on (y) led Yellow
-      Lfy : turn on (y) Fan
+      S00 : dance 0
+      S01 : dance 1
+
+
+    WAIT POSES: wait a given number of seconds
+    Codes:
+      W1. : wait 1 second
+      ...
+      W9. : wait 9 seconds
 
 
     SPECIAL POSES
@@ -327,6 +357,19 @@ private:
       default:
 
         switch (GET_POSE(c1, c2)) {
+
+        	case GET_POSE('S', '0'):
+        		switch (c3) {
+        			case '0':
+                performMove(MOVE_DANCE0);
+                break;
+        			case '1':
+                performMove(MOVE_DANCE1);
+                break;
+        			default:
+                log(CLASS_BODY, Debug, "Inv.S.pose:%c%c%c", c1, c2, c3);
+        		}
+            break;
 
         	case GET_POSE('Z', 'z'):
             lcdImgFunc('l', NULL);
