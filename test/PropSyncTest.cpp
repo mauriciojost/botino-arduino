@@ -13,6 +13,29 @@
 #define JSON_PREFIX "{\"with\":[{\"content\":"
 #define JSON_SUFFIX "}]}"
 
+#define MV2 "A90A09W5."
+
+const char* replyClock = JSON_PREFIX "{\"h\":3}" JSON_SUFFIX;
+
+const char* replyBody = JSON_PREFIX "{"
+    //"\"im0\":\"00000280129010100FE0014001400080\","
+    //"\"im1\":\"00001EF0021000000000000007E00000\","
+    //"\"im2\":\"00000280129010100FE0014001400080\","
+    //"\"im3\":\"00000280129010100FE0014001400080\","
+    //"\"msg0\":\"KEEP%20CALM%0AAND%20GIT%20PUSH\","
+    //"\"msg1\":\"A%20BUG%0ALIVES%0AIN%20ME\","
+    //"\"msg2\":\"KEEP%0AIT%0ACLEAN\","
+    //"\"msg3\":\"H2O\","
+    //"\"mv0\":\"A99A55W5.W5.A99A55A00F2.W4.M02W5.Mc4W2.\","
+    //"\"mv1\":\"A90A09W5.W5.A09A55A00F1.W4.M12W5.Mc4W2.\","
+    "\"mv2\":\"" MV2 "\","
+    //"\"mv3\":\"" "W5.W5.W5.W5.W5.W5.Fw.Fb.M32W5.Mc4W2." "\","
+    "\"t0\":\"201016060\","
+    "\"t1\":\"201016060\","
+    "\"t2\":\"201016060\","
+    "\"t3\":\"201016060\""
+    "}" JSON_SUFFIX;
+
 void setUp() {}
 
 void tearDown() {}
@@ -24,26 +47,9 @@ bool initWifi() {
 int httpGet(const char *url, ParamStream *response) {
 
   if (strcmp("http://dweet.io/get/latest/dweet/for/device1-clock-target", url) == 0) {
-    response->fill(JSON_PREFIX "{\"h\":3}" JSON_SUFFIX);
+    response->fill(replyClock);
   } else if (strcmp("http://dweet.io/get/latest/dweet/for/device1-body-target", url) == 0) {
-    response->fill(JSON_PREFIX "{"
-    "\"im0\":\"00000280129010100FE0014001400080\","
-    "\"im1\":\"00001EF0021000000000000007E00000\","
-    "\"im2\":\"00000280129010100FE0014001400080\","
-    "\"im3\":\"00000280129010100FE0014001400080\","
-    "\"msg0\":\"KEEP%20CALM%0AAND%20GIT%20PUSH\","
-    "\"msg1\":\"A%20BUG%0ALIVES%0AIN%20ME\","
-    "\"msg2\":\"KEEP%0AIT%0ACLEAN\","
-    "\"msg3\":\"H2O\","
-    "\"mv0\":\"A99A55W5.W5.A99A55A00F2.W4.M02W5.Mc4W2.\","
-    "\"mv1\":\"A90A09W5.W5.A09A55A00F1.W4.M12W5.Mc4W2.\","
-    "\"mv2\":\"A90A09W5.W5.A09A55A00F2.W4.M22W5.Mc4W2.\","
-    "\"mv3\":\"W5.W5.W5.W5.W5.W5.Fw.Fb.M32W5.Mc4W2.\","
-    "\"t0\":\"201016060\","
-    "\"t1\":\"201016060\","
-    "\"t2\":\"201016060\","
-    "\"t3\":\"201016060\""
-    "}" JSON_SUFFIX);
+    response->fill(replyBody);
   }
   return 1;
 }
@@ -95,7 +101,7 @@ void test_propsync_syncs_several_body_properties() {
 
   p.act();
 
-  TEST_ASSERT_EQUAL_STRING("aa", body.getMove(2));
+  TEST_ASSERT_EQUAL_STRING(MV2, body.getMove(2));
 
 
 }

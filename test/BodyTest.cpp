@@ -26,7 +26,7 @@ void lcdImg(char img, uint8_t bitmap[]) {
 void messageOnLcd(int line, const char *str, int s) {
   strcpy(msg, str);
 }
-void arms(int left, int right) {}
+void arms(int left, int right, int steps) {}
 void led(char led, bool v) {}
 
 void initBody(Body* b) {

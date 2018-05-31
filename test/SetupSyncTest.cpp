@@ -26,7 +26,7 @@ bool initWifiSteady() {
 int httpGetMockPassHello(const char *url, ParamStream *response) {
   if (strcmp("http://dweet.io/get/latest/dweet/for/device1-setup", url) == 0) {
   	// Pass generated using function AES mode ECB with incremental hex key 000102...0f from http://aes.online-domain-tools.com/
-    response->append("{\"with\":[{\"content\":{\"ssid\":\"pepe\", \"pass\":\"a3a5fcf64804dbb99b2781aebfe338c9\"}}]}");
+    response->fill("{\"with\":[{\"content\":{\"ssid\":\"pepe\", \"pass\":\"a3a5fcf64804dbb99b2781aebfe338c9\"}}]}");
   } else {
   	log(LOG_CLASS, Error, "Unknown: %s", url);
   }
@@ -36,7 +36,7 @@ int httpGetMockPassHello(const char *url, ParamStream *response) {
 int httpGetMockPassHelloMyLittleDarling(const char *url, ParamStream *response) {
   if (strcmp("http://dweet.io/get/latest/dweet/for/device1-setup", url) == 0) {
   	// Pass generated using function AES mode ECB with incremental hex key 000102...0f from http://aes.online-domain-tools.com/
-    response->append("{\"with\":[{\"content\":{\"ssid\":\"name\", \"pass\":\"85b22d5b7548a237ba28c87275324e54fab0417e6ea45b3236991933aa04d8af\"}}]}");
+    response->fill("{\"with\":[{\"content\":{\"ssid\":\"name\", \"pass\":\"85b22d5b7548a237ba28c87275324e54fab0417e6ea45b3236991933aa04d8af\"}}]}");
   } else {
   	log(LOG_CLASS, Error, "Unknown: %s", url);
   }

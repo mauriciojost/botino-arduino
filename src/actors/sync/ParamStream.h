@@ -49,7 +49,7 @@ public:
   }
 
   void fill(const char* str) {
-    bytesReceived.fill(str);
+    bytesReceived.fill("%s", str);
   }
 
   int available() {
