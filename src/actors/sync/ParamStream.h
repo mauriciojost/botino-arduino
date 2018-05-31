@@ -35,7 +35,9 @@ private:
   StaticJsonBuffer<MAX_JSON_STR_LENGTH> jsonBuffer;
 
 public:
-  ParamStream() {}
+  ParamStream() {
+  	flush();
+  }
 
   size_t write(uint8_t b) {
     append(b);
@@ -46,8 +48,8 @@ public:
     bytesReceived.append(b);
   }
 
-  void append(const char* str) {
-    bytesReceived.append(str);
+  void fill(const char* str) {
+    bytesReceived.fill(str);
   }
 
   int available() {
