@@ -33,7 +33,6 @@ private:
   Timing freqConf; // configuration of the frequency at which this actor will get triggered
   Buffer<128> urlAuxBuffer;
   Buffer<MAX_JSON_STR_LENGTH> jsonAuxBuffer;
-  ParamStream httpBodyResponse;
   bool (*initWifiFunc)();
   int (*httpGet)(const char* url, ParamStream* response);
   int (*httpPost)(const char* url, const char* body, ParamStream* response);
@@ -84,6 +83,7 @@ public:
   }
 
   void updateProps(int actorIndex) {
+    ParamStream httpBodyResponse;
     Actor* actor = bot->getActors()->get(actorIndex);
 
     urlAuxBuffer.fill(DWEET_IO_API_URL_GET, actor->getName());
@@ -105,7 +105,7 @@ public:
 
     bot->getPropsJson(&jsonAuxBuffer, actorIndex);
     urlAuxBuffer.fill(DWEET_IO_API_URL_POST, actor->getName());
-    httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), &httpBodyResponse); // best effort
+    httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort
 
   }
 

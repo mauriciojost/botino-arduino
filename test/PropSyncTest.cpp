@@ -15,9 +15,9 @@
 
 #define MV2 "A90A09W5."
 
-const char* replyClock = JSON_PREFIX "{\"h\":3}" JSON_SUFFIX;
+char* replyClock = JSON_PREFIX "{\"h\":3}" JSON_SUFFIX;
 
-const char* replyBody = JSON_PREFIX "{"
+char* replyBody = JSON_PREFIX "{"
     //"\"im0\":\"00000280129010100FE0014001400080\","
     //"\"im1\":\"00001EF0021000000000000007E00000\","
     //"\"im2\":\"00000280129010100FE0014001400080\","
@@ -25,12 +25,13 @@ const char* replyBody = JSON_PREFIX "{"
     //"\"msg0\":\"KEEP%20CALM%0AAND%20GIT%20PUSH\","
     //"\"msg1\":\"A%20BUG%0ALIVES%0AIN%20ME\","
     //"\"msg2\":\"KEEP%0AIT%0ACLEAN\","
-    //"\"msg3\":\"H2O\","
+    "\"pp\":\"\","
+    "\"mv5\":\"" "\","
     //"\"mv0\":\"A99A55W5.W5.A99A55A00F2.W4.M02W5.Mc4W2.\","
     //"\"mv1\":\"A90A09W5.W5.A09A55A00F1.W4.M12W5.Mc4W2.\","
     "\"mv2\":\"" MV2 "\","
     //"\"mv3\":\"" "W5.W5.W5.W5.W5.W5.Fw.Fb.M32W5.Mc4W2." "\","
-    "\"t0\":\"201016060\","
+    //"\"t0\":\"201016060\","
     "\"t1\":\"201016060\","
     "\"t2\":\"201016060\","
     "\"t3\":\"201016060\""

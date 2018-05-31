@@ -24,18 +24,19 @@ void test_param_stream_behaviour() {
 
   TEST_ASSERT_EQUAL(2, ps.available());
 
-  ps.flush();
+}
 
+void test_param_stream_behaviour2() {
+  ParamStream ps;
   feed(&ps, "{\"key\":{\"innerkey\":\"innervalue\"}}");
   JsonObject &json = ps.parse();
   TEST_ASSERT_EQUAL_STRING("innervalue", json["key"]["innerkey"]);
-
-  ps.flush();
 }
 
 int main() {
   UNITY_BEGIN();
   RUN_TEST(test_param_stream_behaviour);
+  RUN_TEST(test_param_stream_behaviour2);
   return (UNITY_END());
 }
 

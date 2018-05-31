@@ -319,8 +319,7 @@ int httpGet(const char *url, ParamStream *response) {
   int errorCode = httpClient.GET();
   log(CLASS_MAIN, Info, "GET:%d %s", errorCode, url);
 
-  if (errorCode > 0) {
-    response->flush();
+  if (errorCode > 0 && response != NULL) {
     httpClient.writeToStream(response);
   } else {
     log(CLASS_MAIN, Error, "! %s", httpClient.errorToString(errorCode).c_str());
@@ -340,8 +339,7 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
   int errorCode = httpClient.POST(body);
   log(CLASS_MAIN, Info, "POST:%d %s", errorCode, url);
 
-  if (errorCode > 0) {
-    response->flush();
+  if (errorCode > 0 && response != NULL) {
     httpClient.writeToStream(response);
   } else {
     log(CLASS_MAIN, Error, "! %s", httpClient.errorToString(errorCode).c_str());

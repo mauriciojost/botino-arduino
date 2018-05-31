@@ -36,7 +36,7 @@ private:
 
 public:
   ParamStream() {
-  	flush();
+  	bytesReceived.clear();
   }
 
   size_t write(uint8_t b) {
@@ -64,11 +64,6 @@ public:
   int peek() {
     // Not supported.
     return -1;
-  }
-
-  void flush() {
-    bytesReceived.clear();
-    jsonBuffer.clear();
   }
 
   JsonObject &parse() {
