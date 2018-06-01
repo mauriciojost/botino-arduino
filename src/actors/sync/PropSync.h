@@ -96,7 +96,7 @@ public:
           JsonObject &content = withJson["content"];
           bot->setPropsJson(content, actorIndex);
         } else {
-          log(CLASS_PROPSYNC, Warn, "No 'content'");
+          log(CLASS_PROPSYNC, Info, "No 'content'");
         }
       } else {
         log(CLASS_PROPSYNC, Warn, "No 'with'");

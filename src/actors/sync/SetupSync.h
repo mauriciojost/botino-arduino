@@ -95,7 +95,7 @@ private:
               log(CLASS_SETUPSYNC, Warn, "No 'ssid'");
             }
           } else {
-            log(CLASS_SETUPSYNC, Warn, "No 'content'");
+            log(CLASS_SETUPSYNC, Info, "No 'content'");
           }
         } else {
           log(CLASS_SETUPSYNC, Warn, "No 'with'");
