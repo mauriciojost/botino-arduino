@@ -9,7 +9,7 @@ function run_test() {
 
   export flags="$2"
 
-  export exclude='Adafruit\|EspSaveCrash\|catch\|RemoteDebug'
+  export exclude="$3"
 
   export headers=$(find -L src -name "*.h" | xargs -I% dirname % | uniq | grep -v libs | grep -v test | grep -v unity | grep -v "$exclude" | xargs -I% echo "-I %")
   export src_c=$(find -L src -name "*.c" | grep -v test | grep -v unity | grep -v libs |  grep -v "$exclude"  | xargs -I% echo " %")
@@ -42,6 +42,8 @@ general_flags="\
   -D ENCRYPT_KEY=\"000102030405060708090a0b0c0d0e0f\"\
   -D OVERRUN_THRESHOLD_SECS=10000"
 
+excludes='Adafruit\|EspSaveCrash\|catch\|RemoteDebug'
+
 platformio run
 
 for f in $(find test -name *.cpp)
@@ -51,5 +53,5 @@ do
   echo "### Running $f"
   echo ""
   echo ""
-  run_test "$f" "$general_flags"
+  run_test "$f" "$general_flags" "$excludes"
 done
