@@ -20,6 +20,9 @@
 
 #ifndef UNIT_TEST
 
+/**
+ * One-use stream for JSON parsing.
+ */
 class ParamStream : public Stream {
 
 #else // UNIT_TEST
