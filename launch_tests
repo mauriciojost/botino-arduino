@@ -31,12 +31,17 @@ function run_test() {
 
 }
 
-rm -fr libs/Unity/examples
-
 
 source mavarduino.conf
 
-platformio run
+if [ "$is_library" == "true" ]
+then
+  echo "### Testing a library"
+else
+  echo "### Testing a final project (not a library)"
+  platformio run
+fi
+
 
 for f in $(find test -name *.cpp)
 do
@@ -45,5 +50,5 @@ do
   echo "### Running $f"
   echo ""
   echo ""
-  run_test "$f" "$test_general_flags" "$test_excludes"
+  run_test "$f" "$test_general_flags" "$test_excludes_pattern"
 done
