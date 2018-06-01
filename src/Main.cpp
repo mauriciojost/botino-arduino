@@ -122,7 +122,7 @@ void lcdPrintLogLine(const char *logStr) {
   delay(DELAY_MS_SPI);
 }
 
-bool initWifi(const char *ssid, const char *pass, bool skipIfConnected) {
+bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries) {
   wl_status_t status;
   log(CLASS_MAIN, Info, "Conn. to %s...", ssid);
 
@@ -141,7 +141,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected) {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, pass);
 
-  int attemptsLeft = 5;
+  int attemptsLeft = retries;
   while (true) {
     delay(3000);
     status = WiFi.status();
@@ -214,6 +214,7 @@ void reactButton() {
     log(CLASS_MAIN, Debug, "Routine %d...", routine);
   	m.getBody()->performMove(routine);
   }
+  log(CLASS_MAIN, Debug, "Reacted to %d", ints);
   digitalWrite(LEDW_PIN, HIGH);
   ints = 0;
 }
@@ -279,7 +280,7 @@ void arms(int left, int right, int steps) {
 
 bool initWifiInit() {
   log(CLASS_PROPSYNC, Info, "W.init %s", WIFI_SSID_INIT);
-  return initWifi(WIFI_SSID_INIT, WIFI_PASSWORD_INIT, false);
+  return initWifi(WIFI_SSID_INIT, WIFI_PASSWORD_INIT, false, 20);
 }
 
 bool initWifiSteady() {
@@ -289,7 +290,7 @@ bool initWifiSteady() {
     const char *wifiSsid = s->getSsid();
     const char *wifiPass = s->getPass();
     log(CLASS_PROPSYNC, Info, "W.steady %s", wifiSsid);
-    bool connected = initWifi(wifiSsid, wifiPass, connectedOnce);
+    bool connected = initWifi(wifiSsid, wifiPass, connectedOnce, 5);
     if (!connectedOnce) {
       messageOnLcd(0, "SETUP...", 2);
       delay(1 * 2000);
@@ -319,8 +320,10 @@ int httpGet(const char *url, ParamStream *response) {
   int errorCode = httpClient.GET();
   log(CLASS_MAIN, Info, "GET:%d %s", errorCode, url);
 
-  if (errorCode > 0 && response != NULL) {
-    httpClient.writeToStream(response);
+  if (errorCode > 0) {
+    if (response != NULL) {
+      httpClient.writeToStream(response);
+    }
   } else {
     log(CLASS_MAIN, Error, "GET:%d %s", errorCode, httpClient.errorToString(errorCode).c_str());
   }
@@ -339,8 +342,10 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
   int errorCode = httpClient.POST(body);
   log(CLASS_MAIN, Info, "POST:%d %s", errorCode, url);
 
-  if (errorCode > 0 && response != NULL) {
-    httpClient.writeToStream(response);
+  if (errorCode > 0) {
+    if (response != NULL) {
+      httpClient.writeToStream(response);
+    }
   } else {
     log(CLASS_MAIN, Error, "POST:%d %s", errorCode, httpClient.errorToString(errorCode).c_str());
   }
