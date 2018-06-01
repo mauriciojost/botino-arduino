@@ -34,7 +34,7 @@ function run_test() {
 rm -fr libs/Unity/examples
 
 
-source dependencies.conf
+source mavarduino.conf
 
 platformio run
 
@@ -45,5 +45,5 @@ do
   echo "### Running $f"
   echo ""
   echo ""
-  run_test "$f" "$general_flags" "$excludes"
+  run_test "$f" "$test_general_flags" "$test_excludes"
 done
