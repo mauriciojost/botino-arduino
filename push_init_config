@@ -7,7 +7,7 @@ PRETTY='python -m json.tool'
 # Set up general settings
 url="http://dweet.io/dweet/for/$DEVICE-settings-target?"
 url+='lcddebug=false&' # turn on/off LCD DEBUG (show logs in LCD)
-url+='crashclear=false&' # do not clear debug info (stacktraces) from device
+url+='crashclear=true&' # do not clear debug info (stacktraces) from device
 url+='loglevel=1' # log level
 curl -XPOST $url | $PRETTY
 
@@ -19,8 +19,8 @@ url+="msg0=KEEP%20CALM%0AAND%20GIT%20PUSH&" # message
 url+="msg1=A%20BUG%0ALIVES%0AIN%20ME&" # message
 url+="msg2=KEEP%20IT%0ACLEAN&" # message
 url+="msg3=DRINK%0AWATER&" # message
-url+="mv0=Fs.W4.M02W5.Mc4Zzi&" # move
-url+="mv1=F1.W4.M12W5.Mc4Zz.&" # move
+url+="mv0=S00&" # move
+url+="mv1=S01&" # move
 url+="mv2=F2.W4.M22W5.Mc4Zz.&" # move
 url+="mv3=Fw.Fb.M32W5.Zz.&" # move
 url+="t0=0&" # timing
