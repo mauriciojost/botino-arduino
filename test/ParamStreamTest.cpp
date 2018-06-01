@@ -23,7 +23,6 @@ void test_param_stream_behaviour() {
   feed(&ps, "{}");
 
   TEST_ASSERT_EQUAL(2, ps.available());
-
 }
 
 void test_param_stream_behaviour2() {

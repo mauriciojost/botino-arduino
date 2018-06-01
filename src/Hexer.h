@@ -12,29 +12,27 @@ class Hexer {
 
 private:
   static uint8_t hexToValue(char v) {
-  	if (v >= '0' && v <= '9') {
-  		return v - '0';
-  	} else if (v >= 'a' && v <= 'f') {
-  		return v - 'a' + 10;
-  	} else if (v >= 'A' && v <= 'F') {
-  		return v - 'A' + 10;
-  	} else {
-  		return 0;
-  	}
+    if (v >= '0' && v <= '9') {
+      return v - '0';
+    } else if (v >= 'a' && v <= 'f') {
+      return v - 'a' + 10;
+    } else if (v >= 'A' && v <= 'F') {
+      return v - 'A' + 10;
+    } else {
+      return 0;
+    }
   }
 
 public:
-
-  static void hexToByte(uint8_t* bytes, const char* inputHex, size_t inputLen) {
-  	if (inputLen % 2 != 0) {
+  static void hexToByte(uint8_t *bytes, const char *inputHex, size_t inputLen) {
+    if (inputLen % 2 != 0) {
       log(CLASS_HEXER, Error, "Bad hexa string (odd %d)", inputLen);
-  	} else {
-      for(int i = 0; i < inputLen; i = i + 2) {
+    } else {
+      for (int i = 0; i < inputLen; i = i + 2) {
         bytes[i / 2] = hexToValue(inputHex[i]) * 16 + hexToValue(inputHex[i + 1]);
       }
-  	}
+    }
   }
-
 };
 
 #endif // HEXER_INC

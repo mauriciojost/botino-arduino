@@ -85,17 +85,22 @@ volatile unsigned char ints = 0;
 HTTPClient httpClient;
 RemoteDebug RDebug;
 
-uint8_t initImage[IMG_SIZE_BYTES] = {
-						 0b00000000, 0b00000000,
-						 0b01111110, 0b00000000,
-						 0b01000010, 0b00111110,
-						 0b01000010, 0b00100010,
-						 0b01001010, 0b00101010,
-						 0b01000010, 0b00100010,
-						 0b01111110, 0b00111110,
-						 0b00000000, 0b00000000
-						 };
-
+uint8_t initImage[IMG_SIZE_BYTES] = {0b00000000,
+                                     0b00000000,
+                                     0b01111110,
+                                     0b00000000,
+                                     0b01000010,
+                                     0b00111110,
+                                     0b01000010,
+                                     0b00100010,
+                                     0b01001010,
+                                     0b00101010,
+                                     0b01000010,
+                                     0b00100010,
+                                     0b01111110,
+                                     0b00111110,
+                                     0b00000000,
+                                     0b00000000};
 
 /********************/
 /*** HW FUNCTIONS ***/
@@ -159,18 +164,18 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
 }
 
 void bitmapToLcd(uint8_t bitmap[]) {
-	for (char yi=0; yi < 8; yi++) {
-    for (char xi=0; xi < 2; xi++) {
-    	uint8_t imgbyte = bitmap[yi * 2 + xi];
-    	for (char b = 0; b < 8; b++) {
-    		uint8_t color = (imgbyte << b) & 0b10000000;
+  for (char yi = 0; yi < 8; yi++) {
+    for (char xi = 0; xi < 2; xi++) {
+      uint8_t imgbyte = bitmap[yi * 2 + xi];
+      for (char b = 0; b < 8; b++) {
+        uint8_t color = (imgbyte << b) & 0b10000000;
         int16_t xl = (int16_t)xi * 64 + (int16_t)b * 8;
         int16_t yl = (int16_t)yi * 8;
-        uint16_t cl = color==0?BLACK:WHITE;
+        uint16_t cl = color == 0 ? BLACK : WHITE;
         lcd.fillRect(xl, yl, 8, 8, cl);
-    	}
+      }
     }
-	}
+  }
 }
 
 void lightSleep(unsigned long delayMs) {
@@ -179,19 +184,19 @@ void lightSleep(unsigned long delayMs) {
 }
 
 void handleDebug() {
-  Settings* s = m.getSettings();
+  Settings *s = m.getSettings();
 
-	// Handle stack-traces stored in memory
+  // Handle stack-traces stored in memory
   if (s->getClear() && SaveCrash.count() > 0) {
     log(CLASS_MAIN, Debug, "Clearing stack-trcs");
     SaveCrash.clear();
   } else {
-  	if (SaveCrash.count() > 0) {
+    if (SaveCrash.count() > 0) {
       log(CLASS_MAIN, Warn, "Stack-trcs (!!!)");
       SaveCrash.print();
-  	} else {
+    } else {
       log(CLASS_MAIN, Debug, "No stack-trcs");
-  	}
+    }
   }
 
   // Handle telnet log server
@@ -199,11 +204,10 @@ void handleDebug() {
 
   // Handle log level as per settings
   setLogLevel((char)(s->getLogLevel() % 4));
-
 }
 
 void reactButton() {
-	delay(100); // avoid bouncing
+  delay(100); // avoid bouncing
   int level = digitalRead(BUTTON0_PIN);
   if (ints > 0 && level) {
     log(CLASS_MAIN, Debug, "Btn.hold(%d)...", ints);
@@ -212,14 +216,12 @@ void reactButton() {
     m.getSettings()->incrButtonPressed((int)ints);
     int routine = (int)random(0, NRO_ROUTINES);
     log(CLASS_MAIN, Debug, "Routine %d...", routine);
-  	m.getBody()->performMove(routine);
+    m.getBody()->performMove(routine);
   }
   log(CLASS_MAIN, Debug, "Reacted to %d", ints);
   digitalWrite(LEDW_PIN, HIGH);
   ints = 0;
 }
-
-
 
 /*****************/
 /*** CALLBACKS ***/
@@ -284,9 +286,9 @@ bool initWifiInit() {
 }
 
 bool initWifiSteady() {
-  SetupSync* s = m.getSetupSync();
-	static bool connectedOnce = false;
-	if (s->isInitialized()) {
+  SetupSync *s = m.getSetupSync();
+  static bool connectedOnce = false;
+  if (s->isInitialized()) {
     const char *wifiSsid = s->getSsid();
     const char *wifiPass = s->getPass();
     log(CLASS_PROPSYNC, Info, "W.steady %s", wifiSsid);
@@ -306,10 +308,10 @@ bool initWifiSteady() {
     }
     connectedOnce = connectedOnce || connected;
     return connected;
-	} else {
+  } else {
     log(CLASS_PROPSYNC, Info, "W.steady not ready");
-		return false;
-	}
+    return false;
+  }
 }
 
 int httpGet(const char *url, ParamStream *response) {
@@ -409,10 +411,10 @@ void lcdImg(char img, uint8_t bitmap[]) {
       break;
     case 'c': // custom
       log(CLASS_BODY, Debug, "Custom face", img);
-    	if (bitmap != NULL) {
+      if (bitmap != NULL) {
         logHex(CLASS_BODY, Debug, bitmap, IMG_SIZE_BYTES);
         bitmapToLcd(bitmap); // custom
-    	}
+      }
       break;
     default:
       log(CLASS_BODY, Debug, "Face?: %c", img);
@@ -474,45 +476,66 @@ void setup() {
 
   log(CLASS_MAIN, Debug, "Infos");
   Buffer<32> aux;
-  aux.fill("NAME:\n %s", DEVICE_NAME); messageOnLcd(0, aux.getBuffer(), 2); delay(3000);
-  aux.fill("ID:\n %d", ESP.getChipId()); messageOnLcd(0, aux.getBuffer(), 2); delay(3000);
-  aux.fill("SSID:\n %s", WIFI_SSID_INIT); messageOnLcd(0, aux.getBuffer(), 2); delay(3000);
-  aux.fill("PASS:\n %s", WIFI_PASSWORD_INIT); messageOnLcd(0, aux.getBuffer(), 2); delay(3000);
+  aux.fill("NAME:\n %s", DEVICE_NAME);
+  messageOnLcd(0, aux.getBuffer(), 2);
+  delay(3000);
+  aux.fill("ID:\n %d", ESP.getChipId());
+  messageOnLcd(0, aux.getBuffer(), 2);
+  delay(3000);
+  aux.fill("SSID:\n %s", WIFI_SSID_INIT);
+  messageOnLcd(0, aux.getBuffer(), 2);
+  delay(3000);
+  aux.fill("PASS:\n %s", WIFI_PASSWORD_INIT);
+  messageOnLcd(0, aux.getBuffer(), 2);
+  delay(3000);
 
-  log(CLASS_MAIN, Debug, "HW test"); delay(2000);
+  log(CLASS_MAIN, Debug, "HW test");
+  delay(2000);
   ios('r', false);
   ios('y', false);
   ios('w', false);
   ios('f', false);
   lcdImg('l', NULL);
 
-  log(CLASS_MAIN, Debug, "..Face test"); delay(2000);
+  log(CLASS_MAIN, Debug, "..Face test");
+  delay(2000);
   lcdImg('c', initImage);
-  log(CLASS_MAIN, Debug, "..Arms down"); delay(2000);
-  arms(0, 0, 100);
-  log(CLASS_MAIN, Debug, "..R. arm up"); delay(2000);
-  arms(0, 3, 100);
-  log(CLASS_MAIN, Debug, "..Left arm up"); delay(2000);
-  arms(3, 3, 100);
-  log(CLASS_MAIN, Debug, "..Arms down"); delay(2000);
-  arms(0, 0, 100);
-  log(CLASS_MAIN, Debug, "..Red led on"); delay(2000);
+  log(CLASS_MAIN, Debug, "..Arms down");
+  delay(2000);
+  // arms(0, 0, 100);
+  log(CLASS_MAIN, Debug, "..R. arm up");
+  delay(2000);
+  // arms(0, 3, 100);
+  log(CLASS_MAIN, Debug, "..Left arm up");
+  delay(2000);
+  // arms(3, 3, 100);
+  log(CLASS_MAIN, Debug, "..Arms down");
+  delay(2000);
+  // arms(0, 0, 100);
+  log(CLASS_MAIN, Debug, "..Red led on");
+  delay(2000);
   ios('r', true);
-  log(CLASS_MAIN, Debug, "..Red led off"); delay(2000);
+  log(CLASS_MAIN, Debug, "..Red led off");
+  delay(2000);
   ios('r', false);
-  log(CLASS_MAIN, Debug, "..Y. led on"); delay(2000);
+  log(CLASS_MAIN, Debug, "..Y. led on");
+  delay(2000);
   ios('y', true);
-  log(CLASS_MAIN, Debug, "..Y. led off"); delay(2000);
+  log(CLASS_MAIN, Debug, "..Y. led off");
+  delay(2000);
   ios('y', false);
-  log(CLASS_MAIN, Debug, "..W. led on"); delay(2000);
+  log(CLASS_MAIN, Debug, "..W. led on");
+  delay(2000);
   ios('w', true);
-  log(CLASS_MAIN, Debug, "..W. led off"); delay(2000);
+  log(CLASS_MAIN, Debug, "..W. led off");
+  delay(2000);
   ios('w', false);
-  log(CLASS_MAIN, Debug, "..Fan on"); delay(2000);
+  log(CLASS_MAIN, Debug, "..Fan on");
+  delay(2000);
   ios('f', true);
-  log(CLASS_MAIN, Debug, "..Fan off"); delay(2000);
+  log(CLASS_MAIN, Debug, "..Fan off");
+  delay(2000);
   ios('f', false);
-
 }
 
 void loop() {
@@ -526,16 +549,15 @@ void loop() {
   unsigned long periodMs = m.getSettings()->getPeriodSeconds() * 1000;
   unsigned long spentMs = millis() - t1;
 
-  log(CLASS_MAIN, Info, "D.C.:%0.3f", (float)spentMs/periodMs);
+  log(CLASS_MAIN, Info, "D.C.:%0.3f", (float)spentMs / periodMs);
   log(CLASS_MAIN, Info, "L.Sleep(%lums)...", periodMs);
-  while(spentMs < periodMs) {
+  while (spentMs < periodMs) {
 
     reactButton();
-  	unsigned long fragToSleepMs = MINIM(periodMs - spentMs, FRAG_TO_SLEEP_MS_MAX);
+    unsigned long fragToSleepMs = MINIM(periodMs - spentMs, FRAG_TO_SLEEP_MS_MAX);
     lightSleep(fragToSleepMs);
 
     spentMs = millis() - t1;
-
   }
 }
 

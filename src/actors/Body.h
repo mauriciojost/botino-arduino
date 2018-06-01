@@ -31,17 +31,22 @@
 
 #define IMG_SIZE_BYTES 16
 
-uint8_t defaultImg[16] = {
-						 0b00000000, 0b00000000,
-						 0b00000100, 0b00100000,
-						 0b00000000, 0b00000000,
-						 0b00000000, 0b00000000,
-						 0b00000100, 0b00100000,
-						 0b00000111, 0b11100000,
-						 0b00000000, 0b00000000,
-						 0b00000000, 0b00000000
-						 };
-
+uint8_t defaultImg[16] = {0b00000000,
+                          0b00000000,
+                          0b00000100,
+                          0b00100000,
+                          0b00000000,
+                          0b00000000,
+                          0b00000000,
+                          0b00000000,
+                          0b00000100,
+                          0b00100000,
+                          0b00000111,
+                          0b11100000,
+                          0b00000000,
+                          0b00000000,
+                          0b00000000,
+                          0b00000000};
 
 enum BodyConfigState {
   BodyConfigMsg0 = 0,      // message 0
@@ -63,31 +68,31 @@ enum BodyConfigState {
   BodyConfigStateDelimiter // delimiter of the configuration states
 };
 
-#define MOVE_DANCE0 \
-  "Lwy"\
-  "Fs."\
-	"B09"\
-	"B90"\
-  "Lwn"\
-  "Fw."\
-	"B09"\
-	"B90"\
-  "Lwy"\
-  "Fb."\
-	"B55"
+#define MOVE_DANCE0                                                                                                                        \
+  "Lwy"                                                                                                                                    \
+  "Fs."                                                                                                                                    \
+  "B09"                                                                                                                                    \
+  "B90"                                                                                                                                    \
+  "Lwn"                                                                                                                                    \
+  "Fw."                                                                                                                                    \
+  "B09"                                                                                                                                    \
+  "B90"                                                                                                                                    \
+  "Lwy"                                                                                                                                    \
+  "Fb."                                                                                                                                    \
+  "B55"
 
-#define MOVE_DANCE1 \
-  "Lwy"\
-  "Fs."\
-	"B09"\
-	"B90"\
-  "Lwn"\
-  "Fw."\
-	"B09"\
-	"B90"\
-  "Lwy"\
-  "Fb."\
-	"B55"
+#define MOVE_DANCE1                                                                                                                        \
+  "Lwy"                                                                                                                                    \
+  "Fs."                                                                                                                                    \
+  "B09"                                                                                                                                    \
+  "B90"                                                                                                                                    \
+  "Lwn"                                                                                                                                    \
+  "Fw."                                                                                                                                    \
+  "B09"                                                                                                                                    \
+  "B90"                                                                                                                                    \
+  "Lwy"                                                                                                                                    \
+  "Fb."                                                                                                                                    \
+  "B55"
 
 class Routine {
 public:
@@ -118,7 +123,7 @@ private:
   void (*arms)(int left, int right, int steps);
   void (*messageFunc)(int line, const char *msg, int size);
   void (*iosFunc)(char led, bool v);
-	void((*lcdImgFunc)(char img, uint8_t bitmap[]));
+  void((*lcdImgFunc)(char img, uint8_t bitmap[]));
 
   Buffer<MSG_MAX_LENGTH> *msgs[NRO_MSGS];
   Routine *routines[NRO_ROUTINES];
@@ -130,96 +135,94 @@ private:
   }
 
   int getInt(char c) {
-  	return ABSOL(c - '0') % 10;
+    return ABSOL(c - '0') % 10;
   }
 
   bool getBool(char c) {
-  	return c == 'y' || c == 'Y' || c == 't' || c == 'T' || c == '1';
+    return c == 'y' || c == 'Y' || c == 't' || c == 'T' || c == '1';
   }
 
   void performPose(char c1, char c2, char c3) {
 
-  	/*
+    /*
 
-    POSES (3 char codes)
-    --------------------
+POSES (3 char codes)
+--------------------
 
-    ARMS POSES: move both arms to a given position each (left, then right) (A=fast, B=normal, C=slow)
-    Codes:
-      A00 : Move left and right arms to respective position 0 and 0 (both down) at high speed
-      ...
-      A90 : Move left and right arms to respective position 9 and 0 (left arm up) at high speed
-      ...
-      A99 : Move left and right arms to respective position 9 and 9 (both up) at high speed
+ARMS POSES: move both arms to a given position each (left, then right) (A=fast, B=normal, C=slow)
+Codes:
+  A00 : Move left and right arms to respective position 0 and 0 (both down) at high speed
+  ...
+  A90 : Move left and right arms to respective position 9 and 0 (left arm up) at high speed
+  ...
+  A99 : Move left and right arms to respective position 9 and 9 (both up) at high speed
 
-      B99 : Move left and right arms to respective position 9 and 9 (both up) at normal speed
+  B99 : Move left and right arms to respective position 9 and 9 (both up) at normal speed
 
-      C99 : Move left and right arms to respective position 9 and 9 (both up) at low speed
-
-
-    FACE POSES: show a given image in the LCD
-    Codes:
-      Fw. : Face White
-      Fb. : Face Black
-      Fl. : Face cLear
-      Fs. : Face Smily
-      FS. : Face Sad
-      Fn. : Face Normal
-      Fz. : Face Zleepy
-      F0. : Face custom 0
-      F1. : Face custom 1
-      F2. : Face custom 2
-      F3. : Face custom 3
+  C99 : Move left and right arms to respective position 9 and 9 (both up) at low speed
 
 
-    IO POSES: turn on/off a given IO device, such as LEDS or the FAN (on = y, off = n)
-    Codes:
-      Lry : turn on (y) the Red led
-      Lrn : turn off (n) the Red led
-      Lwy : turn on (y) led White
-      Lyy : turn on (y) led Yellow
-      Lfy : turn on (y) Fan
+FACE POSES: show a given image in the LCD
+Codes:
+  Fw. : Face White
+  Fb. : Face Black
+  Fl. : Face cLear
+  Fs. : Face Smily
+  FS. : Face Sad
+  Fn. : Face Normal
+  Fz. : Face Zleepy
+  F0. : Face custom 0
+  F1. : Face custom 1
+  F2. : Face custom 2
+  F3. : Face custom 3
 
 
-    MESSAGE POSES: show a certain message in the LCD with a given font size
-    Codes:
-      M01 : show message 0 with font size 1
-      M12 : show message 1 with font size 2
-      ...
-      M32 : show message 3 with font size 2
-      Mc2 : show message containing current time with font size 2
-
-    COMPOSED POSES: dances and other predefined moves usable as poses
-    Codes:
-      S00 : dance 0
-      S01 : dance 1
+IO POSES: turn on/off a given IO device, such as LEDS or the FAN (on = y, off = n)
+Codes:
+  Lry : turn on (y) the Red led
+  Lrn : turn off (n) the Red led
+  Lwy : turn on (y) led White
+  Lyy : turn on (y) led Yellow
+  Lfy : turn on (y) Fan
 
 
-    WAIT POSES: wait a given number of seconds
-    Codes:
-      W1. : wait 1 second
-      ...
-      W9. : wait 9 seconds
+MESSAGE POSES: show a certain message in the LCD with a given font size
+Codes:
+  M01 : show message 0 with font size 1
+  M12 : show message 1 with font size 2
+  ...
+  M32 : show message 3 with font size 2
+  Mc2 : show message containing current time with font size 2
+
+COMPOSED POSES: dances and other predefined moves usable as poses
+Codes:
+  S00 : dance 0
+  S01 : dance 1
 
 
-    SPECIAL POSES
-    Codes:
-      Zz. : turn all power consuming components off
+WAIT POSES: wait a given number of seconds
+Codes:
+  W1. : wait 1 second
+  ...
+  W9. : wait 9 seconds
 
-    */
+
+SPECIAL POSES
+Codes:
+  Zz. : turn all power consuming components off
+
+*/
 
     switch (c1) {
 
-      case 'W':
-        {
-          int v = getInt(c2);
-          log(CLASS_BODY, Debug, "Wait %d s", v);
-          delay(v * 1000);
-        }
-        break;
+      case 'W': {
+        int v = getInt(c2);
+        log(CLASS_BODY, Debug, "Wait %d s", v);
+        delay(v * 1000);
+      } break;
 
       case 'F':
-      	switch (c2) {
+        switch (c2) {
           case '0':
             lcdImgFunc('c', images[0]); // custom 0
             break;
@@ -256,35 +259,29 @@ private:
           default:
             log(CLASS_BODY, Debug, "Face '%c'?", c2);
             break;
-      	}
-      	break;
+        }
+        break;
 
-      case 'A':
-        {
-        	int l = getInt(c2);
-        	int r = getInt(c3);
-          log(CLASS_BODY, Debug, "Armsf %d&%d", l, r);
-          arms(l, r, ARM_FAST_STEPS);
-        }
-      	break;
-      case 'B':
-        {
-        	int l = getInt(c2);
-        	int r = getInt(c3);
-          log(CLASS_BODY, Debug, "Armsn %d&%d", l, r);
-          arms(l, r, ARM_NORMAL_STEPS);
-        }
-      	break;
-      case 'C':
-        {
-        	int l = getInt(c2);
-        	int r = getInt(c3);
-          log(CLASS_BODY, Debug, "Armss %d&%d", l, r);
-          arms(l, r, ARM_SLOW_STEPS);
-        }
-      	break;
+      case 'A': {
+        int l = getInt(c2);
+        int r = getInt(c3);
+        log(CLASS_BODY, Debug, "Armsf %d&%d", l, r);
+        arms(l, r, ARM_FAST_STEPS);
+      } break;
+      case 'B': {
+        int l = getInt(c2);
+        int r = getInt(c3);
+        log(CLASS_BODY, Debug, "Armsn %d&%d", l, r);
+        arms(l, r, ARM_NORMAL_STEPS);
+      } break;
+      case 'C': {
+        int l = getInt(c2);
+        int r = getInt(c3);
+        log(CLASS_BODY, Debug, "Armss %d&%d", l, r);
+        arms(l, r, ARM_SLOW_STEPS);
+      } break;
       case 'M':
-      	switch (c2) {
+        switch (c2) {
           case '0':
             log(CLASS_BODY, Debug, "Msg 0");
             messageFunc(0, msgs[0]->getBuffer(), getInt(c3));
@@ -302,76 +299,72 @@ private:
             messageFunc(0, msgs[3]->getBuffer(), getInt(c3));
             break;
           case 'c': {
-          	{
+            {
               log(CLASS_BODY, Debug, "Msg clock");
               int h = GET_HOURS(timing.getCurrentTime());
               int m = GET_MINUTES(timing.getCurrentTime());
               Buffer<6> t("");
               t.fill("%02d:%02d", h, m);
               messageFunc(0, t.getBuffer(), getInt(c3));
-          	}
+            }
             break;
-          default:
-            log(CLASS_BODY, Debug, "Inv.M.pose:%c%c%c", c1, c2, c3);
-            break;
+            default:
+              log(CLASS_BODY, Debug, "Inv.M.pose:%c%c%c", c1, c2, c3);
+              break;
           }
-      	}
-      	break;
+        }
+        break;
 
       case 'L':
-      	switch (c2) {
-          case 'r':
-            {
-              bool b = getBool(c3);
-              log(CLASS_BODY, Debug, "Led red: %d", b);
-              iosFunc('r', b);
-              break;
-            }
-          case 'w':
-            {
-              bool b = getBool(c3);
-              log(CLASS_BODY, Debug, "Led white: %d", b);
-              iosFunc('w', b);
-              break;
-            }
-          case 'y':
-            {
-              bool b = getBool(c3);
-              log(CLASS_BODY, Debug, "Led yellow: %d", b);
-              iosFunc('y', b);
-              break;
-            }
-          case 'f':
-            {
-              bool b = getBool(c3);
-              log(CLASS_BODY, Debug, "Fan: %d", b);
-              iosFunc('f', b);
-              break;
-            }
+        switch (c2) {
+          case 'r': {
+            bool b = getBool(c3);
+            log(CLASS_BODY, Debug, "Led red: %d", b);
+            iosFunc('r', b);
+            break;
+          }
+          case 'w': {
+            bool b = getBool(c3);
+            log(CLASS_BODY, Debug, "Led white: %d", b);
+            iosFunc('w', b);
+            break;
+          }
+          case 'y': {
+            bool b = getBool(c3);
+            log(CLASS_BODY, Debug, "Led yellow: %d", b);
+            iosFunc('y', b);
+            break;
+          }
+          case 'f': {
+            bool b = getBool(c3);
+            log(CLASS_BODY, Debug, "Fan: %d", b);
+            iosFunc('f', b);
+            break;
+          }
           default:
             log(CLASS_BODY, Debug, "Inv.IO.pose:%c%c%c", c1, c2, c3);
             break;
-      	}
-      	break;
+        }
+        break;
 
       default:
 
         switch (GET_POSE(c1, c2)) {
 
-        	case GET_POSE('S', '0'):
-        		switch (c3) {
-        			case '0':
+          case GET_POSE('S', '0'):
+            switch (c3) {
+              case '0':
                 performMove(MOVE_DANCE0);
                 break;
-        			case '1':
+              case '1':
                 performMove(MOVE_DANCE1);
                 break;
-        			default:
+              default:
                 log(CLASS_BODY, Debug, "Inv.S.pose:%c%c%c", c1, c2, c3);
-        		}
+            }
             break;
 
-        	case GET_POSE('Z', 'z'):
+          case GET_POSE('Z', 'z'):
             lcdImgFunc('l', NULL);
             iosFunc('r', false);
             iosFunc('w', false);
@@ -408,7 +401,7 @@ public:
     for (int i = 0; i < NRO_IMGS; i++) {
       images[i] = new uint8_t[IMG_SIZE_BYTES];
       for (int j = 0; j < IMG_SIZE_BYTES; j++) {
-      	images[i][j] = defaultImg[j];
+        images[i][j] = defaultImg[j];
       }
     }
   }
@@ -417,8 +410,8 @@ public:
     return name;
   }
 
-	void setLcdImgFunc(void (*f)(char img, uint8_t bitmap[])) {
-  	lcdImgFunc = f;
+  void setLcdImgFunc(void (*f)(char img, uint8_t bitmap[])) {
+    lcdImgFunc = f;
   }
   void setArmsFunc(void (*f)(int left, int right, int steps)) {
     arms = f;
@@ -469,11 +462,11 @@ public:
         return "im0"; // image 0 (for any routine)
       case (BodyConfigImg1):
         return "im1";
-     case (BodyConfigImg2):
+      case (BodyConfigImg2):
         return "im2";
-     case (BodyConfigImg3):
+      case (BodyConfigImg3):
         return "im3";
-     case (BodyConfigTime0):
+      case (BodyConfigTime0):
         return "t0"; // timing 0 (for routine 0)
       case (BodyConfigTime1):
         return "t1";
@@ -487,10 +480,10 @@ public:
   }
 
   void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
-  	if (propIndex >= BodyConfigMove0 && propIndex < (NRO_ROUTINES + BodyConfigMove0)) {
+    if (propIndex >= BodyConfigMove0 && propIndex < (NRO_ROUTINES + BodyConfigMove0)) {
       int i = (int)propIndex - (int)BodyConfigMove0;
       setPropValue(setMode, targetValue, actualValue, &routines[i]->move);
-  	} else if (propIndex >= BodyConfigMsg0 && propIndex < (NRO_MSGS + BodyConfigMsg0)) {
+    } else if (propIndex >= BodyConfigMsg0 && propIndex < (NRO_MSGS + BodyConfigMsg0)) {
       int i = (int)propIndex - (int)BodyConfigMsg0;
       setPropValue(setMode, targetValue, actualValue, msgs[i]);
     } else if (propIndex >= BodyConfigTime0 && propIndex < (NRO_ROUTINES + BodyConfigTime0)) {
@@ -501,17 +494,17 @@ public:
       int i = (int)propIndex - (int)BodyConfigImg0;
       if (setMode == SetValue) {
         Buffer<IMG_SIZE_BYTES * 2> target(targetValue); // 2 chars per actual bitmap byte
-        Hexer::hexToByte((uint8_t*)images[i], target.getBuffer(), MINIM((strlen(target.getBuffer())), (IMG_SIZE_BYTES * 2)));
+        Hexer::hexToByte((uint8_t *)images[i], target.getBuffer(), MINIM((strlen(target.getBuffer())), (IMG_SIZE_BYTES * 2)));
       }
       if (actualValue != NULL) {
         actualValue->load("<*>");
       }
-  	} else {
+    } else {
       switch (propIndex) {
         default:
           break;
       }
-  	}
+    }
   }
 
   int getNroProps() {
@@ -528,15 +521,15 @@ public:
     return &timing;
   }
 
-  const char* getMove(int moveIndex) {
-  	return routines[moveIndex % NRO_ROUTINES]->move.getBuffer();
+  const char *getMove(int moveIndex) {
+    return routines[moveIndex % NRO_ROUTINES]->move.getBuffer();
   }
 
   void performMove(int moveIndex) {
     performMove(getMove(moveIndex));
   }
 
-  void performMove(const char* move) {
+  void performMove(const char *move) {
     if (strlen(move) % POSE_STR_LENGTH != 0) {
       log(CLASS_BODY, Warn, "Bad move: %s", move);
       return;
@@ -545,7 +538,6 @@ public:
       performPose(move[i + 0], move[i + 1], move[i + 2]);
     }
   }
-
 };
 
 #endif // BODY_INC

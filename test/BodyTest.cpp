@@ -18,9 +18,9 @@ void setUp() {
 void tearDown() {}
 
 void lcdImg(char img, uint8_t bitmap[]) {
-	if (img == 'b') {
-		faceCleared++;
-	}
+  if (img == 'b') {
+    faceCleared++;
+  }
 }
 
 void messageOnLcd(int line, const char *str, int s) {
@@ -29,7 +29,7 @@ void messageOnLcd(int line, const char *str, int s) {
 void arms(int left, int right, int steps) {}
 void led(char led, bool v) {}
 
-void initBody(Body* b) {
+void initBody(Body *b) {
   b->setLcdImgFunc(lcdImg);
   b->setArmsFunc(arms);
   b->setMessageFunc(messageOnLcd);

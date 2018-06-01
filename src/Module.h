@@ -98,7 +98,6 @@ public:
   ClockSync *getClockSync() {
     return clockSync;
   }
-
 };
 
 #endif // MODULE_INC
