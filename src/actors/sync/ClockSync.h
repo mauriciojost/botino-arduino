@@ -86,7 +86,7 @@ public:
         clock->set(DONT_CHANGE, h, m, s);
         log(CLASS_CLOCKSYNC, Info, "Set time: %s", time.getBuffer());
       } else {
-        log(CLASS_CLOCKSYNC, Warn, "No 'formatted'");
+        log(CLASS_CLOCKSYNC, Warn, "Inv. JSON(no 'formatted')");
       }
     }
   }

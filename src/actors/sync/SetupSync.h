@@ -98,7 +98,7 @@ private:
             log(CLASS_SETUPSYNC, Info, "No 'content'");
           }
         } else {
-          log(CLASS_SETUPSYNC, Warn, "No 'with'");
+          log(CLASS_SETUPSYNC, Info, "Inv. JSON(no 'with'");
         }
       }
     }
