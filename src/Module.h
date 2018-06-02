@@ -69,8 +69,6 @@ public:
     bot->cycle(mode, set, interruptType);
   }
 
-  void setup() {}
-
   Bot *getBot() {
     return bot;
   }

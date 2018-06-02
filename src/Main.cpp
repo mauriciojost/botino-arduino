@@ -505,8 +505,6 @@ void setup() {
   pinMode(BUTTON0_PIN, INPUT);
 
   log(CLASS_MAIN, Debug, "Setup module");
-  m.setup();
-
   m.getBody()->setLcdImgFunc(lcdImg);
   m.getBody()->setArmsFunc(arms);
   m.getBody()->setMessageFunc(messageOnLcd);
