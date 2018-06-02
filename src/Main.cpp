@@ -214,33 +214,46 @@ void handleDebug() {
 }
 
 void reactCommand() {
-	char command[32];
-	strncpy(command, Telnet.getLastCommand().c_str(), 32);
+#define COMMAND_MAX_LENGTH 64
+	char command[COMMAND_MAX_LENGTH];
+	strncpy(command, Telnet.getLastCommand().c_str(), COMMAND_MAX_LENGTH);
+  log(CLASS_MAIN, Debug, "Command: %s", command);
 
   char* c = strtok(command, " ");
 
-  log(CLASS_MAIN, Debug, "Command: %s", command);
   if (strcmp("conf", c) == 0) {
     log(CLASS_MAIN, Debug, "-> Conf mode");
-  	m.getBot()->setMode(ConfigureMode);
+    m.getBot()->setMode(ConfigureMode);
+    return;
   } else if (strcmp("move", c) == 0) {
     c = strtok(NULL, " ");
+    if (c == NULL) {
+      log(CLASS_MAIN, Error, "Argument needed: move");
+      return;
+    }
     log(CLASS_MAIN, Debug, "-> Move %s", c);
-  	m.getBody()->performMove(c);
+    m.getBody()->performMove(c);
+    return;
   } else if (strcmp("set", c) == 0) {
-    char* actor = strtok(NULL, " ");
-    char* prop = strtok(NULL, " ");
-    Buffer<32> value(strtok(NULL, " "));
-    log(CLASS_MAIN, Debug, "-> Set %s.%s = %s", actor, prop, value.getBuffer());
-  	m.getBot()->setProp(actor, prop, &value);
-  } else if (strcmp("actors", c) == 0) {
-    log(CLASS_MAIN, Debug, "-> Actors");
+    const char* actor = strtok(NULL, " ");
+    const char* prop = strtok(NULL, " ");
+    const char* v = strtok(NULL, " ");
+    if (actor == NULL || prop == NULL || v == NULL) {
+      log(CLASS_MAIN, Error, "Arguments needed: actor prop value");
+      return;
+    }
+    log(CLASS_MAIN, Debug, "-> Set %s.%s = %s", actor, prop, v);
+    Buffer<64> value(v);
+    m.getBot()->setProp(actor, prop, &value);
+    return;
+  } else if (strcmp("get", c) == 0) {
+    log(CLASS_MAIN, Debug, "-> Get");
     Array<Actor *>* actors = m.getBot()->getActors();
     for (int i = 0; i < actors->size(); i++) {
       Actor* actor = actors->get(i);
       log(CLASS_MAIN, Debug, " '%s'", actor->getName());
       for (int j = 0; j < actor->getNroProps(); j++) {
-        Buffer<32> value;
+        Buffer<COMMAND_MAX_LENGTH> value;
         actor->setProp(j, DoNotSet, NULL, &value);
         log(CLASS_MAIN, Debug, "   '%s': '%s'", actor->getPropName(j), value.getBuffer());
       }
