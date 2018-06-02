@@ -228,7 +228,7 @@ void reactCommand() {
   } else if (strcmp("move", c) == 0) {
     c = strtok(NULL, " ");
     if (c == NULL) {
-      log(CLASS_MAIN, Error, "Argument needed: move");
+      log(CLASS_MAIN, Error, "Argument needed:\n  move <move>");
       return;
     }
     log(CLASS_MAIN, Debug, "-> Move %s", c);
@@ -239,7 +239,7 @@ void reactCommand() {
     const char* prop = strtok(NULL, " ");
     const char* v = strtok(NULL, " ");
     if (actor == NULL || prop == NULL || v == NULL) {
-      log(CLASS_MAIN, Error, "Arguments needed: actor prop value");
+      log(CLASS_MAIN, Error, "Arguments needed:\n  set <actor> <prop> <value>");
       return;
     }
     log(CLASS_MAIN, Debug, "-> Set %s.%s = %s", actor, prop, v);
@@ -261,12 +261,12 @@ void reactCommand() {
     }
     log(CLASS_MAIN, Debug, " ");
   	return;
-  } else if (strcmp("exit", c) == 0) {
+  } else if (strcmp("run", c) == 0) {
     log(CLASS_MAIN, Debug, "-> Run mode");
   	m.getBot()->setMode(RunMode);
   	return;
   } else {
-    log(CLASS_MAIN, Error, "Invalid command");
+    log(CLASS_MAIN, Error, "Invalid command, try one of the following:\n conf\n run\n get\n set\n move\n");
   	return;
   }
 }
