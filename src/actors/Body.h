@@ -31,23 +31,6 @@
 
 #define IMG_SIZE_BYTES 16
 
-uint8_t defaultImg[16] = {0b00000000,
-                          0b00000000,
-                          0b00000100,
-                          0b00100000,
-                          0b00000000,
-                          0b00000000,
-                          0b00000000,
-                          0b00000000,
-                          0b00000100,
-                          0b00100000,
-                          0b00000111,
-                          0b11100000,
-                          0b00000000,
-                          0b00000000,
-                          0b00000000,
-                          0b00000000};
-
 enum BodyConfigState {
   BodyConfigMsg0 = 0,      // message 0
   BodyConfigMsg1,          // message 1
@@ -68,31 +51,9 @@ enum BodyConfigState {
   BodyConfigStateDelimiter // delimiter of the configuration states
 };
 
-#define MOVE_DANCE0                                                                                                                        \
-  "Lwy"                                                                                                                                    \
-  "Fs."                                                                                                                                    \
-  "B09"                                                                                                                                    \
-  "B90"                                                                                                                                    \
-  "Lwn"                                                                                                                                    \
-  "Fw."                                                                                                                                    \
-  "B09"                                                                                                                                    \
-  "B90"                                                                                                                                    \
-  "Lwy"                                                                                                                                    \
-  "Fb."                                                                                                                                    \
-  "B55"
-
-#define MOVE_DANCE1                                                                                                                        \
-  "Lwy"                                                                                                                                    \
-  "Fs."                                                                                                                                    \
-  "B09"                                                                                                                                    \
-  "B90"                                                                                                                                    \
-  "Lwn"                                                                                                                                    \
-  "Fw."                                                                                                                                    \
-  "B09"                                                                                                                                    \
-  "B90"                                                                                                                                    \
-  "Lwy"                                                                                                                                    \
-  "Fb."                                                                                                                                    \
-  "B55"
+#define MOVE_DANCE0 "LwyFs.B09B90LwnFw.B09B90LwyFb.B55"
+#define MOVE_DANCE1 "FfyLyyLwyFs.A50A05Fb.LryLwnA00A99Fw.LrnLwyA90A09Fb.LwnLyyA90A09Fw.Fs.Ffn"
+#define MOVE_DANCE2 "A87A78A87A78A12A21A12A21"
 
 class Routine {
 public:
@@ -359,6 +320,9 @@ Codes:
               case '1':
                 performMove(MOVE_DANCE1);
                 break;
+              case '2':
+                performMove(MOVE_DANCE2);
+                break;
               default:
                 log(CLASS_BODY, Debug, "Inv.S.pose:%c%c%c", c1, c2, c3);
             }
@@ -401,7 +365,7 @@ public:
     for (int i = 0; i < NRO_IMGS; i++) {
       images[i] = new uint8_t[IMG_SIZE_BYTES];
       for (int j = 0; j < IMG_SIZE_BYTES; j++) {
-        images[i][j] = defaultImg[j];
+        images[i][j] = 0;
       }
     }
   }
