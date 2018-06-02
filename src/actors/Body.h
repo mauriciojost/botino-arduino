@@ -530,8 +530,8 @@ public:
   }
 
   void performMove(const char *move) {
-    if (move == NULL || strlen(move) % POSE_STR_LENGTH != 0) {
-      log(CLASS_BODY, Warn, "Invalid move");
+    if (strlen(move) % POSE_STR_LENGTH != 0) {
+      log(CLASS_BODY, Warn, "Invalid move: %s", move);
       return;
     }
     for (int i = 0; i < strlen(move); i += POSE_STR_LENGTH) {
