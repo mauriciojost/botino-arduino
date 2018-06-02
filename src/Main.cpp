@@ -588,6 +588,9 @@ void setup() {
 
 	Telnet.setCallBackProjectCmds(reactCommand);
 
+  if (digitalRead(BUTTON0_PIN) == HIGH) {
+    m.getBot()->setMode(ConfigureMode);
+  }
 
 }
 
