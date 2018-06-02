@@ -266,7 +266,7 @@ void reactCommand() {
   	m.getBot()->setMode(RunMode);
   	return;
   } else {
-    log(CLASS_MAIN, Error, "Invalid command, try one of the following:\n conf\n run\n get\n set\n move\n");
+    log(CLASS_MAIN, Error, "Invalid command (try: ?)");
   	return;
   }
 }
@@ -603,13 +603,28 @@ void setup() {
 
   log(CLASS_MAIN, Debug, "Setup commands");
 	Telnet.setCallBackProjectCmds(reactCommand);
+  String helpCli("Commands:"
+  		"\n  conf: go to configuration mode"
+  		"\n  run:  go to run mode"
+  		"\n  get:  display actors properties"
+  		"\n  set:  set an actor property"
+  		"\n  move: execute a move"
+  		"\n"
+  		);
+	Telnet.setHelpProjectsCmds(helpCli);
 
   if (digitalRead(BUTTON0_PIN) == HIGH) {
     log(CLASS_MAIN, Info, "CLI mode");
+    messageOnLcd(0, "CLI mode", 2);
+    delay(1000);
     initWifiSteady();
     m.getBot()->setMode(ConfigureMode);
+    log(CLASS_MAIN, Info, "telnet");
+    log(CLASS_MAIN, Info, "  %s", WiFi.localIP().toString().c_str());
   } else {
-    log(CLASS_MAIN, Info, "Regular mode");
+    log(CLASS_MAIN, Info, "REGULAR mode");
+    messageOnLcd(0, "REGULAR mode", 2);
+    delay(1000);
     displayUserInfo();
     performHardwareTest();
   }
