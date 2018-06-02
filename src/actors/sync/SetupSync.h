@@ -25,6 +25,13 @@
 #error "Must define ENCRYPT_KEY"
 #endif // ENCRYPT_KEY
 
+#ifndef WIFI_SSID_STEADY
+#define WIFI_SSID_STEADY "???"
+#endif // WIFI_SSID_STEADY
+
+#ifndef WIFI_PASSWORD_STEADY
+#define WIFI_PASSWORD_STEADY "???"
+#endif // WIFI_PASSWORD_STEADY
 
 #define N_BLOCKS 2 // 2 times KEY_LENGTH
 
@@ -132,8 +139,8 @@ public:
     name = n;
     initWifiSteadyFunc = NULL;
     initWifiInitFunc = NULL;
-    ssid[0] = 0;
-    pass[0] = 0;
+    strcpy(ssid, WIFI_SSID_STEADY);
+    strcpy(pass, WIFI_PASSWORD_STEADY);
     httpGet = NULL;
     freqConf.setFrequency(OnceEvery1Minute);
 		Hexer::hexToByte(key, ENCRYPT_KEY, KEY_LENGTH * 2);
@@ -216,7 +223,7 @@ public:
   }
 
   bool isInitialized() {
-  	return ssid[0] != 0 && pass[0] != 0;
+  	return ssid[0] != '?' && pass[0] != '?';
   }
 };
 
