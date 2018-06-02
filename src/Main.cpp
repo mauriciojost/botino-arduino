@@ -602,12 +602,12 @@ void setup() {
 
   log(CLASS_MAIN, Debug, "Setup commands");
 	Telnet.setCallBackProjectCmds(reactCommand);
-  String helpCli("Commands:"
-  		"\n  conf: go to configuration mode"
-  		"\n  run:  go to run mode"
-  		"\n  get:  display actors properties"
-  		"\n  set:  set an actor property"
-  		"\n  move: execute a move"
+  String helpCli(
+  		"\n  conf   : go to configuration mode"
+  		"\n  run    : go to run mode"
+  		"\n  get    : display actors properties"
+  		"\n  set    : set an actor property"
+  		"\n  move   : execute a move"
   		"\n"
   		);
 	Telnet.setHelpProjectsCmds(helpCli);
