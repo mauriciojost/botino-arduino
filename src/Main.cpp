@@ -11,6 +11,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <ESP8266WiFi.h>
+#include <ArduinoOTA.h>
 #include <ESP8266HTTPClient.h>
 #include <Servo.h>
 #include "EspSaveCrash.h"
@@ -194,20 +195,16 @@ void bitmapToLcd(uint8_t bitmap[]) {
   }
 }
 
-void handleDebug() {
+void handleSettings() {
   Settings *s = m.getSettings();
 
   // Handle stack-traces stored in memory
   if (s->getClear() && SaveCrash.count() > 0) {
     log(CLASS_MAIN, Debug, "Clearing stack-trcs");
     SaveCrash.clear();
-  } else {
-    if (SaveCrash.count() > 0) {
-      log(CLASS_MAIN, Warn, "Stack-trcs (!!!)");
-      SaveCrash.print();
-    } else {
-      log(CLASS_MAIN, Debug, "No stack-trcs");
-    }
+  } else if (SaveCrash.count() > 0) {
+    log(CLASS_MAIN, Warn, "Stack-trcs (!!!)");
+    SaveCrash.print();
   }
 
   // Handle log level as per settings
@@ -573,6 +570,7 @@ void setup() {
   // Intialize the logging framework
   Serial.begin(115200);
   Telnet.begin("ESP"); // Intialize the remote logging framework
+  ArduinoOTA.begin(); // Intialize OTA
   lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C); delay(DELAY_MS_SPI); // Setup LCD
   setupLog(logLine);
 
@@ -654,9 +652,14 @@ void loop() {
   // Handle telnet log server
   Telnet.handle();
 
+  // Handle OTA
+  ArduinoOTA.handle();
+
+  // Handle settings
+  handleSettings();
+
   switch (m.getBot()->getMode()) {
   	case (RunMode):
-      handleDebug();
       m.loop(false, false, true);
       sleepInCycle(t1);
       break;

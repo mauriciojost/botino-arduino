@@ -136,3 +136,13 @@ Then open with _eclipse_.
 ```
 ln -s `readlink -e .piolibdeps/Arduino/libraries/ESP8266HTTPClient/src/ESP8266HTTPClient.*` src/
 ```
+
+## 3.3. Upload
+
+To upload the firmware just do: 
+
+```
+platformio run --target upload # && ./serial_monitor 0
+# or
+platformio run --target upload --upload-port <IP>
+```
