@@ -116,6 +116,14 @@ void lcdClear(int line) {
   lcd.fillRect(0, line * 8, 128, 8, BLACK);
 }
 
+void lcdHighlight(int line) {
+	int offset;
+	offset = 0; lcd.fillRect(0, line * 8 + offset, 128, 8 - offset, BLACK);
+  offset = 2; lcd.fillRect(0, line * 8 + offset, 128, 8 - offset, WHITE);
+  offset = 4; lcd.fillRect(0, line * 8 + offset, 128, 8 - offset, BLACK);
+  offset = 6; lcd.fillRect(0, line * 8 + offset, 128, 8 - offset, WHITE);
+}
+
 void lcdPrintLogLine(const char *logStr) {
   if (!m.getSettings()->getLcdDebug()) {
     return;
@@ -128,7 +136,7 @@ void lcdPrintLogLine(const char *logStr) {
   lcd.setCursor(0, line * 8);
   lcd.println(logStr);
   line = (line + 1) % 8;
-  lcdClear(line); // clear next line too (to indicate move)
+  lcdHighlight(line); // clear next line too (to indicate move)
   lcd.display();
   delay(DELAY_MS_SPI);
 }
@@ -212,13 +220,14 @@ void reactButton() {
   int level = digitalRead(BUTTON0_PIN);
   if (ints > 0 && level) {
     log(CLASS_MAIN, Debug, "Btn.hold(%d)...", ints);
+    log(CLASS_MAIN, Debug, "Done (%d)", ints);
   } else if (ints > 0 && !level) { // pressed the button, but not currently being pressed
     log(CLASS_MAIN, Debug, "Btn.quick(%d)...", ints);
     int routine = (int)random(0, NRO_ROUTINES);
     log(CLASS_MAIN, Debug, "Routine %d...", routine);
     m.getBody()->performMove(routine);
+    log(CLASS_MAIN, Debug, "Done (%d)", ints);
   }
-  log(CLASS_MAIN, Debug, "Reacted to %d", ints);
   digitalWrite(LEDW_PIN, HIGH);
   ints = 0;
 }
@@ -502,16 +511,16 @@ void setup() {
   lcdImg('c', initImage);
   log(CLASS_MAIN, Debug, "..Arms down");
   delay(2000);
-  // arms(0, 0, 100);
+  arms(0, 0, 100);
   log(CLASS_MAIN, Debug, "..R. arm up");
   delay(2000);
-  // arms(0, 3, 100);
+  arms(0, 3, 100);
   log(CLASS_MAIN, Debug, "..Left arm up");
   delay(2000);
-  // arms(3, 3, 100);
+  arms(3, 3, 100);
   log(CLASS_MAIN, Debug, "..Arms down");
   delay(2000);
-  // arms(0, 0, 100);
+  arms(0, 0, 100);
   log(CLASS_MAIN, Debug, "..Red led on");
   delay(2000);
   ios('r', true);
