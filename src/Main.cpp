@@ -247,11 +247,14 @@ void reactCommand() {
       log(CLASS_MAIN, Debug, " ");
     }
     log(CLASS_MAIN, Debug, " ");
+  	return;
   } else if (strcmp("exit", c) == 0) {
     log(CLASS_MAIN, Debug, "-> Run mode");
   	m.getBot()->setMode(RunMode);
+  	return;
   } else {
-    log(CLASS_MAIN, Warn, "Invalid command");
+    log(CLASS_MAIN, Error, "Invalid command");
+  	return;
   }
 }
 
@@ -270,6 +273,79 @@ void reactButton() {
   }
   digitalWrite(LEDW_PIN, HIGH);
   ints = 0;
+}
+
+void arms(int left, int right, int steps);
+void lcdImg(char img, uint8_t bitmap[]);
+void ios(char led, bool v);
+void messageOnLcd(int line, const char *str, int size);
+
+void displayUserInfo() {
+  Buffer<32> aux;
+  log(CLASS_MAIN, Debug, "USER INFO");
+  aux.fill("NAME:\n %s", DEVICE_NAME);
+  messageOnLcd(0, aux.getBuffer(), 2);
+  delay(3000);
+  aux.fill("ID:\n %d", ESP.getChipId());
+  messageOnLcd(0, aux.getBuffer(), 2);
+  delay(3000);
+  aux.fill("SSID:\n %s", WIFI_SSID_INIT);
+  messageOnLcd(0, aux.getBuffer(), 2);
+  delay(3000);
+  aux.fill("PASS:\n %s", WIFI_PASSWORD_INIT);
+  messageOnLcd(0, aux.getBuffer(), 2);
+  delay(3000);
+}
+
+
+void performHardwareTest() {
+  log(CLASS_MAIN, Debug, "HW test");
+  delay(2000);
+  ios('r', false);
+  ios('y', false);
+  ios('w', false);
+  ios('f', false);
+  lcdImg('l', NULL);
+
+  log(CLASS_MAIN, Debug, "..Face test");
+  delay(2000);
+  lcdImg('c', initImage);
+  log(CLASS_MAIN, Debug, "..Arms down");
+  delay(2000);
+  arms(0, 0, 100);
+  log(CLASS_MAIN, Debug, "..R. arm up");
+  delay(2000);
+  arms(0, 3, 100);
+  log(CLASS_MAIN, Debug, "..Left arm up");
+  delay(2000);
+  arms(3, 3, 100);
+  log(CLASS_MAIN, Debug, "..Arms down");
+  delay(2000);
+  arms(0, 0, 100);
+  log(CLASS_MAIN, Debug, "..Red led on");
+  delay(2000);
+  ios('r', true);
+  log(CLASS_MAIN, Debug, "..Red led off");
+  delay(2000);
+  ios('r', false);
+  log(CLASS_MAIN, Debug, "..Y. led on");
+  delay(2000);
+  ios('y', true);
+  log(CLASS_MAIN, Debug, "..Y. led off");
+  delay(2000);
+  ios('y', false);
+  log(CLASS_MAIN, Debug, "..W. led on");
+  delay(2000);
+  ios('w', true);
+  log(CLASS_MAIN, Debug, "..W. led off");
+  delay(2000);
+  ios('w', false);
+  log(CLASS_MAIN, Debug, "..Fan on");
+  delay(2000);
+  ios('f', true);
+  log(CLASS_MAIN, Debug, "..Fan off");
+  delay(2000);
+  ios('f', false);
 }
 
 /*****************/
@@ -343,11 +419,9 @@ bool initWifiSteady() {
     log(CLASS_PROPSYNC, Info, "W.steady %s", wifiSsid);
     bool connected = initWifi(wifiSsid, wifiPass, connectedOnce, 5);
     if (!connectedOnce) {
-      messageOnLcd(0, "SETUP...", 2);
+      messageOnLcd(0, "WIFI SETUP...", 2);
       delay(1 * 2000);
       messageOnLcd(0, wifiSsid, 2);
-      delay(1 * 2000);
-      messageOnLcd(0, wifiPass, 2);
       delay(1 * 2000);
       if (connected) { // first time
         messageOnLcd(0, "SETUP OK", 2);
@@ -478,21 +552,14 @@ void lcdImg(char img, uint8_t bitmap[]) {
 /*****************/
 
 void setup() {
+
   // Let HW startup
-  delay(3 * 1000);
-
-  // Initialize the serial port
-  Serial.begin(115200);
-
-  // Initialize the LCD
-  lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  lcd.dim(true);
-  delay(DELAY_MS_SPI);
-
-  // Intialize the remote logging framework
-  Telnet.begin("ESP");
+  delay(2 * 1000);
 
   // Intialize the logging framework
+  Serial.begin(115200);
+  Telnet.begin("ESP"); // Intialize the remote logging framework
+  lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C); delay(DELAY_MS_SPI); // Setup LCD
   setupLog(logLine);
 
   log(CLASS_MAIN, Debug, "Setup pins");
@@ -521,73 +588,17 @@ void setup() {
   log(CLASS_MAIN, Debug, "Setup interrupts");
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, RISING);
 
-  log(CLASS_MAIN, Debug, "Infos");
-  Buffer<32> aux;
-  aux.fill("NAME:\n %s", DEVICE_NAME);
-  messageOnLcd(0, aux.getBuffer(), 2);
-  delay(3000);
-  aux.fill("ID:\n %d", ESP.getChipId());
-  messageOnLcd(0, aux.getBuffer(), 2);
-  delay(3000);
-  aux.fill("SSID:\n %s", WIFI_SSID_INIT);
-  messageOnLcd(0, aux.getBuffer(), 2);
-  delay(3000);
-  aux.fill("PASS:\n %s", WIFI_PASSWORD_INIT);
-  messageOnLcd(0, aux.getBuffer(), 2);
-  delay(3000);
-
-  log(CLASS_MAIN, Debug, "HW test");
-  delay(2000);
-  ios('r', false);
-  ios('y', false);
-  ios('w', false);
-  ios('f', false);
-  lcdImg('l', NULL);
-
-  log(CLASS_MAIN, Debug, "..Face test");
-  delay(2000);
-  lcdImg('c', initImage);
-  log(CLASS_MAIN, Debug, "..Arms down");
-  delay(2000);
-  arms(0, 0, 100);
-  log(CLASS_MAIN, Debug, "..R. arm up");
-  delay(2000);
-  arms(0, 3, 100);
-  log(CLASS_MAIN, Debug, "..Left arm up");
-  delay(2000);
-  arms(3, 3, 100);
-  log(CLASS_MAIN, Debug, "..Arms down");
-  delay(2000);
-  arms(0, 0, 100);
-  log(CLASS_MAIN, Debug, "..Red led on");
-  delay(2000);
-  ios('r', true);
-  log(CLASS_MAIN, Debug, "..Red led off");
-  delay(2000);
-  ios('r', false);
-  log(CLASS_MAIN, Debug, "..Y. led on");
-  delay(2000);
-  ios('y', true);
-  log(CLASS_MAIN, Debug, "..Y. led off");
-  delay(2000);
-  ios('y', false);
-  log(CLASS_MAIN, Debug, "..W. led on");
-  delay(2000);
-  ios('w', true);
-  log(CLASS_MAIN, Debug, "..W. led off");
-  delay(2000);
-  ios('w', false);
-  log(CLASS_MAIN, Debug, "..Fan on");
-  delay(2000);
-  ios('f', true);
-  log(CLASS_MAIN, Debug, "..Fan off");
-  delay(2000);
-  ios('f', false);
-
+  log(CLASS_MAIN, Debug, "Setup commands");
 	Telnet.setCallBackProjectCmds(reactCommand);
 
   if (digitalRead(BUTTON0_PIN) == HIGH) {
+    log(CLASS_MAIN, Info, "CLI mode");
+    initWifiSteady();
     m.getBot()->setMode(ConfigureMode);
+  } else {
+    log(CLASS_MAIN, Info, "Regular mode");
+    displayUserInfo();
+    performHardwareTest();
   }
 
 }
