@@ -128,7 +128,7 @@ The project is a `platformio` project.
 
 To get started with _eclipse_ do:
 ```
-platformio init --ide eclipse --board esp01_1m
+platformio init --ide eclipse --board esp12e
 ```
 
 Then open with _eclipse_.
