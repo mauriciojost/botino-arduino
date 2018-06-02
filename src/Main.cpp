@@ -66,6 +66,12 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 #define SERVO1_RANGE_DEGREES 140
 #endif // SERVO1_RANGE_DEGREES
 
+#ifndef PERIOD_SEC
+#define PERIOD_SEC 60
+#endif // PERIOD_SEC
+
+#define PERIOD_MSEC (PERIOD_SEC * 1000)
+
 #define SERVO0_STEP_DEGREES (SERVO0_RANGE_DEGREES / MAX_SERVO_STEPS)
 #define SERVO1_STEP_DEGREES (SERVO1_RANGE_DEGREES / MAX_SERVO_STEPS)
 
@@ -83,7 +89,7 @@ Servo servoRight;
 Adafruit_SSD1306 lcd(-1);
 volatile unsigned char ints = 0;
 HTTPClient httpClient;
-RemoteDebug RDebug;
+RemoteDebug Telnet;
 
 uint8_t initImage[IMG_SIZE_BYTES] = {0b00000000,
                                      0b00000000,
@@ -178,11 +184,6 @@ void bitmapToLcd(uint8_t bitmap[]) {
   }
 }
 
-void lightSleep(unsigned long delayMs) {
-  wifi_set_sleep_type(LIGHT_SLEEP_T);
-  delay(delayMs);
-}
-
 void handleDebug() {
   Settings *s = m.getSettings();
 
@@ -213,7 +214,6 @@ void reactButton() {
     log(CLASS_MAIN, Debug, "Btn.hold(%d)...", ints);
   } else if (ints > 0 && !level) { // pressed the button, but not currently being pressed
     log(CLASS_MAIN, Debug, "Btn.quick(%d)...", ints);
-    m.getSettings()->incrButtonPressed((int)ints);
     int routine = (int)random(0, NRO_ROUTINES);
     log(CLASS_MAIN, Debug, "Routine %d...", routine);
     m.getBody()->performMove(routine);
@@ -247,7 +247,7 @@ void messageOnLcd(int line, const char *str, int size) {
 void logLine(const char *str) {
   lcdPrintLogLine(str);
   Serial.println(str);
-  RDebug.printf("%s\n", str);
+  Telnet.printf("%s\n", str);
 }
 
 void arms(int left, int right, int steps) {
@@ -441,7 +441,7 @@ void setup() {
   delay(DELAY_MS_SPI);
 
   // Intialize the remote logging framework
-  RDebug.begin("ESP");
+  Telnet.begin("ESP");
 
   // Intialize the logging framework
   setupLog(logLine);
@@ -536,29 +536,42 @@ void setup() {
   log(CLASS_MAIN, Debug, "..Fan off");
   delay(2000);
   ios('f', false);
+
+/**
+ * Sleep the remaining part of the cycle.
+ */
+void sleepInCycle(unsigned long cycleBegin) {
+  unsigned long spentMs = millis() - cycleBegin;
+  log(CLASS_MAIN, Info, "D.C.:%0.3f", (float)spentMs / PERIOD_MSEC);
+  log(CLASS_MAIN, Info, "L.Sleep(%lums)...", PERIOD_MSEC);
+  while (spentMs < PERIOD_MSEC) {
+    reactButton();
+    unsigned long fragToSleepMs = MINIM(PERIOD_MSEC - spentMs, FRAG_TO_SLEEP_MS_MAX);
+    wifi_set_sleep_type(LIGHT_SLEEP_T);
+    delay(fragToSleepMs);
+    spentMs = millis() - cycleBegin;
+  }
 }
 
 void loop() {
-
   unsigned long t1 = millis();
 
-  m.loop(false, false, true);
+  // Handle telnet log server
+  Telnet.handle();
 
-  handleDebug();
-
-  unsigned long periodMs = m.getSettings()->getPeriodSeconds() * 1000;
-  unsigned long spentMs = millis() - t1;
-
-  log(CLASS_MAIN, Info, "D.C.:%0.3f", (float)spentMs / periodMs);
-  log(CLASS_MAIN, Info, "L.Sleep(%lums)...", periodMs);
-  while (spentMs < periodMs) {
-
-    reactButton();
-    unsigned long fragToSleepMs = MINIM(periodMs - spentMs, FRAG_TO_SLEEP_MS_MAX);
-    lightSleep(fragToSleepMs);
-
-    spentMs = millis() - t1;
+  switch (m.getBot()->getMode()) {
+  	case (RunMode):
+      handleDebug();
+      m.loop(false, false, true);
+      sleepInCycle(t1);
+      break;
+  	case (ConfigureMode):
+      break;
+  	default:
+      m.getBot()->setMode(RunMode);
+      break;
   }
+
 }
 
 #endif // UNIT_TEST

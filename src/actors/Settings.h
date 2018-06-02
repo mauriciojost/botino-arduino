@@ -9,15 +9,9 @@
 
 #define CLASS_SETTINGS "ST"
 
-#ifndef PERIOD_SEC
-#define PERIOD_SEC 30
-#endif // PERIOD_SEC
-
 enum GlobalConfigState {
   GlobalClearStackTraceState = 0,
   GlobalLogLevelState,
-  GlobalButtonPressedState,
-  GlobalPeriodSecondsState,
   GlobalLcdDebugState,
   GlobalConfigStateDelimiter // delimiter of the configuration states
 };
@@ -28,8 +22,6 @@ private:
   const char *name;
   bool clearStackTrace;
   int logLevel;
-  int buttonPressed;
-  int periodSeconds;
   bool lcdDebug;
   Timing freqConf;
 
@@ -38,8 +30,6 @@ public:
     name = n;
     clearStackTrace = false;
     logLevel = 0;
-    buttonPressed = 0;
-    periodSeconds = PERIOD_SEC;
     lcdDebug = true;
   }
 
@@ -55,10 +45,6 @@ public:
         return "crashclear";
       case (GlobalLogLevelState):
         return "loglevel";
-      case (GlobalButtonPressedState):
-        return "interrupts";
-      case (GlobalPeriodSecondsState):
-        return "period";
       case (GlobalLcdDebugState):
         return "lcddebug";
       default:
@@ -73,12 +59,6 @@ public:
         break;
       case (GlobalLogLevelState):
         setPropInteger(setMode, targetValue, actualValue, &logLevel);
-        break;
-      case (GlobalButtonPressedState):
-        setPropInteger(setMode, targetValue, actualValue, &buttonPressed);
-        break;
-      case (GlobalPeriodSecondsState):
-        setPropInteger(setMode, targetValue, actualValue, &periodSeconds);
         break;
       case (GlobalLcdDebugState):
         setPropBoolean(setMode, targetValue, actualValue, &lcdDebug);
@@ -108,22 +88,6 @@ public:
 
   int getLogLevel() {
     return logLevel;
-  }
-
-  int getButtonPressed() {
-    return buttonPressed;
-  }
-
-  void setButtonPressed(int v) {
-    buttonPressed = v;
-  }
-
-  void incrButtonPressed(int v) {
-    buttonPressed += v;
-  }
-
-  int getPeriodSeconds() {
-    return periodSeconds;
   }
 
   bool getLcdDebug() {
