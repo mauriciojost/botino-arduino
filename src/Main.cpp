@@ -208,11 +208,51 @@ void handleDebug() {
     }
   }
 
-  // Handle telnet log server
-  RDebug.handle();
-
   // Handle log level as per settings
   setLogLevel((char)(s->getLogLevel() % 4));
+
+}
+
+void reactCommand() {
+	char command[32];
+	strncpy(command, Telnet.getLastCommand().c_str(), 32);
+
+  char* c = strtok(command, " ");
+
+  log(CLASS_MAIN, Debug, "Command: %s", command);
+  if (strcmp("conf", c) == 0) {
+    log(CLASS_MAIN, Debug, "-> Conf mode");
+  	m.getBot()->setMode(ConfigureMode);
+  } else if (strcmp("move", c) == 0) {
+    c = strtok(NULL, " ");
+    log(CLASS_MAIN, Debug, "-> Move %s", c);
+  	m.getBody()->performMove(c);
+  } else if (strcmp("set", c) == 0) {
+    char* actor = strtok(NULL, " ");
+    char* prop = strtok(NULL, " ");
+    Buffer<32> value(strtok(NULL, " "));
+    log(CLASS_MAIN, Debug, "-> Set %s.%s = %s", actor, prop, value.getBuffer());
+  	m.getBot()->setProp(actor, prop, &value);
+  } else if (strcmp("actors", c) == 0) {
+    log(CLASS_MAIN, Debug, "-> Actors");
+    Array<Actor *>* actors = m.getBot()->getActors();
+    for (int i = 0; i < actors->size(); i++) {
+      Actor* actor = actors->get(i);
+      log(CLASS_MAIN, Debug, " '%s'", actor->getName());
+      for (int j = 0; j < actor->getNroProps(); j++) {
+        Buffer<32> value;
+        actor->setProp(j, DoNotSet, NULL, &value);
+        log(CLASS_MAIN, Debug, "   '%s': '%s'", actor->getPropName(j), value.getBuffer());
+      }
+      log(CLASS_MAIN, Debug, " ");
+    }
+    log(CLASS_MAIN, Debug, " ");
+  } else if (strcmp("exit", c) == 0) {
+    log(CLASS_MAIN, Debug, "-> Run mode");
+  	m.getBot()->setMode(RunMode);
+  } else {
+    log(CLASS_MAIN, Warn, "Invalid command");
+  }
 }
 
 void reactButton() {
@@ -545,6 +585,11 @@ void setup() {
   log(CLASS_MAIN, Debug, "..Fan off");
   delay(2000);
   ios('f', false);
+
+	Telnet.setCallBackProjectCmds(reactCommand);
+
+
+}
 
 /**
  * Sleep the remaining part of the cycle.
