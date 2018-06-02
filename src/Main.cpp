@@ -72,6 +72,8 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 
 #define PERIOD_MSEC (PERIOD_SEC * 1000)
 
+#define COMMAND_MAX_LENGTH 64
+
 #define SERVO0_STEP_DEGREES (SERVO0_RANGE_DEGREES / MAX_SERVO_STEPS)
 #define SERVO1_STEP_DEGREES (SERVO1_RANGE_DEGREES / MAX_SERVO_STEPS)
 
@@ -214,15 +216,14 @@ void handleDebug() {
 }
 
 void reactCommand() {
-#define COMMAND_MAX_LENGTH 64
 	char command[COMMAND_MAX_LENGTH];
 	strncpy(command, Telnet.getLastCommand().c_str(), COMMAND_MAX_LENGTH);
-  log(CLASS_MAIN, Debug, "Command: %s", command);
+  log(CLASS_MAIN, Info, "Command: %s", command);
 
   char* c = strtok(command, " ");
 
   if (strcmp("conf", c) == 0) {
-    log(CLASS_MAIN, Debug, "-> Conf mode");
+    log(CLASS_MAIN, Info, "-> Conf mode");
     m.getBot()->setMode(ConfigureMode);
     return;
   } else if (strcmp("move", c) == 0) {
@@ -231,7 +232,7 @@ void reactCommand() {
       log(CLASS_MAIN, Error, "Argument needed:\n  move <move>");
       return;
     }
-    log(CLASS_MAIN, Debug, "-> Move %s", c);
+    log(CLASS_MAIN, Info, "-> Move %s", c);
     m.getBody()->performMove(c);
     return;
   } else if (strcmp("set", c) == 0) {
@@ -242,27 +243,27 @@ void reactCommand() {
       log(CLASS_MAIN, Error, "Arguments needed:\n  set <actor> <prop> <value>");
       return;
     }
-    log(CLASS_MAIN, Debug, "-> Set %s.%s = %s", actor, prop, v);
+    log(CLASS_MAIN, Info, "-> Set %s.%s = %s", actor, prop, v);
     Buffer<64> value(v);
     m.getBot()->setProp(actor, prop, &value);
     return;
   } else if (strcmp("get", c) == 0) {
-    log(CLASS_MAIN, Debug, "-> Get");
+    log(CLASS_MAIN, Info, "-> Get");
     Array<Actor *>* actors = m.getBot()->getActors();
     for (int i = 0; i < actors->size(); i++) {
       Actor* actor = actors->get(i);
-      log(CLASS_MAIN, Debug, " '%s'", actor->getName());
+      log(CLASS_MAIN, Info, " '%s'", actor->getName());
       for (int j = 0; j < actor->getNroProps(); j++) {
         Buffer<COMMAND_MAX_LENGTH> value;
         actor->setProp(j, DoNotSet, NULL, &value);
-        log(CLASS_MAIN, Debug, "   '%s': '%s'", actor->getPropName(j), value.getBuffer());
+        log(CLASS_MAIN, Info, "   '%s': '%s'", actor->getPropName(j), value.getBuffer());
       }
-      log(CLASS_MAIN, Debug, " ");
+      log(CLASS_MAIN, Info, " ");
     }
-    log(CLASS_MAIN, Debug, " ");
+    log(CLASS_MAIN, Info, " ");
   	return;
   } else if (strcmp("run", c) == 0) {
-    log(CLASS_MAIN, Debug, "-> Run mode");
+    log(CLASS_MAIN, Info, "-> Run mode");
   	m.getBot()->setMode(RunMode);
   	return;
   } else {
@@ -402,8 +403,8 @@ void arms(int left, int right, int steps) {
   lastPosL = (lastPosL == -1 ? targetPosL : lastPosL);
   lastPosR = (lastPosR == -1 ? targetPosR : lastPosR);
 
-  log(CLASS_MAIN, Info, "Sv.L%d>%d", lastPosL, targetPosL);
-  log(CLASS_MAIN, Info, "Sv.R%d>%d", lastPosR, targetPosR);
+  log(CLASS_MAIN, Debug, "Sv.L%d>%d", lastPosL, targetPosL);
+  log(CLASS_MAIN, Debug, "Sv.R%d>%d", lastPosR, targetPosR);
   for (int i = 1; i <= steps; i++) {
     float factor = ((float)i) / steps;
     int vL = lastPosL + ((targetPosL - lastPosL) * factor);
@@ -456,7 +457,7 @@ int httpGet(const char *url, ParamStream *response) {
   httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
 
   int errorCode = httpClient.GET();
-  log(CLASS_MAIN, Info, "GET:%d %s", errorCode, url);
+  log(CLASS_MAIN, Debug, "GET:%d %s", errorCode, url);
 
   if (errorCode > 0) {
     if (response != NULL) {
@@ -478,7 +479,7 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
   httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
 
   int errorCode = httpClient.POST(body);
-  log(CLASS_MAIN, Info, "POST:%d %s", errorCode, url);
+  log(CLASS_MAIN, Debug, "POST:%d %s", errorCode, url);
 
   if (errorCode > 0) {
     if (response != NULL) {
