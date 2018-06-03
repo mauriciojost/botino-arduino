@@ -12,6 +12,8 @@ url+='loglevel=1' # log level
 curl -XPOST $url | $PRETTY
 
 # Set up body
+# Routine 0: smile and turn a LED showing H20 in the LCD, then show the time, and sleep
+# Routine 1: show the current time, and sleep
 url="http://dweet.io/dweet/for/$DEVICE-body-target?"
 url+="msg0=H2O&" # custom message
 url+="mv0=Fs.Lwy.M05.W3.Mc4W5.Zz.&" # move
