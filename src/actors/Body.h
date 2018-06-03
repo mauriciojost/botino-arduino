@@ -55,6 +55,15 @@ enum BodyConfigState {
 #define MOVE_DANCE1 "FfyLyyLwyFs.A50A05Fb.LryLwnA00A99Fw.LrnLwyA90A09Fb.LwnLyyA90A09Fw.Fs.Ffn"
 #define MOVE_DANCE2 "A87A78A87A78A12A21A12A21"
 
+// Create images with:
+// https://docs.google.com/spreadsheets/d/1jXa9mFxeiN_bUji_WiCPKO_gB6pxQUeQ5QxgoSINqdc/edit#gid=0
+#define IMG_CRAZY "00007F00413E4122492A41227F3E0000"
+#define IMG_SMILY "000002401248124808100810042003C0"
+#define IMG_NORMAL "000002400240000001000180042003C0"
+#define IMG_ANGRY "0000700E4912552A45227DBE000003C0"
+#define IMG_SAD "06600810024002400240024002400000"
+#define IMG_SLEEPY "0000000012480C300180000001800000"
+
 class Routine {
 public:
   Buffer<MOVE_STR_LENGTH> move;
@@ -206,16 +215,16 @@ Codes:
             lcdImgFunc('l', NULL); // clear
             break;
           case 's':
-            lcdImgFunc('s', NULL); // smile
+            lcdImgFunc('c', IMG_SMILY); // smile
             break;
           case 'S':
-            lcdImgFunc('S', NULL); // sad
+            lcdImgFunc('c', IMG_SAD); // sad
             break;
           case 'n':
-            lcdImgFunc('n', NULL); // normal
+            lcdImgFunc('c', IMG_NORMAL); // normal
             break;
           case 'z':
-            lcdImgFunc('z', NULL); // sleepy
+            lcdImgFunc('c', IMG_SLEEPY); // sleepy
             break;
           default:
             log(CLASS_BODY, Debug, "Face '%c'?", c2);

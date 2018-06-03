@@ -94,22 +94,14 @@ volatile unsigned char ints = 0;
 HTTPClient httpClient;
 RemoteDebug Telnet;
 
-uint8_t initImage[IMG_SIZE_BYTES] = {0b00000000,
-                                     0b00000000,
-                                     0b01111110,
-                                     0b00000000,
-                                     0b01000010,
-                                     0b00111110,
-                                     0b01000010,
-                                     0b00100010,
-                                     0b01001010,
-                                     0b00101010,
-                                     0b01000010,
-                                     0b00100010,
-                                     0b01111110,
-                                     0b00111110,
-                                     0b00000000,
-                                     0b00000000};
+uint8_t initImage[IMG_SIZE_BYTES] = {0b00000000, 0b00000000,
+                                     0b01111110, 0b00000000,
+                                     0b01000010, 0b00111110,
+                                     0b01000010, 0b00100010,
+                                     0b01001010, 0b00101010,
+                                     0b01000010, 0b00100010,
+                                     0b01111110, 0b00111110,
+                                     0b00000000, 0b00000000};
 
 /********************/
 /*** HW FUNCTIONS ***/
@@ -526,22 +518,6 @@ void lcdImg(char img, uint8_t bitmap[]) {
     case 'l': // clear
       log(CLASS_BODY, Debug, "Clear face");
       lcd.clearDisplay();
-      break;
-    case 's': // smily
-      log(CLASS_BODY, Debug, "Smile face");
-      lcd.drawBitmap(0, 0, happy, 128, 64, WHITE);
-      break;
-    case 'S': // sad
-      log(CLASS_BODY, Debug, "Sad face");
-      lcd.drawBitmap(0, 0, sad, 128, 64, WHITE);
-      break;
-    case 'n': // sad
-      log(CLASS_BODY, Debug, "Normal face");
-      lcd.drawBitmap(0, 0, normal, 128, 64, WHITE);
-      break;
-    case 'z': // sleepy
-      log(CLASS_BODY, Debug, "Sleepy face");
-      lcd.drawBitmap(0, 0, sleepy, 128, 64, WHITE);
       break;
     case 'c': // custom
       log(CLASS_BODY, Debug, "Custom face", img);
