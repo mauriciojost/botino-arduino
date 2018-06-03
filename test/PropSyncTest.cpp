@@ -15,9 +15,9 @@
 
 #define MV2 "A90A09W5."
 
-char *replyClock = JSON_PREFIX "{\"h\":3}" JSON_SUFFIX;
+const char *replyClock = JSON_PREFIX "{\"h\":3}" JSON_SUFFIX;
 
-char *replyBody = JSON_PREFIX "{"
+const char *replyBody = JSON_PREFIX "{"
                               "\"im0\":\"00000280129010100FE0014001400080\","
                               "\"im1\":\"00001EF0021000000000000007E00000\","
                               "\"im2\":\"00000280129010100FE0014001400080\","
