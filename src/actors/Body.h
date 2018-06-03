@@ -348,6 +348,7 @@ Codes:
             break;
 
           case GET_POSE('Z', 'z'):
+            lcdImgFunc('b', NULL);
             lcdImgFunc('l', NULL);
             iosFunc('r', false);
             iosFunc('w', false);
