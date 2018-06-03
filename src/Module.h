@@ -12,6 +12,7 @@
 #include <log4ino/Log.h>
 #include <Pinout.h>
 #include "actors/Settings.h"
+#include "actors/Quotes.h"
 
 #define CLASS_MODULE "MD"
 
@@ -29,6 +30,7 @@ private:
   Settings *settings;
   SerBot *bot;
   Body *body;
+  Quotes *quotes;
 
 public:
   Module() {
@@ -39,19 +41,22 @@ public:
     clock = new Clock("clock");
     settings = new Settings("settings");
     body = new Body("body");
+    quotes = new Quotes("quotes");
 
-    actors = new Array<Actor *>(6);
+    actors = new Array<Actor *>(7);
     actors->set(0, (Actor *)setupSync);
     actors->set(1, (Actor *)propSync);
     actors->set(2, (Actor *)clockSync);
     actors->set(3, (Actor *)clock);
     actors->set(4, (Actor *)settings);
-    actors->set(5, (Actor *)body);
+    actors->set(5, (Actor *)quotes);
+    actors->set(6, (Actor *)body);
 
     bot = new SerBot(clock, actors);
 
     propSync->setBot(bot);
     clockSync->setClock(bot->getClock());
+    body->setQuotes(quotes);
 
     bot->setMode(RunMode);
   }

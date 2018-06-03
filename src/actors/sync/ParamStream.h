@@ -74,6 +74,11 @@ public:
     JsonObject &root = jsonBuffer.parseObject(bytesReceived.getUnsafeBuffer());
     return root;
   }
+
+  const char* content() {
+  	return bytesReceived.getBuffer();
+  }
+
 };
 
 #endif // PARAM_STREAM_INC

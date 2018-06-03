@@ -9,6 +9,7 @@
 #include <main4ino/Boolean.h>
 #include <main4ino/Misc.h>
 #include <Hexer.h>
+#include <actors/Quotes.h>
 
 #define CLASS_BODY "BO"
 #define MSG_MAX_LENGTH 32
@@ -95,12 +96,13 @@ private:
   void (*iosFunc)(char led, bool v);
   void((*lcdImgFunc)(char img, uint8_t bitmap[]));
 
+  Quotes* quotes;
   Buffer<MSG_MAX_LENGTH> *msgs[NRO_MSGS];
   Routine *routines[NRO_ROUTINES];
   uint8_t *images[NRO_IMGS];
 
   bool isInitialized() {
-    bool init = arms != NULL && iosFunc != NULL && messageFunc != NULL && lcdImgFunc != NULL;
+    bool init = arms != NULL && iosFunc != NULL && messageFunc != NULL && lcdImgFunc != NULL && quotes != NULL;
     return init;
   }
 
@@ -163,6 +165,7 @@ Codes:
   ...
   M32 : show message 3 with font size 2
   Mc2 : show message containing current time with font size 2
+  Mq2 : show random quote
 
 COMPOSED POSES: dances and other predefined moves usable as poses
 Codes:
@@ -249,7 +252,8 @@ Codes:
         int r = getInt(c3);
         log(CLASS_BODY, Debug, "Armss %d&%d", l, r);
         arms(l, r, ARM_SLOW_STEPS);
-      } break;
+      }
+      break;
       case 'M':
         switch (c2) {
           case '0':
@@ -268,7 +272,7 @@ Codes:
             log(CLASS_BODY, Debug, "Msg 3");
             messageFunc(0, msgs[3]->getBuffer(), getInt(c3));
             break;
-          case 'c': {
+          case 'c':
             {
               log(CLASS_BODY, Debug, "Msg clock");
               int h = GET_HOURS(timing.getCurrentTime());
@@ -278,10 +282,16 @@ Codes:
               messageFunc(0, t.getBuffer(), getInt(c3));
             }
             break;
-            default:
-              log(CLASS_BODY, Debug, "Inv.M.pose:%c%c%c", c1, c2, c3);
-              break;
-          }
+          case 'q':
+            {
+              log(CLASS_BODY, Debug, "Msg quote");
+              int i = random(NRO_QUOTES);
+              messageFunc(0, quotes->getQuote(i), getInt(c3));
+            }
+            break;
+          default:
+            log(CLASS_BODY, Debug, "Inv.M.pose:%c%c%c", c1, c2, c3);
+            break;
         }
         break;
 
@@ -361,6 +371,7 @@ public:
     messageFunc = NULL;
     iosFunc = NULL;
     lcdImgFunc = NULL;
+    quotes = NULL;
     for (int i = 0; i < NRO_MSGS; i++) {
       msgs[i] = new Buffer<MSG_MAX_LENGTH>("");
     }
@@ -381,6 +392,10 @@ public:
 
   const char *getName() {
     return name;
+  }
+
+  void setQuotes(Quotes* q) {
+  	quotes = q;
   }
 
   void setLcdImgFunc(void (*f)(char img, uint8_t bitmap[])) {
