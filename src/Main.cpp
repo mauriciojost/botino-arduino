@@ -349,6 +349,8 @@ void performHardwareTest() {
   log(CLASS_MAIN, Debug, "..Fan off");
   delay(2000);
   ios('f', false);
+  log(CLASS_MAIN, Debug, "..Random %lu %lu %lu", random(10000), random(10000), random(10000));
+  delay(2000);
 }
 
 /*****************/
@@ -558,6 +560,9 @@ void setup() {
   pinMode(SERVO0_PIN, OUTPUT);
   pinMode(SERVO1_PIN, OUTPUT);
   pinMode(BUTTON0_PIN, INPUT);
+
+  log(CLASS_MAIN, Debug, "Setup random");
+	randomSeed(analogRead(0) * 256 + analogRead(0));
 
   log(CLASS_MAIN, Debug, "Setup module");
   m.getBody()->setLcdImgFunc(lcdImg);
