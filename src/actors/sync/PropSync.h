@@ -99,7 +99,7 @@ public:
           log(CLASS_PROPSYNC, Info, "No 'content'");
         }
       } else {
-        log(CLASS_PROPSYNC, Info, "Inv. JSON(no 'with'");
+        log(CLASS_PROPSYNC, Info, "Inv. JSON(no 'with')");
       }
     }
 
