@@ -215,16 +215,16 @@ Codes:
             lcdImgFunc('l', NULL); // clear
             break;
           case 's':
-            lcdImgFunc('c', IMG_SMILY); // smile
+            lcdImgFunc('c', (uint8_t*)IMG_SMILY); // smile
             break;
           case 'S':
-            lcdImgFunc('c', IMG_SAD); // sad
+            lcdImgFunc('c', (uint8_t*)IMG_SAD); // sad
             break;
           case 'n':
-            lcdImgFunc('c', IMG_NORMAL); // normal
+            lcdImgFunc('c', (uint8_t*)IMG_NORMAL); // normal
             break;
           case 'z':
-            lcdImgFunc('c', IMG_SLEEPY); // sleepy
+            lcdImgFunc('c', (uint8_t*)IMG_SLEEPY); // sleepy
             break;
           default:
             log(CLASS_BODY, Debug, "Face '%c'?", c2);
