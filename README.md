@@ -78,6 +78,13 @@ Properties: see [here for more information](src/actors/Body.h)
 
 # 2. Other information
 
+## Telnet
+
+You can telnet the device for debugging purposes. You will get the logs via Wifi. 
+
+You can also control the device. To do so you need to enter in configuration mode, by sending via telnet the command `conf` (and wait
+for the device to pick it up). Then send the command `?` for help.
+
 ## Poses
 
 A pose is a status of a device. For instance a LED on, a fan off, a message in the LCD, etc.
@@ -94,21 +101,21 @@ A timing is expressed as an integer value. It is possible to specify several typ
 
 ### Never
 
-Simply `0` value.
+Simply `0` value. There will be no matching (the actor will not act).
 
 ### Concrete date-time
 
-Simply `1DDHHMMSS` (DD for days, HH for hours, MM for minutes, SS for seconds). 
+Simply use `1DDHHMMSS` (DD for days, HH for hours, MM for minutes, SS for seconds). 
 
-For instance, if you want the actor to wake up at 15h00 any day, just set its frequency to `177150000` (read as 1 for concrete date-time mode, 77 for any day, 15 for 15h, 00 for 00m, and 00 for 00s).
+For instance, if you want the actor to wake up at 15h00 any day, just set its frequency to `177150000` (the expression can be read as follows: 1 for concrete date-time mode, 77 for any day matching, 15 for matching only at 15h, 00 for matching only at 00m, and 00 for matching only at 00s).
 
 ### Frequency
 
-Simply `2DDHHMMSS`. 
+Simply use `2DDHHMMSS`. 
 
 The actor will act when the actual time component modulo the provided component equals zero. 
 
-For example: if you want the actor to wake up every 2 hours, just set its frequency to `201026060` (read as 2 for frequency mode, 01 for any day as any day modulo 1 will give 0, 02 for every 2 hours as pair hours modulo 2 will give 0 while odd hours will give 1 so no matching, 60 for matching only at 00m, and 00 for matching only at 00s).
+For example: if you want the actor to wake up every 2 hours, just set its frequency to `201026060` (the expression can be read as follows: 2 for frequency mode; 01 for any day, as any day number modulo 1 equals 0; 02 meaning every 2 hours, as any pair hour value modulo 2 equals 0, while odd hours will give 1, so no matching; 60 for matching only at 00m, and 00 for matching only at 00s).
 
 
 # 3. Contribute
