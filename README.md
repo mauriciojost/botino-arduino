@@ -2,12 +2,15 @@
 
 This is a cool-geek-fully-configurable alarm project.
 
+![Botino](misc/images/botino-v0.jpg)
+
 Features:
 
 - Innovative design
 - Setup via the internet / JSON
 - Several configurable alarms
 - Highly customizable routines: face expressions, LCD custom images, messages, LEDs, arms, fan, among others.
+- Random quote of the day
 
 ## 1. Get It Started
 
