@@ -18,8 +18,8 @@ url="http://dweet.io/dweet/for/$DEVICE-body-target?"
 url+="msg0=H2O&" # custom message
 url+="mv0=Fs.Lwy.M05.W3.Mc4W5.Zz.&" # move
 url+="mv1=Mc4W5.Zz.&" # move
-url+="mv2=S01&" # move
-url+="mv3=S02&" # move
+url+="mv2=S00S01S01S01Zz.&" # move
+url+="mv3=S02S02S02S00Zz.&" # move
 url+="t0=201013060&" # timing
 url+="t1=201010160&" # timing
 url+="t2=0&" # timing
