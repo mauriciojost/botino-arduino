@@ -1,9 +1,6 @@
 # TODO
 
 - Package electronics without breadboard
-- Add repeat for routines
-- Add a move where you show a random fortune message
-- Allow to combine moves (first move 0, then move 1 x 2 times)
 - Version the docker images
 - Create script to set up wifi parameters for the first time.
 - Make a good pass and fix data types (avoid char, use better uint8 for instance)
@@ -11,6 +8,9 @@
 
 # DONE
 
+- Add a move where you show a random fortune message -> Done (Quotes)
+- Add repeat for routines -> Won't do
+- Allow to combine moves (first move 0, then move 1 x 2 times) -> Won't do
 - Create a way to ease the image creation -> spreadsheet
 - Make key for WIFI pass encryption configurable
 - Tell the WIFI & pass you should set up in your hotspot phone for botino to access the internet.
