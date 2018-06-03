@@ -8,6 +8,7 @@
 #include <main4ino/Integer.h>
 #include <main4ino/Boolean.h>
 #include <main4ino/Misc.h>
+#include <actors/sync/ParamStream.h>
 
 #define CLASS_QUOTES "QU"
 
