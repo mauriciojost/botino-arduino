@@ -7,35 +7,30 @@ PRETTY='python -m json.tool'
 # Set up general settings
 url="http://dweet.io/dweet/for/$DEVICE-settings-target?"
 url+='lcddebug=false&' # turn on/off LCD DEBUG (show logs in LCD)
-url+='crashclear=true&' # do not clear debug info (stacktraces) from device
+url+='crashclear=false&' # do not clear debug info (stacktraces) from device
 url+='loglevel=1' # log level
 curl -XPOST $url | $PRETTY
 
 # Set up body
 url="http://dweet.io/dweet/for/$DEVICE-body-target?"
-url+="im1=00001EF0021000000000000007E00000&" # image doubtful
-url+="im2=00000280129010100FE0014001400080&" # image mischeavious
-url+="msg0=KEEP%20CALM%0AAND%20GIT%20PUSH&" # message
-url+="msg1=A%20BUG%0ALIVES%0AIN%20ME&" # message
-url+="msg2=KEEP%20IT%0ACLEAN&" # message
-url+="msg3=DRINK%0AWATER&" # message
-url+="mv0=S00&" # move
-url+="mv1=S01&" # move
-url+="mv2=F2.W4.M22W5.Mc4Zz.&" # move
-url+="mv3=Fw.Fb.M32W5.Zz.&" # move
-url+="t0=0&" # timing
-url+="t1=0&" # timing
+url+="msg0=H2O&" # custom message
+url+="mv0=Fs.Lwy.M05.W3.Mc4W5.Zz.&" # move
+url+="mv1=Mc4W5.Zz.&" # move
+url+="mv2=S01&" # move
+url+="mv3=S02&" # move
+url+="t0=201013060&" # timing
+url+="t1=201010160&" # timing
 url+="t2=0&" # timing
-url+="t3=201016060&" # timing
+url+="t3=0" # timing
 curl -XPOST $url | $PRETTY
 
 # Set up properties synchronizer
 url="http://dweet.io/dweet/for/$DEVICE-propsync-target?"
-url+="freq=201010560" # sync all properties every 5 minutes
+url+="freq=201011560" # sync all properties every 5 minutes
 curl -XPOST $url | $PRETTY
 
 # Set up setup synchronizer (for wifi setup)
-url="http://dweet.io/dweet/for/$DEVICE-setupsync-target?"
+#url="http://dweet.io/dweet/for/$DEVICE-setupsync-target?"
 #url+="freq=201010560" # sync all properties every 5 minutes
-curl -XPOST $url | $PRETTY
+#curl -XPOST $url | $PRETTY
 
