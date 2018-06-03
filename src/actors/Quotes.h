@@ -32,7 +32,7 @@ private:
   bool (*initWifiFunc)();
 
   bool isInitialized() {
-  	return (httpGet != NULL || initWifiFunc == NULL );
+  	return (httpGet != NULL && initWifiFunc != NULL );
   }
 
 public:
