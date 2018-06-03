@@ -152,7 +152,7 @@ ln -s `readlink -e .piolibdeps/Arduino/libraries/ESP8266HTTPClient/src/ESP8266HT
 To upload the firmware just do: 
 
 ```
-export VERSION=`jshon -e version -u` && export PLATFORMIO_BUILD_FLAGS="'-D PROJ_VERSION=\"$VERSION\"'"
+export VERSION=`cat library.json | jshon -e version -u` && export PLATFORMIO_BUILD_FLAGS="'-D PROJ_VERSION=\"$VERSION\"'"
 
 # then compile, upload, and display logs doing either:
 
