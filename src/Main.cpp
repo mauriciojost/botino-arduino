@@ -22,6 +22,10 @@
 
 #define CLASS_MAIN "MA"
 
+#ifndef PROJ_VERSION
+#define PROJ_VERSION "1master"
+#endif // PROJ_VERSION
+
 #ifndef WIFI_SSID_INIT
 #error "Must provide WIFI_SSID_INIT"
 #define WIFI_SSID_INIT ""
@@ -286,17 +290,25 @@ void messageOnLcd(int line, const char *str, int size);
 void displayUserInfo() {
   Buffer<32> aux;
   log(CLASS_MAIN, Debug, "USER INFO");
+  aux.fill("VERSION:\n %s", PROJ_VERSION);
+  messageOnLcd(0, aux.getBuffer(), 2);
+  log(CLASS_MAIN, Debug, aux.getBuffer());
+  delay(3000);
   aux.fill("NAME:\n %s", DEVICE_NAME);
   messageOnLcd(0, aux.getBuffer(), 2);
+  log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(3000);
   aux.fill("ID:\n %d", ESP.getChipId());
   messageOnLcd(0, aux.getBuffer(), 2);
+  log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(3000);
   aux.fill("SSID:\n %s", WIFI_SSID_INIT);
   messageOnLcd(0, aux.getBuffer(), 2);
+  log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(3000);
   aux.fill("PASS:\n %s", WIFI_PASSWORD_INIT);
   messageOnLcd(0, aux.getBuffer(), 2);
+  log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(3000);
 }
 

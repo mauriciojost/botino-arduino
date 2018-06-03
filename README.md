@@ -152,7 +152,16 @@ ln -s `readlink -e .piolibdeps/Arduino/libraries/ESP8266HTTPClient/src/ESP8266HT
 To upload the firmware just do: 
 
 ```
-platformio run --target upload # && ./serial_monitor 0
-# or
-platformio run --target upload --upload-port <IP>
+export VERSION=`jshon -e version -u` && export PLATFORMIO_BUILD_FLAGS="'-D PROJ_VERSION=\"$VERSION\"'"
+
+# then compile, upload, and display logs doing either:
+
+platformio run --target upload # via serial port
+ ./serial_monitor 0
+
+# or:
+
+platformio run --target upload --upload-port <IP> # OTA
+telnet <IP>
+
 ```
