@@ -101,6 +101,11 @@ public:
   ClockSync *getClockSync() {
     return clockSync;
   }
+
+  Quotes *getQuotes() {
+    return quotes;
+  }
+
 };
 
 #endif // MODULE_INC

@@ -572,6 +572,8 @@ void setup() {
   m.getSetupSync()->setInitWifiSteady(initWifiSteady);
   m.getSetupSync()->setInitWifiInit(initWifiInit);
   m.getSetupSync()->setHttpGet(httpGet);
+  m.getQuotes()->setHttpGet(httpGet);
+  m.getQuotes()->setInitWifi(initWifiSteady);
 
   log(CLASS_MAIN, Debug, "Setup interrupts");
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, RISING);
