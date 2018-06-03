@@ -544,11 +544,11 @@ void setup() {
   delay(2 * 1000);
 
   // Intialize the logging framework
-  Serial.begin(115200);
-  Telnet.begin("ESP"); // Intialize the remote logging framework
+  Serial.begin(115200); // Initialize serial port
+  Telnet.begin("ESP" DEVICE_NAME); // Intialize the remote logging framework
   ArduinoOTA.begin(); // Intialize OTA
-  lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C); delay(DELAY_MS_SPI); // Setup LCD
-  setupLog(logLine);
+  lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C); delay(DELAY_MS_SPI); // Initialize LCD
+  setupLog(logLine); // Initialize log callback
 
   log(CLASS_MAIN, Debug, "Setup pins");
   pinMode(LEDR_PIN, OUTPUT);
