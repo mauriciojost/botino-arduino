@@ -53,17 +53,17 @@ enum BodyConfigState {
 };
 
 #define MOVE_DANCE0 "LwyFs.B09B90LwnFw.B09B90LwyFb.B55"
-#define MOVE_DANCE1 "FfyLyyLwyFs.A50A05Fb.LryLwnA00A99Fw.LrnLwyA90A09Fb.LwnLyyA90A09Fw.Fs.Ffn"
+#define MOVE_DANCE1 "FfyLyyLwyFs.A50A05Fb.LryLwnA00A99Fw.LrnLwyA90A09Fb.LwnLyyA90A09Fw.Fs."
 #define MOVE_DANCE2 "A87A78A87A78A12A21A12A21"
 
 // Create images with:
 // https://docs.google.com/spreadsheets/d/1jXa9mFxeiN_bUji_WiCPKO_gB6pxQUeQ5QxgoSINqdc/edit#gid=0
-#define IMG_CRAZY "00007F00413E4122492A41227F3E0000"
-#define IMG_SMILY "000002401248124808100810042003C0"
-#define IMG_NORMAL "000002400240000001000180042003C0"
-#define IMG_ANGRY "0000700E4912552A45227DBE000003C0"
-#define IMG_SAD "06600810024002400240024002400000"
-#define IMG_SLEEPY "0000000012480C300180000001800000"
+const uint8_t IMG_CRAZY[] = {0x00, 0x00, 0x7F, 0x00, 0x41, 0x3E, 0x41, 0x22, 0x49, 0x2A, 0x41, 0x22, 0x7F, 0x3E, 0x00, 0x00};
+const uint8_t IMG_SMILY[] = {0x00, 0x00, 0x02, 0x40, 0x12, 0x48, 0x12, 0x48, 0x08, 0x10, 0x08, 0x10, 0x04, 0x20, 0x03, 0xC0};
+const uint8_t IMG_NORMAL[] = {0x00, 0x00, 0x02, 0x40, 0x02, 0x40, 0x00, 0x00, 0x01, 0x00, 0x01, 0x80, 0x04, 0x20, 0x03, 0xC0};
+const uint8_t IMG_ANGRY[] = {0x00, 0x00, 0x70, 0x0E, 0x49, 0x12, 0x55, 0x2A, 0x45, 0x22, 0x7D, 0xBE, 0x00, 0x00, 0x03, 0xC0};
+const uint8_t IMG_SAD[] = {0x06, 0x60, 0x08, 0x10, 0x02, 0x40, 0x02, 0x40, 0x02, 0x40, 0x02, 0x40, 0x02, 0x40, 0x00, 0x00};
+const uint8_t IMG_SLEEPY[] = {0x00, 0x00, 0x00, 0x00, 0x12, 0x48, 0x0C, 0x30, 0x01, 0x80, 0x00, 0x00, 0x01, 0x80, 0x00, 0x00};
 
 class Routine {
 public:
@@ -218,16 +218,16 @@ Codes:
             lcdImgFunc('l', NULL); // clear
             break;
           case 's':
-            lcdImgFunc('c', (uint8_t*)IMG_SMILY); // smile
+            lcdImgFunc('c', IMG_SMILY); // smile
             break;
           case 'S':
-            lcdImgFunc('c', (uint8_t*)IMG_SAD); // sad
+            lcdImgFunc('c', IMG_SAD); // sad
             break;
           case 'n':
-            lcdImgFunc('c', (uint8_t*)IMG_NORMAL); // normal
+            lcdImgFunc('c', IMG_NORMAL); // normal
             break;
           case 'z':
-            lcdImgFunc('c', (uint8_t*)IMG_SLEEPY); // sleepy
+            lcdImgFunc('c', IMG_SLEEPY); // sleepy
             break;
           default:
             log(CLASS_BODY, Debug, "Face '%c'?", c2);
