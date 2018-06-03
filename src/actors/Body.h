@@ -138,6 +138,8 @@ FACE POSES: show a given image in the LCD
 Codes:
   Fw. : Face White
   Fb. : Face Black
+  Fa. : Face Angry
+  Fr. : Face cRazy
   Fl. : Face cLear
   Fs. : Face Smily
   FS. : Face Sad
@@ -217,6 +219,9 @@ Codes:
           case 'l':
             lcdImgFunc('l', NULL); // clear
             break;
+          case 'r':
+            lcdImgFunc('c', IMG_CRAZY); // crazy
+            break;
           case 's':
             lcdImgFunc('c', IMG_SMILY); // smile
             break;
@@ -225,6 +230,9 @@ Codes:
             break;
           case 'n':
             lcdImgFunc('c', IMG_NORMAL); // normal
+            break;
+          case 'a':
+            lcdImgFunc('c', IMG_ANGRY); // angry
             break;
           case 'z':
             lcdImgFunc('c', IMG_SLEEPY); // sleepy
