@@ -145,10 +145,10 @@ Codes:
   FS. : Face Sad
   Fn. : Face Normal
   Fz. : Face Zleepy
-  F0. : Face custom 0
-  F1. : Face custom 1
-  F2. : Face custom 2
-  F3. : Face custom 3
+  F0. : Face custom 0 (user provided)
+  F1. : Face custom 1 (user provided)
+  F2. : Face custom 2 (user provided)
+  F3. : Face custom 3 (user provided)
 
 
 IO POSES: turn on/off a given IO device, such as LEDS or the FAN (on = y, off = n)
@@ -162,17 +162,17 @@ Codes:
 
 MESSAGE POSES: show a certain message in the LCD with a given font size
 Codes:
-  M01 : show message 0 with font size 1
-  M12 : show message 1 with font size 2
+  M01 : show message 0 with font size 1 (user provided)
   ...
-  M32 : show message 3 with font size 2
-  Mc2 : show message containing current time with font size 2
-  Mq2 : show random quote
+  M32 : show message 3 with font size 2 (user provided)
+  Mc4 : show message containing current time (with font size 4)
+  Mq1 : show random quote (with font size 1)
 
 COMPOSED POSES: dances and other predefined moves usable as poses
 Codes:
   S00 : dance 0
   S01 : dance 1
+  S02 : dance 2
 
 
 WAIT POSES: wait a given number of seconds
