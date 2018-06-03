@@ -37,7 +37,7 @@ private:
   }
 
 public:
-  Quotes(const char *n) : timing(OnceEvery1Minute) {
+  Quotes(const char *n) : timing(OnceEvery5Minutes) {
     name = n;
     httpGet = NULL;
     initWifiFunc = NULL;
