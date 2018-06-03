@@ -11,6 +11,9 @@
 
 #define CLASS_QUOTES "QU"
 
+#define QUOTE_MAX_LENGTH 128
+#define NRO_QUOTES 6
+
 enum QuotesConfigState {
   QuotesConfigStateDelimiter = 0 // delimiter of the configuration states
 };
@@ -22,8 +25,6 @@ enum QuotesConfigState {
  */
 class Quotes : public Actor {
 
-#define QUOTE_MAX_LENGTH 100
-#define NRO_QUOTES 2
 private:
   const char *name;
   Timing timing;
