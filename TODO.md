@@ -1,13 +1,13 @@
 # TODO
 
 - Package electronics without breadboard
-- Version the docker images
 - Create script to set up wifi parameters for the first time.
 - Make a good pass and fix data types (avoid char, use better uint8 for instance)
 
 
 # DONE
 
+- Version the docker images
 - Add a move where you show a random fortune message -> Done (Quotes)
 - Add repeat for routines -> Won't do
 - Allow to combine moves (first move 0, then move 1 x 2 times) -> Won't do
