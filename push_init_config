@@ -15,15 +15,21 @@ curl -XPOST $url | $PRETTY
 # Routine 0: smile and turn a LED showing H20 in the LCD, then show the time, and sleep
 # Routine 1: show the current time, and sleep
 url="http://dweet.io/dweet/for/$DEVICE-body-target?"
+
 url+="msg0=H2O&" # custom message
-url+="mv0=Fs.LwyM05W5.Mc4W5.Zz.&" # move
+url+="mv0=M04W5.Zz.&" # move
+url+="t0=201016060&" # timing
+
 url+="mv1=Mc4W5.Zz.&" # move
-url+="mv2=S00S01S02S01Zz.&" # move
-url+="mv3=Mq1&" # move
-url+="t0=201013060&" # timing
-url+="t1=201010160&" # timing
-url+="t2=0&" # timing
+url+="t1=201016060&" # timing
+
+url+="msg1=STANDUP&" # custom message
+url+="mv2=M13W5.S02S01Mq1W9.Zz.&" # move
+url+="t2=101103000&" # timing
+
+url+="mv3=S02S01Mq1W9.Zz.&" # move
 url+="t3=0" # timing
+
 curl -XPOST $url | $PRETTY
 
 # Set up properties synchronizer
