@@ -8,26 +8,61 @@
 #include <actors/Body.h>
 
 int faceCleared = 0;
-char msg[100];
+char lastMsg[100];
+char lastArms[100];
+bool ledY;
+bool ledR;
+bool ledW;
+bool fan;
 
 void setUp() {
   faceCleared = 0;
-  msg[0] = 0;
+  lastMsg[0] = 0;
+  lastArms[0] = 0;
+  ledY = false;
+  ledR = false;
+  ledW = false;
+  fan = false;
 }
 
 void tearDown() {}
 
 void lcdImg(char img, uint8_t bitmap[]) {
-  if (img == 'b') {
-    faceCleared++;
+  switch (img) {
+  	case 'b':
+      faceCleared++;
+      break;
+  	default:
+  		break;
   }
 }
 
 void messageOnLcd(int line, const char *str, int s) {
-  strcpy(msg, str);
+  strcpy(lastMsg, str);
 }
-void arms(int left, int right, int steps) {}
-void led(char led, bool v) {}
+
+void arms(int left, int right, int steps) {
+	sprintf(armsValue, "l:%d,r:%d,s:%d", left, right, steps);
+}
+
+void led(char led, bool v) {
+	switch(led) {
+		case "y":
+			ledY = v;
+			break;
+		case "w":
+			ledW = v;
+			break;
+		case "r":
+			ledR = v;
+			break;
+		case "f":
+			fan = v;
+			break;
+		default:
+			break;
+	}
+}
 
 void initBody(Body *b, Quotes *q) {
   b->setLcdImgFunc(lcdImg);
@@ -52,19 +87,46 @@ void test_body_shows_time() {
   b.setProp(BodyConfigMove0, SetValue, &move0, NULL);
 
   TEST_ASSERT_EQUAL(0, faceCleared);
-  TEST_ASSERT_EQUAL_STRING("", msg);
+  TEST_ASSERT_EQUAL_STRING("", lastMsg);
 
   Timing *t = b.getFrequencyConfiguration();
   t->setCurrentTime(3600 * 2 + 60 * 33 + 10);
   b.act();
 
   TEST_ASSERT_EQUAL(t->getCurrentTime(), faceCleared);
-  TEST_ASSERT_EQUAL_STRING("02:33", msg);
+  TEST_ASSERT_EQUAL_STRING("02:33", lastMsg);
+}
+
+void executeMove(Body* b, const char* move) {
+  Buffer<20> mv0;
+  mv0.fill(move);
+  b.setProp(BodyConfigMove0, SetValue, &mv0, NULL);
+  t->setCurrentTime(t->getCurrentTime() + 1); // assumes configured to act every second
+  b.act();
+}
+
+void test_body_performs_basic_moves() {
+
+  Body b("b");
+  Quotes q("q");
+  initBody(&b, &q);
+
+  Timing *t = b.getFrequencyConfiguration();
+
+  Long time0(201010101);      // act every single second / act() method call
+  b.setProp(BodyConfigTime0, SetValue, &time0, NULL);
+
+  TEST_ASSERT_EQUAL("", lastArms);
+
+  executeMove(&b, "A00");
+
+  TEST_ASSERT_EQUAL("l:0,r:0,steps:20", lastArms);
 }
 
 int main() {
   UNITY_BEGIN();
   RUN_TEST(test_body_shows_time);
+  RUN_TEST(test_body_performs_basic_moves);
   return (UNITY_END());
 }
 
