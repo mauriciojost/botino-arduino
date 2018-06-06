@@ -6,8 +6,8 @@
 #define CLASS_HEXER "HX"
 
 /**
-* This class is a helper for hexadecimal transformations.
-*/
+ * This class is a helper for hexadecimal transformations.
+ */
 class Hexer {
 
 private:

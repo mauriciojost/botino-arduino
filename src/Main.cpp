@@ -4,21 +4,21 @@
  * of Arduino specific HW.
  */
 #ifndef UNIT_TEST
-#include <Arduino.h>
-#include <Module.h>
-#include <SPI.h>
-#include <Wire.h>
+#include "EspSaveCrash.h"
+#include "Images.h"
+#include "RemoteDebug.h"
+#include "main4ino/Misc.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include <ESP8266WiFi.h>
+#include <Arduino.h>
 #include <ArduinoOTA.h>
 #include <ESP8266HTTPClient.h>
-#include <Servo.h>
-#include "EspSaveCrash.h"
+#include <ESP8266WiFi.h>
+#include <Module.h>
 #include <Pinout.h>
-#include "Images.h"
-#include "main4ino/Misc.h"
-#include "RemoteDebug.h"
+#include <SPI.h>
+#include <Servo.h>
+#include <Wire.h>
 
 #define CLASS_MAIN "MA"
 
@@ -116,11 +116,15 @@ void lcdClear(int line) {
 }
 
 void lcdHighlight(int line) {
-	int offset;
-	offset = 0; lcd.fillRect(0, line * 8 + offset, 128, 8 - offset, BLACK);
-  offset = 2; lcd.fillRect(0, line * 8 + offset, 128, 8 - offset, WHITE);
-  offset = 4; lcd.fillRect(0, line * 8 + offset, 128, 8 - offset, BLACK);
-  offset = 6; lcd.fillRect(0, line * 8 + offset, 128, 8 - offset, WHITE);
+  int offset;
+  offset = 0;
+  lcd.fillRect(0, line * 8 + offset, 128, 8 - offset, BLACK);
+  offset = 2;
+  lcd.fillRect(0, line * 8 + offset, 128, 8 - offset, WHITE);
+  offset = 4;
+  lcd.fillRect(0, line * 8 + offset, 128, 8 - offset, BLACK);
+  offset = 6;
+  lcd.fillRect(0, line * 8 + offset, 128, 8 - offset, WHITE);
 }
 
 void lcdPrintLogLine(const char *logStr) {
@@ -205,15 +209,14 @@ void handleSettings() {
 
   // Handle log level as per settings
   setLogLevel((char)(s->getLogLevel() % 4));
-
 }
 
 void reactCommand() {
-	char command[COMMAND_MAX_LENGTH];
-	strncpy(command, Telnet.getLastCommand().c_str(), COMMAND_MAX_LENGTH);
+  char command[COMMAND_MAX_LENGTH];
+  strncpy(command, Telnet.getLastCommand().c_str(), COMMAND_MAX_LENGTH);
   log(CLASS_MAIN, Info, "Command: %s", command);
 
-  char* c = strtok(command, " ");
+  char *c = strtok(command, " ");
 
   if (strcmp("conf", c) == 0) {
     log(CLASS_MAIN, Info, "-> Conf mode");
@@ -229,9 +232,9 @@ void reactCommand() {
     m.getBody()->performMove(c);
     return;
   } else if (strcmp("set", c) == 0) {
-    const char* actor = strtok(NULL, " ");
-    const char* prop = strtok(NULL, " ");
-    const char* v = strtok(NULL, " ");
+    const char *actor = strtok(NULL, " ");
+    const char *prop = strtok(NULL, " ");
+    const char *v = strtok(NULL, " ");
     if (actor == NULL || prop == NULL || v == NULL) {
       log(CLASS_MAIN, Error, "Arguments needed:\n  set <actor> <prop> <value>");
       return;
@@ -242,9 +245,9 @@ void reactCommand() {
     return;
   } else if (strcmp("get", c) == 0) {
     log(CLASS_MAIN, Info, "-> Get");
-    Array<Actor *>* actors = m.getBot()->getActors();
+    Array<Actor *> *actors = m.getBot()->getActors();
     for (int i = 0; i < actors->size(); i++) {
-      Actor* actor = actors->get(i);
+      Actor *actor = actors->get(i);
       log(CLASS_MAIN, Info, " '%s'", actor->getName());
       for (int j = 0; j < actor->getNroProps(); j++) {
         Buffer<COMMAND_MAX_LENGTH> value;
@@ -254,14 +257,14 @@ void reactCommand() {
       log(CLASS_MAIN, Info, " ");
     }
     log(CLASS_MAIN, Info, " ");
-  	return;
+    return;
   } else if (strcmp("run", c) == 0) {
     log(CLASS_MAIN, Info, "-> Run mode");
-  	m.getBot()->setMode(RunMode);
-  	return;
+    m.getBot()->setMode(RunMode);
+    return;
   } else {
     log(CLASS_MAIN, Error, "Invalid command (try: ?)");
-  	return;
+    return;
   }
 }
 
@@ -311,7 +314,6 @@ void displayUserInfo() {
   log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(3000);
 }
-
 
 void performHardwareTest() {
   log(CLASS_MAIN, Debug, "HW test");
@@ -558,11 +560,12 @@ void setup() {
   delay(2 * 1000);
 
   // Intialize the logging framework
-  Serial.begin(115200); // Initialize serial port
+  Serial.begin(115200);            // Initialize serial port
   Telnet.begin("ESP" DEVICE_NAME); // Intialize the remote logging framework
-  ArduinoOTA.begin(); // Intialize OTA
-  lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C); delay(DELAY_MS_SPI); // Initialize LCD
-  setupLog(logLine); // Initialize log callback
+  ArduinoOTA.begin();              // Intialize OTA
+  lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  delay(DELAY_MS_SPI); // Initialize LCD
+  setupLog(logLine);   // Initialize log callback
 
   log(CLASS_MAIN, Debug, "Setup pins");
   pinMode(LEDR_PIN, OUTPUT);
@@ -574,7 +577,7 @@ void setup() {
   pinMode(BUTTON0_PIN, INPUT);
 
   log(CLASS_MAIN, Debug, "Setup random");
-	randomSeed(analogRead(0) * 256 + analogRead(0));
+  randomSeed(analogRead(0) * 256 + analogRead(0));
 
   log(CLASS_MAIN, Debug, "Setup module");
   m.getBody()->setLcdImgFunc(lcdImg);
@@ -596,16 +599,14 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, RISING);
 
   log(CLASS_MAIN, Debug, "Setup commands");
-	Telnet.setCallBackProjectCmds(reactCommand);
-  String helpCli(
-  		"\n  conf   : go to configuration mode"
-  		"\n  run    : go to run mode"
-  		"\n  get    : display actors properties"
-  		"\n  set    : set an actor property (example: 'set body msg0 HELLO')"
-  		"\n  move   : execute a move (example: 'move A00C55')"
-  		"\n"
-  		);
-	Telnet.setHelpProjectsCmds(helpCli);
+  Telnet.setCallBackProjectCmds(reactCommand);
+  String helpCli("\n  conf   : go to configuration mode"
+                 "\n  run    : go to run mode"
+                 "\n  get    : display actors properties"
+                 "\n  set    : set an actor property (example: 'set body msg0 HELLO')"
+                 "\n  move   : execute a move (example: 'move A00C55')"
+                 "\n");
+  Telnet.setHelpProjectsCmds(helpCli);
 
   if (digitalRead(BUTTON0_PIN) == HIGH) {
     log(CLASS_MAIN, Info, "CLI mode");
@@ -622,7 +623,6 @@ void setup() {
     displayUserInfo();
     performHardwareTest();
   }
-
 }
 
 /**
@@ -654,17 +654,16 @@ void loop() {
   handleSettings();
 
   switch (m.getBot()->getMode()) {
-  	case (RunMode):
+    case (RunMode):
       m.loop(false, false, true);
       sleepInCycle(t1);
       break;
-  	case (ConfigureMode):
+    case (ConfigureMode):
       break;
-  	default:
+    default:
       m.getBot()->setMode(RunMode);
       break;
   }
-
 }
 
 #endif // UNIT_TEST

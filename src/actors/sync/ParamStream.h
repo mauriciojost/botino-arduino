@@ -1,12 +1,12 @@
 #ifndef PARAM_STREAM_INC
 #define PARAM_STREAM_INC
 
+#include <ArduinoJson.h>
 #include <log4ino/Log.h>
 #include <main4ino/Buffer.h>
-#include <ArduinoJson.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 #ifndef UNIT_TEST
 #include <Stream.h>
@@ -39,7 +39,7 @@ private:
 
 public:
   ParamStream() {
-  	bytesReceived.clear();
+    bytesReceived.clear();
   }
 
   size_t write(uint8_t b) {
@@ -51,7 +51,7 @@ public:
     bytesReceived.append(b);
   }
 
-  void fill(const char* str) {
+  void fill(const char *str) {
     bytesReceived.fill("%s", str);
   }
 
@@ -75,10 +75,9 @@ public:
     return root;
   }
 
-  const char* content() {
-  	return bytesReceived.getBuffer();
+  const char *content() {
+    return bytesReceived.getBuffer();
   }
-
 };
 
 #endif // PARAM_STREAM_INC

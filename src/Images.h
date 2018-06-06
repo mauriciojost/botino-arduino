@@ -4,5 +4,3 @@
 // BT 128
 // Scaling: stretch to fill canvas
 // Arduino code, simple bitmap
-
-

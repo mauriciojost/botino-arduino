@@ -1,24 +1,24 @@
 #ifndef MODULE_INC
 #define MODULE_INC
 
-#include <main4ino/Actor.h>
+#include "actors/Quotes.h"
+#include "actors/Settings.h"
+#include <Pinout.h>
+#include <actors/Body.h>
 #include <actors/sync/ClockSync.h>
 #include <actors/sync/PropSync.h>
 #include <actors/sync/SetupSync.h>
-#include <actors/Body.h>
+#include <log4ino/Log.h>
+#include <main4ino/Actor.h>
+#include <main4ino/Array.h>
 #include <main4ino/Clock.h>
 #include <main4ino/SerBot.h>
-#include <main4ino/Array.h>
-#include <log4ino/Log.h>
-#include <Pinout.h>
-#include "actors/Settings.h"
-#include "actors/Quotes.h"
 
 #define CLASS_MODULE "MD"
 
 /**
-* This class represents the integration of all components (LCD, buttons, buzzer, etc).
-*/
+ * This class represents the integration of all components (LCD, buttons, buzzer, etc).
+ */
 class Module {
 
 private:
@@ -105,7 +105,6 @@ public:
   Quotes *getQuotes() {
     return quotes;
   }
-
 };
 
 #endif // MODULE_INC

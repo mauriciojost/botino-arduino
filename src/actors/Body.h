@@ -1,20 +1,20 @@
 #ifndef BODY_INC
 #define BODY_INC
 
-#include <log4ino/Log.h>
-#include <main4ino/Actor.h>
-#include <main4ino/Value.h>
-#include <main4ino/Buffer.h>
-#include <main4ino/Integer.h>
-#include <main4ino/Boolean.h>
-#include <main4ino/Misc.h>
 #include <Hexer.h>
 #include <actors/Quotes.h>
+#include <log4ino/Log.h>
+#include <main4ino/Actor.h>
+#include <main4ino/Boolean.h>
+#include <main4ino/Buffer.h>
+#include <main4ino/Integer.h>
+#include <main4ino/Misc.h>
+#include <main4ino/Value.h>
 
 #define CLASS_BODY "BO"
 #define MSG_MAX_LENGTH 32
-#define MAX_POSES_PER_MOVE 8  // maximum amount of positions per move
-#define POSE_STR_LENGTH 3     // characters that represent a position / state within a move
+#define MAX_POSES_PER_MOVE 8 // maximum amount of positions per move
+#define POSE_STR_LENGTH 3    // characters that represent a position / state within a move
 #define MOVE_STR_LENGTH (POSE_STR_LENGTH * MAX_POSES_PER_MOVE)
 
 #define ON 1
@@ -96,7 +96,7 @@ private:
   void (*iosFunc)(char led, bool v);
   void((*lcdImgFunc)(char img, uint8_t bitmap[]));
 
-  Quotes* quotes;
+  Quotes *quotes;
   Buffer<MSG_MAX_LENGTH> *msgs[NRO_MSGS];
   Routine *routines[NRO_ROUTINES];
   uint8_t *images[NRO_IMGS];
@@ -260,8 +260,7 @@ Codes:
         int r = getInt(c3);
         log(CLASS_BODY, Debug, "Armss %d&%d", l, r);
         arms(l, r, ARM_SLOW_STEPS);
-      }
-      break;
+      } break;
       case 'M':
         switch (c2) {
           case '0':
@@ -280,23 +279,19 @@ Codes:
             log(CLASS_BODY, Debug, "Msg 3");
             messageFunc(0, msgs[3]->getBuffer(), getInt(c3));
             break;
-          case 'c':
-            {
-              log(CLASS_BODY, Debug, "Msg clock");
-              int h = GET_HOURS(timing.getCurrentTime());
-              int m = GET_MINUTES(timing.getCurrentTime());
-              Buffer<6> t("");
-              t.fill("%02d:%02d", h, m);
-              messageFunc(0, t.getBuffer(), getInt(c3));
-            }
-            break;
-          case 'q':
-            {
-              log(CLASS_BODY, Debug, "Msg quote");
-              int i = random(NRO_QUOTES);
-              messageFunc(0, quotes->getQuote(i), getInt(c3));
-            }
-            break;
+          case 'c': {
+            log(CLASS_BODY, Debug, "Msg clock");
+            int h = GET_HOURS(timing.getCurrentTime());
+            int m = GET_MINUTES(timing.getCurrentTime());
+            Buffer<6> t("");
+            t.fill("%02d:%02d", h, m);
+            messageFunc(0, t.getBuffer(), getInt(c3));
+          } break;
+          case 'q': {
+            log(CLASS_BODY, Debug, "Msg quote");
+            int i = random(NRO_QUOTES);
+            messageFunc(0, quotes->getQuote(i), getInt(c3));
+          } break;
           default:
             log(CLASS_BODY, Debug, "Inv.M.pose:%c%c%c", c1, c2, c3);
             break;
@@ -403,8 +398,8 @@ public:
     return name;
   }
 
-  void setQuotes(Quotes* q) {
-  	quotes = q;
+  void setQuotes(Quotes *q) {
+    quotes = q;
   }
 
   void setLcdImgFunc(void (*f)(char img, uint8_t bitmap[])) {

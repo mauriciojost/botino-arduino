@@ -1,8 +1,8 @@
 #ifdef UNIT_TEST
 
 // Auxiliary libraries
-#include <unity.h>
 #include <string.h>
+#include <unity.h>
 
 // Being tested
 #include <actors/Body.h>

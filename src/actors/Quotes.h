@@ -1,14 +1,14 @@
 #ifndef QUOTES_INC
 #define QUOTES_INC
 
+#include <actors/sync/ParamStream.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
-#include <main4ino/Value.h>
+#include <main4ino/Boolean.h>
 #include <main4ino/Buffer.h>
 #include <main4ino/Integer.h>
-#include <main4ino/Boolean.h>
 #include <main4ino/Misc.h>
-#include <actors/sync/ParamStream.h>
+#include <main4ino/Value.h>
 
 #define CLASS_QUOTES "QU"
 
@@ -30,11 +30,11 @@ private:
   const char *name;
   Timing timing;
   Buffer<QUOTE_MAX_LENGTH> *quotes[NRO_QUOTES];
-  int (*httpGet)(const char* url, ParamStream* response);
+  int (*httpGet)(const char *url, ParamStream *response);
   bool (*initWifiFunc)();
 
   bool isInitialized() {
-  	return (httpGet != NULL && initWifiFunc != NULL );
+    return (httpGet != NULL && initWifiFunc != NULL);
   }
 
 public:
@@ -51,14 +51,13 @@ public:
     return name;
   }
 
-  void setHttpGet(int (*h)(const char* url, ParamStream* response)) {
-  	httpGet = h;
+  void setHttpGet(int (*h)(const char *url, ParamStream *response)) {
+    httpGet = h;
   }
 
   void setInitWifi(bool (*f)()) {
     initWifiFunc = f;
   }
-
 
   void act() {
     if (!isInitialized()) {
@@ -66,9 +65,9 @@ public:
       return;
     }
     if (timing.matches()) {
-    	for (int i = 0; i < NRO_QUOTES; i++) {
+      for (int i = 0; i < NRO_QUOTES; i++) {
         fillQuote(i);
-    	}
+      }
     }
   }
 
@@ -90,7 +89,7 @@ public:
     }
   }
 
-  void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) { }
+  void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {}
 
   int getNroProps() {
     return QuotesConfigStateDelimiter;
@@ -106,11 +105,10 @@ public:
     return &timing;
   }
 
-  const char* getQuote(int i) {
-  	int vi = POSIT(i % NRO_QUOTES);
-  	return quotes[vi]->getBuffer();
+  const char *getQuote(int i) {
+    int vi = POSIT(i % NRO_QUOTES);
+    return quotes[vi]->getBuffer();
   }
-
 };
 
 #endif // QUOTES_INC

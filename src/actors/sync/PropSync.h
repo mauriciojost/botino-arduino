@@ -1,13 +1,13 @@
 #ifndef PROPSYNC_INC
 #define PROPSYNC_INC
 
+#include <actors/sync/ParamStream.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
-#include <main4ino/SerBot.h>
-#include <main4ino/Misc.h>
 #include <main4ino/Bot.h>
-#include <actors/sync/ParamStream.h>
 #include <main4ino/Clock.h>
+#include <main4ino/Misc.h>
+#include <main4ino/SerBot.h>
 
 #define CLASS_PROPSYNC "PY"
 
@@ -19,12 +19,11 @@ enum PropSyncConfigState {
   PropSyncConfigDelimiter // delimiter of the configuration states
 };
 
-
 /**
-* This actor exchanges status via HTTP to synchronize
-* properties with target property values provided by an user
-* on a centralized server, polled regularly.
-*/
+ * This actor exchanges status via HTTP to synchronize
+ * properties with target property values provided by an user
+ * on a centralized server, polled regularly.
+ */
 class PropSync : public Actor {
 
 private:
@@ -34,8 +33,8 @@ private:
   Buffer<128> urlAuxBuffer;
   Buffer<MAX_JSON_STR_LENGTH> jsonAuxBuffer;
   bool (*initWifiFunc)();
-  int (*httpGet)(const char* url, ParamStream* response);
-  int (*httpPost)(const char* url, const char* body, ParamStream* response);
+  int (*httpGet)(const char *url, ParamStream *response);
+  int (*httpPost)(const char *url, const char *body, ParamStream *response);
 
 public:
   PropSync(const char *n) {
@@ -61,12 +60,12 @@ public:
       return;
     }
     if (freqConf.matches()) {
-    	bool connected = initWifiFunc();
-    	if (connected) {
-    		for (int i = 0; i < bot->getActors()->size(); i++) {
+      bool connected = initWifiFunc();
+      if (connected) {
+        for (int i = 0; i < bot->getActors()->size(); i++) {
           updateProps(i);
-    		}
-    	}
+        }
+      }
     }
   }
 
@@ -74,17 +73,17 @@ public:
     initWifiFunc = f;
   }
 
-  void setHttpGet(int (*h)(const char* url, ParamStream* response)) {
-  	httpGet = h;
+  void setHttpGet(int (*h)(const char *url, ParamStream *response)) {
+    httpGet = h;
   }
 
-  void setHttpPost(int (*h)(const char* url, const char* body, ParamStream* response)) {
-  	httpPost = h;
+  void setHttpPost(int (*h)(const char *url, const char *body, ParamStream *response)) {
+    httpPost = h;
   }
 
   void updateProps(int actorIndex) {
     ParamStream httpBodyResponse;
-    Actor* actor = bot->getActors()->get(actorIndex);
+    Actor *actor = bot->getActors()->get(actorIndex);
 
     urlAuxBuffer.fill(DWEET_IO_API_URL_GET, actor->getName());
     int errorCode = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
@@ -106,7 +105,6 @@ public:
     bot->getPropsJson(&jsonAuxBuffer, actorIndex);
     urlAuxBuffer.fill(DWEET_IO_API_URL_POST, actor->getName());
     httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort
-
   }
 
   const char *getPropName(int propIndex) {
@@ -120,16 +118,14 @@ public:
 
   void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
-      case (PropSyncConfigFreq):
-        {
-          long freq = freqConf.getCustom();
-          setPropLong(setMode, targetValue, actualValue, &freq);
-          if (setMode == SetValue) {
-            freqConf.setCustom(freq);
-            freqConf.setFrequency(Custom);
-          }
+      case (PropSyncConfigFreq): {
+        long freq = freqConf.getCustom();
+        setPropLong(setMode, targetValue, actualValue, &freq);
+        if (setMode == SetValue) {
+          freqConf.setCustom(freq);
+          freqConf.setFrequency(Custom);
         }
-        break;
+      } break;
       default:
         break;
     }

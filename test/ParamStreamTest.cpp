@@ -1,8 +1,8 @@
 #ifdef UNIT_TEST
 
 // Auxiliary libraries
-#include <unity.h>
 #include <string.h>
+#include <unity.h>
 
 // Library being tested
 #include <actors/sync/ParamStream.h>

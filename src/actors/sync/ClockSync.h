@@ -1,12 +1,12 @@
 #ifndef CLOCKSYNC_INC
 #define CLOCKSYNC_INC
 
+#include <actors/sync/ParamStream.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
-#include <main4ino/Misc.h>
-#include <actors/sync/ParamStream.h>
-#include <main4ino/Clock.h>
 #include <main4ino/Boolean.h>
+#include <main4ino/Clock.h>
+#include <main4ino/Misc.h>
 
 #define CLASS_CLOCKSYNC "CS"
 
@@ -17,12 +17,13 @@
 #error "Must provide TIMEZONE_DB_ZONE"
 #endif
 
-#define TIMEZONE_DB_API_URL_GET "http://api.timezonedb.com/v2/get-time-zone?key=" TIMEZONE_DB_KEY "&format=json&by=zone&zone=" TIMEZONE_DB_ZONE
+#define TIMEZONE_DB_API_URL_GET                                                                                                            \
+  "http://api.timezonedb.com/v2/get-time-zone?key=" TIMEZONE_DB_KEY "&format=json&by=zone&zone=" TIMEZONE_DB_ZONE
 
 /**
-* This actor exchanges status via HTTP to synchronize
-* internal clock with time provided by the Internet.
-*/
+ * This actor exchanges status via HTTP to synchronize
+ * internal clock with time provided by the Internet.
+ */
 class ClockSync : public Actor {
 
 private:
@@ -30,7 +31,7 @@ private:
   Clock *clock;
   Timing freqConf; // configuration of the frequency at which this actor will get triggered
   bool (*initWifiFunc)();
-  int (*httpGet)(const char* url, ParamStream* response);
+  int (*httpGet)(const char *url, ParamStream *response);
 
 public:
   ClockSync(const char *n) : freqConf(OnceEvery5Minutes) {
@@ -54,10 +55,10 @@ public:
       return;
     }
     if (freqConf.matches()) {
-    	bool connected = initWifiFunc();
-    	if (connected) {
+      bool connected = initWifiFunc();
+      if (connected) {
         updateClockProperties();
-    	}
+      }
     }
   }
 
@@ -65,8 +66,8 @@ public:
     initWifiFunc = f;
   }
 
-  void setHttpGet(int (*h)(const char* url, ParamStream* response)) {
-  	httpGet = h;
+  void setHttpGet(int (*h)(const char *url, ParamStream *response)) {
+    httpGet = h;
   }
 
   void updateClockProperties() {
@@ -93,15 +94,23 @@ public:
 
   void setProp(int propIndex, SetMode set, const Value *targetValue, Value *actualValue) {}
 
-  int getNroProps() { return 0; }
+  int getNroProps() {
+    return 0;
+  }
 
-  const char *getPropName(int propIndex) { return ""; }
+  const char *getPropName(int propIndex) {
+    return "";
+  }
 
   void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}
 
-  int getNroInfos() { return 0; }
+  int getNroInfos() {
+    return 0;
+  }
 
-  Timing *getFrequencyConfiguration() { return &freqConf; }
+  Timing *getFrequencyConfiguration() {
+    return &freqConf;
+  }
 };
 
 #endif // CLOCKSYNC_INC
