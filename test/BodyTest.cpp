@@ -43,7 +43,7 @@ void messageOnLcd(int line, const char *str, int s) {
 }
 
 void arms(int left, int right, int steps) {
-	sprintf(lastArms, "l:%d,r:%d,s:%d", left, right, steps);
+	sprintf(lastArms, "left:%d,right:%d,steps:%d", left, right, steps);
 }
 
 void led(char led, bool v) {
@@ -118,9 +118,34 @@ void test_body_performs_basic_moves() {
 
   TEST_ASSERT_EQUAL_STRING("", lastArms);
 
-  executeMove(&b, "A00");
+  executeMove(&b, "A91");
+  TEST_ASSERT_EQUAL_STRING("left:9,right:1,steps:20", lastArms);
 
-  TEST_ASSERT_EQUAL_STRING("l:0,r:0,s:20", lastArms);
+  executeMove(&b, "B56");
+  TEST_ASSERT_EQUAL_STRING("left:5,right:6,steps:40", lastArms);
+
+  executeMove(&b, "C13");
+  TEST_ASSERT_EQUAL_STRING("left:1,right:3,steps:100", lastArms);
+
+  executeMove(&b, "Lyn");
+  TEST_ASSERT_EQUAL(false, ledY);
+
+  executeMove(&b, "Lyy");
+  TEST_ASSERT_EQUAL(true, ledY);
+
+  executeMove(&b, "Lfn");
+  TEST_ASSERT_EQUAL(false, fan);
+
+  executeMove(&b, "Lfy");
+  TEST_ASSERT_EQUAL(true, fan);
+
+  executeMove(&b, "Zz.");
+  TEST_ASSERT_EQUAL_STRING("left:0,right:0,steps:100", lastArms);
+  TEST_ASSERT_EQUAL(false, ledY);
+  TEST_ASSERT_EQUAL(false, ledR);
+  TEST_ASSERT_EQUAL(false, ledW);
+  TEST_ASSERT_EQUAL(false, fan);
+
 }
 
 int main() {
