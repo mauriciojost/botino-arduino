@@ -3,6 +3,7 @@
 // Auxiliary libraries
 #include <string.h>
 #include <unity.h>
+#include <main4ino/Misc.h>
 
 // Being tested
 #include <actors/Body.h>
@@ -42,21 +43,21 @@ void messageOnLcd(int line, const char *str, int s) {
 }
 
 void arms(int left, int right, int steps) {
-	sprintf(armsValue, "l:%d,r:%d,s:%d", left, right, steps);
+	sprintf(lastArms, "l:%d,r:%d,s:%d", left, right, steps);
 }
 
 void led(char led, bool v) {
 	switch(led) {
-		case "y":
+		case 'y':
 			ledY = v;
 			break;
-		case "w":
+		case 'w':
 			ledW = v;
 			break;
-		case "r":
+		case 'r':
 			ledR = v;
 			break;
-		case "f":
+		case 'f':
 			fan = v;
 			break;
 		default:
@@ -100,9 +101,10 @@ void test_body_shows_time() {
 void executeMove(Body* b, const char* move) {
   Buffer<20> mv0;
   mv0.fill(move);
-  b.setProp(BodyConfigMove0, SetValue, &mv0, NULL);
+  b->setProp(BodyConfigMove0, SetValue, &mv0, NULL);
+  Timing *t = b->getFrequencyConfiguration();
   t->setCurrentTime(t->getCurrentTime() + 1); // assumes configured to act every second
-  b.act();
+  b->act();
 }
 
 void test_body_performs_basic_moves() {
@@ -111,16 +113,14 @@ void test_body_performs_basic_moves() {
   Quotes q("q");
   initBody(&b, &q);
 
-  Timing *t = b.getFrequencyConfiguration();
-
   Long time0(201010101);      // act every single second / act() method call
   b.setProp(BodyConfigTime0, SetValue, &time0, NULL);
 
-  TEST_ASSERT_EQUAL("", lastArms);
+  TEST_ASSERT_EQUAL_STRING("", lastArms);
 
   executeMove(&b, "A00");
 
-  TEST_ASSERT_EQUAL("l:0,r:0,steps:20", lastArms);
+  TEST_ASSERT_EQUAL_STRING("l:0,r:0,s:20", lastArms);
 }
 
 int main() {

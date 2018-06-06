@@ -2,6 +2,7 @@
 #define HEXER_INC
 
 #include <log4ino/Log.h>
+#include <main4ino/Misc.h>
 
 #define CLASS_HEXER "HX"
 

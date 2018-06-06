@@ -1,6 +1,7 @@
 #ifndef BODY_INC
 #define BODY_INC
 
+#include <main4ino/Misc.h>
 #include <Hexer.h>
 #include <actors/Quotes.h>
 #include <log4ino/Log.h>
@@ -8,7 +9,6 @@
 #include <main4ino/Boolean.h>
 #include <main4ino/Buffer.h>
 #include <main4ino/Integer.h>
-#include <main4ino/Misc.h>
 #include <main4ino/Value.h>
 
 #define CLASS_BODY "BO"

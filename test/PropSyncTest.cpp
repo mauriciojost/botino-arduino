@@ -1,11 +1,12 @@
 #ifdef UNIT_TEST
 
 // Auxiliary libraries
+#include <string.h>
+#include <unity.h>
+#include <main4ino/Misc.h>
 #include <actors/Body.h>
 #include <main4ino/Array.h>
 #include <main4ino/SerBot.h>
-#include <string.h>
-#include <unity.h>
 
 // Being tested
 #include <actors/sync/PropSync.h>
