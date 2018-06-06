@@ -1,4 +1,4 @@
-#!/usr/bin/env
+#!/usr/bin/env bash
 
 # https://github.com/mauriciojost/mavarduino
 #
@@ -8,6 +8,5 @@
 # provided clang configuration file.
 #
 
-CURRDIR=`dirname $0`
+find src/ test/  -type f | xargs -I% clang-format-5.0 -style=file -i -fallback-style=none %
 
-clang-format-3.7 -i src/* src/*/* test/*
