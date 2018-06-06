@@ -1,14 +1,14 @@
 #ifndef SETUPSYNC_INC
 #define SETUPSYNC_INC
 
-#include <Hexer.h>
-#include <actors/sync/ParamStream.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
-#include <main4ino/Boolean.h>
-#include <main4ino/Bot.h>
-#include <main4ino/Clock.h>
 #include <main4ino/Misc.h>
+#include <main4ino/Bot.h>
+#include <actors/sync/ParamStream.h>
+#include <main4ino/Clock.h>
+#include <main4ino/Boolean.h>
+#include <Hexer.h>
 #ifdef UNIT_TEST
 #include <aes.h> // in C code
 #else
@@ -43,8 +43,8 @@ enum SetupSyncConfigState {
 };
 
 /**
- * This actor performs the setup of sensitive information via HTTP (via encryption).
- */
+* This actor performs the setup of sensitive information via HTTP (via encryption).
+*/
 class SetupSync : public Actor {
 
 private:
@@ -55,7 +55,7 @@ private:
   Timing freqConf; // configuration of the frequency at which this actor will get triggered
   bool (*initWifiSteadyFunc)();
   bool (*initWifiInitFunc)();
-  int (*httpGet)(const char *url, ParamStream *response);
+  int (*httpGet)(const char* url, ParamStream* response);
 
   struct AES_ctx ctx;
   uint8_t key[KEY_LENGTH]; // represented as a string, so N chars + 1 trailing null char
@@ -63,8 +63,8 @@ private:
   void update() {
     bool connected = initWifiSteadyFunc();
     if (connected) {
-      freqConf.setFrequency(Never);
-      return; // nothing to be done, as already connected
+    	freqConf.setFrequency(Never);
+    	return; // nothing to be done, as already connected
     }
 
     // try connecting to alternative network and setup
@@ -80,24 +80,9 @@ private:
           if (withJson.containsKey("content")) {
             JsonObject &content = withJson["content"];
             if (content.containsKey("ssid") && content.containsKey("pass")) {
-              char aux[ENCRYPTION_BUFFER_SIZE * 2]; // each character (including null ending trail) is represented using 2 chars
-
-              // SSID recovery (encrypted and hex encoded)
-              const char *s = content["ssid"].as<char *>();
-              strcpy(aux, s);
-              Hexer::hexToByte((uint8_t *)ssid, aux, MINIM(strlen(aux), ENCRYPTION_BUFFER_SIZE * 2));
-              decrypt((uint8_t *)ssid);
-              ssid[ENCRYPTION_BUFFER_SIZE - 1] = 0;
-
-              // PASS recovery (encrypted and hex encoded)
-              const char *p = content["pass"].as<char *>();
-              strcpy(aux, p);
-              Hexer::hexToByte((uint8_t *)pass, aux, MINIM(strlen(aux), ENCRYPTION_BUFFER_SIZE * 2));
-              decrypt((uint8_t *)pass);
-              pass[ENCRYPTION_BUFFER_SIZE - 1] = 0;
-
+							decryptEncoded(content["ssid"].as<char *>(), ssid);
+							decryptEncoded(content["pass"].as<char *>(), pass);
               log(CLASS_SETUPSYNC, Debug, "SETUP:%s/***", ssid);
-
             } else {
               log(CLASS_SETUPSYNC, Warn, "No 'ssid'");
             }
@@ -111,29 +96,38 @@ private:
     }
   }
 
-  void encrypt(const uint8_t *buffer) {
+  void encrypt(const uint8_t* buffer) {
     log(CLASS_SETUPSYNC, Debug, "Original: ");
     logHex(CLASS_SETUPSYNC, Debug, buffer, ENCRYPTION_BUFFER_SIZE);
     for (int i = 0; i < N_BLOCKS; ++i) {
-      const uint8_t *bufferBlock = buffer + (i * KEY_LENGTH);
+    	const uint8_t* bufferBlock = buffer + (i * KEY_LENGTH);
       AES_ECB_encrypt(&ctx, bufferBlock);
     }
     log(CLASS_SETUPSYNC, Debug, "Encrypted: ");
     logHex(CLASS_SETUPSYNC, Debug, buffer, ENCRYPTION_BUFFER_SIZE);
   }
 
-  void decrypt(const uint8_t *buffer) {
+  void decrypt(const uint8_t* buffer) {
     log(CLASS_SETUPSYNC, Debug, "Encrypted: ");
     logHex(CLASS_SETUPSYNC, Debug, buffer, ENCRYPTION_BUFFER_SIZE);
     for (int i = 0; i < N_BLOCKS; ++i) {
-      const uint8_t *bufferBlock = buffer + (i * KEY_LENGTH);
+    	const uint8_t* bufferBlock = buffer + (i * KEY_LENGTH);
       AES_ECB_decrypt(&ctx, bufferBlock);
     }
     log(CLASS_SETUPSYNC, Debug, "Decrypted: ");
     logHex(CLASS_SETUPSYNC, Debug, buffer, ENCRYPTION_BUFFER_SIZE);
   }
 
+	void decryptEncoded (const char* hexStr, char* buffer) {
+    char aux[ENCRYPTION_BUFFER_SIZE * 2]; // each character (including null ending trail) is represented using 2 chars
+		strcpy (aux, hexStr);
+		Hexer::hexToByte ((uint8_t*) (buffer), aux, MINIM(strlen (aux), ENCRYPTION_BUFFER_SIZE * 2));
+		decrypt ((uint8_t*) (buffer));
+		buffer[ENCRYPTION_BUFFER_SIZE - 1] = 0;
+	}
+
 public:
+
   SetupSync(const char *n) {
     name = n;
     initWifiSteadyFunc = NULL;
@@ -142,7 +136,7 @@ public:
     strcpy(pass, WIFI_PASSWORD_STEADY);
     httpGet = NULL;
     freqConf.setFrequency(OnceEvery1Minute);
-    Hexer::hexToByte(key, ENCRYPT_KEY, KEY_LENGTH * 2);
+		Hexer::hexToByte(key, ENCRYPT_KEY, KEY_LENGTH * 2);
     AES_init_ctx(&ctx, key);
   }
 
@@ -169,20 +163,22 @@ public:
     initWifiInitFunc = f;
   }
 
-  void setHttpGet(int (*h)(const char *url, ParamStream *response)) {
-    httpGet = h;
+  void setHttpGet(int (*h)(const char* url, ParamStream* response)) {
+  	httpGet = h;
   }
 
   void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
-      case (SetupSyncConfigFreq): {
-        long freq = freqConf.getCustom();
-        setPropLong(setMode, targetValue, actualValue, &freq);
-        if (setMode == SetValue) {
-          freqConf.setCustom(freq);
-          freqConf.setFrequency(Custom);
+      case (SetupSyncConfigFreq):
+        {
+          long freq = freqConf.getCustom();
+          setPropLong(setMode, targetValue, actualValue, &freq);
+          if (setMode == SetValue) {
+            freqConf.setCustom(freq);
+            freqConf.setFrequency(Custom);
+          }
         }
-      } break;
+        break;
       default:
         break;
     }
@@ -207,12 +203,12 @@ public:
     return 0;
   }
 
-  const char *getSsid() {
-    return ssid;
+  const char* getSsid() {
+  	return ssid;
   }
 
-  const char *getPass() {
-    return pass;
+  const char* getPass() {
+  	return pass;
   }
 
   Timing *getFrequencyConfiguration() {
@@ -220,7 +216,7 @@ public:
   }
 
   bool isInitialized() {
-    return ssid[0] != '?' && pass[0] != '?';
+  	return ssid[0] != '?' && pass[0] != '?';
   }
 };
 
