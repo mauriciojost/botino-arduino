@@ -1,12 +1,12 @@
 # TODO
 
 - Package electronics without breadboard
-- Create script to set up wifi parameters for the first time.
 - Make a good pass and fix data types (avoid char, use better uint8 for instance)
 
 
 # DONE
 
+- Create script to set up wifi parameters for the first time.
 - Version the docker images
 - Add a move where you show a random fortune message -> Done (Quotes)
 - Add repeat for routines -> Won't do
