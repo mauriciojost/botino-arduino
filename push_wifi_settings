@@ -1,35 +1,42 @@
 #!/usr/bin/env bash
 
+# Encrypt and publish sensitive setup information
+# for your devide. This includes wifi ssid and password. 
+# Usage: 
+#   script <device> <wifi_ssid> <wifi_password> <encryption_key>
+
 PRETTY='python -m json.tool'
 
 DEVICE=$1
 WIFI_SSID=$2
 WIFI_PASSWORD=$3
-KEY=${4:-11112233445566778899aabbccddeeff}
-ENCRYPTED_PASS=$5
+KEY_HEX=${4:-11112233445566778899aabbccddeeff}
 
-echo "# Creating input file (content $WIFI_PASSWORD)..."
-echo "$WIFI_PASSWORD" > body.bin
+# Print a single-line hexadecimal representation of a file's content.
+function file_to_hex() {
+  local f=$1
+  xxd -ps "$f" | tr '\n' ' ' | sed 's/ //g'
+}
 
-echo "# Input file..."
-cat body.bin
 
-echo "# Encrypting file (key $KEY)..."
-echo $KEY | xxd -r -p > pass
-openssl enc -aes-128-ecb -nosalt -K $KEY -in body.bin -out body.ecb.bin  
+# Encrypt an input string given a key
+function ecb_encrypt() {
+  local input="$1"
+  local key="$2"
+  local inputf=`mktemp`
+  local outputf=`mktemp`
+  echo "$input" > "$inputf"
+  echo "$input" | openssl enc -aes-128-ecb -nosalt -K "$key" -in "$inputf" -out "$outputf"
+  echo $outputf
+}
 
-echo "# Showing output file..."
-WIFI_PASSWORD_ENCRYPTED=`xxd -ps body.ecb.bin`
+WIFI_SSID_ENCRYPTED=$(file_to_hex `ecb_encrypt "$WIFI_SSID" "$KEY_HEX"`)
+WIFI_PASSWORD_ENCRYPTED=$(file_to_hex `ecb_encrypt "$WIFI_PASSWORD" "$KEY_HEX"`)
 
 # Set up settings
 url="http://dweet.io/dweet/for/$DEVICE-setup?"
-url+="ssid=$WIFI_SSID&"
-if [ "$ENCRYPTED_PASS" == "" ]
-then
-  url+="pass=$WIFI_PASSWORD_ENCRYPTED"
-else
-  url+="pass=$ENCRYPTED_PASS"
-fi
+url+="ssid=$WIFI_SSID_ENCRYPTED&"
+url+="pass=$WIFI_PASSWORD_ENCRYPTED"
 curl -XPOST $url | $PRETTY
 
 echo "# Done."
