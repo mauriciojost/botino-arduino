@@ -31,7 +31,6 @@ private:
   SerBot *bot;
   Timing freqConf; // configuration of the frequency at which this actor will get triggered
   Buffer<128> urlAuxBuffer;
-  Buffer<MAX_JSON_STR_LENGTH> jsonAuxBuffer;
   bool (*initWifiFunc)();
   int (*httpGet)(const char *url, ParamStream *response);
   int (*httpPost)(const char *url, const char *body, ParamStream *response);
@@ -102,6 +101,7 @@ public:
       }
     }
 
+    Buffer<MAX_JSON_STR_LENGTH> jsonAuxBuffer;
     bot->getPropsJson(&jsonAuxBuffer, actorIndex);
     urlAuxBuffer.fill(DWEET_IO_API_URL_POST, actor->getName());
     httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort
