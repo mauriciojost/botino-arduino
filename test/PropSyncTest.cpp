@@ -9,7 +9,7 @@
 #include <main4ino/SerBot.h>
 
 // Being tested
-#include <actors/sync/PropSync.h>
+#include <actors/PropSync.h>
 
 #define JSON_PREFIX "{\"with\":[{\"content\":"
 #define JSON_SUFFIX "}]}"

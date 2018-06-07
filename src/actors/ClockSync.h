@@ -1,7 +1,7 @@
 #ifndef CLOCKSYNC_INC
 #define CLOCKSYNC_INC
 
-#include <actors/sync/ParamStream.h>
+#include <actors/ParamStream.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Boolean.h>

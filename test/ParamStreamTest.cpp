@@ -5,7 +5,7 @@
 #include <unity.h>
 
 // Library being tested
-#include <actors/sync/ParamStream.h>
+#include <actors/ParamStream.h>
 
 void setUp() {}
 

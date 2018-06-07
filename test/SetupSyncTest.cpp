@@ -5,7 +5,7 @@
 #include <unity.h>
 
 // Being tested
-#include <actors/sync/SetupSync.h>
+#include <actors/SetupSync.h>
 #include <main4ino/Array.h>
 #include <main4ino/SerBot.h>
 
