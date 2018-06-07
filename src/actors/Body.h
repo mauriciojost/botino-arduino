@@ -10,6 +10,7 @@
 #include <main4ino/Integer.h>
 #include <main4ino/Value.h>
 #include <actors/Quotes.h>
+#include <actors/Images.h>
 
 #define CLASS_BODY "BO"
 #define MSG_MAX_LENGTH 32
@@ -41,10 +42,6 @@ enum BodyConfigState {
   BodyConfigMove1,         // move 1
   BodyConfigMove2,         // move 2
   BodyConfigMove3,         // move 3
-  BodyConfigImg0,          // img 0
-  BodyConfigImg1,          // img 1
-  BodyConfigImg2,          // img 2
-  BodyConfigImg3,          // img 3
   BodyConfigTime0,         // time/freq of acting for move 0
   BodyConfigTime1,         // time/freq of acting for move 1
   BodyConfigTime2,         // time/freq of acting for move 2
@@ -97,12 +94,12 @@ private:
   void((*lcdImgFunc)(char img, uint8_t bitmap[]));
 
   Quotes *quotes;
+  Images *images;
   Buffer<MSG_MAX_LENGTH> *msgs[NRO_MSGS];
   Routine *routines[NRO_ROUTINES];
-  uint8_t *images[NRO_IMGS];
 
   bool isInitialized() {
-    bool init = arms != NULL && iosFunc != NULL && messageFunc != NULL && lcdImgFunc != NULL && quotes != NULL;
+    bool init = arms != NULL && iosFunc != NULL && messageFunc != NULL && lcdImgFunc != NULL && quotes != NULL && images != NULL;
     return init;
   }
 
@@ -199,16 +196,16 @@ Codes:
       case 'F':
         switch (c2) {
           case '0':
-            lcdImgFunc('c', images[0]); // custom 0
+            lcdImgFunc('c', images->get(0)); // custom 0
             break;
           case '1':
-            lcdImgFunc('c', images[1]); // custom 1
+            lcdImgFunc('c', images->get(1)); // custom 1
             break;
           case '2':
-            lcdImgFunc('c', images[2]); // custom 2
+            lcdImgFunc('c', images->get(2)); // custom 2
             break;
           case '3':
-            lcdImgFunc('c', images[3]); // custom 3
+            lcdImgFunc('c', images->get(3)); // custom 3
             break;
           case 'w':
             lcdImgFunc('w', NULL); // white
@@ -376,6 +373,7 @@ public:
     iosFunc = NULL;
     lcdImgFunc = NULL;
     quotes = NULL;
+    images = NULL;
     for (int i = 0; i < NRO_MSGS; i++) {
       msgs[i] = new Buffer<MSG_MAX_LENGTH>("");
     }
@@ -385,13 +383,6 @@ public:
       routines[i]->timing.setCustom(routines[i]->timingConf);
       routines[i]->timing.setFrequency(Custom);
     }
-
-    for (int i = 0; i < NRO_IMGS; i++) {
-      images[i] = new uint8_t[IMG_SIZE_BYTES];
-      for (int j = 0; j < IMG_SIZE_BYTES; j++) {
-        images[i][j] = 0;
-      }
-    }
   }
 
   const char *getName() {
@@ -400,6 +391,10 @@ public:
 
   void setQuotes(Quotes *q) {
     quotes = q;
+  }
+
+  void setImages(Images *i) {
+    images = i;
   }
 
   void setLcdImgFunc(void (*f)(char img, uint8_t bitmap[])) {
@@ -450,14 +445,6 @@ public:
         return "mv2";
       case (BodyConfigMove3):
         return "mv3";
-      case (BodyConfigImg0):
-        return "im0"; // image 0 (for any routine)
-      case (BodyConfigImg1):
-        return "im1";
-      case (BodyConfigImg2):
-        return "im2";
-      case (BodyConfigImg3):
-        return "im3";
       case (BodyConfigTime0):
         return "t0"; // timing 0 (for routine 0)
       case (BodyConfigTime1):
@@ -482,15 +469,6 @@ public:
       int i = (int)propIndex - (int)BodyConfigTime0;
       setPropLong(setMode, targetValue, actualValue, &routines[i]->timingConf);
       routines[i]->timing.setCustom(routines[i]->timingConf);
-    } else if (propIndex >= BodyConfigImg0 && propIndex < (NRO_IMGS + BodyConfigImg0)) {
-      int i = (int)propIndex - (int)BodyConfigImg0;
-      if (setMode == SetValue) {
-        Buffer<IMG_SIZE_BYTES * 2> target(targetValue); // 2 chars per actual bitmap byte
-        Hexer::hexToByte((uint8_t *)images[i], target.getBuffer(), MINIM((strlen(target.getBuffer())), (IMG_SIZE_BYTES * 2)));
-      }
-      if (actualValue != NULL) {
-        actualValue->load("<*>");
-      }
     } else {
       switch (propIndex) {
         default:

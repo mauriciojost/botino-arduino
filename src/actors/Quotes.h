@@ -9,6 +9,7 @@
 #include <main4ino/Boolean.h>
 #include <main4ino/Buffer.h>
 #include <main4ino/Integer.h>
+
 #define CLASS_QUOTES "QU"
 
 #define QUOTE_MAX_LENGTH 128

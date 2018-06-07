@@ -8,6 +8,7 @@
 #include <actors/ClockSync.h>
 #include <actors/PropSync.h>
 #include <actors/SetupSync.h>
+#include <actors/Images.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Array.h>
@@ -31,6 +32,7 @@ private:
   SerBot *bot;
   Body *body;
   Quotes *quotes;
+  Images *images;
 
 public:
   Module() {
@@ -42,8 +44,9 @@ public:
     settings = new Settings("settings");
     body = new Body("body");
     quotes = new Quotes("quotes");
+    images = new Images("images");
 
-    actors = new Array<Actor *>(7);
+    actors = new Array<Actor *>(8);
     actors->set(0, (Actor *)setupSync);
     actors->set(1, (Actor *)propSync);
     actors->set(2, (Actor *)clockSync);
@@ -51,12 +54,14 @@ public:
     actors->set(4, (Actor *)settings);
     actors->set(5, (Actor *)quotes);
     actors->set(6, (Actor *)body);
+    actors->set(7, (Actor *)images);
 
     bot = new SerBot(clock, actors);
 
     propSync->setBot(bot);
     clockSync->setClock(bot->getClock());
     body->setQuotes(quotes);
+    body->setImages(images);
 
     bot->setMode(RunMode);
   }
