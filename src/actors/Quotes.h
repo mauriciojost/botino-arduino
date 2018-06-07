@@ -4,12 +4,11 @@
 #include <log4ino/Log.h>
 #include <main4ino/Misc.h>
 #include <main4ino/Value.h>
+#include <actors/ParamStream.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Boolean.h>
 #include <main4ino/Buffer.h>
 #include <main4ino/Integer.h>
-#include <actors/ParamStream.h>
-
 #define CLASS_QUOTES "QU"
 
 #define QUOTE_MAX_LENGTH 128
