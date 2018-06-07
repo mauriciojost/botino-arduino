@@ -1,9 +1,9 @@
 #ifdef UNIT_TEST
 
 // Auxiliary libraries
+#include <main4ino/Misc.h>
 #include <string.h>
 #include <unity.h>
-#include <main4ino/Misc.h>
 
 // Being tested
 #include <actors/Body.h>
@@ -30,11 +30,11 @@ void tearDown() {}
 
 void lcdImg(char img, uint8_t bitmap[]) {
   switch (img) {
-  	case 'b':
+    case 'b':
       faceCleared++;
       break;
-  	default:
-  		break;
+    default:
+      break;
   }
 }
 
@@ -43,26 +43,26 @@ void messageOnLcd(int line, const char *str, int s) {
 }
 
 void arms(int left, int right, int steps) {
-	sprintf(lastArms, "left:%d,right:%d,steps:%d", left, right, steps);
+  sprintf(lastArms, "left:%d,right:%d,steps:%d", left, right, steps);
 }
 
 void led(char led, bool v) {
-	switch(led) {
-		case 'y':
-			ledY = v;
-			break;
-		case 'w':
-			ledW = v;
-			break;
-		case 'r':
-			ledR = v;
-			break;
-		case 'f':
-			fan = v;
-			break;
-		default:
-			break;
-	}
+  switch (led) {
+    case 'y':
+      ledY = v;
+      break;
+    case 'w':
+      ledW = v;
+      break;
+    case 'r':
+      ledR = v;
+      break;
+    case 'f':
+      fan = v;
+      break;
+    default:
+      break;
+  }
 }
 
 void initBody(Body *b, Quotes *q) {
@@ -98,7 +98,7 @@ void test_body_shows_time() {
   TEST_ASSERT_EQUAL_STRING("02:33", lastMsg);
 }
 
-void executeMove(Body* b, const char* move) {
+void executeMove(Body *b, const char *move) {
   Buffer<20> mv0;
   mv0.fill(move);
   b->setProp(BodyConfigMove0, SetValue, &mv0, NULL);
@@ -113,7 +113,7 @@ void test_body_performs_basic_moves() {
   Quotes q("q");
   initBody(&b, &q);
 
-  Long time0(201010101);      // act every single second / act() method call
+  Long time0(201010101); // act every single second / act() method call
   b.setProp(BodyConfigTime0, SetValue, &time0, NULL);
 
   TEST_ASSERT_EQUAL_STRING("", lastArms);
@@ -145,7 +145,6 @@ void test_body_performs_basic_moves() {
   TEST_ASSERT_EQUAL(false, ledR);
   TEST_ASSERT_EQUAL(false, ledW);
   TEST_ASSERT_EQUAL(false, fan);
-
 }
 
 int main() {
