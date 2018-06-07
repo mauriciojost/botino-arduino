@@ -11,6 +11,7 @@
 #include <main4ino/Value.h>
 #include <actors/Quotes.h>
 #include <actors/Images.h>
+#include <actors/Messages.h>
 
 #define CLASS_BODY "BO"
 #define MSG_MAX_LENGTH 32
@@ -34,11 +35,7 @@
 #define IMG_SIZE_BYTES 16
 
 enum BodyConfigState {
-  BodyConfigMsg0 = 0,      // message 0
-  BodyConfigMsg1,          // message 1
-  BodyConfigMsg2,          // message 2
-  BodyConfigMsg3,          // message 3
-  BodyConfigMove0,         // move 0
+  BodyConfigMove0 = 0,     // move 0
   BodyConfigMove1,         // move 1
   BodyConfigMove2,         // move 2
   BodyConfigMove3,         // move 3
@@ -95,11 +92,11 @@ private:
 
   Quotes *quotes;
   Images *images;
-  Buffer<MSG_MAX_LENGTH> *msgs[NRO_MSGS];
+  Messages *messages;
   Routine *routines[NRO_ROUTINES];
 
   bool isInitialized() {
-    bool init = arms != NULL && iosFunc != NULL && messageFunc != NULL && lcdImgFunc != NULL && quotes != NULL && images != NULL;
+    bool init = arms != NULL && iosFunc != NULL && messageFunc != NULL && lcdImgFunc != NULL && quotes != NULL && images != NULL && messages != NULL;
     return init;
   }
 
@@ -262,19 +259,19 @@ Codes:
         switch (c2) {
           case '0':
             log(CLASS_BODY, Debug, "Msg 0");
-            messageFunc(0, msgs[0]->getBuffer(), getInt(c3));
+            messageFunc(0, messages->get(0), getInt(c3));
             break;
           case '1':
             log(CLASS_BODY, Debug, "Msg 1");
-            messageFunc(0, msgs[1]->getBuffer(), getInt(c3));
+            messageFunc(0, messages->get(1), getInt(c3));
             break;
           case '2':
             log(CLASS_BODY, Debug, "Msg 2");
-            messageFunc(0, msgs[2]->getBuffer(), getInt(c3));
+            messageFunc(0, messages->get(2), getInt(c3));
             break;
           case '3':
             log(CLASS_BODY, Debug, "Msg 3");
-            messageFunc(0, msgs[3]->getBuffer(), getInt(c3));
+            messageFunc(0, messages->get(3), getInt(c3));
             break;
           case 'c': {
             log(CLASS_BODY, Debug, "Msg clock");
@@ -374,9 +371,7 @@ public:
     lcdImgFunc = NULL;
     quotes = NULL;
     images = NULL;
-    for (int i = 0; i < NRO_MSGS; i++) {
-      msgs[i] = new Buffer<MSG_MAX_LENGTH>("");
-    }
+    messages = NULL;
     for (int i = 0; i < NRO_ROUTINES; i++) {
       routines[i] = new Routine();
       routines[i]->timingConf = 0L; // Never
@@ -395,6 +390,10 @@ public:
 
   void setImages(Images *i) {
     images = i;
+  }
+
+  void setMessages(Messages *m) {
+    messages = m;
   }
 
   void setLcdImgFunc(void (*f)(char img, uint8_t bitmap[])) {
@@ -429,14 +428,6 @@ public:
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
-      case (BodyConfigMsg0):
-        return "msg0"; // message 0 (for any routine)
-      case (BodyConfigMsg1):
-        return "msg1";
-      case (BodyConfigMsg2):
-        return "msg2";
-      case (BodyConfigMsg3):
-        return "msg3";
       case (BodyConfigMove0):
         return "mv0"; // move 0 (for routine 0)
       case (BodyConfigMove1):
@@ -462,9 +453,6 @@ public:
     if (propIndex >= BodyConfigMove0 && propIndex < (NRO_ROUTINES + BodyConfigMove0)) {
       int i = (int)propIndex - (int)BodyConfigMove0;
       setPropValue(setMode, targetValue, actualValue, &routines[i]->move);
-    } else if (propIndex >= BodyConfigMsg0 && propIndex < (NRO_MSGS + BodyConfigMsg0)) {
-      int i = (int)propIndex - (int)BodyConfigMsg0;
-      setPropValue(setMode, targetValue, actualValue, msgs[i]);
     } else if (propIndex >= BodyConfigTime0 && propIndex < (NRO_ROUTINES + BodyConfigTime0)) {
       int i = (int)propIndex - (int)BodyConfigTime0;
       setPropLong(setMode, targetValue, actualValue, &routines[i]->timingConf);

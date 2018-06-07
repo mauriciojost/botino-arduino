@@ -65,13 +65,14 @@ void led(char led, bool v) {
   }
 }
 
-void initBody(Body *b, Quotes* q, Images* i) {
+void initBody(Body *b, Quotes* q, Images* i, Messages* m) {
   b->setLcdImgFunc(lcdImg);
   b->setArmsFunc(arms);
   b->setMessageFunc(messageOnLcd);
   b->setIosFunc(led);
   b->setQuotes(q);
   b->setImages(i);
+  b->setMessages(m);
 }
 
 void test_body_shows_time() {
@@ -79,9 +80,10 @@ void test_body_shows_time() {
   setLogLevel(Warn);
   Quotes q("q");
   Images i("i");
+  Messages ms("m");
 
   Body b("b");
-  initBody(&b, &q, &i);
+  initBody(&b, &q, &i, &ms);
 
   Long time0(201010101);      // every single second
   Buffer<10> move0("Mc.Fb."); // clock message (show current time) and face black
@@ -113,8 +115,10 @@ void test_body_performs_basic_moves() {
 
   Quotes q("q");
   Images i("i");
+  Messages ms("m");
+
   Body b("b");
-  initBody(&b, &q, &i);
+  initBody(&b, &q, &i, &ms);
 
   Long time0(201010101); // act every single second / act() method call
   b.setProp(BodyConfigTime0, SetValue, &time0, NULL);

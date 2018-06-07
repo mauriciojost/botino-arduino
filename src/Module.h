@@ -1,6 +1,7 @@
 #ifndef MODULE_INC
 #define MODULE_INC
 
+#include "actors/Messages.h"
 #include "actors/Quotes.h"
 #include "actors/Settings.h"
 #include <Pinout.h>
@@ -33,6 +34,7 @@ private:
   Body *body;
   Quotes *quotes;
   Images *images;
+  Messages *messages;
 
 public:
   Module() {
@@ -45,8 +47,9 @@ public:
     body = new Body("body");
     quotes = new Quotes("quotes");
     images = new Images("images");
+    messages = new Messages("messages");
 
-    actors = new Array<Actor *>(8);
+    actors = new Array<Actor *>(9);
     actors->set(0, (Actor *)setupSync);
     actors->set(1, (Actor *)propSync);
     actors->set(2, (Actor *)clockSync);
@@ -55,6 +58,7 @@ public:
     actors->set(5, (Actor *)quotes);
     actors->set(6, (Actor *)body);
     actors->set(7, (Actor *)images);
+    actors->set(8, (Actor *)messages);
 
     bot = new SerBot(clock, actors);
 
@@ -62,6 +66,7 @@ public:
     clockSync->setClock(bot->getClock());
     body->setQuotes(quotes);
     body->setImages(images);
+    body->setMessages(messages);
 
     bot->setMode(RunMode);
   }
