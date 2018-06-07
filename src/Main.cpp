@@ -98,6 +98,8 @@ volatile unsigned char ints = 0;
 HTTPClient httpClient;
 RemoteDebug Telnet;
 
+// clang-format off
+
 uint8_t initImage[IMG_SIZE_BYTES] = {0b00000000, 0b00000000,
                                      0b01111110, 0b00000000,
                                      0b01000010, 0b00111110,
@@ -106,6 +108,8 @@ uint8_t initImage[IMG_SIZE_BYTES] = {0b00000000, 0b00000000,
                                      0b01000010, 0b00100010,
                                      0b01111110, 0b00111110,
                                      0b00000000, 0b00000000};
+
+// clang-format on
 
 /********************/
 /*** HW FUNCTIONS ***/
