@@ -152,6 +152,12 @@ void test_body_performs_basic_moves() {
   TEST_ASSERT_EQUAL(false, ledR);
   TEST_ASSERT_EQUAL(false, ledW);
   TEST_ASSERT_EQUAL(false, fan);
+
+  Buffer<10> m0("HEY");
+  ms.setProp(MessagesConfigMsg0, SetValue, &m0, NULL);
+  executeMove(&b, "M01");
+  TEST_ASSERT_EQUAL_STRING("HEY", lastMsg);
+
 }
 
 int main() {
