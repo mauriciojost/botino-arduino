@@ -88,8 +88,8 @@ void test_body_shows_time() {
   Long time0(201010101);      // every single second
   Buffer<10> move0("Mc.Fb."); // clock message (show current time) and face black
 
-  b.setProp(BodyConfigTime0, SetValue, &time0, NULL);
-  b.setProp(BodyConfigMove0, SetValue, &move0, NULL);
+  b.setPropValue(BodyConfigTime0, &time0);
+  b.setPropValue(BodyConfigMove0, &move0);
 
   TEST_ASSERT_EQUAL(0, faceCleared);
   TEST_ASSERT_EQUAL_STRING("", lastMsg);
@@ -105,7 +105,7 @@ void test_body_shows_time() {
 void executeMove(Body *b, const char *move) {
   Buffer<20> mv0;
   mv0.fill(move);
-  b->setProp(BodyConfigMove0, SetValue, &mv0, NULL);
+  b->setPropValue(BodyConfigMove0, &mv0);
   Timing *t = b->getFrequencyConfiguration();
   t->setCurrentTime(t->getCurrentTime() + 1); // assumes configured to act every second
   b->act();
@@ -121,7 +121,7 @@ void test_body_performs_basic_moves() {
   initBody(&b, &q, &i, &ms);
 
   Long time0(201010101); // act every single second / act() method call
-  b.setProp(BodyConfigTime0, SetValue, &time0, NULL);
+  b.setPropValue(BodyConfigTime0, &time0);
 
   TEST_ASSERT_EQUAL_STRING("", lastArms);
 
@@ -154,7 +154,7 @@ void test_body_performs_basic_moves() {
   TEST_ASSERT_EQUAL(false, fan);
 
   Buffer<10> m0("HEY");
-  ms.setProp(MessagesConfigMsg0, SetValue, &m0, NULL);
+  ms.setPropValue(MessagesConfigMsg0, &m0);
   executeMove(&b, "M01");
   TEST_ASSERT_EQUAL_STRING("HEY", lastMsg);
 

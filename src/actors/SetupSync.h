@@ -166,12 +166,12 @@ public:
     httpGet = h;
   }
 
-  void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
+  void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
       case (SetupSyncConfigFreq): {
         long freq = freqConf.getCustom();
-        setPropLong(setMode, targetValue, actualValue, &freq);
-        if (setMode == SetValue) {
+        setPropLong(m, targetValue, actualValue, &freq);
+        if (m == SetCustomValue) {
           freqConf.setCustom(freq);
           freqConf.setFrequency(Custom);
         }

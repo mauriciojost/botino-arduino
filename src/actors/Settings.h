@@ -52,16 +52,16 @@ public:
     }
   }
 
-  void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
+  void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
       case (GlobalClearStackTraceState):
-        setPropBoolean(setMode, targetValue, actualValue, &clearStackTrace);
+        setPropBoolean(m, targetValue, actualValue, &clearStackTrace);
         break;
       case (GlobalLogLevelState):
-        setPropInteger(setMode, targetValue, actualValue, &logLevel);
+        setPropInteger(m, targetValue, actualValue, &logLevel);
         break;
       case (GlobalLcdDebugState):
-        setPropBoolean(setMode, targetValue, actualValue, &lcdDebug);
+        setPropBoolean(m, targetValue, actualValue, &lcdDebug);
         break;
       default:
         break;

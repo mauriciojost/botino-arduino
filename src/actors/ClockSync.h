@@ -92,7 +92,7 @@ public:
     }
   }
 
-  void setProp(int propIndex, SetMode set, const Value *targetValue, Value *actualValue) {}
+  void getSetPropValue(int propIndex, GetSetMode set, const Value *targetValue, Value *actualValue) {}
 
   int getNroProps() {
     return 0;

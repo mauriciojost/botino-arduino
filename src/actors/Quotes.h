@@ -89,7 +89,7 @@ public:
     }
   }
 
-  void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {}
+  void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {}
 
   int getNroProps() {
     return QuotesConfigStateDelimiter;

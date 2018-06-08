@@ -255,7 +255,7 @@ void reactCommand() {
       log(CLASS_MAIN, Info, " '%s'", actor->getName());
       for (int j = 0; j < actor->getNroProps(); j++) {
         Buffer<COMMAND_MAX_LENGTH> value;
-        actor->setProp(j, DoNotSet, NULL, &value);
+        actor->getPropValue(j, &value);
         log(CLASS_MAIN, Info, "   '%s': '%s'", actor->getPropName(j), value.getBuffer());
       }
       log(CLASS_MAIN, Info, " ");

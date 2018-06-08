@@ -65,10 +65,10 @@ public:
     }
   }
 
-  void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
+  void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {
     if (propIndex >= ImagesConfigImg0 && propIndex < (NRO_IMGS + ImagesConfigImg0)) {
       int i = (int)propIndex - (int)ImagesConfigImg0;
-      if (setMode == SetValue) {
+      if (m == SetCustomValue) {
         Buffer<IMG_SIZE_BYTES * 2> target(targetValue); // 2 chars per actual bitmap byte
         Hexer::hexToByte((uint8_t *)images[i], target.getBuffer(), MINIM((strlen(target.getBuffer())), (IMG_SIZE_BYTES * 2)));
       }

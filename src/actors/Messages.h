@@ -63,7 +63,7 @@ public:
     }
   }
 
-  void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
+  void getSetPropValue(int propIndex, GetSetMode setMode, const Value *targetValue, Value *actualValue) {
     if (propIndex >= MessagesConfigMsg0 && propIndex < (NRO_MSGS + MessagesConfigMsg0)) {
       int i = (int)propIndex - (int)MessagesConfigMsg0;
       setPropValue(setMode, targetValue, actualValue, msgs[i]);

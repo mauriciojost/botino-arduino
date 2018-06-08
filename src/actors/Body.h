@@ -449,13 +449,13 @@ public:
     }
   }
 
-  void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
+  void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {
     if (propIndex >= BodyConfigMove0 && propIndex < (NRO_ROUTINES + BodyConfigMove0)) {
       int i = (int)propIndex - (int)BodyConfigMove0;
-      setPropValue(setMode, targetValue, actualValue, &routines[i]->move);
+      setPropValue(m, targetValue, actualValue, &routines[i]->move);
     } else if (propIndex >= BodyConfigTime0 && propIndex < (NRO_ROUTINES + BodyConfigTime0)) {
       int i = (int)propIndex - (int)BodyConfigTime0;
-      setPropLong(setMode, targetValue, actualValue, &routines[i]->timingConf);
+      setPropLong(m, targetValue, actualValue, &routines[i]->timingConf);
       routines[i]->timing.setCustom(routines[i]->timingConf);
     } else {
       switch (propIndex) {

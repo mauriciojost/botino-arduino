@@ -13,9 +13,11 @@
 
 #define DWEET_IO_API_URL_POST "http://dweet.io/dweet/for/" DEVICE_NAME "-%s-current"
 #define DWEET_IO_API_URL_GET "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-%s-target"
+#define DWEET_IO_API_URL_REPORT "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-%s-target"
 
 enum PropSyncConfigState {
   PropSyncConfigFreq = 0,
+  PropSyncConfigUpdateReport,
   PropSyncConfigDelimiter // delimiter of the configuration states
 };
 
@@ -34,6 +36,7 @@ private:
   bool (*initWifiFunc)();
   int (*httpGet)(const char *url, ParamStream *response);
   int (*httpPost)(const char *url, const char *body, ParamStream *response);
+  bool updateReportEnabled;
 
 public:
   PropSync(const char *n) {
@@ -43,6 +46,7 @@ public:
     httpGet = NULL;
     httpPost = NULL;
     freqConf.setFrequency(OnceEvery1Minute);
+    updateReportEnabled = false;
   }
 
   void setBot(SerBot *b) {
@@ -63,6 +67,9 @@ public:
       if (connected) {
         for (int i = 0; i < bot->getActors()->size(); i++) {
           updateProps(i);
+          if (updateReportEnabled) {
+            updateReport(i);
+          }
         }
       }
     }
@@ -107,24 +114,40 @@ public:
     httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort
   }
 
+  void updateReport(int actorIndex) {
+    ParamStream httpBodyResponse;
+    Actor *actor = bot->getActors()->get(actorIndex);
+    Buffer<MAX_JSON_STR_LENGTH> jsonAuxBuffer;
+    bot->getInfosJson(&jsonAuxBuffer, actorIndex);
+    urlAuxBuffer.fill(DWEET_IO_API_URL_REPORT, actor->getName());
+    httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort
+  }
+
+
   const char *getPropName(int propIndex) {
     switch (propIndex) {
       case (PropSyncConfigFreq):
         return "freq";
+      case (PropSyncConfigUpdateReport):
+        return "updaterep";
+
       default:
         return "";
     }
   }
 
-  void setProp(int propIndex, SetMode setMode, const Value *targetValue, Value *actualValue) {
+  void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
       case (PropSyncConfigFreq): {
         long freq = freqConf.getCustom();
-        setPropLong(setMode, targetValue, actualValue, &freq);
-        if (setMode == SetValue) {
+        setPropLong(m, targetValue, actualValue, &freq);
+        if (m == SetCustomValue) {
           freqConf.setCustom(freq);
           freqConf.setFrequency(Custom);
         }
+      } break;
+      case (PropSyncConfigUpdateReport): {
+        setPropBoolean(m, targetValue, actualValue, &updateReportEnabled);
       } break;
       default:
         break;
