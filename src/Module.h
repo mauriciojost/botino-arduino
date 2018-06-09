@@ -44,8 +44,8 @@ public:
     clockSync = new ClockSync("clocksync");
     clock = new Clock("clock");
     settings = new Settings("settings");
-    body = new Body("body");
     quotes = new Quotes("quotes");
+    body = new Body("body");
     images = new Images("images");
     messages = new Messages("messages");
 
