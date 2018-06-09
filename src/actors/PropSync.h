@@ -66,11 +66,16 @@ public:
       return;
     }
     if (freqConf.matches()) {
+      log(CLASS_PROPSYNC, Debug, "Propsync starts");
       bool connected = initWifiFunc();
       if (connected) {
         for (int i = 0; i < bot->getActors()->size(); i++) {
-          updateProps(i);
+          if (updatePropsEnabled) {
+            log(CLASS_PROPSYNC, Debug, "  Props:%s", bot->getActors()->get(i)->getName());
+            updateProps(i);
+          }
           if (updateReportEnabled) {
+            log(CLASS_PROPSYNC, Debug, "  Repo:%s", bot->getActors()->get(i)->getName());
             updateReport(i);
           }
         }
@@ -102,6 +107,7 @@ public:
         JsonObject &withJson = json["with"][0];
         if (withJson.containsKey("content")) {
           JsonObject &content = withJson["content"];
+          log(CLASS_PROPSYNC, Debug, "SetProp:%s", actor->getName());
           bot->setPropsJson(content, actorIndex);
         } else {
           log(CLASS_PROPSYNC, Info, "No 'content'");
