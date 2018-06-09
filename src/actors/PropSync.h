@@ -17,6 +17,7 @@
 
 enum PropSyncConfigState {
   PropSyncConfigFreq = 0,
+  PropSyncConfigUpdateProps,
   PropSyncConfigUpdateReport,
   PropSyncConfigDelimiter // delimiter of the configuration states
 };
@@ -36,6 +37,7 @@ private:
   bool (*initWifiFunc)();
   int (*httpGet)(const char *url, ParamStream *response);
   int (*httpPost)(const char *url, const char *body, ParamStream *response);
+  bool updatePropsEnabled;
   bool updateReportEnabled;
 
 public:
@@ -46,6 +48,7 @@ public:
     httpGet = NULL;
     httpPost = NULL;
     freqConf.setFrequency(OnceEvery1Minute);
+    updatePropsEnabled = true;
     updateReportEnabled = false;
   }
 
@@ -111,6 +114,7 @@ public:
     Buffer<MAX_JSON_STR_LENGTH> jsonAuxBuffer;
     bot->getPropsJson(&jsonAuxBuffer, actorIndex);
     urlAuxBuffer.fill(DWEET_IO_API_URL_POST, actor->getName());
+    log(CLASS_PROPSYNC, Debug, "DumpProp:%s", actor->getName());
     httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort
   }
 
@@ -120,6 +124,7 @@ public:
     Buffer<MAX_JSON_STR_LENGTH> jsonAuxBuffer;
     bot->getInfosJson(&jsonAuxBuffer, actorIndex);
     urlAuxBuffer.fill(DWEET_IO_API_URL_REPORT, actor->getName());
+    log(CLASS_PROPSYNC, Debug, "DumpRepo:%s", actor->getName());
     httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort
   }
 
@@ -128,9 +133,10 @@ public:
     switch (propIndex) {
       case (PropSyncConfigFreq):
         return "freq";
+      case (PropSyncConfigUpdateProps):
+        return "updateprops";
       case (PropSyncConfigUpdateReport):
         return "updaterep";
-
       default:
         return "";
     }
@@ -145,6 +151,9 @@ public:
           freqConf.setCustom(freq);
           freqConf.setFrequency(Custom);
         }
+      } break;
+      case (PropSyncConfigUpdateProps): {
+        setPropBoolean(m, targetValue, actualValue, &updatePropsEnabled);
       } break;
       case (PropSyncConfigUpdateReport): {
         setPropBoolean(m, targetValue, actualValue, &updateReportEnabled);
