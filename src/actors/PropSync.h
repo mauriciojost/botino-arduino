@@ -13,7 +13,7 @@
 
 #define DWEET_IO_API_URL_POST "http://dweet.io/dweet/for/" DEVICE_NAME "-%s-current"
 #define DWEET_IO_API_URL_GET "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-%s-target"
-#define DWEET_IO_API_URL_REPORT "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-%s-target"
+#define DWEET_IO_API_URL_REPORT "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-%s-report"
 
 enum PropSyncConfigState {
   PropSyncConfigFreq = 0,
