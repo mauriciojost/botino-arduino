@@ -90,6 +90,8 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 
 #define SERVO_INVERT_POS(p, f) (((f) ? (180 - (p)) : (p)))
 
+#define URL_PRINT_MAX_LENGTH 20
+
 Module m;
 Servo servoLeft;
 Servo servoRight;
@@ -466,7 +468,7 @@ int httpGet(const char *url, ParamStream *response) {
   httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
 
   int errorCode = httpClient.GET();
-  log(CLASS_MAIN, Debug, "GET:%d %s", errorCode, url);
+  log(CLASS_MAIN, Debug, "GET:%d..%s", errorCode, tailStr(url, URL_PRINT_MAX_LENGTH));
 
   if (errorCode > 0) {
     if (response != NULL) {
@@ -488,7 +490,7 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
   httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
 
   int errorCode = httpClient.POST(body);
-  log(CLASS_MAIN, Debug, "POST:%d %s", errorCode, url);
+  log(CLASS_MAIN, Debug, "POST:%d..%s", errorCode, tailStr(url, URL_PRINT_MAX_LENGTH));
 
   if (errorCode > 0) {
     if (response != NULL) {
@@ -625,7 +627,9 @@ void setup() {
     messageOnLcd(0, "REGULAR mode", 2);
     delay(1000);
     displayUserInfo();
+#ifdef HARDWARE_TEST
     performHardwareTest();
+#endif
   }
 }
 
