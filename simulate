@@ -12,6 +12,7 @@ FLAGS="
 -D LOG_LEVEL=0
 -D DEVICE_NAME=\"dev1\"
 -D MAX_LOG_MSG_LENGTH=1024
+-D PERIOD_SEC=1
 "
 SRC="
 src/Main.cpp
