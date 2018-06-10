@@ -8,7 +8,7 @@ PRETTY='python -m json.tool'
 url="http://dweet.io/dweet/for/$DEVICE-settings-target?"
 url+='lcddebug=false&' # turn on/off LCD DEBUG (show logs in LCD)
 url+='crashclear=false&' # do not clear debug info (stacktraces) from device
-url+='loglevel=1' # log level
+url+='loglevel=0' # log level
 curl -XPOST $url | $PRETTY
 
 # Set up messages (to be used by the body)
@@ -33,7 +33,7 @@ url+="t0=201016060&" # timing
 url+="mv1=Mc4W9.Zz.&" # move
 url+="t1=201016060&" # timing
 
-url+="mv2=B99M13W9.Zz.&" # move
+url+="mv2=B99M13W9.F0.W9.M13W9.Zz.&" # move
 url+="t2=177103000&" # timing
 
 url+="mv3=S02S01Mq1W9.Zz.&" # move
