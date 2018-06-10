@@ -3,6 +3,7 @@
 - Package electronics without breadboard
 - Make a good pass and fix data types (avoid char, use better uint8 for instance)
 - Add a simulator
+- Improve documentation (use tables when convenient)
 
 
 # DONE
