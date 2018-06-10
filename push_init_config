@@ -11,21 +11,30 @@ url+='crashclear=false&' # do not clear debug info (stacktraces) from device
 url+='loglevel=1' # log level
 curl -XPOST $url | $PRETTY
 
-# Set up body
-# Routine 0: smile and turn a LED showing H20 in the LCD, then show the time, and sleep
-# Routine 1: show the current time, and sleep
-url="http://dweet.io/dweet/for/$DEVICE-body-target?"
+# Set up messages (to be used by the body)
+url="http://dweet.io/dweet/for/$DEVICE-messages-target?"
 
 url+="msg0=H2O&" # custom message
-url+="mv0=M04W5.Zz.&" # move
+url+="msg1=STANDUP&" # custom message
+curl -XPOST $url | $PRETTY
+
+# Set up images (to be used by the body)
+url="http://dweet.io/dweet/for/$DEVICE-images-target?"
+url+="im0=00002814100828140000000003C00000&"
+curl -XPOST $url | $PRETTY
+
+
+# Set up body
+url="http://dweet.io/dweet/for/$DEVICE-body-target?"
+
+url+="mv0=LwyM04W9.Zz.&" # move
 url+="t0=201016060&" # timing
 
-url+="mv1=Mc4W5.Zz.&" # move
+url+="mv1=Mc4W9.Zz.&" # move
 url+="t1=201016060&" # timing
 
-url+="msg1=STANDUP&" # custom message
-url+="mv2=M13W5.S02S01Mq1W9.Zz.&" # move
-url+="t2=101103000&" # timing
+url+="mv2=B99M13W9.Zz.&" # move
+url+="t2=177103000&" # timing
 
 url+="mv3=S02S01Mq1W9.Zz.&" # move
 url+="t3=0" # timing
@@ -34,11 +43,11 @@ curl -XPOST $url | $PRETTY
 
 # Set up properties synchronizer
 url="http://dweet.io/dweet/for/$DEVICE-propsync-target?"
-url+="freq=201011560" # sync all properties every 5 minutes
+url+="freq=201011560" # sync all properties every 15 minutes
 curl -XPOST $url | $PRETTY
 
 # Set up setup synchronizer (for wifi setup)
 #url="http://dweet.io/dweet/for/$DEVICE-setupsync-target?"
-#url+="freq=201010560" # sync all properties every 5 minutes
+#url+="freq=201012060" # sync every 20 minutes
 #curl -XPOST $url | $PRETTY
 
