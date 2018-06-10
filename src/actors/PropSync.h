@@ -72,11 +72,9 @@ public:
       if (connected) {
         for (int i = 0; i < bot->getActors()->size(); i++) {
           if (updatePropsEnabled) {
-            log(CLASS_PROPSYNC, Debug, "  Props:%s", bot->getActors()->get(i)->getName());
             updateProps(i);
           }
           if (updateReportEnabled) {
-            log(CLASS_PROPSYNC, Debug, "  Repo:%s", bot->getActors()->get(i)->getName());
             updateReport(i);
           }
         }
