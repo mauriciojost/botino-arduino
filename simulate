@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+rm simulator.bin
+
+FLAGS="
+-D WIFI_SSID_INIT=\"wifi\"
+-D WIFI_PASSWORD_INIT=\"pass\"
+-D ENCRYPT_KEY=\"11112233445566778899aabbccddeeff\"
+-D TIMEZONE_DB_KEY=\"akey\"
+-D TIMEZONE_DB_ZONE=\"Europe/Paris\"
+-D DWEET_IO_API_TOKEN=\"token\"
+-D UNIT_TEST
+-D LOG_LEVEL=0
+-D DEVICE_NAME=\"dev1\"
+"
+SRC="
+src/Main.cpp
+src/aes.c
+src/main4ino/*.cpp
+src/log4ino/*.cpp
+"
+HEADERS="
+-I src/
+-I src/actors/
+-I src/log4ino
+-I src/main4ino
+"
+
+g++ -o simulator.bin $FLAGS $SRC $HEADERS
+./simulator.bin
+rm simulator.bin
