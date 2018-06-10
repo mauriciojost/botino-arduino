@@ -738,19 +738,19 @@ void setup() {
  */
 void sleepInCycle(unsigned long cycleBegin) {
   log(CLASS_MAIN, Info, "L.Sleep(%lums)...", PERIOD_MSEC);
-#ifndef UNIT_TEST // ESP8266
   unsigned long spentMs = millis() - cycleBegin;
   log(CLASS_MAIN, Info, "D.C.:%0.3f", (float)spentMs / PERIOD_MSEC);
   while (spentMs < PERIOD_MSEC) {
     reactButton();
     unsigned long fragToSleepMs = MINIM(PERIOD_MSEC - spentMs, FRAG_TO_SLEEP_MS_MAX);
+#ifndef UNIT_TEST // ESP8266
     wifi_set_sleep_type(LIGHT_SLEEP_T);
-    delay(fragToSleepMs);
-    spentMs = millis() - cycleBegin;
-  }
 # else // UNIT_TEST (on PC)
   // nothing here, already logged
 #endif // UNIT_TEST
+    delay(fragToSleepMs);
+    spentMs = millis() - cycleBegin;
+  }
 
 }
 
