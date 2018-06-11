@@ -10,7 +10,7 @@
 #include "Images.h"
 #include "main4ino/Misc.h"
 
-#ifndef UNIT_TEST // ESP8266
+#ifndef SIMULATE // ESP8266
 
 #include "EspSaveCrash.h"
 #include "RemoteDebug.h"
@@ -43,9 +43,9 @@ extern "C" {
 #include "user_interface.h"
 }
 
-# else // UNIT_TEST (on PC)
+# else // SIMULATE (on PC)
 // nothing here
-#endif // UNIT_TEST
+#endif // SIMULATE
 
 enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 
@@ -115,7 +115,7 @@ uint8_t initImage[IMG_SIZE_BYTES] = {0b00000000, 0b00000000,
 
 // clang-format on
 
-#ifndef UNIT_TEST // ESP8266
+#ifndef SIMULATE // ESP8266
 
 HTTPClient httpClient;
 RemoteDebug Telnet;
@@ -207,13 +207,13 @@ void bitmapToLcd(uint8_t bitmap[]) {
   }
 }
 
-# else // UNIT_TEST (on PC)
+# else // SIMULATE (on PC)
 // no HW functions replacement (as they won't be called)
-#endif // UNIT_TEST
+#endif // SIMULATE
 
 
 bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries) {
-#ifndef UNIT_TEST // ESP8266
+#ifndef SIMULATE // ESP8266
   wl_status_t status;
   log(CLASS_MAIN, Info, "Conn. to %s...", ssid);
 
@@ -247,16 +247,16 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
       return false; // not connected
     }
   }
-# else // UNIT_TEST (on PC)
+# else // SIMULATE (on PC)
   printf("initWifi(%s, %s, %d)", ssid, pass, retries);
   return false;
-#endif // UNIT_TEST
+#endif // SIMULATE
 }
 
 void handleSettings() {
   Settings *s = m.getSettings();
 
-#ifndef UNIT_TEST // ESP8266
+#ifndef SIMULATE // ESP8266
   // Handle stack-traces stored in memory
   if (s->getClear() && SaveCrash.count() > 0) {
     log(CLASS_MAIN, Debug, "Clearing stack-trcs");
@@ -265,24 +265,24 @@ void handleSettings() {
     log(CLASS_MAIN, Warn, "Stack-trcs (!!!)");
     SaveCrash.print();
   }
-# else // UNIT_TEST (on PC)
+# else // SIMULATE (on PC)
   // noting to do here
-#endif // UNIT_TEST
+#endif // SIMULATE
 
   // Handle log level as per settings
   setLogLevel((char)(s->getLogLevel() % 4));
 }
 
 void handleServices() {
-#ifndef UNIT_TEST // ESP8266
+#ifndef SIMULATE // ESP8266
   // Handle telnet log server
   Telnet.handle();
 
   // Handle OTA
   ArduinoOTA.handle();
-# else // UNIT_TEST (on PC)
+# else // SIMULATE (on PC)
   // noting to do here
-#endif // UNIT_TEST
+#endif // SIMULATE
 }
 
 void reactCommand(const char* cmd) {
@@ -342,14 +342,14 @@ void reactCommand(const char* cmd) {
   }
 }
 
-#ifndef UNIT_TEST // ESP8266
+#ifndef SIMULATE // ESP8266
 void reactCommandCustom() {
 	reactCommand(Telnet.getLastCommand().c_str());
 }
-#endif // UNIT_TEST
+#endif // SIMULATE
 
 void reactButton() {
-#ifndef UNIT_TEST // ESP8266
+#ifndef SIMULATE // ESP8266
   delay(100); // avoid bouncing
   int level = digitalRead(BUTTON0_PIN);
   if (ints > 0 && level) {
@@ -364,12 +364,12 @@ void reactButton() {
   }
   digitalWrite(LEDW_PIN, HIGH);
   ints = 0;
-# else // UNIT_TEST (on PC)
+# else // SIMULATE (on PC)
   // noting to do here
-#endif // UNIT_TEST
+#endif // SIMULATE
 }
 
-#ifndef UNIT_TEST // ESP8266
+#ifndef SIMULATE // ESP8266
 void performHardwareTest() {
   log(CLASS_MAIN, Debug, "HW test");
   delay(2000);
@@ -422,28 +422,28 @@ void performHardwareTest() {
   delay(2000);
 }
 
-# else // UNIT_TEST (on PC)
+# else // SIMULATE (on PC)
 
 // nothing here to replace hardware funcitons on
 // the PC
 
-#endif  // UNIT_TEST
+#endif  // SIMULATE
 
 
 /*****************/
 /*** CALLBACKS ***/
 /*****************/
 
-#ifndef UNIT_TEST // ESP8266
+#ifndef SIMULATE // ESP8266
 ICACHE_RAM_ATTR
 void buttonPressed() {
   ints++;
   digitalWrite(LEDW_PIN, LOW);
 }
-#endif // UNIT_TEST
+#endif // SIMULATE
 
 void messageOnLcd(int line, const char *str, int size) {
-#ifndef UNIT_TEST // ESP8266
+#ifndef SIMULATE // ESP8266
   lcd.clearDisplay();
   lcd.setTextWrap(true);
   lcd.setTextSize(size);
@@ -452,23 +452,23 @@ void messageOnLcd(int line, const char *str, int size) {
   lcd.println(str);
   lcd.display();
   delay(DELAY_MS_SPI);
-# else // UNIT_TEST (on PC)
+# else // SIMULATE (on PC)
   printf("LCD: %s (size %d)", str, size);
-#endif // UNIT_TEST
+#endif // SIMULATE
 }
 
 void logLine(const char *str) {
-#ifndef UNIT_TEST // ESP8266
+#ifndef SIMULATE // ESP8266
   lcdPrintLogLine(str);
   Serial.println(str);
   Telnet.printf("%s\n", str);
-# else // UNIT_TEST (on PC)
+# else // SIMULATE (on PC)
   printf("LOG: %s", str);
-#endif // UNIT_TEST
+#endif // SIMULATE
 }
 
 void arms(int left, int right, int steps) {
-#ifndef UNIT_TEST // ESP8266
+#ifndef SIMULATE // ESP8266
   static int lastPosL = -1;
   static int lastPosR = -1;
 
@@ -496,9 +496,9 @@ void arms(int left, int right, int steps) {
   lastPosR = targetPosR;
   servoLeft.detach();
   servoRight.detach();
-# else // UNIT_TEST (on PC)
+# else // SIMULATE (on PC)
   printf("ARMS: %d %d %d", left, right, steps);
-#endif // UNIT_TEST
+#endif // SIMULATE
 }
 
 bool initWifiInit() {
@@ -534,7 +534,7 @@ bool initWifiSteady() {
 }
 
 int httpGet(const char *url, ParamStream *response) {
-#ifndef UNIT_TEST // ESP8266
+#ifndef SIMULATE // ESP8266
   httpClient.begin(url);
   httpClient.addHeader("Content-Type", "application/json");
   httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
@@ -554,14 +554,14 @@ int httpGet(const char *url, ParamStream *response) {
   delay(WAIT_BEFORE_HTTP_MS);
 
   return errorCode;
-# else // UNIT_TEST (on PC)
+# else // SIMULATE (on PC)
   printf("httpGet: %s", url);
   return -1;
-#endif // UNIT_TEST
+#endif // SIMULATE
 }
 
 int httpPost(const char *url, const char *body, ParamStream *response) {
-#ifndef UNIT_TEST // ESP8266
+#ifndef SIMULATE // ESP8266
   httpClient.begin(url);
   httpClient.addHeader("Content-Type", "application/json");
   httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
@@ -581,15 +581,15 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
   delay(WAIT_BEFORE_HTTP_MS);
 
   return errorCode;
-# else // UNIT_TEST (on PC)
+# else // SIMULATE (on PC)
   printf("httpGet: %s", url);
   return -1;
-#endif // UNIT_TEST
+#endif // SIMULATE
 }
 
 void ios(char led, bool v) {
   log(CLASS_MAIN, Debug, "Led'%c'->%d", led, (int)v);
-#ifndef UNIT_TEST // ESP8266
+#ifndef SIMULATE // ESP8266
   switch (led) {
     case 'r':
       digitalWrite(LEDR_PIN, !v); // VCC hard-wired
@@ -606,14 +606,14 @@ void ios(char led, bool v) {
     default:
       break;
   }
-# else // UNIT_TEST (on PC)
+# else // SIMULATE (on PC)
   // nothing here, action already logged
-#endif // UNIT_TEST
+#endif // SIMULATE
 }
 
 void lcdImg(char img, uint8_t bitmap[]) {
   log(CLASS_MAIN, Debug, "Img '%c'", img);
-#ifndef UNIT_TEST // ESP8266
+#ifndef SIMULATE // ESP8266
   switch (img) {
     case 'w': // white
       log(CLASS_BODY, Debug, "White face");
@@ -640,9 +640,9 @@ void lcdImg(char img, uint8_t bitmap[]) {
   }
   lcd.display();
   delay(DELAY_MS_SPI);
-# else // UNIT_TEST (on PC)
+# else // SIMULATE (on PC)
   // nothing here, action already logged
-#endif // UNIT_TEST
+#endif // SIMULATE
 }
 
 /*****************/
@@ -651,7 +651,7 @@ void lcdImg(char img, uint8_t bitmap[]) {
 
 void setup() {
 
-#ifndef UNIT_TEST // ESP8266
+#ifndef SIMULATE // ESP8266
   // Let HW startup
   delay(2 * 1000);
 
@@ -675,9 +675,9 @@ void setup() {
   log(CLASS_MAIN, Debug, "Setup random");
   randomSeed(analogRead(0) * 256 + analogRead(0));
 
-# else // UNIT_TEST (on PC)
+# else // SIMULATE (on PC)
   // nothing here
-#endif // UNIT_TEST
+#endif // SIMULATE
 
   // TODO all this should be wrapped by the Module
   log(CLASS_MAIN, Debug, "Setup module");
@@ -696,7 +696,7 @@ void setup() {
   m.getQuotes()->setHttpGet(httpGet);
   m.getQuotes()->setInitWifi(initWifiSteady);
 
-#ifndef UNIT_TEST // ESP8266
+#ifndef SIMULATE // ESP8266
 
   log(CLASS_MAIN, Debug, "Setup interrupts");
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, RISING);
@@ -728,9 +728,9 @@ void setup() {
     performHardwareTest();
 #endif
   }
-# else // UNIT_TEST (on PC)
+# else // SIMULATE (on PC)
   // something to reactCommand
-#endif // UNIT_TEST
+#endif // SIMULATE
 }
 
 /**
@@ -743,11 +743,11 @@ void sleepInCycle(unsigned long cycleBegin) {
   while (spentMs < PERIOD_MSEC) {
     reactButton();
     unsigned long fragToSleepMs = MINIM(PERIOD_MSEC - spentMs, FRAG_TO_SLEEP_MS_MAX);
-#ifndef UNIT_TEST // ESP8266
+#ifndef SIMULATE // ESP8266
     wifi_set_sleep_type(LIGHT_SLEEP_T);
-# else // UNIT_TEST (on PC)
+# else // SIMULATE (on PC)
   // nothing here, already logged
-#endif // UNIT_TEST
+#endif // SIMULATE
     delay(fragToSleepMs);
     spentMs = millis() - cycleBegin;
   }
