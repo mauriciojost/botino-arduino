@@ -43,13 +43,7 @@ extern "C" {
 #include "user_interface.h"
 }
 
-# else // SIMULATE (on PC)
-
-#include <curlpp/cURLpp.hpp>
-#include <curlpp/Easy.hpp>
-#include <curlpp/Options.hpp>
-
-using namespace curlpp::options;
+#else // SIMULATE (on PC)
 
 #endif // SIMULATE
 
@@ -211,7 +205,7 @@ void bitmapToLcd(uint8_t bitmap[]) {
   }
 }
 
-# else // SIMULATE (on PC)
+#else // SIMULATE (on PC)
 // no HW functions replacement (as they won't be called)
 #endif // SIMULATE
 
@@ -251,7 +245,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
       return false; // not connected
     }
   }
-# else // SIMULATE (on PC)
+#else // SIMULATE (on PC)
   printf("initWifi(%s, %s, %d)", ssid, pass, retries);
   return false;
 #endif // SIMULATE
@@ -269,7 +263,7 @@ void handleSettings() {
     log(CLASS_MAIN, Warn, "Stack-trcs (!!!)");
     SaveCrash.print();
   }
-# else // SIMULATE (on PC)
+#else // SIMULATE (on PC)
   // noting to do here
 #endif // SIMULATE
 
@@ -284,7 +278,7 @@ void handleServices() {
 
   // Handle OTA
   ArduinoOTA.handle();
-# else // SIMULATE (on PC)
+#else // SIMULATE (on PC)
   // noting to do here
 #endif // SIMULATE
 }
@@ -368,7 +362,7 @@ void reactButton() {
   }
   digitalWrite(LEDW_PIN, HIGH);
   ints = 0;
-# else // SIMULATE (on PC)
+#else // SIMULATE (on PC)
   // noting to do here
 #endif // SIMULATE
 }
@@ -426,7 +420,7 @@ void performHardwareTest() {
   delay(2000);
 }
 
-# else // SIMULATE (on PC)
+#else // SIMULATE (on PC)
 
 // nothing here to replace hardware funcitons on
 // the PC
@@ -456,7 +450,7 @@ void messageOnLcd(int line, const char *str, int size) {
   lcd.println(str);
   lcd.display();
   delay(DELAY_MS_SPI);
-# else // SIMULATE (on PC)
+#else // SIMULATE (on PC)
   printf("LCD: %s (size %d)", str, size);
 #endif // SIMULATE
 }
@@ -466,7 +460,7 @@ void logLine(const char *str) {
   lcdPrintLogLine(str);
   Serial.println(str);
   Telnet.printf("%s\n", str);
-# else // SIMULATE (on PC)
+#else // SIMULATE (on PC)
   printf("LOG: %s", str);
 #endif // SIMULATE
 }
@@ -500,7 +494,7 @@ void arms(int left, int right, int steps) {
   lastPosR = targetPosR;
   servoLeft.detach();
   servoRight.detach();
-# else // SIMULATE (on PC)
+#else // SIMULATE (on PC)
   printf("ARMS: %d %d %d", left, right, steps);
 #endif // SIMULATE
 }
@@ -558,12 +552,8 @@ int httpGet(const char *url, ParamStream *response) {
   delay(WAIT_BEFORE_HTTP_MS);
 
   return errorCode;
-# else // SIMULATE (on PC)
-  printf("httpGet 111: %s", url);
-	curlpp::Cleanup myCleanup;
-	curlpp::Easy myRequest;
-	myRequest.setOpt<Url>("http://example.com");
-	myRequest.perform();
+#else // SIMULATE (on PC)
+
   return -1;
 #endif // SIMULATE
 }
@@ -589,7 +579,7 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
   delay(WAIT_BEFORE_HTTP_MS);
 
   return errorCode;
-# else // SIMULATE (on PC)
+#else // SIMULATE (on PC)
   printf("httpGet: %s", url);
   return -1;
 #endif // SIMULATE
@@ -614,7 +604,7 @@ void ios(char led, bool v) {
     default:
       break;
   }
-# else // SIMULATE (on PC)
+#else // SIMULATE (on PC)
   // nothing here, action already logged
 #endif // SIMULATE
 }
@@ -648,7 +638,7 @@ void lcdImg(char img, uint8_t bitmap[]) {
   }
   lcd.display();
   delay(DELAY_MS_SPI);
-# else // SIMULATE (on PC)
+#else // SIMULATE (on PC)
   // nothing here, action already logged
 #endif // SIMULATE
 }
@@ -683,7 +673,7 @@ void setup() {
   log(CLASS_MAIN, Debug, "Setup random");
   randomSeed(analogRead(0) * 256 + analogRead(0));
 
-# else // SIMULATE (on PC)
+#else // SIMULATE (on PC)
   // nothing here
 #endif // SIMULATE
 
@@ -736,7 +726,7 @@ void setup() {
     performHardwareTest();
 #endif
   }
-# else // SIMULATE (on PC)
+#else // SIMULATE (on PC)
   // something to reactCommand
 #endif // SIMULATE
 }
@@ -753,7 +743,7 @@ void sleepInCycle(unsigned long cycleBegin) {
     unsigned long fragToSleepMs = MINIM(PERIOD_MSEC - spentMs, FRAG_TO_SLEEP_MS_MAX);
 #ifndef SIMULATE // ESP8266
     wifi_set_sleep_type(LIGHT_SLEEP_T);
-# else // SIMULATE (on PC)
+#else // SIMULATE (on PC)
   // nothing here, already logged
 #endif // SIMULATE
     delay(fragToSleepMs);
