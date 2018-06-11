@@ -47,8 +47,6 @@ extern "C" {
 // nothing here
 #endif // SIMULATE
 
-enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
-
 #define DELAY_MS_SPI 3
 #define FRAG_TO_SLEEP_MS_MAX 2000 // maximum sleeping time for which the module can be unresponsive
 
