@@ -44,13 +44,7 @@ extern "C" {
 }
 
 # else // UNIT_TEST (on PC)
-
-#include <curlpp/cURLpp.hpp>
-#include <curlpp/Easy.hpp>
-#include <curlpp/Options.hpp>
-
-using namespace curlpp::options;
-
+// nothing here
 #endif // UNIT_TEST
 
 enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
@@ -561,11 +555,7 @@ int httpGet(const char *url, ParamStream *response) {
 
   return errorCode;
 # else // UNIT_TEST (on PC)
-  printf("httpGet 111: %s", url);
-	curlpp::Cleanup myCleanup;
-	curlpp::Easy myRequest;
-	myRequest.setOpt<Url>("http://example.com");
-	myRequest.perform();
+  printf("httpGet: %s", url);
   return -1;
 #endif // UNIT_TEST
 }
