@@ -774,13 +774,11 @@ void loop() {
   }
 }
 
-#ifndef UNIT_TEST // ESP8266
- // nothing here
-# else // UNIT_TEST (on PC)
+#ifdef SIMULATE
 int main( int argc, const char* argv[] ) {
 	setup();
 	while(true) {
     loop();
 	}
 }
-#endif // UNIT_TEST
+#endif // SIMULATE
