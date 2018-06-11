@@ -28,6 +28,7 @@ HEADERS="
 -I src/main4ino
 "
 
-g++ -o simulator.bin $FLAGS $SRC $HEADERS
+LIBS="-lcurlpp -lcurl"
+g++ -o simulator.bin $FLAGS $SRC $HEADERS $LIBS
 ./simulator.bin
 rm simulator.bin

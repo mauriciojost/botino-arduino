@@ -44,7 +44,13 @@ extern "C" {
 }
 
 # else // SIMULATE (on PC)
-// nothing here
+
+#include <curlpp/cURLpp.hpp>
+#include <curlpp/Easy.hpp>
+#include <curlpp/Options.hpp>
+
+using namespace curlpp::options;
+
 #endif // SIMULATE
 
 #define DELAY_MS_SPI 3
@@ -553,7 +559,11 @@ int httpGet(const char *url, ParamStream *response) {
 
   return errorCode;
 # else // SIMULATE (on PC)
-  printf("httpGet: %s", url);
+  printf("httpGet 111: %s", url);
+	curlpp::Cleanup myCleanup;
+	curlpp::Easy myRequest;
+	myRequest.setOpt<Url>("http://example.com");
+	myRequest.perform();
   return -1;
 #endif // SIMULATE
 }
