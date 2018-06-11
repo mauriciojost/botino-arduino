@@ -39,19 +39,6 @@
 #define WIFI_PASSWORD_INIT ""
 #endif
 
-extern "C" {
-#include "user_interface.h"
-}
-
-# else // UNIT_TEST (on PC)
-// nothing here
-#endif // UNIT_TEST
-
-enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
-
-#define DELAY_MS_SPI 3
-#define FRAG_TO_SLEEP_MS_MAX 2000 // maximum sleeping time for which the module can be unresponsive
-
 #ifndef SERVO0_INVERTED
 #define SERVO0_INVERTED false
 #endif // SERVO0_INVERTED
@@ -78,6 +65,25 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 #define SERVO1_RANGE_DEGREES 140
 #endif // SERVO1_RANGE_DEGREES
 
+#ifndef DWEET_IO_API_TOKEN
+#error "Must provide DWEET_IO_API_TOKEN"
+#endif
+
+
+extern "C" {
+#include "user_interface.h"
+}
+
+# else // UNIT_TEST (on PC)
+// nothing here
+#endif // UNIT_TEST
+
+enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
+
+#define DELAY_MS_SPI 3
+#define FRAG_TO_SLEEP_MS_MAX 2000 // maximum sleeping time for which the module can be unresponsive
+
+
 #ifndef PERIOD_SEC
 #define PERIOD_SEC 60
 #endif // PERIOD_SEC
@@ -88,10 +94,6 @@ enum ButtonPressed { NoButton = 0, ButtonSetWasPressed, ButtonModeWasPressed };
 
 #define SERVO0_STEP_DEGREES (SERVO0_RANGE_DEGREES / MAX_SERVO_STEPS)
 #define SERVO1_STEP_DEGREES (SERVO1_RANGE_DEGREES / MAX_SERVO_STEPS)
-
-#ifndef DWEET_IO_API_TOKEN
-#error "Must provide DWEET_IO_API_TOKEN"
-#endif
 
 #define WAIT_BEFORE_HTTP_MS 1500
 
@@ -502,11 +504,16 @@ void arms(int left, int right, int steps) {
 }
 
 bool initWifiInit() {
+#ifndef UNIT_TEST // ESP8266
   log(CLASS_PROPSYNC, Info, "W.init %s", WIFI_SSID_INIT);
   return initWifi(WIFI_SSID_INIT, WIFI_PASSWORD_INIT, false, 20);
+#else // UNIT_TEST (on PC)
+  return true;
+#endif // UNIT_TEST
 }
 
 bool initWifiSteady() {
+#ifndef UNIT_TEST // ESP8266
   SetupSync *s = m.getSetupSync();
   static bool connectedOnce = false;
   if (s->isInitialized()) {
@@ -531,6 +538,9 @@ bool initWifiSteady() {
     log(CLASS_PROPSYNC, Info, "W.steady not ready");
     return false;
   }
+#else // UNIT_TEST (on PC)
+  return true;
+#endif // UNIT_TEST
 }
 
 int httpGet(const char *url, ParamStream *response) {
