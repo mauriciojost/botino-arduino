@@ -82,4 +82,7 @@ void ios(char led, bool v);
 // Interruptable sleep function (haveToInterrupt called within).
 void sleepInterruptable(unsigned long cycleBegin);
 
+// Show an image (either a catalog image or a custom bitmap)
+void lcdImg(char img, uint8_t bitmap[]);
+
 #endif // MAIN_INC
