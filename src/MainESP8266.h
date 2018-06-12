@@ -496,10 +496,6 @@ void lcdImg(char img, uint8_t bitmap[]) {
   delay(DELAY_MS_SPI);
 }
 
-/*****************/
-/***** SETUP *****/
-/*****************/
-
 void setupArchitecture() {
 
   // Let HW startup
