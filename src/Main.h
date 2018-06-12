@@ -48,19 +48,38 @@ bool initWifiSteady();
 ///////////////////////////////
 // To be provided by the Main of a specific architecture
 ///////////////////////////////
-bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries);
+
+// Setup step specific to the architecture
+void setupArchitecture();
+
+// Loop specific to the architecture
 void loopArchitecture();
 
-void setupArchitecture();
+// Setup wifi using provided parameters
+bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries);
+
 // Function to execute whenever a button is pressed (interrupt handling)
-void reactButton();
-// Message funcion. Directly connected with user.
+bool haveToInterrupt(unsigned long cycleBegin);
+
+// Message function. Directly connected with user.
 void messageFunc(int line, const char *str, int size);
+
+// Log function.
 void logLine(const char *str);
+
+// Arms control function.
 void arms(int left, int right, int steps);
+
+// HTTP GET function.
 int httpGet(const char *url, ParamStream *response);
+
+// HTTP POST function.
 int httpPost(const char *url, const char *body, ParamStream *response);
+
+// IO control function.
 void ios(char led, bool v);
+
+// Interruptable sleep function (haveToInterrupt called within).
 void sleepInterruptable(unsigned long cycleBegin);
 
 #endif // MAIN_INC

@@ -284,7 +284,7 @@ void reactCommandCustom() {
 	reactCommand(Telnet.getLastCommand().c_str());
 }
 
-void reactButton() {
+bool haveToInterrupt() {
   delay(100); // avoid bouncing
   int level = digitalRead(BUTTON0_PIN);
   if (ints > 0 && level) {
@@ -299,6 +299,7 @@ void reactButton() {
   }
   digitalWrite(LEDW_PIN, HIGH);
   ints = 0;
+  return false;
 }
 
 void performHardwareTest() {
@@ -570,7 +571,9 @@ void sleepInterruptable(unsigned long cycleBegin) {
   unsigned long spentMs = millis() - cycleBegin;
   log(CLASS_MAIN, Info, "D.C.:%0.3f", (float)spentMs / PERIOD_MSEC);
   while (spentMs < PERIOD_MSEC) {
-    reactButton();
+    if (haveToInterrupt()) {
+    	break;
+    }
     unsigned long fragToSleepMs = MINIM(PERIOD_MSEC - spentMs, FRAG_TO_SLEEP_MS_MAX);
     wifi_set_sleep_type(LIGHT_SLEEP_T);
     delay(fragToSleepMs);
