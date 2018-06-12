@@ -83,15 +83,6 @@ Servo servoRight;
 Adafruit_SSD1306 lcd(-1);
 
 
-/********************/
-/*** HW FUNCTIONS ***/
-/********************/
-
-void arms(int left, int right, int steps);
-void lcdImg(char img, uint8_t bitmap[]);
-void ios(char led, bool v);
-
-
 void lcdClear(int line) {
   lcd.fillRect(0, line * 8, 128, 8, BLACK);
 }
@@ -479,26 +470,26 @@ void lcdImg(char img, uint8_t bitmap[]) {
   log(CLASS_MAIN, Debug, "Img '%c'", img);
   switch (img) {
     case 'w': // white
-      log(CLASS_BODY, Debug, "White face");
+      log(CLASS_MAIN, Debug, "White face");
       lcd.invertDisplay(true);
       break;
     case 'b': // black
-      log(CLASS_BODY, Debug, "Black face");
+      log(CLASS_MAIN, Debug, "Black face");
       lcd.invertDisplay(false);
       break;
     case 'l': // clear
-      log(CLASS_BODY, Debug, "Clear face");
+      log(CLASS_MAIN, Debug, "Clear face");
       lcd.clearDisplay();
       break;
     case 'c': // custom
-      log(CLASS_BODY, Debug, "Custom face", img);
+      log(CLASS_MAIN, Debug, "Custom face", img);
       if (bitmap != NULL) {
-        logHex(CLASS_BODY, Debug, bitmap, IMG_SIZE_BYTES);
+        logHex(CLASS_MAIN, Debug, bitmap, IMG_SIZE_BYTES);
         bitmapToLcd(bitmap); // custom
       }
       break;
     default:
-      log(CLASS_BODY, Debug, "Face?: %c", img);
+      log(CLASS_MAIN, Debug, "Face?: %c", img);
       break;
   }
   lcd.display();
