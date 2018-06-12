@@ -3,8 +3,7 @@
 
 #define CL_MAX_LENGTH 1000
 #define CURL_COMMAND_GET "curl --silent -XGET '%s'"
-#define CURL_COMMAND_POST "curl --silent -XPOST '%s' -d '%s'"
-#define HTTP_OK 200
+#define CURL_COMMAND_POST "curl --silent -H \"Content-Type: application/json\" -XPOST '%s' -d '%s'"
 
 bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries) {
   log(CLASS_MAIN, Debug, "initWifi(%s, %s, %d)", ssid, pass, retries);
