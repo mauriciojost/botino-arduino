@@ -25,8 +25,8 @@ bool initWifiSteady() {
   if (s->isInitialized()) {
     const char *wifiSsid = s->getSsid();
     const char *wifiPass = s->getPass();
-    log(CLASS_MAIN, Info, "W.steady %s", wifiSsid);
-    bool connected = initWifi(wifiSsid, wifiPass, connectedOnce, 5);
+    log(CLASS_MAIN, Info, "W.steady'%s'", wifiSsid);
+    bool connected = initWifi(wifiSsid, wifiPass, connectedOnce, 10);
     if (!connectedOnce) {
       messageFunc(0, "WIFI CONNECT...", 2);
       delay(1 * 2000);
@@ -41,7 +41,7 @@ bool initWifiSteady() {
     connectedOnce = connectedOnce || connected;
     return connected;
   } else {
-    log(CLASS_MAIN, Info, "W.steady not ready");
+    log(CLASS_MAIN, Info, "W.steady KO");
     return false;
   }
 }
