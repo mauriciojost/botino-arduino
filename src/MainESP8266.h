@@ -96,7 +96,7 @@ void lcdHighlight(int line) {
   offset = 4;
   lcd.fillRect(0, line * 8 + offset, 128, 8 - offset, BLACK);
   offset = 6;
-  lcd.fillRect(0, line * 8 + offset, 128, 8 - offset, WHITE);
+  lcd.fillRect(0, line * 8 + offset, 128, 8 - offset, BLACK);
 }
 
 void lcdPrintLogLine(const char *logStr) {
