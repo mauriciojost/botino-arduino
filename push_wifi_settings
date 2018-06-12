@@ -26,7 +26,18 @@ function ecb_encrypt() {
   local inputf=`mktemp`
   local outputf=`mktemp`
   echo "$input" > "$inputf"
-  echo "$input" | openssl enc -aes-128-ecb -nosalt -K "$key" -in "$inputf" -out "$outputf"
+  local size=${#input}
+  local remaining=`echo "30 - $size" | bc`
+
+  xxd -ps "$inputf" > /tmp/input-$input
+
+  dd if=/dev/zero bs=1 count="$remaining" >> "$inputf"  # fill in remaining bytes with null chars
+
+  echo $size > /tmp/size-$input
+  echo $remaining > /tmp/remaining-$input
+  xxd -ps $inputf > /tmp/inputpadded-$input
+
+  openssl enc -aes-128-ecb -nosalt -K "$key" -in "$inputf" -out "$outputf"
   echo $outputf
 }
 
