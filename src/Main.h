@@ -40,14 +40,16 @@
 bool initWifiInit();
 bool initWifiSteady();
 void loop();
+void setup();
 
 // To be provided by the Main of a specific architecture
 bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries);
 void handleSettings();
 void handleServices();
-void setup();
+void setupArchitecture();
 void reactButton();
-void messageOnLcd(int line, const char *str, int size);
+// Message funcion. Directly connected with user.
+void messageFunc(int line, const char *str, int size);
 void logLine(const char *str);
 void arms(int left, int right, int steps);
 int httpGet(const char *url, ParamStream *response);

@@ -90,7 +90,6 @@ Adafruit_SSD1306 lcd(-1);
 void arms(int left, int right, int steps);
 void lcdImg(char img, uint8_t bitmap[]);
 void ios(char led, bool v);
-void messageOnLcd(int line, const char *str, int size);
 
 
 void lcdClear(int line) {
@@ -130,23 +129,23 @@ void displayUserInfo() {
   Buffer<32> aux;
   log(CLASS_MAIN, Debug, "USER INFO");
   aux.fill("VER: %s", PROJ_VERSION);
-  messageOnLcd(0, aux.getBuffer(), 2);
+  messageFunc(0, aux.getBuffer(), 2);
   log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(3000);
   aux.fill("NAM: %s", DEVICE_NAME);
-  messageOnLcd(0, aux.getBuffer(), 2);
+  messageFunc(0, aux.getBuffer(), 2);
   log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(3000);
   aux.fill("ID : %d", ESP.getChipId());
-  messageOnLcd(0, aux.getBuffer(), 2);
+  messageFunc(0, aux.getBuffer(), 2);
   log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(3000);
   aux.fill("SSI: %s", WIFI_SSID_INIT);
-  messageOnLcd(0, aux.getBuffer(), 2);
+  messageFunc(0, aux.getBuffer(), 2);
   log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(3000);
   aux.fill("PAS: %s", WIFI_PASSWORD_INIT);
-  messageOnLcd(0, aux.getBuffer(), 2);
+  messageFunc(0, aux.getBuffer(), 2);
   log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(3000);
 }
@@ -366,7 +365,7 @@ void buttonPressed() {
   digitalWrite(LEDW_PIN, LOW);
 }
 
-void messageOnLcd(int line, const char *str, int size) {
+void messageFunc(int line, const char *str, int size) {
   lcd.clearDisplay();
   lcd.setTextWrap(true);
   lcd.setTextSize(size);
@@ -511,7 +510,7 @@ void lcdImg(char img, uint8_t bitmap[]) {
 /***** SETUP *****/
 /*****************/
 
-void setup() {
+void setupArchitecture() {
 
   // Let HW startup
   delay(2 * 1000);
@@ -536,22 +535,6 @@ void setup() {
   log(CLASS_MAIN, Debug, "Setup random");
   randomSeed(analogRead(0) * 256 + analogRead(0));
 
-  log(CLASS_MAIN, Debug, "Setup module");
-  m.getBody()->setLcdImgFunc(lcdImg);
-  m.getBody()->setArmsFunc(arms);
-  m.getBody()->setMessageFunc(messageOnLcd);
-  m.getBody()->setIosFunc(ios);
-  m.getPropSync()->setInitWifi(initWifiSteady);
-  m.getPropSync()->setHttpPost(httpPost);
-  m.getPropSync()->setHttpGet(httpGet);
-  m.getClockSync()->setInitWifi(initWifiSteady);
-  m.getClockSync()->setHttpGet(httpGet);
-  m.getSetupSync()->setInitWifiSteady(initWifiSteady);
-  m.getSetupSync()->setInitWifiInit(initWifiInit);
-  m.getSetupSync()->setHttpGet(httpGet);
-  m.getQuotes()->setHttpGet(httpGet);
-  m.getQuotes()->setInitWifi(initWifiSteady);
-
   log(CLASS_MAIN, Debug, "Setup interrupts");
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, RISING);
 
@@ -567,7 +550,7 @@ void setup() {
 
   if (digitalRead(BUTTON0_PIN) == HIGH) {
     log(CLASS_MAIN, Info, "CLI mode");
-    messageOnLcd(0, "CLI mode", 2);
+    messageFunc(0, "CLI mode", 2);
     delay(1000);
     initWifiSteady();
     m.getBot()->setMode(ConfigureMode);
@@ -575,7 +558,7 @@ void setup() {
     log(CLASS_MAIN, Info, "  %s", WiFi.localIP().toString().c_str());
   } else {
     log(CLASS_MAIN, Info, "REGULAR mode");
-    messageOnLcd(0, "REGULAR mode", 2);
+    messageFunc(0, "REGULAR mode", 2);
     delay(1000);
     displayUserInfo();
 #ifdef HARDWARE_TEST

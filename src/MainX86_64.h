@@ -25,11 +25,7 @@ void reactButton() {
   // noting to do here
 }
 
-/*****************/
-/*** CALLBACKS ***/
-/*****************/
-
-void messageOnLcd(int line, const char *str, int size) {
+void messageFunc(int line, const char *str, int size) {
   printf("LCD: %s (size %d)", str, size);
 }
 
@@ -77,26 +73,8 @@ void lcdImg(char img, uint8_t bitmap[]) {
   log(CLASS_MAIN, Debug, "Img '%c'", img);
 }
 
-/*****************/
-/***** SETUP *****/
-/*****************/
-
-void setup() {
-  log(CLASS_MAIN, Debug, "Setup module");
-  m.getBody()->setLcdImgFunc(lcdImg);
-  m.getBody()->setArmsFunc(arms);
-  m.getBody()->setMessageFunc(messageOnLcd);
-  m.getBody()->setIosFunc(ios);
-  m.getPropSync()->setInitWifi(initWifiSteady);
-  m.getPropSync()->setHttpPost(httpPost);
-  m.getPropSync()->setHttpGet(httpGet);
-  m.getClockSync()->setInitWifi(initWifiSteady);
-  m.getClockSync()->setHttpGet(httpGet);
-  m.getSetupSync()->setInitWifiSteady(initWifiSteady);
-  m.getSetupSync()->setInitWifiInit(initWifiInit);
-  m.getSetupSync()->setHttpGet(httpGet);
-  m.getQuotes()->setHttpGet(httpGet);
-  m.getQuotes()->setInitWifi(initWifiSteady);
+void setupArchitecture() {
+	// nothing to be done here
 }
 
 void sleepInterruptable(unsigned long cycleBegin) {

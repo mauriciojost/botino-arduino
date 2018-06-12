@@ -28,12 +28,12 @@ bool initWifiSteady() {
     log(CLASS_MAIN, Info, "W.steady %s", wifiSsid);
     bool connected = initWifi(wifiSsid, wifiPass, connectedOnce, 5);
     if (!connectedOnce) {
-      messageOnLcd(0, "WIFI SETUP...", 2);
+      messageFunc(0, "WIFI SETUP...", 2);
       delay(1 * 2000);
-      messageOnLcd(0, wifiSsid, 2);
+      messageFunc(0, wifiSsid, 2);
       delay(1 * 2000);
       if (connected) { // first time
-        messageOnLcd(0, "SETUP OK", 2);
+        messageFunc(0, "SETUP OK", 2);
         log(CLASS_MAIN, Info, "SETUP OK");
         delay(10 * 1000);
       }
@@ -44,6 +44,27 @@ bool initWifiSteady() {
     log(CLASS_MAIN, Info, "W.steady not ready");
     return false;
   }
+}
+
+void setup() {
+
+  m.getBody()->setLcdImgFunc(lcdImg);
+  m.getBody()->setArmsFunc(arms);
+  m.getBody()->setMessageFunc(messageFunc);
+  m.getBody()->setIosFunc(ios);
+  m.getPropSync()->setInitWifi(initWifiSteady);
+  m.getPropSync()->setHttpPost(httpPost);
+  m.getPropSync()->setHttpGet(httpGet);
+  m.getClockSync()->setInitWifi(initWifiSteady);
+  m.getClockSync()->setHttpGet(httpGet);
+  m.getSetupSync()->setInitWifiSteady(initWifiSteady);
+  m.getSetupSync()->setInitWifiInit(initWifiInit);
+  m.getSetupSync()->setHttpGet(httpGet);
+  m.getQuotes()->setHttpGet(httpGet);
+  m.getQuotes()->setInitWifi(initWifiSteady);
+
+  setupArchitecture();
+
 }
 
 void loop() {
