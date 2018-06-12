@@ -2,12 +2,12 @@
 
 - Package electronics without breadboard
 - Make a good pass and fix data types (avoid char, use better uint8 for instance)
-- Add a simulator
 - Improve documentation (use tables when convenient)
 
 
 # DONE
 
+- Add a simulator
 - Create script to set up wifi parameters for the first time.
 - Version the docker images
 - Add a move where you show a random fortune message -> Done (Quotes)
