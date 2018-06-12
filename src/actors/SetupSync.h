@@ -81,7 +81,9 @@ private:
           if (withJson.containsKey("content")) {
             JsonObject &content = withJson["content"];
             if (content.containsKey("ssid") && content.containsKey("pass")) {
+              log(CLASS_SETUPSYNC, Debug, "Decrypt ssid");
               decryptEncoded(content["ssid"].as<char *>(), ssid);
+              log(CLASS_SETUPSYNC, Debug, "Decrypt pass");
               decryptEncoded(content["pass"].as<char *>(), pass);
               log(CLASS_SETUPSYNC, Debug, "SETUP:%s/***", ssid);
             } else {
