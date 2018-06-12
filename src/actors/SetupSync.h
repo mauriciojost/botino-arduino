@@ -85,7 +85,7 @@ private:
               decryptEncoded(content["ssid"].as<char *>(), ssid);
               log(CLASS_SETUPSYNC, Debug, "Decrypt pass");
               decryptEncoded(content["pass"].as<char *>(), pass);
-              log(CLASS_SETUPSYNC, Debug, "SETUP:%s/***", ssid);
+              log(CLASS_SETUPSYNC, Debug, "Got %s/***", ssid);
             } else {
               log(CLASS_SETUPSYNC, Warn, "No 'ssid'");
             }
