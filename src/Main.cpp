@@ -45,6 +45,10 @@ extern "C" {
 
 #else // SIMULATE (on PC)
 
+#define CL_MAX_LENGTH 1000
+#define CURL_COMMAND_GET "curl --silent -XGET '%s'"
+#define CURL_COMMAND_POST "curl --silent -XPOST '%s' -d '%s'"
+
 #endif // SIMULATE
 
 #define DELAY_MS_SPI 3
@@ -246,8 +250,8 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
     }
   }
 #else // SIMULATE (on PC)
-  printf("initWifi(%s, %s, %d)", ssid, pass, retries);
-  return false;
+  log(CLASS_MAIN, Debug, "initWifi(%s, %s, %d)", ssid, pass, retries);
+  return true;
 #endif // SIMULATE
 }
 
@@ -553,8 +557,17 @@ int httpGet(const char *url, ParamStream *response) {
 
   return errorCode;
 #else // SIMULATE (on PC)
-
-  return -1;
+  Buffer<CL_MAX_LENGTH> aux;
+  aux.fill(CURL_COMMAND_GET, url);
+  log(CLASS_MAIN, Debug, "GET: '%s'", aux.getBuffer());
+  FILE *fp = popen(aux.getBuffer(), "r");
+  if (fp == NULL) {return -1;}
+  while (fgets(aux.getUnsafeBuffer(), 1000 -1, fp) != NULL) {
+    response->fill(aux.getBuffer());
+  }
+  log(CLASS_MAIN, Debug, "-> %s", response->content());
+  pclose(fp);
+  return 1;
 #endif // SIMULATE
 }
 
@@ -580,8 +593,17 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
 
   return errorCode;
 #else // SIMULATE (on PC)
-  printf("httpGet: %s", url);
-  return -1;
+  Buffer<CL_MAX_LENGTH> aux;
+  aux.fill(CURL_COMMAND_POST, url, body);
+  log(CLASS_MAIN, Debug, "POST: '%s'", aux.getBuffer());
+  FILE *fp = popen(aux.getBuffer(), "r");
+  if (fp == NULL) {return -1;}
+  while (fgets(aux.getUnsafeBuffer(), CL_MAX_LENGTH -1, fp) != NULL) {
+    response->fill(aux.getBuffer());
+  }
+  log(CLASS_MAIN, Debug, "-> %s", response->content());
+  pclose(fp);
+  return 1;
 #endif // SIMULATE
 }
 
