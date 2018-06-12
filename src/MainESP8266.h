@@ -201,7 +201,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
   }
 }
 
-void handleSettings() {
+void loopArchitecture() {
   Settings *s = m.getSettings();
 
   // Handle stack-traces stored in memory
@@ -215,9 +215,7 @@ void handleSettings() {
 
   // Handle log level as per settings
   setLogLevel((char)(s->getLogLevel() % 4));
-}
 
-void handleServices() {
   // Handle telnet log server
   Telnet.handle();
 

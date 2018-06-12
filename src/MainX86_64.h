@@ -11,14 +11,10 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
   return true;
 }
 
-void handleSettings() {
+void loopArchitecture() {
   Settings *s = m.getSettings();
   // Handle log level as per settings
   setLogLevel((char)(s->getLogLevel() % 4));
-}
-
-void handleServices() {
-  // noting to do here
 }
 
 void reactButton() {

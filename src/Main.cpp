@@ -69,8 +69,7 @@ void setup() {
 
 void loop() {
   unsigned long t1 = millis();
-  handleSettings();
-  handleServices();
+  loopArchitecture();
   switch (m.getBot()->getMode()) {
     case (RunMode):
       m.loop(false, false, true);

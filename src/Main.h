@@ -36,17 +36,23 @@
 
 #define URL_PRINT_MAX_LENGTH 20
 
+///////////////////////////////
 // Provided by generic Main
+///////////////////////////////
+
+void setup();
+void loop();
 bool initWifiInit();
 bool initWifiSteady();
-void loop();
-void setup();
 
+///////////////////////////////
 // To be provided by the Main of a specific architecture
+///////////////////////////////
 bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries);
-void handleSettings();
-void handleServices();
+void loopArchitecture();
+
 void setupArchitecture();
+// Function to execute whenever a button is pressed (interrupt handling)
 void reactButton();
 // Message funcion. Directly connected with user.
 void messageFunc(int line, const char *str, int size);
