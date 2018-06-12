@@ -13,7 +13,6 @@
 #include <SPI.h>
 #include <Servo.h>
 #include <Wire.h>
-#include <HttpCodes.h>
 
 #define SERVO0_STEP_DEGREES (SERVO0_RANGE_DEGREES / MAX_SERVO_STEPS)
 #define SERVO1_STEP_DEGREES (SERVO1_RANGE_DEGREES / MAX_SERVO_STEPS)

@@ -12,6 +12,7 @@
 #include <Module.h>
 #include "Images.h"
 #include "main4ino/Misc.h"
+#include <HttpCodes.h>
 
 #ifndef PROJ_VERSION
 #define PROJ_VERSION "1master"
