@@ -28,13 +28,13 @@ bool initWifiSteady() {
     log(CLASS_MAIN, Info, "W.steady %s", wifiSsid);
     bool connected = initWifi(wifiSsid, wifiPass, connectedOnce, 5);
     if (!connectedOnce) {
-      messageFunc(0, "WIFI SETUP...", 2);
+      messageFunc(0, "WIFI CONNECT...", 2);
       delay(1 * 2000);
       messageFunc(0, wifiSsid, 2);
       delay(1 * 2000);
       if (connected) { // first time
-        messageFunc(0, "SETUP OK", 2);
-        log(CLASS_MAIN, Info, "SETUP OK");
+        messageFunc(0, "WIFI OK", 2);
+        log(CLASS_MAIN, Info, "WIFI OK");
         delay(10 * 1000);
       }
     }
