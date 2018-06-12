@@ -39,6 +39,7 @@
 // Provided by generic Main
 bool initWifiInit();
 bool initWifiSteady();
+void loop();
 
 // To be provided by the Main of a specific architecture
 bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries);
