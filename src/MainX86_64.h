@@ -39,11 +39,13 @@ int httpGet(const char *url, ParamStream *response) {
   aux.fill(CURL_COMMAND_GET, url);
   log(CLASS_MAIN, Debug, "GET: '%s'", aux.getBuffer());
   FILE *fp = popen(aux.getBuffer(), "r");
-  if (fp == NULL) {return -1;}
-  while (fgets(aux.getUnsafeBuffer(), 1000 -1, fp) != NULL) {
-    response->fill(aux.getBuffer());
+  if (fp == NULL) {return HTTP_BAD_REQUEST;}
+  if (response != NULL) {
+    while (fgets(aux.getUnsafeBuffer(), CL_MAX_LENGTH -1, fp) != NULL) {
+      response->fill(aux.getBuffer());
+    }
+    log(CLASS_MAIN, Debug, "-> %s", response->content());
   }
-  log(CLASS_MAIN, Debug, "-> %s", response->content());
   pclose(fp);
   return HTTP_OK; // not quite true, but will work for simple purposes
 }
@@ -53,11 +55,15 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
   aux.fill(CURL_COMMAND_POST, url, body);
   log(CLASS_MAIN, Debug, "POST: '%s'", aux.getBuffer());
   FILE *fp = popen(aux.getBuffer(), "r");
-  if (fp == NULL) {return -1;}
-  while (fgets(aux.getUnsafeBuffer(), CL_MAX_LENGTH -1, fp) != NULL) {
-    response->fill(aux.getBuffer());
+  if (fp == NULL) {
+  	return HTTP_BAD_REQUEST;
   }
-  log(CLASS_MAIN, Debug, "-> %s", response->content());
+  if (response != NULL) {
+    while (fgets(aux.getUnsafeBuffer(), CL_MAX_LENGTH -1, fp) != NULL) {
+      response->fill(aux.getBuffer());
+    }
+    log(CLASS_MAIN, Debug, "-> %s", response->content());
+  }
   pclose(fp);
   return HTTP_OK; // not quite true, but will work for simple purposes
 }
