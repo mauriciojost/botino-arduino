@@ -2,7 +2,7 @@
 
 #define CL_MAX_LENGTH 1000
 #define CURL_COMMAND_GET "curl --silent -XGET '%s'"
-#define CURL_COMMAND_POST "curl --silent -H \"Content-Type: application/json\" -XPOST '%s' -d '%s'"
+#define CURL_COMMAND_POST "curl --silent -H 'Content-Type: application/json' -XPOST '%s' -d '%s'"
 
 bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries) {
   log(CLASS_MAIN, Debug, "initWifi(%s, %s, %d)", ssid, pass, retries);
@@ -38,11 +38,11 @@ int httpGet(const char *url, ParamStream *response) {
   log(CLASS_MAIN, Debug, "GET: '%s'", aux.getBuffer());
   FILE *fp = popen(aux.getBuffer(), "r");
   if (fp == NULL) {return HTTP_BAD_REQUEST;}
-  if (response != NULL) {
-    while (fgets(aux.getUnsafeBuffer(), CL_MAX_LENGTH -1, fp) != NULL) {
+  while (fgets(aux.getUnsafeBuffer(), CL_MAX_LENGTH -1, fp) != NULL) {
+    if (response != NULL) {
       response->fill(aux.getBuffer());
+      log(CLASS_MAIN, Debug, "-> %s", response->content());
     }
-    log(CLASS_MAIN, Debug, "-> %s", response->content());
   }
   pclose(fp);
   return HTTP_OK; // not quite true, but will work for simple purposes
@@ -56,11 +56,11 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
   if (fp == NULL) {
   	return HTTP_BAD_REQUEST;
   }
-  if (response != NULL) {
-    while (fgets(aux.getUnsafeBuffer(), CL_MAX_LENGTH -1, fp) != NULL) {
+  while (fgets(aux.getUnsafeBuffer(), CL_MAX_LENGTH -1, fp) != NULL) {
+    if (response != NULL) {
       response->fill(aux.getBuffer());
+      log(CLASS_MAIN, Debug, "-> %s", response->content());
     }
-    log(CLASS_MAIN, Debug, "-> %s", response->content());
   }
   pclose(fp);
   return HTTP_OK; // not quite true, but will work for simple purposes
