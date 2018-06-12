@@ -38,13 +38,14 @@ bool initWifi() {
 }
 
 int httpGet(const char *url, ParamStream *response) {
-
   if (strcmp("http://dweet.io/get/latest/dweet/for/device1-clock-target", url) == 0) {
     response->fill(replyClock);
+    return HTTP_OK;
   } else if (strcmp("http://dweet.io/get/latest/dweet/for/device1-body-target", url) == 0) {
     response->fill(replyBody);
+    return HTTP_OK;
   }
-  return 1;
+  return HTTP_BAD_REQUEST;
 }
 
 int httpPost(const char *url, const char *body, ParamStream *response) {

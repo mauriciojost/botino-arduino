@@ -8,6 +8,7 @@
 #include <main4ino/Clock.h>
 #include <main4ino/Misc.h>
 #include <main4ino/SerBot.h>
+#include <HttpCodes.h>
 
 #define CLASS_PROPSYNC "PY"
 
@@ -100,7 +101,7 @@ public:
 
     urlAuxBuffer.fill(DWEET_IO_API_URL_GET, actor->getName());
     int errorCode = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
-    if (errorCode == HTTP_CODE_OK) {
+    if (errorCode == HTTP_OK) {
       JsonObject &json = httpBodyResponse.parse();
       if (json.containsKey("with")) {
         JsonObject &withJson = json["with"][0];

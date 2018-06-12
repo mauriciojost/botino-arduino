@@ -7,6 +7,7 @@
 #include <main4ino/Boolean.h>
 #include <main4ino/Clock.h>
 #include <main4ino/Misc.h>
+#include <HttpCodes.h>
 
 #define CLASS_CLOCKSYNC "CS"
 
@@ -73,7 +74,7 @@ public:
   void updateClockProperties() {
     ParamStream s;
     int errorCode = httpGet(TIMEZONE_DB_API_URL_GET, &s);
-    if (errorCode == HTTP_CODE_OK) {
+    if (errorCode == HTTP_OK) {
       JsonObject &json = s.parse();
       if (json.containsKey("formatted")) {
         int y, mo, d, h, m, s;

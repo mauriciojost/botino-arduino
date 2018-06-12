@@ -24,6 +24,7 @@
 #include <SPI.h>
 #include <Servo.h>
 #include <Wire.h>
+#include <HttpCodes.h>
 
 #ifndef PROJ_VERSION
 #define PROJ_VERSION "1master"

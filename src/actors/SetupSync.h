@@ -9,6 +9,7 @@
 #include <main4ino/Clock.h>
 #include <main4ino/Boolean.h>
 #include <Hexer.h>
+#include <HttpCodes.h>
 #ifdef UNIT_TEST
 #include <aes.h> // in C code
 #else
@@ -73,7 +74,7 @@ private:
     if (connected) {
       ParamStream s;
       int errorCode = httpGet(DWEET_IO_API_URL_BASE_GET, &s);
-      if (errorCode == HTTP_CODE_OK) {
+      if (errorCode == HTTP_OK) {
         JsonObject &json = s.parse();
         if (json.containsKey("with")) {
           JsonObject &withJson = json["with"][0];

@@ -28,10 +28,12 @@ int httpGetMockPassHello(const char *url, ParamStream *response) {
     // Pass generated using function AES mode ECB with incremental hex key 000102...0f from http://aes.online-domain-tools.com/
     response->fill(
         "{\"with\":[{\"content\":{\"ssid\":\"7d6a85f1c257d7e64e54f095b14f2338\", \"pass\":\"a3a5fcf64804dbb99b2781aebfe338c9\"}}]}");
+    return HTTP_OK;
   } else {
     log(LOG_CLASS, Error, "Unknown: %s", url);
+    return HTTP_OK;
   }
-  return 1;
+  return HTTP_BAD_REQUEST;
 }
 
 int httpGetMockPassHelloMyLittleDarling(const char *url, ParamStream *response) {
@@ -39,10 +41,11 @@ int httpGetMockPassHelloMyLittleDarling(const char *url, ParamStream *response) 
     // Pass generated using function AES mode ECB with incremental hex key 000102...0f from http://aes.online-domain-tools.com/
     response->fill("{\"with\":[{\"content\":{\"ssid\":\"7d6a85f1c257d7e64e54f095b14f2338\", "
                    "\"pass\":\"85b22d5b7548a237ba28c87275324e54fab0417e6ea45b3236991933aa04d8af\"}}]}");
+    return HTTP_OK;
   } else {
     log(LOG_CLASS, Error, "Unknown: %s", url);
   }
-  return 1;
+  return HTTP_BAD_REQUEST;
 }
 
 void test_setupsync_syncs_properties() {

@@ -9,6 +9,7 @@
 #include <main4ino/Boolean.h>
 #include <main4ino/Buffer.h>
 #include <main4ino/Integer.h>
+#include <HttpCodes.h>
 
 #define CLASS_QUOTES "QU"
 
@@ -75,7 +76,7 @@ public:
     ParamStream httpBodyResponse;
     log(CLASS_QUOTES, Debug, "Filling %d", i);
     int errorCode = httpGet(URL_QUOTES, &httpBodyResponse);
-    if (errorCode == HTTP_CODE_OK) {
+    if (errorCode == HTTP_OK) {
       quotes[i]->fill("%s", httpBodyResponse.content());
     } else {
       log(CLASS_QUOTES, Warn, "KO: %d", errorCode);
