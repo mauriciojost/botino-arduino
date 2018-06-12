@@ -75,10 +75,10 @@ public:
     ParamStream httpBodyResponse;
     log(CLASS_QUOTES, Debug, "Filling %d", i);
     int errorCode = httpGet(URL_QUOTES, &httpBodyResponse);
-    if (errorCode > 0) {
+    if (errorCode == HTTP_CODE_OK) {
       quotes[i]->fill("%s", httpBodyResponse.content());
     } else {
-      log(CLASS_QUOTES, Warn, "No quote");
+      log(CLASS_QUOTES, Warn, "KO: %d", errorCode);
     }
   }
 

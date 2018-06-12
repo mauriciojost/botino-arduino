@@ -73,7 +73,7 @@ private:
     if (connected) {
       ParamStream s;
       int errorCode = httpGet(DWEET_IO_API_URL_BASE_GET, &s);
-      if (errorCode > 0) {
+      if (errorCode == HTTP_CODE_OK) {
         JsonObject &json = s.parse();
         if (json.containsKey("with")) {
           JsonObject &withJson = json["with"][0];
@@ -92,6 +92,8 @@ private:
         } else {
           log(CLASS_SETUPSYNC, Info, "Inv. JSON(no 'with')");
         }
+      } else {
+        log(CLASS_SETUPSYNC, Warn, "KO: %d", errorCode);
       }
     } else {
       log(CLASS_SETUPSYNC, Warn, "Couldn't connect");

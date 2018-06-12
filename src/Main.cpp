@@ -48,7 +48,7 @@ extern "C" {
 #define CL_MAX_LENGTH 1000
 #define CURL_COMMAND_GET "curl --silent -XGET '%s'"
 #define CURL_COMMAND_POST "curl --silent -XPOST '%s' -d '%s'"
-
+#define HTTP_OK 200
 #endif // SIMULATE
 
 #define DELAY_MS_SPI 3
@@ -544,7 +544,7 @@ int httpGet(const char *url, ParamStream *response) {
   int errorCode = httpClient.GET();
   log(CLASS_MAIN, Debug, "GET:%d..%s", errorCode, tailStr(url, URL_PRINT_MAX_LENGTH));
 
-  if (errorCode > 0) {
+  if (errorCode == HTTP_OK) {
     if (response != NULL) {
       httpClient.writeToStream(response);
     }
@@ -567,7 +567,7 @@ int httpGet(const char *url, ParamStream *response) {
   }
   log(CLASS_MAIN, Debug, "-> %s", response->content());
   pclose(fp);
-  return 1;
+  return HTTP_OK; // not quite true, but will work for simple purposes
 #endif // SIMULATE
 }
 
@@ -580,7 +580,7 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
   int errorCode = httpClient.POST(body);
   log(CLASS_MAIN, Debug, "POST:%d..%s", errorCode, tailStr(url, URL_PRINT_MAX_LENGTH));
 
-  if (errorCode > 0) {
+  if (errorCode == HTTP_OK) {
     if (response != NULL) {
       httpClient.writeToStream(response);
     }
@@ -603,7 +603,7 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
   }
   log(CLASS_MAIN, Debug, "-> %s", response->content());
   pclose(fp);
-  return 1;
+  return HTTP_OK; // not quite true, but will work for simple purposes
 #endif // SIMULATE
 }
 

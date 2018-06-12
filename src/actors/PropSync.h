@@ -100,7 +100,7 @@ public:
 
     urlAuxBuffer.fill(DWEET_IO_API_URL_GET, actor->getName());
     int errorCode = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
-    if (errorCode > 0) {
+    if (errorCode == HTTP_CODE_OK) {
       JsonObject &json = httpBodyResponse.parse();
       if (json.containsKey("with")) {
         JsonObject &withJson = json["with"][0];
@@ -114,6 +114,8 @@ public:
       } else {
         log(CLASS_PROPSYNC, Info, "Inv. JSON(no 'with')");
       }
+    } else {
+      log(CLASS_PROPSYNC, Warn, "KO: %d", errorCode);
     }
 
     bot->getPropsJson(&jsonAuxBuffer, actorIndex);

@@ -73,7 +73,7 @@ public:
   void updateClockProperties() {
     ParamStream s;
     int errorCode = httpGet(TIMEZONE_DB_API_URL_GET, &s);
-    if (errorCode > 0) {
+    if (errorCode == HTTP_CODE_OK) {
       JsonObject &json = s.parse();
       if (json.containsKey("formatted")) {
         int y, mo, d, h, m, s;
@@ -89,6 +89,8 @@ public:
       } else {
         log(CLASS_CLOCKSYNC, Warn, "Inv. JSON(no 'formatted')");
       }
+    } else {
+      log(CLASS_CLOCKSYNC, Warn, "KO: %d", errorCode);
     }
   }
 
