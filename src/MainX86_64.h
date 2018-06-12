@@ -1,4 +1,3 @@
-
 #include <Main.h>
 
 #define CL_MAX_LENGTH 1000
@@ -22,15 +21,15 @@ bool haveToInterrupt() {
 }
 
 void messageFunc(int line, const char *str, int size) {
-  printf("LCD: %s (size %d)", str, size);
+  printf("\n\nLCD: %s (size %d)\n\n", str, size);
 }
 
 void logLine(const char *str) {
-  printf("LOG: %s", str);
+  printf("LOG: %s\n", str);
 }
 
 void arms(int left, int right, int steps) {
-  printf("ARMS: %d %d %d", left, right, steps);
+  printf("\n\nARMS: %d %d %d\n\n", left, right, steps);
 }
 
 int httpGet(const char *url, ParamStream *response) {
