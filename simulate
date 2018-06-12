@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
-rm simulator.bin
+
+set -x 
+set -e
+
+rm -f .simulator.bin
+
+PARAM_FLAGS="$@"
 
 FLAGS="
 -D WIFI_SSID_INIT=\"wifi\"
@@ -14,13 +20,16 @@ FLAGS="
 -D MAX_LOG_MSG_LENGTH=1024
 -D PERIOD_SEC=1
 -D SIMULATE
+$PARAM_FLAGS
 "
+
 SRC="
 src/Main.cpp
 src/aes.c
 src/main4ino/*.cpp
 src/log4ino/*.cpp
 "
+
 HEADERS="
 -I src/
 -I src/actors/
@@ -29,6 +38,7 @@ HEADERS="
 "
 
 LIBS=""
-g++ -o simulator.bin $FLAGS $SRC $HEADERS $LIBS
-./simulator.bin
-rm simulator.bin
+
+g++ -o .simulator.bin $FLAGS $SRC $HEADERS $LIBS
+./.simulator.bin
+rm -f .simulator.bin
