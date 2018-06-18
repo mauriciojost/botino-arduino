@@ -29,13 +29,7 @@ function ecb_encrypt() {
   local size=${#input}
   local remaining=`echo "31 - $size" | bc`
 
-  xxd -ps "$inputf" > /tmp/k-input-$input
-
   dd if=/dev/zero of="$inputf" bs=1 seek="$size" count="$remaining" # fill in remaining bytes with null chars
-
-  echo $size > /tmp/k-size-$input
-  echo $remaining > /tmp/k-remaining-$input
-  xxd -ps $inputf > /tmp/k-inputpadded-$input
 
   openssl enc -aes-128-ecb -nosalt -K "$key" -in "$inputf" -out "$outputf"
   echo $outputf
