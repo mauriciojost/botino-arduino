@@ -16,7 +16,21 @@ Module m;
 
 bool initWifiInit() {
   log(CLASS_MAIN, Info, "W.init %s", WIFI_SSID_INIT);
-  return initWifi(WIFI_SSID_INIT, WIFI_PASSWORD_INIT, false, 20);
+  messageFunc(0, "HOTSPOT?", 2);
+  delay(1 * 2000);
+  messageFunc(0, WIFI_SSID_INIT, 2);
+  delay(1 * 2000);
+  messageFunc(0, WIFI_PASSWORD_INIT, 2);
+  delay(1 * 2000);
+  bool connected = initWifi(WIFI_SSID_INIT, WIFI_PASSWORD_INIT, false, 20);
+  if (connected) {
+    messageFunc(0, "HOTSPOT OK", 2);
+    delay(1 * 2000);
+  } else {
+    messageFunc(0, "HOTSPOT KO", 2);
+    delay(1 * 2000);
+  }
+  return connected;
 }
 
 bool initWifiSteady() {
@@ -28,7 +42,7 @@ bool initWifiSteady() {
     log(CLASS_MAIN, Info, "W.steady'%s'", wifiSsid);
     bool connected = initWifi(wifiSsid, wifiPass, connectedOnce, 10);
     if (!connectedOnce) {
-      messageFunc(0, "WIFI...", 2);
+      messageFunc(0, "WIFI?", 2);
       delay(1 * 2000);
       messageFunc(0, wifiSsid, 2);
       delay(1 * 2000);
