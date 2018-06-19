@@ -30,6 +30,7 @@
 #include <actors/Quotes.h>
 #include <actors/Images.h>
 #include <actors/Messages.h>
+#include <actors/Predictions.h>
 
 #define CLASS_BODY "BO"
 #define MSG_MAX_LENGTH 32
@@ -289,6 +290,12 @@ Codes:
             log(CLASS_BODY, Debug, "Msg quote");
             int i = random(NRO_QUOTES);
             messageFunc(0, quotes->getQuote(i), getInt(c3));
+          } break;
+          case 'p': {
+            log(CLASS_BODY, Debug, "Msg prediction");
+            Buffer<200> pr("");
+            Predictions::getPrediction(&pr);
+            messageFunc(0, pr.getBuffer(), getInt(c3));
           } break;
           default:
             log(CLASS_BODY, Debug, "Inv.M.pose:%c%c%c", c1, c2, c3);
