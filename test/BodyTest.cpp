@@ -160,10 +160,31 @@ void test_body_performs_basic_moves() {
 
 }
 
+void test_body_creates_predictions() {
+
+  Quotes q("q");
+  Images i("i");
+  Messages ms("m");
+
+  Body b("b");
+  initBody(&b, &q, &i, &ms);
+
+  Long time0(201010101); // act every single second / act() method call
+  b.setPropValue(BodyConfigTime0, &time0);
+
+  Buffer<10> m0("HEY");
+  ms.setPropValue(MessagesConfigMsg0, &m0);
+  executeMove(&b, "Mp1");
+  TEST_ASSERT_EQUAL_STRING("your colleague will ride your colleague in 5 minutes at work", lastMsg);
+
+}
+
+
 int main() {
   UNITY_BEGIN();
   RUN_TEST(test_body_shows_time);
   RUN_TEST(test_body_performs_basic_moves);
+  RUN_TEST(test_body_creates_predictions);
   return (UNITY_END());
 }
 
