@@ -6,7 +6,7 @@
  *
  * Holds custom messages.
  *
- * Each message is at most MSG_MAX_LENGTH long, and this actor support NRO_MSGS messages.
+ * Each message is at most MSG_MAX_LENGTH long, and this actor supports NRO_MSGS messages.
  *
  */
 

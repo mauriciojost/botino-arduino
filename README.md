@@ -1,6 +1,5 @@
 # BOTINO
 
-
 This is a cool-geek-fully-configurable alarm project.
 
 ![Botino](misc/images/botino-v0.jpg)
@@ -8,12 +7,12 @@ This is a cool-geek-fully-configurable alarm project.
 Features:
 
 - Innovative design
-- Setup via the internet / JSON
+- Setup REST JSON
 - Several configurable alarms
 - Highly customizable routines: face expressions, LCD custom images, messages, LEDs, arms, fan, among others.
 - Random quote of the day
 
-## 1. Get It Started
+## 1. Get Started
 
 ### 1.1. Plug It
 
@@ -29,7 +28,6 @@ Then, using the provided [setup_device](setup_device) script, set up the wifi ss
 
 ### 1.3. Play with It
 
-
 Interaction with *Botino* is done via the Internet. You send the setup to the internet via HTTP queries, and *botino* regularly picks them up. 
 
 You are the boss. You tell *Botino* what to do. There are several settings you can tune. 
@@ -44,7 +42,7 @@ Any actor can be read or writen via the internet, performing HTTP verbs on defin
 Just replace `DEVICENAME` with your device name, and `ACTORNAME` with the name of the actor you want to read/write.
 
 | Purpose                       | HTTP VERB | URL                                                               |
-| ----------------------------- | ---------:|:-----------------------------------------------------------------:|
+| ----------------------------- | --------- | ----------------------------------------------------------------- |
 | Get the status of an actor    | GET       | http://dweet.io/get/latest/dweet/for/DEVICENAME-ACTORNAME-current |
 | Change the status of an actor | POST      | http://dweet.io/dweet/for/DEVICENAME-ACTORNAME-target             |
 
@@ -54,11 +52,12 @@ To change the current status of the actor follow the same schema as observed wit
 #### Actors 
 
 | Actor name    | Actor description                                                                                | Properties                         |
-| ------------- | ------------------------------------------------------------------------------------------------ |:----------------------------------:|
+| ------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------- |
 | settings      | Is in charge of gather general purpose settings, mostly for development purposes.                | [Settings.h](src/actors/Settings.h)|
 | body          | This is the core of the alarm, driven by routines triggered at specific moments.                 | [Body.h](src/actors/Body.h)        |
 | images        | Holds custom images to be used.                                                                  | [Images.h](src/actors/Images.h)    |
 | messages      | Holds custom messages to be used.                                                                | [Messages.h](src/actors/Messages.h)|
+| ...           |                                                                                                  | [...](src/actors/)                 |
 
 # 2. Extras
 
@@ -83,11 +82,11 @@ The frequency at which a given actor will act depends on its timing configuratio
 
 A timing is expressed as an integer value. It is possible to specify several types of timing: 
 
-| Timing type       | Description                                                  | Format       | Example                               |
-| ----------------- | ------------------------------------------------------------ |:-------------|:-------------------------------------:|
-| never             | No matching ever.                                            | `0`          | -                                     |
-| day-time          | Match a custom day-time (within a month).                    | `1DDHHMMSS` | 177050000 (any day, 05h00m00s         |
-| modulo-frequency  | Match a component-modulo expression.                         | `2DDHHMMSS` | 201013060 (any day, every 30 minutes) |
+| Timing type       | Description                                                  | Format       | Example                                  |
+| ----------------- | ------------------------------------------------------------ |:-------------|:----------------------------------------:|
+| never             | No matching ever.                                            | `0`          | `0`                                      |
+| day-time          | Match a custom day-time (within a month).                    | `1DDHHMMSS` | `177050000` (any day, 05h00m00s)        |
+| modulo-frequency  | Match a component-modulo expression.                         | `2DDHHMMSS` | `201013060` (any day, every 30 minutes) |
 
 ### Never
 
@@ -119,7 +118,7 @@ For information, the Board used is [NODEMCU / ESP-01](http://www.esp8266.com/wik
 To prepare your development environment first do:
 
 ```
-./pull_dependencies dependencies.conf
+./pull_dependencies
 ```
 
 The project is a `platformio` project.
@@ -138,11 +137,12 @@ To get started with _eclipse_ do:
 platformio init --ide eclipse --board esp12e
 ```
 
-Then open with _eclipse_.
+Then open with _eclipse_. When missing sources, you could link them to the `src` directory as follows:
 
 ```
 ln -s `readlink -e .piolibdeps/Arduino/libraries/ESP8266HTTPClient/src/ESP8266HTTPClient.*` src/
 ```
+However this method is not recommended.
 
 ## 3.3. Upload
 
