@@ -89,6 +89,12 @@ The frequency at which a given actor will act depends on its timing configuratio
 
 A timing is expressed as an integer value. It is possible to specify several types of timing: 
 
+| Timing type       | Description                                                  | Format    | Example                               |
+| ----------------- | ------------------------------------------------------------ |:----------|:-------------------------------------:|
+| never             | No matching ever.                                            | 0         | -                                     |
+| day-time          | Match a custom day-time (within a month)                     | 1DDHHMMSS | 177050000 (any day, 05h00m00s         |
+| modulo-frequency  | Match a component-modulo expression                          | 2DDHHMMSS | 201013060 (any day, every 30 minutes) |
+
 ### Never
 
 Simply `0` value. There will be no matching (the actor will not act).
