@@ -1,12 +1,6 @@
 # BOTINO
 
 
-| Tables        | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
-
 This is a cool-geek-fully-configurable alarm project.
 
 ![Botino](misc/images/botino-v0.jpg)
@@ -27,15 +21,18 @@ To get started first connect the module to any standard USB plug. Enjoy the HW t
 
 ### 1.2. Connect It to WIFI
 
-Set up your phone's hotspot with the LCD-provided SSID and password. This way *botino* can access the internet for the first time. 
+Set up your smartphone's hotspot with the SSID and passwords provided by the LCD at startup. 
+*Botino* will access it, and access the internet for the first time. This way you can set it up. 
+This hotspot setup has to be done only once (per boot).
 
-Then, using the provided setup-wifi script, set up the internet credentials you want your *botino* to use regularly. Botino will let you know if the WIFI set up went correctly. 
+Then, using the provided [setup_device](setup_device) script, set up the wifi ssid/password you want your *botino* to use regularly (from your router / ISP). *Botino* will let you know if the WIFI set up went correctly. 
 
 ### 1.3. Play with It
 
-Interaction with *Botino* is done via the Internet. 
 
-You are the boss. You tell *Botino* what to do via HTTP queries. There are several settings you can tune. 
+Interaction with *Botino* is done via the Internet. You send the setup to the internet via HTTP queries, and *botino* regularly picks them up. 
+
+You are the boss. You tell *Botino* what to do. There are several settings you can tune. 
 
 *Botino*'s internal components are called actors. Each actor has a precise role, and a set of properties
 you can tune to get the behaviour you want.
@@ -46,44 +43,24 @@ Any actor can be read or writen via the internet, performing HTTP verbs on defin
 
 Just replace `DEVICENAME` with your device name, and `ACTORNAME` with the name of the actor you want to read/write.
 
-To get the current status of the actor: 
-
-```
-HTTP GET: http://dweet.io/get/latest/dweet/for/DEVICENAME-ACTORNAME-target
-```
-
-To change the current status of the actor (follow the same schema as observed with GET):
-
-```
-HTTP POST: http://dweet.io/get/latest/dweet/for/DEVICENAME-ACTORNAME-current
-```
-
-#### Actor: Settings
-
-This actor is in charge of gather general purpose settings, mostly for development purposes. 
-
-Properties: see [here for more information](src/actors/Settings.h)
-
-#### Actor: Body
-
-This actor is the core of the alarm. 
-
-The most important concept is the routine. A routine is an move triggered at a specific moment. To define a routine it is
-required to have a move (to perform when it's time) and a timing (to determine when to perform).
-
-Properties: 
-
-- `tX` timing X (X from 0 to 3): timing for the corresponding routine X (see the timing documentation)
-- `mvX` move X (X from 0 to 3): move for the routine X, as a list of consecutive 3 letter-code for poses (see the poses documentation)
-- `msgX` message X (X from 0 to 3): examples are "HI", "HELLO", they can be displayed using a given pose
-- `imX` image X (X from 0 to 3): image in hexadecimal format, it can be displayed using a pose, see the image generator below for more information
-
-Properties: see [here for more information](src/actors/Body.h)
-
-[Image generator](https://docs.google.com/spreadsheets/d/1jXa9mFxeiN_bUji_WiCPKO_gB6pxQUeQ5QxgoSINqdc/edit#gid=0)
+| Purpose                       | HTTP VERB | URL                                                               |
+| ----------------------------- | ---------:|:-----------------------------------------------------------------:|
+| Get the status of an actor    | GET       | http://dweet.io/get/latest/dweet/for/DEVICENAME-ACTORNAME-current |
+| Change the status of an actor | POST      | http://dweet.io/dweet/for/DEVICENAME-ACTORNAME-target             |
 
 
-# 2. Other information
+To change the current status of the actor follow the same schema as observed with GET.
+
+#### Actors 
+
+| Actor name    | Actor description                                                                                | Properties                         |
+| ------------- | ------------------------------------------------------------------------------------------------ |:----------------------------------:|
+| settings      | Is in charge of gather general purpose settings, mostly for development purposes.                | [Settings.h](src/actors/Settings.h)|
+| body          | This is the core of the alarm, driven by routines triggered at specific moments                  | [Body.h](src/actors/Body.h)        |
+| images        | Holds custom images to be used.                                                                  | [Images.h](src/actors/Images.h)    |
+| messages      | Holds custom messages to be used.                                                                | [Messages.h](src/actors/Messages.h)|
+
+# 2. Extras
 
 ## Telnet
 
@@ -91,6 +68,12 @@ You can telnet the device for debugging purposes. You will get the logs via Wifi
 
 You can also control the device. To do so you need to enter in configuration mode, by sending via telnet the command `conf` (and wait
 for the device to pick it up). Then send the command `?` for help.
+
+## Images
+
+Custom images respect a custom bitmap serialization. You can use the below link to create your own custom image.
+
+[Image generator](https://docs.google.com/spreadsheets/d/1jXa9mFxeiN_bUji_WiCPKO_gB6pxQUeQ5QxgoSINqdc/edit#gid=0)
 
 ## Poses
 
