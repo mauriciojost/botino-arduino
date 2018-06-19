@@ -35,14 +35,14 @@
 #define IMG_SIZE_BYTES 16
 
 enum BodyConfigState {
-  BodyConfigMove0 = 0,     // move 0
-  BodyConfigMove1,         // move 1
-  BodyConfigMove2,         // move 2
-  BodyConfigMove3,         // move 3
-  BodyConfigTime0,         // time/freq of acting for move 0
-  BodyConfigTime1,         // time/freq of acting for move 1
-  BodyConfigTime2,         // time/freq of acting for move 2
-  BodyConfigTime3,         // time/freq of acting for move 3
+  BodyConfigMove0 = 0,     // move for the routine 0 as a list of consecutive 3 letter-code of poses (see the poses documentation)
+  BodyConfigMove1,         // move for the routine 1 (same as above)
+  BodyConfigMove2,         // move
+  BodyConfigMove3,         // move
+  BodyConfigTime0,         // time/freq of acting for the routine 0
+  BodyConfigTime1,         // time/freq of acting for the routine 1
+  BodyConfigTime2,         // time/freq
+  BodyConfigTime3,         // time/freq
   BodyConfigStateDelimiter // delimiter of the configuration states
 };
 
@@ -71,14 +71,15 @@ public:
  *
  * The robot can perform a few configurable routines at a given moment / frequency in time.
  *
- * A routine is made of:
- * - a timing configuration (can be a frequency expression or a specific time of the day)
- * - a move (a sequence of poses)
+ * The most important concept is the routine, which is made of:
+ * - a timing condition (can be a frequency expression or a specific time of the day)
+ * - a move to perform once the timing condition matches (a sequence of poses)
  *
- * A move can contain many poses. A pose can be both arms up, both arms down, a given face (sad, smily) or even some
+ * A move can contain many poses. A pose can be: both arms up, both arms down, a given face (sad, smily) or even some
  * special conditions like illumination (red light) or control over the fan.
  *
  * Routines are configurable in both senses: timing and moves.
+ *
  */
 class Body : public Actor {
 

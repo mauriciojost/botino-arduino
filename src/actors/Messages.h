@@ -18,7 +18,7 @@
 #define NRO_MSGS 4
 
 enum MessagesConfigState {
-  MessagesConfigMsg0 = 0,      // message 0
+  MessagesConfigMsg0 = 0,      // message 0, examples are "HI", "HELLO"
   MessagesConfigMsg1,          // message 1
   MessagesConfigMsg2,          // message 2
   MessagesConfigMsg3,          // message 3

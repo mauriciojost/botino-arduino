@@ -16,7 +16,7 @@
 #define NRO_IMGS 4
 
 enum ImagesConfigState {
-  ImagesConfigImg0 = 0,
+  ImagesConfigImg0 = 0, // image in hexadecimal format
   ImagesConfigImg1,
   ImagesConfigImg2,
   ImagesConfigImg3,
