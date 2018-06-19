@@ -1,6 +1,15 @@
 #ifndef ACT_MESSAGES_INC
 #define ACT_MESSAGES_INC
 
+/**
+ * Messages
+ *
+ * Holds custom messages.
+ *
+ * Each message is at most MSG_MAX_LENGTH long, and this actor support NRO_MSGS messages.
+ *
+ */
+
 #include <main4ino/Misc.h>
 #include <Hexer.h>
 #include <log4ino/Log.h>
@@ -18,10 +27,10 @@
 #define NRO_MSGS 4
 
 enum MessagesConfigState {
-  MessagesConfigMsg0 = 0,      // message 0, examples are "HI", "HELLO"
-  MessagesConfigMsg1,          // message 1
-  MessagesConfigMsg2,          // message 2
-  MessagesConfigMsg3,          // message 3
+  MessagesConfigMsg0 = 0,      // string, message 0, examples are "HI", "HELLO"
+  MessagesConfigMsg1,          // string, message 1
+  MessagesConfigMsg2,          // string, message 2
+  MessagesConfigMsg3,          // string, message 3
   MessagesConfigStateDelimiter // delimiter of the configuration states
 };
 

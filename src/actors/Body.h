@@ -1,6 +1,24 @@
 #ifndef BODY_INC
 #define BODY_INC
 
+/**
+ * Body
+ *
+ * Representative of the Botino physical robot.
+ *
+ * The robot can perform a few configurable routines at a given moment / frequency in time.
+ *
+ * The most important concept is the routine, which is made of:
+ * - a timing condition (can be a frequency expression or a specific time of the day)
+ * - a move to perform once the timing condition matches (a sequence of poses)
+ *
+ * A move can contain many poses. A pose can be: both arms up, both arms down, a given face (sad, smily) or even some
+ * special conditions like illumination (red light) or control over the fan.
+ *
+ * Routines are configurable in both senses: timing and moves.
+ *
+ */
+
 #include <main4ino/Misc.h>
 #include <Hexer.h>
 #include <log4ino/Log.h>
@@ -35,10 +53,10 @@
 #define IMG_SIZE_BYTES 16
 
 enum BodyConfigState {
-  BodyConfigMove0 = 0,     // move for the routine 0 as a list of consecutive 3 letter-code of poses (see the poses documentation)
-  BodyConfigMove1,         // move for the routine 1 (same as above)
-  BodyConfigMove2,         // move
-  BodyConfigMove3,         // move
+  BodyConfigMove0 = 0,     // string, move for the routine 0 as a list of consecutive 3 letter-code of poses (see the poses documentation)
+  BodyConfigMove1,         // string, move for the routine 1 (same as above)
+  BodyConfigMove2,         // string, move
+  BodyConfigMove3,         // string, move
   BodyConfigTime0,         // time/freq of acting for the routine 0
   BodyConfigTime1,         // time/freq of acting for the routine 1
   BodyConfigTime2,         // time/freq
@@ -66,21 +84,6 @@ public:
   long timingConf;
 };
 
-/**
- * Body, representative of the Botino physical robot.
- *
- * The robot can perform a few configurable routines at a given moment / frequency in time.
- *
- * The most important concept is the routine, which is made of:
- * - a timing condition (can be a frequency expression or a specific time of the day)
- * - a move to perform once the timing condition matches (a sequence of poses)
- *
- * A move can contain many poses. A pose can be: both arms up, both arms down, a given face (sad, smily) or even some
- * special conditions like illumination (red light) or control over the fan.
- *
- * Routines are configurable in both senses: timing and moves.
- *
- */
 class Body : public Actor {
 
 private:

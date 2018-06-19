@@ -1,6 +1,20 @@
 #ifndef IMAGES_INC
 #define IMAGES_INC
 
+/**
+ * Images
+ *
+ * Holds custom images.
+ *
+ * The custom images respect a custom bitmap serialization, expressed in hexadecimal format.
+ * To ease the design process, you can use the below link to create your own bitmap.
+ *
+ * [Image generator](https://docs.google.com/spreadsheets/d/1jXa9mFxeiN_bUji_WiCPKO_gB6pxQUeQ5QxgoSINqdc/edit#gid=0)
+ *
+ * Each image is IMG_SIZE_BYTES long (expressed in hexadecimal format), and this actor support NRO_IMGS images.
+ *
+ */
+
 #include <main4ino/Misc.h>
 #include <Hexer.h>
 #include <log4ino/Log.h>
@@ -16,10 +30,10 @@
 #define NRO_IMGS 4
 
 enum ImagesConfigState {
-  ImagesConfigImg0 = 0, // image in hexadecimal format
-  ImagesConfigImg1,
-  ImagesConfigImg2,
-  ImagesConfigImg3,
+  ImagesConfigImg0 = 0, // string, image in hexadecimal format
+  ImagesConfigImg1, // string, image in hexadecimal format
+  ImagesConfigImg2, // string, image in hexadecimal format
+  ImagesConfigImg3, // string, image in hexadecimal format
   ImagesConfigStateDelimiter // delimiter of the configuration states
 };
 

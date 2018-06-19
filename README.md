@@ -69,12 +69,6 @@ You can telnet the device for debugging purposes. You will get the logs via Wifi
 You can also control the device. To do so you need to enter in configuration mode, by sending via telnet the command `conf` (and wait
 for the device to pick it up). Then send the command `?` for help.
 
-## Images
-
-Custom images respect a custom bitmap serialization. You can use the below link to create your own custom image.
-
-[Image generator](https://docs.google.com/spreadsheets/d/1jXa9mFxeiN_bUji_WiCPKO_gB6pxQUeQ5QxgoSINqdc/edit#gid=0)
-
 ## Poses
 
 A pose is a status of a device. For instance a LED on, a fan off, a message in the LCD, etc.

@@ -1,6 +1,14 @@
 #ifndef GLOBAL_INC
 #define GLOBAL_INC
 
+/**
+ * Settings
+ *
+ * Holds global settings for the device (like log level, debug mode, etc.).
+ *
+ */
+
+
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Boolean.h>
@@ -10,9 +18,9 @@
 #define CLASS_SETTINGS "ST"
 
 enum GlobalConfigState {
-  GlobalClearStackTraceState = 0,
-  GlobalLogLevelState,
-  GlobalLcdDebugState,
+  GlobalClearStackTraceState = 0, // boolean, clear the stack trace log if full
+  GlobalLogLevelState, // integer, define the log level
+  GlobalLcdDebugState, // boolean, define if the LCD shows the debug logs
   GlobalConfigStateDelimiter // delimiter of the configuration states
 };
 
