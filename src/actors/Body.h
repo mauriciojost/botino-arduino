@@ -165,6 +165,7 @@ Codes:
   ...
   M32 : show message 3 with font size 2 (user provided)
   Mc4 : show message containing current time (with font size 4)
+  Mp1 : show random future reading (with font size 1)
   Mq1 : show random quote (with font size 1)
 
 COMPOSED POSES: dances and other predefined moves usable as poses

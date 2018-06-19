@@ -11,6 +11,7 @@ Features:
 - Several configurable alarms
 - Highly customizable routines: face expressions, LCD custom images, messages, LEDs, arms, fan, among others.
 - Random quote of the day
+- Random future reading
 
 ## 1. Get Started
 

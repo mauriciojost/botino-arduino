@@ -2,11 +2,11 @@
 
 - Package electronics without breadboard
 - Make a good pass and fix data types (avoid char, use better uint8 for instance)
-- Improve documentation (use tables when convenient)
 
 
 # DONE
 
+- Improve documentation (use tables when convenient)
 - Add a simulator
 - Create script to set up wifi parameters for the first time.
 - Version the docker images
