@@ -30,16 +30,17 @@ class ClockSync : public Actor {
 private:
   const char *name;
   Clock *clock;
-  Timing freqConf; // configuration of the frequency at which this actor will get triggered
+  Timing timing; // configuration of the frequency at which this actor will get triggered
   bool (*initWifiFunc)();
   int (*httpGet)(const char *url, ParamStream *response);
 
 public:
-  ClockSync(const char *n) : freqConf(OnceEvery5Minutes) {
+  ClockSync(const char *n) {
     name = n;
     clock = NULL;
     initWifiFunc = NULL;
     httpGet = NULL;
+    timing.setFrequency(OnceEvery5Minutes);
   }
 
   void setClock(Clock *c) {
@@ -55,7 +56,7 @@ public:
       log(CLASS_CLOCKSYNC, Error, "Init needed");
       return;
     }
-    if (freqConf.matches()) {
+    if (timing.matches()) {
       bool connected = initWifiFunc();
       if (connected) {
         updateClockProperties();
@@ -112,7 +113,7 @@ public:
   }
 
   Timing *getFrequencyConfiguration() {
-    return &freqConf;
+    return &timing;
   }
 };
 
