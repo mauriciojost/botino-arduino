@@ -20,7 +20,7 @@ enum SettingsProps {
   SettingsClearStackTraceProp = 0, // boolean, clear the stack trace log if full
   SettingsLogLevelProp,            // integer, define the log level
   SettingsLcdDebugProp,            // boolean, define if the LCD shows the debug logs
-  SettingsPropsDelimiter           // delimiter of the configuration states
+  SettingsPropsDelimiter           // amount of properties
 };
 
 class Settings : public Actor {
