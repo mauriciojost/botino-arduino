@@ -8,7 +8,6 @@
  *
  */
 
-
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Boolean.h>
@@ -17,11 +16,11 @@
 
 #define CLASS_SETTINGS "ST"
 
-enum GlobalConfigState {
-  GlobalClearStackTraceState = 0, // boolean, clear the stack trace log if full
-  GlobalLogLevelState, // integer, define the log level
-  GlobalLcdDebugState, // boolean, define if the LCD shows the debug logs
-  GlobalConfigStateDelimiter // delimiter of the configuration states
+enum SettingsProps {
+  SettingsClearStackTraceProp = 0, // boolean, clear the stack trace log if full
+  SettingsLogLevelProp,            // integer, define the log level
+  SettingsLcdDebugProp,            // boolean, define if the LCD shows the debug logs
+  SettingsPropsDelimiter           // delimiter of the configuration states
 };
 
 class Settings : public Actor {
@@ -34,11 +33,12 @@ private:
   Timing freqConf;
 
 public:
-  Settings(const char *n) : freqConf(Never) {
+  Settings(const char *n) {
     name = n;
     clearStackTrace = false;
     logLevel = 0;
     lcdDebug = true;
+    freqConf.setFrequency(Never);
   }
 
   const char *getName() {
@@ -49,11 +49,11 @@ public:
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
-      case (GlobalClearStackTraceState):
+      case (SettingsClearStackTraceProp):
         return "crashclear";
-      case (GlobalLogLevelState):
+      case (SettingsLogLevelProp):
         return "loglevel";
-      case (GlobalLcdDebugState):
+      case (SettingsLcdDebugProp):
         return "lcddebug";
       default:
         return "";
@@ -62,13 +62,13 @@ public:
 
   void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
-      case (GlobalClearStackTraceState):
+      case (SettingsClearStackTraceProp):
         setPropBoolean(m, targetValue, actualValue, &clearStackTrace);
         break;
-      case (GlobalLogLevelState):
+      case (SettingsLogLevelProp):
         setPropInteger(m, targetValue, actualValue, &logLevel);
         break;
-      case (GlobalLcdDebugState):
+      case (SettingsLcdDebugProp):
         setPropBoolean(m, targetValue, actualValue, &lcdDebug);
         break;
       default:
@@ -77,7 +77,7 @@ public:
   }
 
   int getNroProps() {
-    return GlobalConfigStateDelimiter;
+    return SettingsPropsDelimiter;
   }
 
   void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}

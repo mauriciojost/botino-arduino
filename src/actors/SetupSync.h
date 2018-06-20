@@ -38,9 +38,9 @@
 
 #define ENCRYPTION_BUFFER_SIZE (N_BLOCKS * KEY_LENGTH + 1) // encryption zone + trailing null character
 
-enum SetupSyncConfigState {
-  SetupSyncConfigFreq = 0,
-  SetupSyncConfigDelimiter // delimiter of the configuration states
+enum SetupSyncProps {
+  SetupSyncFreqProp = 0,
+  SetupSyncPropsDelimiter // amount of properties
 };
 
 /**
@@ -53,7 +53,7 @@ private:
 
   char ssid[ENCRYPTION_BUFFER_SIZE];
   char pass[ENCRYPTION_BUFFER_SIZE];
-  Timing freqConf; // configuration of the frequency at which this actor will get triggered
+  Timing timing; // configuration of the frequency at which this actor will get triggered
   bool (*initWifiSteadyFunc)();
   bool (*initWifiInitFunc)();
   int (*httpGet)(const char *url, ParamStream *response);
@@ -64,7 +64,7 @@ private:
   void update() {
     bool connected = initWifiSteadyFunc();
     if (connected) {
-      freqConf.setFrequency(Never);
+      timing.setFrequency(Never);
       return; // nothing to be done, as already connected
     }
 
@@ -141,7 +141,7 @@ public:
     strcpy(ssid, WIFI_SSID_STEADY);
     strcpy(pass, WIFI_PASSWORD_STEADY);
     httpGet = NULL;
-    freqConf.setFrequency(OnceEvery1Minute);
+    timing.setFrequency(OnceEvery1Minute);
     Hexer::hexToByte(key, ENCRYPT_KEY, KEY_LENGTH * 2);
     AES_init_ctx(&ctx, key);
   }
@@ -156,7 +156,7 @@ public:
       log(CLASS_SETUPSYNC, Error, "Init needed");
       return;
     }
-    if (freqConf.matches()) {
+    if (timing.matches()) {
       update();
     }
   }
@@ -175,12 +175,12 @@ public:
 
   void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
-      case (SetupSyncConfigFreq): {
-        long freq = freqConf.getCustom();
+      case (SetupSyncFreqProp): {
+        long freq = timing.getCustom();
         setPropLong(m, targetValue, actualValue, &freq);
         if (m == SetCustomValue) {
-          freqConf.setCustom(freq);
-          freqConf.setFrequency(Custom);
+          timing.setCustom(freq);
+          timing.setFrequency(Custom);
         }
       } break;
       default:
@@ -189,12 +189,12 @@ public:
   }
 
   int getNroProps() {
-    return SetupSyncConfigDelimiter;
+    return SetupSyncPropsDelimiter;
   }
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
-      case (SetupSyncConfigFreq):
+      case (SetupSyncFreqProp):
         return "freq";
       default:
         return "";
@@ -216,7 +216,7 @@ public:
   }
 
   Timing *getFrequencyConfiguration() {
-    return &freqConf;
+    return &timing;
   }
 
   bool isInitialized() {

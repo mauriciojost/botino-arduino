@@ -80,7 +80,6 @@ void setup() {
   m.getQuotes()->setInitWifi(initWifiSteady);
 
   setupArchitecture();
-
 }
 
 void loop() {

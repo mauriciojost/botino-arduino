@@ -17,7 +17,7 @@ void loopArchitecture() {
 
 bool haveToInterrupt() {
   // noting to do here
-	return false;
+  return false;
 }
 
 void messageFunc(int line, const char *str, int size) {
@@ -37,8 +37,10 @@ int httpGet(const char *url, ParamStream *response) {
   aux.fill(CURL_COMMAND_GET, url);
   log(CLASS_MAIN, Debug, "GET: '%s'", aux.getBuffer());
   FILE *fp = popen(aux.getBuffer(), "r");
-  if (fp == NULL) {return HTTP_BAD_REQUEST;}
-  while (fgets(aux.getUnsafeBuffer(), CL_MAX_LENGTH -1, fp) != NULL) {
+  if (fp == NULL) {
+    return HTTP_BAD_REQUEST;
+  }
+  while (fgets(aux.getUnsafeBuffer(), CL_MAX_LENGTH - 1, fp) != NULL) {
     if (response != NULL) {
       response->fill(aux.getBuffer());
       log(CLASS_MAIN, Debug, "-> %s", response->content());
@@ -54,9 +56,9 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
   log(CLASS_MAIN, Debug, "POST: '%s'", aux.getBuffer());
   FILE *fp = popen(aux.getBuffer(), "r");
   if (fp == NULL) {
-  	return HTTP_BAD_REQUEST;
+    return HTTP_BAD_REQUEST;
   }
-  while (fgets(aux.getUnsafeBuffer(), CL_MAX_LENGTH -1, fp) != NULL) {
+  while (fgets(aux.getUnsafeBuffer(), CL_MAX_LENGTH - 1, fp) != NULL) {
     if (response != NULL) {
       response->fill(aux.getBuffer());
       log(CLASS_MAIN, Debug, "-> %s", response->content());
@@ -75,7 +77,7 @@ void lcdImg(char img, uint8_t bitmap[]) {
 }
 
 void setupArchitecture() {
-	// nothing to be done here
+  // nothing to be done here
 }
 
 void sleepInterruptable(unsigned long cycleBegin) {
@@ -84,18 +86,17 @@ void sleepInterruptable(unsigned long cycleBegin) {
   log(CLASS_MAIN, Info, "D.C.:%0.3f", (float)spentMs / PERIOD_MSEC);
   while (spentMs < PERIOD_MSEC) {
     if (haveToInterrupt()) {
-    	break;
+      break;
     }
     unsigned long fragToSleepMs = MINIM(PERIOD_MSEC - spentMs, FRAG_TO_SLEEP_MS_MAX);
     delay(fragToSleepMs);
     spentMs = millis() - cycleBegin;
   }
-
 }
 
-int main( int argc, const char* argv[] ) {
-	setup();
-	while(true) {
+int main(int argc, const char *argv[]) {
+  setup();
+  while (true) {
     loop();
-	}
+  }
 }

@@ -1,6 +1,7 @@
 #ifndef PROPSYNC_INC
 #define PROPSYNC_INC
 
+#include <HttpCodes.h>
 #include <actors/ParamStream.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
@@ -8,7 +9,6 @@
 #include <main4ino/Clock.h>
 #include <main4ino/Misc.h>
 #include <main4ino/SerBot.h>
-#include <HttpCodes.h>
 
 #define CLASS_PROPSYNC "PY"
 
@@ -16,11 +16,11 @@
 #define DWEET_IO_API_URL_GET "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-%s-target"
 #define DWEET_IO_API_URL_REPORT "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-%s-report"
 
-enum PropSyncConfigState {
-  PropSyncConfigFreq = 0,
-  PropSyncConfigUpdateProps,
-  PropSyncConfigUpdateReport,
-  PropSyncConfigDelimiter // delimiter of the configuration states
+enum PropSyncProps {
+  PropSyncFreqProp = 0,
+  PropSyncUpdatePropsProp,
+  PropSyncUpdateInfosProp,
+  PropSyncPropsgDelimiter // count of properties
 };
 
 /**
@@ -135,14 +135,13 @@ public:
     httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort
   }
 
-
   const char *getPropName(int propIndex) {
     switch (propIndex) {
-      case (PropSyncConfigFreq):
+      case (PropSyncFreqProp):
         return "freq";
-      case (PropSyncConfigUpdateProps):
+      case (PropSyncUpdatePropsProp):
         return "updateprops";
-      case (PropSyncConfigUpdateReport):
+      case (PropSyncUpdateInfosProp):
         return "updaterep";
       default:
         return "";
@@ -151,7 +150,7 @@ public:
 
   void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
-      case (PropSyncConfigFreq): {
+      case (PropSyncFreqProp): {
         long freq = freqConf.getCustom();
         setPropLong(m, targetValue, actualValue, &freq);
         if (m == SetCustomValue) {
@@ -159,10 +158,10 @@ public:
           freqConf.setFrequency(Custom);
         }
       } break;
-      case (PropSyncConfigUpdateProps): {
+      case (PropSyncUpdatePropsProp): {
         setPropBoolean(m, targetValue, actualValue, &updatePropsEnabled);
       } break;
-      case (PropSyncConfigUpdateReport): {
+      case (PropSyncUpdateInfosProp): {
         setPropBoolean(m, targetValue, actualValue, &updateReportEnabled);
       } break;
       default:
@@ -171,7 +170,7 @@ public:
   }
 
   int getNroProps() {
-    return PropSyncConfigDelimiter;
+    return PropSyncPropsgDelimiter;
   }
 
   void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}

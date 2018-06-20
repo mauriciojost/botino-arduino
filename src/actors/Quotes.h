@@ -16,10 +16,6 @@
 #define QUOTE_MAX_LENGTH 128
 #define NRO_QUOTES 6
 
-enum QuotesConfigState {
-  QuotesConfigStateDelimiter = 0 // delimiter of the configuration states
-};
-
 #define URL_QUOTES "http://api.forismatic.com/api/1.0/POST?method=getQuote&format=text&lang=en"
 
 /**
@@ -39,10 +35,11 @@ private:
   }
 
 public:
-  Quotes(const char *n) : timing(OnceEvery5Minutes) {
+  Quotes(const char *n) {
     name = n;
     httpGet = NULL;
     initWifiFunc = NULL;
+    timing.setFrequency(OnceEvery5Minutes);
     for (int i = 0; i < NRO_QUOTES; i++) {
       quotes[i] = new Buffer<QUOTE_MAX_LENGTH>("Damn! No quote yet! :(");
     }
@@ -93,7 +90,7 @@ public:
   void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {}
 
   int getNroProps() {
-    return QuotesConfigStateDelimiter;
+    return 0;
   }
 
   void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}

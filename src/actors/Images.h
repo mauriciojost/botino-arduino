@@ -15,13 +15,13 @@
  *
  */
 
-#include <main4ino/Misc.h>
 #include <Hexer.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Boolean.h>
 #include <main4ino/Buffer.h>
 #include <main4ino/Integer.h>
+#include <main4ino/Misc.h>
 #include <main4ino/Value.h>
 
 #define CLASS_IMAGE "IM"
@@ -30,10 +30,10 @@
 #define NRO_IMGS 4
 
 enum ImagesConfigState {
-  ImagesConfigImg0 = 0, // string, image in hexadecimal format
-  ImagesConfigImg1, // string, image in hexadecimal format
-  ImagesConfigImg2, // string, image in hexadecimal format
-  ImagesConfigImg3, // string, image in hexadecimal format
+  ImagesConfigImg0 = 0,      // string, image in hexadecimal format
+  ImagesConfigImg1,          // string, image in hexadecimal format
+  ImagesConfigImg2,          // string, image in hexadecimal format
+  ImagesConfigImg3,          // string, image in hexadecimal format
   ImagesConfigStateDelimiter // delimiter of the configuration states
 };
 
@@ -45,7 +45,7 @@ private:
   uint8_t *images[NRO_IMGS];
 
 public:
-  Images(const char *n) : timing(Never) {
+  Images(const char *n) {
     name = n;
     for (int i = 0; i < NRO_IMGS; i++) {
       images[i] = new uint8_t[IMG_SIZE_BYTES];
@@ -53,16 +53,14 @@ public:
         images[i][j] = 0;
       }
     }
+    timing.setFrequency(Never);
   }
 
   const char *getName() {
     return name;
   }
 
-
-  void act() {
-
-  }
+  void act() {}
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
@@ -111,10 +109,9 @@ public:
     return &timing;
   }
 
-  uint8_t* get(int i) {
+  uint8_t *get(int i) {
     return images[POSIT(i) % NRO_IMGS];
   }
-
 };
 
 #endif // IMAGES_INC

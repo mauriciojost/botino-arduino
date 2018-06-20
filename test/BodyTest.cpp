@@ -65,7 +65,7 @@ void led(char led, bool v) {
   }
 }
 
-void initBody(Body *b, Quotes* q, Images* i, Messages* m) {
+void initBody(Body *b, Quotes *q, Images *i, Messages *m) {
   b->setLcdImgFunc(lcdImg);
   b->setArmsFunc(arms);
   b->setMessageFunc(messageOnLcd);
@@ -88,8 +88,8 @@ void test_body_shows_time() {
   Long time0(201010101);      // every single second
   Buffer<10> move0("Mc.Fb."); // clock message (show current time) and face black
 
-  b.setPropValue(BodyConfigTime0, &time0);
-  b.setPropValue(BodyConfigMove0, &move0);
+  b.setPropValue(BodyTime0Prop, &time0);
+  b.setPropValue(BodyMove0Prop, &move0);
 
   TEST_ASSERT_EQUAL(0, faceCleared);
   TEST_ASSERT_EQUAL_STRING("", lastMsg);
@@ -105,7 +105,7 @@ void test_body_shows_time() {
 void executeMove(Body *b, const char *move) {
   Buffer<20> mv0;
   mv0.fill(move);
-  b->setPropValue(BodyConfigMove0, &mv0);
+  b->setPropValue(BodyMove0Prop, &mv0);
   Timing *t = b->getFrequencyConfiguration();
   t->setCurrentTime(t->getCurrentTime() + 1); // assumes configured to act every second
   b->act();
@@ -121,7 +121,7 @@ void test_body_performs_basic_moves() {
   initBody(&b, &q, &i, &ms);
 
   Long time0(201010101); // act every single second / act() method call
-  b.setPropValue(BodyConfigTime0, &time0);
+  b.setPropValue(BodyTime0Prop, &time0);
 
   TEST_ASSERT_EQUAL_STRING("", lastArms);
 
@@ -154,10 +154,9 @@ void test_body_performs_basic_moves() {
   TEST_ASSERT_EQUAL(false, fan);
 
   Buffer<10> m0("HEY");
-  ms.setPropValue(MessagesConfigMsg0, &m0);
+  ms.setPropValue(MessagesMsg0Prop, &m0);
   executeMove(&b, "M01");
   TEST_ASSERT_EQUAL_STRING("HEY", lastMsg);
-
 }
 
 void test_body_creates_predictions() {
@@ -170,15 +169,13 @@ void test_body_creates_predictions() {
   initBody(&b, &q, &i, &ms);
 
   Long time0(201010101); // act every single second / act() method call
-  b.setPropValue(BodyConfigTime0, &time0);
+  b.setPropValue(BodyTime0Prop, &time0);
 
   Buffer<10> m0("HEY");
-  ms.setPropValue(MessagesConfigMsg0, &m0);
+  ms.setPropValue(MessagesMsg0Prop, &m0);
   executeMove(&b, "Mp1");
   TEST_ASSERT_EQUAL_STRING("your colleague will ride your colleague in 5 minutes at work", lastMsg);
-
 }
-
 
 int main() {
   UNITY_BEGIN();

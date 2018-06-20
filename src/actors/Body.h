@@ -53,16 +53,16 @@
 
 #define IMG_SIZE_BYTES 16
 
-enum BodyConfigState {
-  BodyConfigMove0 = 0,     // string, move for the routine 0 as a list of consecutive 3 letter-code of poses (see the poses documentation)
-  BodyConfigMove1,         // string, move for the routine 1 (same as above)
-  BodyConfigMove2,         // string, move
-  BodyConfigMove3,         // string, move
-  BodyConfigTime0,         // time/freq of acting for the routine 0
-  BodyConfigTime1,         // time/freq of acting for the routine 1
-  BodyConfigTime2,         // time/freq
-  BodyConfigTime3,         // time/freq
-  BodyConfigStateDelimiter // delimiter of the configuration states
+enum BodyProps {
+  BodyMove0Prop = 0, // string, move for the routine 0 as a list of consecutive 3 letter-code of poses (see the poses documentation)
+  BodyMove1Prop,     // string, move for the routine 1 (same as above)
+  BodyMove2Prop,     // string, move
+  BodyMove3Prop,     // string, move
+  BodyTime0Prop,     // time/freq of acting for the routine 0
+  BodyTime1Prop,     // time/freq of acting for the routine 1
+  BodyTime2Prop,     // time/freq
+  BodyTime3Prop,     // time/freq
+  BodyPropsDelimiter // delimiter of the configuration states
 };
 
 #define MOVE_DANCE0 "LwyFs.B09B90LwnFw.B09B90LwyFb.B55"
@@ -101,7 +101,8 @@ private:
   Routine *routines[NRO_ROUTINES];
 
   bool isInitialized() {
-    bool init = arms != NULL && iosFunc != NULL && messageFunc != NULL && lcdImgFunc != NULL && quotes != NULL && images != NULL && messages != NULL;
+    bool init = arms != NULL && iosFunc != NULL && messageFunc != NULL && lcdImgFunc != NULL && quotes != NULL && images != NULL &&
+                messages != NULL;
     return init;
   }
 
@@ -375,7 +376,7 @@ Codes:
   }
 
 public:
-  Body(const char *n) : timing(OnceEvery1Minute) {
+  Body(const char *n) {
     name = n;
     arms = NULL;
     messageFunc = NULL;
@@ -384,6 +385,7 @@ public:
     quotes = NULL;
     images = NULL;
     messages = NULL;
+    timing.setFrequency(OnceEvery1Minute);
     for (int i = 0; i < NRO_ROUTINES; i++) {
       routines[i] = new Routine();
       routines[i]->timingConf = 0L; // Never
@@ -440,21 +442,21 @@ public:
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
-      case (BodyConfigMove0):
+      case (BodyMove0Prop):
         return "mv0"; // move 0 (for routine 0)
-      case (BodyConfigMove1):
+      case (BodyMove1Prop):
         return "mv1";
-      case (BodyConfigMove2):
+      case (BodyMove2Prop):
         return "mv2";
-      case (BodyConfigMove3):
+      case (BodyMove3Prop):
         return "mv3";
-      case (BodyConfigTime0):
+      case (BodyTime0Prop):
         return "t0"; // timing 0 (for routine 0)
-      case (BodyConfigTime1):
+      case (BodyTime1Prop):
         return "t1";
-      case (BodyConfigTime2):
+      case (BodyTime2Prop):
         return "t2";
-      case (BodyConfigTime3):
+      case (BodyTime3Prop):
         return "t3";
       default:
         return "";
@@ -462,11 +464,11 @@ public:
   }
 
   void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {
-    if (propIndex >= BodyConfigMove0 && propIndex < (NRO_ROUTINES + BodyConfigMove0)) {
-      int i = (int)propIndex - (int)BodyConfigMove0;
+    if (propIndex >= BodyMove0Prop && propIndex < (NRO_ROUTINES + BodyMove0Prop)) {
+      int i = (int)propIndex - (int)BodyMove0Prop;
       setPropValue(m, targetValue, actualValue, &routines[i]->move);
-    } else if (propIndex >= BodyConfigTime0 && propIndex < (NRO_ROUTINES + BodyConfigTime0)) {
-      int i = (int)propIndex - (int)BodyConfigTime0;
+    } else if (propIndex >= BodyTime0Prop && propIndex < (NRO_ROUTINES + BodyTime0Prop)) {
+      int i = (int)propIndex - (int)BodyTime0Prop;
       setPropLong(m, targetValue, actualValue, &routines[i]->timingConf);
       routines[i]->timing.setCustom(routines[i]->timingConf);
     } else {
@@ -478,7 +480,7 @@ public:
   }
 
   int getNroProps() {
-    return BodyConfigStateDelimiter;
+    return BodyPropsDelimiter;
   }
 
   void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}

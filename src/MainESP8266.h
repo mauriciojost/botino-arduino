@@ -45,7 +45,6 @@
 #define SERVO1_RANGE_DEGREES 140
 #endif // SERVO1_RANGE_DEGREES
 
-
 #ifndef WIFI_SSID_INIT
 #error "Must provide WIFI_SSID_INIT"
 #define WIFI_SSID_INIT ""
@@ -80,7 +79,6 @@ RemoteDebug Telnet;
 Servo servoLeft;
 Servo servoRight;
 Adafruit_SSD1306 lcd(-1);
-
 
 void lcdClear(int line) {
   lcd.fillRect(0, line * 8, 128, 8, BLACK);
@@ -213,7 +211,7 @@ void loopArchitecture() {
   ArduinoOTA.handle();
 }
 
-void reactCommand(const char* cmd) {
+void reactCommand(const char *cmd) {
   char command[COMMAND_MAX_LENGTH];
   strncpy(command, cmd, COMMAND_MAX_LENGTH);
   log(CLASS_MAIN, Info, "Command: %s", command);
@@ -271,7 +269,7 @@ void reactCommand(const char* cmd) {
 }
 
 void reactCommandCustom() {
-	reactCommand(Telnet.getLastCommand().c_str());
+  reactCommand(Telnet.getLastCommand().c_str());
 }
 
 bool haveToInterrupt() {
@@ -558,7 +556,7 @@ void sleepInterruptable(unsigned long cycleBegin) {
   log(CLASS_MAIN, Info, "D.C.:%0.3f", (float)spentMs / PERIOD_MSEC);
   while (spentMs < PERIOD_MSEC) {
     if (haveToInterrupt()) {
-    	break;
+      break;
     }
     unsigned long fragToSleepMs = MINIM(PERIOD_MSEC - spentMs, FRAG_TO_SLEEP_MS_MAX);
     wifi_set_sleep_type(LIGHT_SLEEP_T);
