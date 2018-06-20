@@ -3,13 +3,13 @@
 
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
-#include <main4ino/Misc.h>
-#include <main4ino/Bot.h>
-#include <actors/ParamStream.h>
-#include <main4ino/Clock.h>
-#include <main4ino/Boolean.h>
 #include <Hexer.h>
 #include <HttpCodes.h>
+#include <actors/ParamStream.h>
+#include <main4ino/Boolean.h>
+#include <main4ino/Bot.h>
+#include <main4ino/Clock.h>
+#include <main4ino/Misc.h>
 #ifdef UNIT_TEST
 #include <aes.h> // in C code
 #else
