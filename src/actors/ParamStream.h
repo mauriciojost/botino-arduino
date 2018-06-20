@@ -1,6 +1,7 @@
 #ifndef PARAM_STREAM_INC
 #define PARAM_STREAM_INC
 
+#include <main4ino/Value.h>
 #include <ArduinoJson.h>
 #include <log4ino/Log.h>
 #include <main4ino/Buffer.h>

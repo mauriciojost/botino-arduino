@@ -2,9 +2,9 @@
 #define SETUPSYNC_INC
 
 #include <log4ino/Log.h>
-#include <main4ino/Actor.h>
 #include <Hexer.h>
 #include <HttpCodes.h>
+#include <main4ino/Actor.h>
 #include <actors/ParamStream.h>
 #include <main4ino/Boolean.h>
 #include <main4ino/Bot.h>
