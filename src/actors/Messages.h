@@ -9,12 +9,12 @@
  * Each message is at most MSG_MAX_LENGTH long, and this actor supports NRO_MSGS messages.
  *
  */
-#include <main4ino/Misc.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Boolean.h>
 #include <main4ino/Buffer.h>
 #include <main4ino/Integer.h>
+#include <main4ino/Misc.h>
 
 #include <main4ino/Value.h>
 

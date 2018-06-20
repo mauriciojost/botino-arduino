@@ -19,18 +19,18 @@
  *
  */
 
-#include <main4ino/Misc.h>
 #include <Hexer.h>
+#include <actors/Images.h>
+#include <actors/Messages.h>
+#include <actors/Predictions.h>
+#include <actors/Quotes.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Boolean.h>
 #include <main4ino/Buffer.h>
 #include <main4ino/Integer.h>
+#include <main4ino/Misc.h>
 #include <main4ino/Value.h>
-#include <actors/Quotes.h>
-#include <actors/Images.h>
-#include <actors/Messages.h>
-#include <actors/Predictions.h>
 
 #define CLASS_BODY "BO"
 #define MSG_MAX_LENGTH 32

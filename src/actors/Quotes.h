@@ -1,15 +1,15 @@
 #ifndef QUOTES_INC
 #define QUOTES_INC
 
-#include <log4ino/Log.h>
-#include <main4ino/Misc.h>
-#include <main4ino/Value.h>
+#include <HttpCodes.h>
 #include <actors/ParamStream.h>
+#include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Boolean.h>
 #include <main4ino/Buffer.h>
 #include <main4ino/Integer.h>
-#include <HttpCodes.h>
+#include <main4ino/Misc.h>
+#include <main4ino/Value.h>
 
 #define CLASS_QUOTES "QU"
 

@@ -7,9 +7,9 @@
 #include <Pinout.h>
 #include <actors/Body.h>
 #include <actors/ClockSync.h>
+#include <actors/Images.h>
 #include <actors/PropSync.h>
 #include <actors/SetupSync.h>
-#include <actors/Images.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Array.h>
