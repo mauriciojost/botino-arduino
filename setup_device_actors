@@ -32,17 +32,17 @@ curl_cmd $url
 # Set up body
 url="http://dweet.io/dweet/for/$DEVICE-body-target?"
 
-url+="mv0=LwyM04W9.Zz.&" # move
-url+="t0=201016060&" # timing
+url+="mv3=LwyM04W9.Zz.&" # move H20
+url+="t3=201016060&" # timing H20
 
-url+="mv1=Mc4W9.Zz.&" # move
-url+="t1=201016060&" # timing
+url+="mv1=Mc4W9.Zz.&" # move clock
+url+="t1=201016060&" # timing clock
 
-url+="mv2=B99M13W9.F0.W9.M13W9.Zz.&" # move
-url+="t2=177103000&" # timing
+url+="mv2=B99M13W9.F0.W9.M13W9.Zz.&" # move standup
+url+="t2=177103000&" # timing standup
 
-url+="mv3=S02S01Mq1W9.Zz.&" # move
-url+="t3=0" # timing
+url+="mv0=Mp1W9.W9.Zz.&" # move fun
+url+="t0=0" # timing fun
 
 curl_cmd $url
 
