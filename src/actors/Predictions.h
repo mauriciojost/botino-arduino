@@ -18,14 +18,14 @@ class Predictions {
 private:
 public:
   static const char *getPrediction(Buffer<200> *msg) {
-    msg->fill("%s will %s %s %s %s", getObject(), getTransitiveVerb(), getObject(), getWhen(), getWhere());
+    msg->fill("%s will %s %s %s", getObject(), getTransitiveVerb(), getObject(), getWhere());
   }
 
   static const char *getObject() {
     return getObject(RANDOM);
   }
   static const char *getObject(int i) {
-    switch (i % 26) {
+    switch (i % 31) {
       case 0:
         return "your colleague";
       case 1:
@@ -78,6 +78,16 @@ public:
         return "superman";
       case 25:
         return "a bug";
+      case 26:
+        return "Freddy Mercury";
+      case 27:
+        return "Mr. Dracula";
+      case 28:
+        return "Madonna";
+      case 29:
+        return "Lady GaGa";
+      case 30:
+        return "Dalai Lama";
       default:
         return "?";
     }
@@ -87,7 +97,7 @@ public:
     return getTransitiveVerb(RANDOM);
   }
   static const char *getTransitiveVerb(int i) {
-    switch (i % 13) {
+    switch (i % 21) {
       case 0:
         return "ride";
       case 1:
@@ -113,25 +123,23 @@ public:
       case 11:
         return "pee";
       case 12:
-        return "";
-      default:
-        return "?";
-    }
-  }
-
-  static const char *getWhen() {
-    return getWhen(RANDOM);
-  }
-  static const char *getWhen(int i) {
-    switch (i % 4) {
-      case 0:
-        return "in 5 minutes";
-      case 1:
-        return "in 1 hour";
-      case 2:
-        return "today";
-      case 3:
-        return "tomorrow";
+        return "dance with";
+      case 13:
+        return "kiss";
+      case 14:
+        return "marry";
+      case 15:
+        return "go shopping with";
+      case 16:
+        return "tickle";
+      case 17:
+        return "watch TV with";
+      case 18:
+        return "yell at";
+      case 19:
+        return "design";
+      case 20:
+        return "give birth to";
       default:
         return "?";
     }
@@ -165,7 +173,7 @@ public:
       case 10:
         return "at mom's";
       case 11:
-        return "at mom's";
+        return "at the museum";
       default:
         return "?";
     }
