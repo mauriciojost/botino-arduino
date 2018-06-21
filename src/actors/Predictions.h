@@ -9,6 +9,9 @@
 
 /**
  * Generates funny predictions.
+ *
+ * Inspiration:
+ * - https://scratch.mit.edu/projects/3313631/
  */
 
 #define RANDOM random(10000)
