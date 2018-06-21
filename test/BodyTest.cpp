@@ -174,7 +174,7 @@ void test_body_creates_predictions() {
   Buffer<10> m0("HEY");
   ms.setPropValue(MessagesMsg0Prop, &m0);
   executeMove(&b, "Mp1");
-  TEST_ASSERT_EQUAL_STRING("your colleague will ride your colleague in 5 minutes at work", lastMsg);
+  TEST_ASSERT_EQUAL_STRING("your colleague will ride your colleague at work", lastMsg);
 }
 
 int main() {
