@@ -280,7 +280,7 @@ bool haveToInterrupt() {
     log(CLASS_MAIN, Debug, "Done (%d)", ints);
   } else if (ints > 0 && !level) { // pressed the button, but not currently being pressed
     log(CLASS_MAIN, Debug, "Btn.quick(%d)...", ints);
-    int routine = (int)random(0, NRO_ROUTINES);
+    int routine = (int)random(0, m.getSettings()->getNroRoutinesForButton());
     log(CLASS_MAIN, Debug, "Routine %d...", routine);
     m.getBody()->performMove(routine);
     log(CLASS_MAIN, Debug, "Done (%d)", ints);

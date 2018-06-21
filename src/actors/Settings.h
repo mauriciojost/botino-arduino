@@ -20,6 +20,7 @@ enum SettingsProps {
   SettingsClearStackTraceProp = 0, // boolean, clear the stack trace log if full
   SettingsLogLevelProp,            // integer, define the log level
   SettingsLcdDebugProp,            // boolean, define if the LCD shows the debug logs
+  SettingsButtonRoutineLimitProp,  // integer, define the first X routines that are randomly executed when the button is pressed
   SettingsPropsDelimiter           // amount of properties
 };
 
@@ -30,6 +31,7 @@ private:
   bool clearStackTrace;
   int logLevel;
   bool lcdDebug;
+  int buttonRoutineUntil;
   Timing freqConf;
 
 public:
@@ -38,6 +40,7 @@ public:
     clearStackTrace = false;
     logLevel = 0;
     lcdDebug = true;
+    buttonRoutineUntil = 1;
     freqConf.setFrequency(Never);
   }
 
@@ -55,6 +58,8 @@ public:
         return "loglevel";
       case (SettingsLcdDebugProp):
         return "lcddebug";
+      case (SettingsButtonRoutineLimitProp):
+        return "btnrout";
       default:
         return "";
     }
@@ -70,6 +75,9 @@ public:
         break;
       case (SettingsLcdDebugProp):
         setPropBoolean(m, targetValue, actualValue, &lcdDebug);
+        break;
+      case (SettingsButtonRoutineLimitProp):
+        setPropInteger(m, targetValue, actualValue, &buttonRoutineUntil);
         break;
       default:
         break;
@@ -96,6 +104,10 @@ public:
 
   int getLogLevel() {
     return logLevel;
+  }
+
+  int getNroRoutinesForButton() {
+    return buttonRoutineUntil;
   }
 
   bool getLcdDebug() {
