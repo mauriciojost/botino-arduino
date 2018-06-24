@@ -211,63 +211,6 @@ void loopArchitecture() {
   ArduinoOTA.handle();
 }
 
-void reactCommand(const char *cmd) {
-  char command[COMMAND_MAX_LENGTH];
-  strncpy(command, cmd, COMMAND_MAX_LENGTH);
-  log(CLASS_MAIN, Info, "Command: %s", command);
-
-  char *c = strtok(command, " ");
-
-  if (strcmp("conf", c) == 0) {
-    log(CLASS_MAIN, Info, "-> Conf mode");
-    m.getBot()->setMode(ConfigureMode);
-    return;
-  } else if (strcmp("move", c) == 0) {
-    c = strtok(NULL, " ");
-    if (c == NULL) {
-      log(CLASS_MAIN, Error, "Argument needed:\n  move <move>");
-      return;
-    }
-    log(CLASS_MAIN, Info, "-> Move %s", c);
-    m.getBody()->performMove(c);
-    return;
-  } else if (strcmp("set", c) == 0) {
-    const char *actor = strtok(NULL, " ");
-    const char *prop = strtok(NULL, " ");
-    const char *v = strtok(NULL, " ");
-    if (actor == NULL || prop == NULL || v == NULL) {
-      log(CLASS_MAIN, Error, "Arguments needed:\n  set <actor> <prop> <value>");
-      return;
-    }
-    log(CLASS_MAIN, Info, "-> Set %s.%s = %s", actor, prop, v);
-    Buffer<64> value(v);
-    m.getBot()->setProp(actor, prop, &value);
-    return;
-  } else if (strcmp("get", c) == 0) {
-    log(CLASS_MAIN, Info, "-> Get");
-    Array<Actor *> *actors = m.getBot()->getActors();
-    for (int i = 0; i < actors->size(); i++) {
-      Actor *actor = actors->get(i);
-      log(CLASS_MAIN, Info, " '%s'", actor->getName());
-      for (int j = 0; j < actor->getNroProps(); j++) {
-        Buffer<COMMAND_MAX_LENGTH> value;
-        actor->getPropValue(j, &value);
-        log(CLASS_MAIN, Info, "   '%s': '%s'", actor->getPropName(j), value.getBuffer());
-      }
-      log(CLASS_MAIN, Info, " ");
-    }
-    log(CLASS_MAIN, Info, " ");
-    return;
-  } else if (strcmp("run", c) == 0) {
-    log(CLASS_MAIN, Info, "-> Run mode");
-    m.getBot()->setMode(RunMode);
-    return;
-  } else {
-    log(CLASS_MAIN, Error, "Invalid command (try: ?)");
-    return;
-  }
-}
-
 void reactCommandCustom() {
   reactCommand(Telnet.getLastCommand().c_str());
 }
