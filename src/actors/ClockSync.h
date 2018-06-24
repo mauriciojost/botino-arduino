@@ -78,16 +78,22 @@ public:
     if (errorCode == HTTP_OK) {
       JsonObject &json = s.parse();
       if (json.containsKey("formatted")) {
-        int y, mo, d, h, m, s;
         const char *formatted = json["formatted"].as<char *>(); // example: 2018-04-26 21:32:30
-        log(CLASS_CLOCKSYNC, Debug, "Retrieved: %s", formatted);
-        sscanf(formatted, "%04d-%02d-%02d %02d:%02d:%02d", &y, &mo, &d, &h, &m, &s);
-        Buffer<8> time(formatted + 11);
-        clock->setAutoAdjust(true);
-        clock->set(DONT_CHANGE, h, m, s);
-        clock->setAutoAdjust(false);
-        clock->set(DONT_CHANGE, h, m, s);
-        log(CLASS_CLOCKSYNC, Info, "Set time: %s", time.getBuffer());
+        int y, mo, d, h, m, s;
+        log(CLASS_CLOCKSYNC, Debug, "Retrieved: '%s'", formatted);
+        int parsed = sscanf(formatted, "%04d-%02d-%02d %02d:%02d:%02d", &y, &mo, &d, &h, &m, &s);
+        if (parsed > 0) {
+          Buffer<8> time(formatted + 11);
+          clock->setAutoAdjust(true);
+          clock->set(DONT_CHANGE, h, m, s);
+          clock->setAutoAdjust(false);
+          // TODO clock should support year, month and day too because this is too fragile
+          // for instance: what happens if sync takes place at midnight?
+          clock->set(DONT_CHANGE, h, m, s);
+          log(CLASS_CLOCKSYNC, Info, "Set time: %s", time.getBuffer());
+        } else {
+          log(CLASS_CLOCKSYNC, Info, "Invalid time");
+        }
       } else {
         log(CLASS_CLOCKSYNC, Warn, "Inv. JSON(no 'formatted')");
       }
