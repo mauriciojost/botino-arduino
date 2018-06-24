@@ -40,6 +40,6 @@ HEADERS="
 LIBS=""
 
 g++ -Wno-deprecated-declarations -g -ggdb -o .simulator.bin $FLAGS $SRC $HEADERS $LIBS
-#./.simulator.bin
-gdbtui ./.simulator.bin
+./.simulator.bin
+#gdbtui ./.simulator.bin
 rm -f .simulator.bin
