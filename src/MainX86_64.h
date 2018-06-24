@@ -21,7 +21,7 @@ bool haveToInterrupt() {
 }
 
 void messageFunc(int line, const char *str, int size) {
-  printf("\n\nLCD: %s (size %d)\n\n", str, size);
+  printf("\n\n***** LCD (size %d)\n  %s\n*****\n\n", size, str);
 }
 
 void logLine(const char *str) {
