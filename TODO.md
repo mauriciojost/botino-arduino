@@ -2,6 +2,11 @@
 
 - Package electronics without breadboard
 - Make a good pass and fix data types (avoid char, use better uint8 for instance)
+- Fix warnings
+- Improve simulator
+- Find better alternative to scripts and replace them (simulator, format, ...)
+- Share settings between uploader and simulator
+- Add one-shot timing setting
 
 
 # DONE
