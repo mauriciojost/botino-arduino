@@ -13,11 +13,13 @@ void loopArchitecture() {
   Settings *s = m.getSettings();
   // Handle log level as per settings
   setLogLevel((char)(s->getLogLevel() % 4));
-}
 
-bool haveToInterrupt() {
-  // noting to do here
-  return false;
+	char str[100];
+	gets(str);
+	printf("Parsing: '%s'\n", str);
+	if (strlen(str) != 0) {
+    reactCommand(str);
+	}
 }
 
 void messageFunc(int line, const char *str, int size) {
@@ -80,19 +82,15 @@ void setupArchitecture() {
   // nothing to be done here
 }
 
-void sleepInterruptable(unsigned long cycleBegin) {
-  log(CLASS_MAIN, Info, "L.Sleep(%lums)...", PERIOD_MSEC);
-  unsigned long spentMs = millis() - cycleBegin;
-  log(CLASS_MAIN, Info, "D.C.:%0.3f", (float)spentMs / PERIOD_MSEC);
-  while (spentMs < PERIOD_MSEC) {
-    if (haveToInterrupt()) {
-      break;
-    }
-    unsigned long fragToSleepMs = MINIM(PERIOD_MSEC - spentMs, FRAG_TO_SLEEP_MS_MAX);
-    delay(fragToSleepMs);
-    spentMs = millis() - cycleBegin;
-  }
+void sleepInterruptable(unsigned long periodMsec) {
+  log(CLASS_MAIN, Info, "L.Sleep(%lums)...", periodMsec);
 }
+
+bool haveToInterrupt() {
+  // noting to do here
+  return false;
+}
+
 
 int main(int argc, const char *argv[]) {
   setup();

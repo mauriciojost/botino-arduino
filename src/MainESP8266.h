@@ -550,15 +550,16 @@ void setupArchitecture() {
   }
 }
 
-void sleepInterruptable(unsigned long cycleBegin) {
-  log(CLASS_MAIN, Info, "L.Sleep(%lums)...", PERIOD_MSEC);
+void sleepInterruptable(unsigned long periodMs) {
+  unsigned long cycleBegin = millis();
+  log(CLASS_MAIN, Info, "L.Sleep(%lums)...", periodMs);
   unsigned long spentMs = millis() - cycleBegin;
-  log(CLASS_MAIN, Info, "D.C.:%0.3f", (float)spentMs / PERIOD_MSEC);
-  while (spentMs < PERIOD_MSEC) {
+  log(CLASS_MAIN, Info, "D.C.:%0.3f", (float)spentMs / periodMs);
+  while (spentMs < periodMs) {
     if (haveToInterrupt()) {
       break;
     }
-    unsigned long fragToSleepMs = MINIM(PERIOD_MSEC - spentMs, FRAG_TO_SLEEP_MS_MAX);
+    unsigned long fragToSleepMs = MINIM(periodMs - spentMs, FRAG_TO_SLEEP_MS_MAX);
     wifi_set_sleep_type(LIGHT_SLEEP_T);
     delay(fragToSleepMs);
     spentMs = millis() - cycleBegin;

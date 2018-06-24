@@ -59,6 +59,9 @@ void loopArchitecture();
 // Setup wifi using provided parameters
 bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries);
 
+// Interruptable sleep function (haveToInterrupt called within).
+void sleepInterruptable(unsigned long cycleBegin);
+
 // Function to execute whenever a button is pressed (interrupt handling)
 bool haveToInterrupt(unsigned long cycleBegin);
 
@@ -79,9 +82,6 @@ int httpPost(const char *url, const char *body, ParamStream *response);
 
 // IO control function.
 void ios(char led, bool v);
-
-// Interruptable sleep function (haveToInterrupt called within).
-void sleepInterruptable(unsigned long cycleBegin);
 
 // Show an image (either a catalog image or a custom bitmap)
 void lcdImg(char img, uint8_t bitmap[]);
