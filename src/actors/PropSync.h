@@ -142,7 +142,7 @@ public:
       case (PropSyncUpdatePropsProp):
         return "updateprops";
       case (PropSyncUpdateInfosProp):
-        return "updaterep";
+        return "updateinfos";
       default:
         return "";
     }
