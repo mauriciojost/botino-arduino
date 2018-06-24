@@ -3,7 +3,7 @@
 pipeline {
   agent {
     docker { 
-      image 'mauriciojost/arduino-ci:0.2.0' 
+      image 'mauriciojost/arduino-ci:13' 
     }
   }
   stages {
