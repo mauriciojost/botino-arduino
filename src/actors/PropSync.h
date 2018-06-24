@@ -12,9 +12,10 @@
 
 #define CLASS_PROPSYNC "PY"
 
-#define DWEET_IO_API_URL_POST "http://dweet.io/dweet/for/" DEVICE_NAME "-%s-current"
-#define DWEET_IO_API_URL_GET "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-%s-target"
-#define DWEET_IO_API_URL_REPORT "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-%s-report"
+#define DWEET_IO_API_URL_POST_CURRENT "http://dweet.io/dweet/for/" DEVICE_NAME "-%s-current"
+#define DWEET_IO_API_URL_POST_TARGET "http://dweet.io/dweet/for/" DEVICE_NAME "-%s-target"
+#define DWEET_IO_API_URL_GET_TARGET "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-%s-target"
+#define DWEET_IO_API_URL_INFOS "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-%s-infos"
 
 enum PropSyncProps {
   PropSyncFreqProp = 0,
@@ -98,8 +99,9 @@ public:
   void updateProps(int actorIndex) {
     ParamStream httpBodyResponse;
     Actor *actor = bot->getActors()->get(actorIndex);
+    const char* actorName = actor->getName();
 
-    urlAuxBuffer.fill(DWEET_IO_API_URL_GET, actor->getName());
+    urlAuxBuffer.fill(DWEET_IO_API_URL_GET_TARGET, actorName);
     int errorCode = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
     if (errorCode == HTTP_OK) {
       JsonObject &json = httpBodyResponse.parse();
@@ -107,7 +109,7 @@ public:
         JsonObject &withJson = json["with"][0];
         if (withJson.containsKey("content")) {
           JsonObject &content = withJson["content"];
-          log(CLASS_PROPSYNC, Debug, "SetProp:%s", actor->getName());
+          log(CLASS_PROPSYNC, Debug, "SetProp:%s", actorName);
           bot->setPropsJson(content, actorIndex);
         } else {
           log(CLASS_PROPSYNC, Info, "No 'content'");
@@ -120,9 +122,13 @@ public:
     }
 
     bot->getPropsJson(&jsonAuxBuffer, actorIndex);
-    urlAuxBuffer.fill(DWEET_IO_API_URL_POST, actor->getName());
-    log(CLASS_PROPSYNC, Debug, "DumpProp:%s", actor->getName());
+    urlAuxBuffer.fill(DWEET_IO_API_URL_POST_CURRENT, actorName);
+    log(CLASS_PROPSYNC, Debug, "DumpProp:%s", actorName);
     httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort
+
+    urlAuxBuffer.fill(DWEET_IO_API_URL_POST_TARGET, actorName);
+    log(CLASS_PROPSYNC, Debug, "ClearTarget:%s", actorName);
+    httpPost(urlAuxBuffer.getBuffer(), "{}", NULL); // best effort
   }
 
   void updateReport(int actorIndex) {
@@ -130,7 +136,7 @@ public:
     Actor *actor = bot->getActors()->get(actorIndex);
     Buffer<MAX_JSON_STR_LENGTH> jsonAuxBuffer;
     bot->getInfosJson(&jsonAuxBuffer, actorIndex);
-    urlAuxBuffer.fill(DWEET_IO_API_URL_REPORT, actor->getName());
+    urlAuxBuffer.fill(DWEET_IO_API_URL_INFOS, actor->getName());
     log(CLASS_PROPSYNC, Debug, "DumpRepo:%s", actor->getName());
     httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort
   }
