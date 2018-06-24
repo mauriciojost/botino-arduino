@@ -57,13 +57,13 @@ void setupArchitecture();
 void loopArchitecture();
 
 // Setup wifi using provided parameters
-bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries);
+bool initWifi(const char *ssid, const char *pass, bool skipIfAlreadyConnected, int retries);
 
 // Interruptable sleep function (haveToInterrupt called within).
 void sleepInterruptable(unsigned long cycleBegin);
 
 // Function to execute whenever a button is pressed (interrupt handling)
-bool haveToInterrupt(unsigned long cycleBegin);
+bool haveToInterrupt();
 
 // Message function. Directly connected with user.
 void messageFunc(int line, const char *str, int size);
