@@ -21,6 +21,7 @@ enum PropSyncProps {
   PropSyncFreqProp = 0,
   PropSyncUpdatePropsProp,
   PropSyncUpdateInfosProp,
+  PropSyncClearTargetOnLoadProp,
   PropSyncPropsgDelimiter // count of properties
 };
 
@@ -41,7 +42,8 @@ private:
   int (*httpGet)(const char *url, ParamStream *response);
   int (*httpPost)(const char *url, const char *body, ParamStream *response);
   bool updatePropsEnabled;
-  bool updateReportEnabled;
+  bool updateInfosEnabled;
+  bool clearTargetOnLoad;
 
 public:
   PropSync(const char *n) {
@@ -52,7 +54,8 @@ public:
     httpPost = NULL;
     freqConf.setFrequency(OnceEvery1Minute);
     updatePropsEnabled = true;
-    updateReportEnabled = false;
+    updateInfosEnabled = false;
+    clearTargetOnLoad = false;
   }
 
   void setBot(SerBot *b) {
@@ -76,8 +79,8 @@ public:
           if (updatePropsEnabled) {
             updateProps(i);
           }
-          if (updateReportEnabled) {
-            updateReport(i);
+          if (updateInfosEnabled) {
+            updateInfos(i);
           }
         }
       }
@@ -101,6 +104,7 @@ public:
     Actor *actor = bot->getActors()->get(actorIndex);
     const char* actorName = actor->getName();
 
+    log(CLASS_PROPSYNC, Debug, "LoadTarg:%s", actorName);
     urlAuxBuffer.fill(DWEET_IO_API_URL_GET_TARGET, actorName);
     int errorCode = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
     if (errorCode == HTTP_OK) {
@@ -121,23 +125,27 @@ public:
       log(CLASS_PROPSYNC, Warn, "KO: %d", errorCode);
     }
 
+    if (clearTargetOnLoad) {
+      urlAuxBuffer.fill(DWEET_IO_API_URL_POST_TARGET, actorName);
+      log(CLASS_PROPSYNC, Debug, "ClrTarg:%s", actorName);
+      httpPost(urlAuxBuffer.getBuffer(), "{}", NULL); // best effort
+    }
+
     bot->getPropsJson(&jsonAuxBuffer, actorIndex);
     urlAuxBuffer.fill(DWEET_IO_API_URL_POST_CURRENT, actorName);
-    log(CLASS_PROPSYNC, Debug, "DumpProp:%s", actorName);
+    log(CLASS_PROPSYNC, Debug, "UpdCurr:%s", actorName);
     httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort
 
-    urlAuxBuffer.fill(DWEET_IO_API_URL_POST_TARGET, actorName);
-    log(CLASS_PROPSYNC, Debug, "ClearTarget:%s", actorName);
-    httpPost(urlAuxBuffer.getBuffer(), "{}", NULL); // best effort
   }
 
-  void updateReport(int actorIndex) {
+  void updateInfos(int actorIndex) {
     ParamStream httpBodyResponse;
     Actor *actor = bot->getActors()->get(actorIndex);
+    const char* actorName = actor->getName();
     Buffer<MAX_JSON_STR_LENGTH> jsonAuxBuffer;
     bot->getInfosJson(&jsonAuxBuffer, actorIndex);
-    urlAuxBuffer.fill(DWEET_IO_API_URL_INFOS, actor->getName());
-    log(CLASS_PROPSYNC, Debug, "DumpRepo:%s", actor->getName());
+    urlAuxBuffer.fill(DWEET_IO_API_URL_INFOS, actorName);
+    log(CLASS_PROPSYNC, Debug, "UpdInfos:%s", actorName);
     httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort
   }
 
@@ -149,6 +157,8 @@ public:
         return "updateprops";
       case (PropSyncUpdateInfosProp):
         return "updateinfos";
+      case (PropSyncClearTargetOnLoadProp):
+        return "clearonload";
       default:
         return "";
     }
@@ -168,7 +178,10 @@ public:
         setPropBoolean(m, targetValue, actualValue, &updatePropsEnabled);
       } break;
       case (PropSyncUpdateInfosProp): {
-        setPropBoolean(m, targetValue, actualValue, &updateReportEnabled);
+        setPropBoolean(m, targetValue, actualValue, &updateInfosEnabled);
+      } break;
+      case (PropSyncClearTargetOnLoadProp): {
+        setPropBoolean(m, targetValue, actualValue, &clearTargetOnLoad);
       } break;
       default:
         break;
