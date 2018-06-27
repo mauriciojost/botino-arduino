@@ -15,6 +15,7 @@
 #include <Wire.h>
 
 #define HARDWARE_TEST_STEP_DELAY_MS 2000
+#define DUTY_CYCLE_THRESHOLD_PERC 50
 
 #define SERVO0_STEP_DEGREES (SERVO0_RANGE_DEGREES / MAX_SERVO_STEPS)
 #define SERVO1_STEP_DEGREES (SERVO1_RANGE_DEGREES / MAX_SERVO_STEPS)
@@ -499,7 +500,11 @@ void setupArchitecture() {
 
 void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {
   unsigned long spentMs = millis() - cycleBegin;
-  log(CLASS_MAIN, Info, "D.C.:%d%%", (spentMs * 100) / periodMs);
+  int dc = (spentMs * 100) / periodMs;
+  log(CLASS_MAIN, Info, "D.C.:%d%%", dc);
+  if (dc > DUTY_CYCLE_THRESHOLD_PERC) {
+    log(CLASS_MAIN, Warn, "Cycle: %lums", spentMs);
+  }
   log(CLASS_MAIN, Info, "L.Sleep(%lums)...", periodMs);
   while (spentMs < periodMs) {
     if (haveToInterrupt()) {
