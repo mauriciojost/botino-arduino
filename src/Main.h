@@ -60,7 +60,7 @@ void loopArchitecture();
 bool initWifi(const char *ssid, const char *pass, bool skipIfAlreadyConnected, int retries);
 
 // Interruptable sleep function (haveToInterrupt called within).
-void sleepInterruptable(unsigned long cycleBegin);
+void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs);
 
 // Function to execute whenever a button is pressed (interrupt handling)
 bool haveToInterrupt();

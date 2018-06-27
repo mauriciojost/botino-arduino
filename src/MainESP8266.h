@@ -495,11 +495,10 @@ void setupArchitecture() {
   }
 }
 
-void sleepInterruptable(unsigned long periodMs) {
-  unsigned long cycleBegin = millis();
-  log(CLASS_MAIN, Info, "L.Sleep(%lums)...", periodMs);
+void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {
   unsigned long spentMs = millis() - cycleBegin;
-  log(CLASS_MAIN, Info, "D.C.:%0.3f", (float)spentMs / periodMs);
+  log(CLASS_MAIN, Info, "D.C.:%d%%", (spentMs * 100) / periodMs);
+  log(CLASS_MAIN, Info, "L.Sleep(%lums)...", periodMs);
   while (spentMs < periodMs) {
     if (haveToInterrupt()) {
       break;

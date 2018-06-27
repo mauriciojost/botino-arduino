@@ -150,11 +150,12 @@ void setup() {
 }
 
 void loop() {
+  unsigned long cycleBegin = millis();
   loopArchitecture();
   switch (m.getBot()->getMode()) {
     case (RunMode):
       m.loop(false, false, true);
-      sleepInterruptable(PERIOD_MSEC);
+      sleepInterruptable(cycleBegin, PERIOD_MSEC);
       break;
     case (ConfigureMode):
       break;

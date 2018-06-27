@@ -82,7 +82,7 @@ void setupArchitecture() {
   // nothing to be done here
 }
 
-void sleepInterruptable(unsigned long periodMsec) {
+void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMsec) {
   log(CLASS_MAIN, Info, "L.Sleep(%lums)...", periodMsec);
 }
 
