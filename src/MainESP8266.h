@@ -14,6 +14,8 @@
 #include <Servo.h>
 #include <Wire.h>
 
+#define HARDWARE_TEST_STEP_DELAY_MS 2000
+
 #define SERVO0_STEP_DEGREES (SERVO0_RANGE_DEGREES / MAX_SERVO_STEPS)
 #define SERVO1_STEP_DEGREES (SERVO1_RANGE_DEGREES / MAX_SERVO_STEPS)
 
@@ -235,7 +237,7 @@ bool haveToInterrupt() {
 
 void performHardwareTest() {
   log(CLASS_MAIN, Debug, "HW test");
-  delay(2000);
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
   ios('r', false);
   ios('y', false);
   ios('w', false);
@@ -243,46 +245,46 @@ void performHardwareTest() {
   lcdImg('l', NULL);
 
   log(CLASS_MAIN, Debug, "..Face test");
-  delay(2000);
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
   lcdImg('c', initImage);
   log(CLASS_MAIN, Debug, "..Arms down");
-  delay(2000);
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
   arms(0, 0, 100);
   log(CLASS_MAIN, Debug, "..R. arm up");
-  delay(2000);
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
   arms(0, 3, 100);
   log(CLASS_MAIN, Debug, "..Left arm up");
-  delay(2000);
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
   arms(3, 3, 100);
   log(CLASS_MAIN, Debug, "..Arms down");
-  delay(2000);
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
   arms(0, 0, 100);
   log(CLASS_MAIN, Debug, "..Red led on");
-  delay(2000);
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
   ios('r', true);
   log(CLASS_MAIN, Debug, "..Red led off");
-  delay(2000);
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
   ios('r', false);
   log(CLASS_MAIN, Debug, "..Y. led on");
-  delay(2000);
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
   ios('y', true);
   log(CLASS_MAIN, Debug, "..Y. led off");
-  delay(2000);
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
   ios('y', false);
   log(CLASS_MAIN, Debug, "..W. led on");
-  delay(2000);
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
   ios('w', true);
   log(CLASS_MAIN, Debug, "..W. led off");
-  delay(2000);
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
   ios('w', false);
   log(CLASS_MAIN, Debug, "..Fan on");
-  delay(2000);
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
   ios('f', true);
   log(CLASS_MAIN, Debug, "..Fan off");
-  delay(2000);
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
   ios('f', false);
   log(CLASS_MAIN, Debug, "..Random %lu %lu %lu", random(10000), random(10000), random(10000));
-  delay(2000);
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
 }
 
 /*****************/
