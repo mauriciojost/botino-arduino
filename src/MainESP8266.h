@@ -157,7 +157,7 @@ void bitmapToLcd(uint8_t bitmap[]) {
 
 bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries) {
   wl_status_t status;
-  log(CLASS_MAIN, Info, "Conn. to %s...", ssid);
+  log(CLASS_MAIN, Info, "To '%s'/'%s'...", ssid, pass);
 
   if (skipIfConnected) {
     log(CLASS_MAIN, Info, "Conn.?");
@@ -168,7 +168,9 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
     }
   } else {
     log(CLASS_MAIN, Info, "W.Off.");
+    WiFi.disconnect();
     WiFi.mode(WIFI_OFF); // to be removed after SDK update to 1.5.4
+    delay(3000);
   }
 
   WiFi.mode(WIFI_STA);
