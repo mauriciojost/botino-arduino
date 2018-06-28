@@ -148,9 +148,7 @@ public:
     	return; // nothing to be syncd
     }
 
-    ParamStream httpBodyResponse;
     const char* actorName = actor->getName();
-    Buffer<MAX_JSON_STR_LENGTH> jsonAuxBuffer;
     bot->getInfosJson(&jsonAuxBuffer, actorIndex);
     urlAuxBuffer.fill(DWEET_IO_API_URL_INFOS, actorName);
     log(CLASS_PROPSYNC, Debug, "UpdInfos:%s", actorName);
