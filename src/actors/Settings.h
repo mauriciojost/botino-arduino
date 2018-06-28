@@ -16,6 +16,8 @@
 
 #define CLASS_SETTINGS "ST"
 
+#define INFO_BUFFER_LENGTH 256
+
 enum SettingsProps {
   SettingsClearStackTraceProp = 0, // boolean, clear the stack trace log if full
   SettingsLogLevelProp,            // integer, define the log level
@@ -32,6 +34,9 @@ private:
   int logLevel;
   bool lcdDebug;
   int buttonRoutineUntil;
+
+  Buffer<INFO_BUFFER_LENGTH> infoBuffer;
+
   Timing freqConf;
 
 public:
@@ -42,6 +47,7 @@ public:
     lcdDebug = true;
     buttonRoutineUntil = 1;
     freqConf.setFrequency(Never);
+    infoBuffer.clear();
   }
 
   const char *getName() {
@@ -88,10 +94,12 @@ public:
     return SettingsPropsDelimiter;
   }
 
-  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}
+  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {
+  	info->load(&infoBuffer);
+  }
 
   int getNroInfos() {
-    return 0;
+    return 1;
   }
 
   Timing *getFrequencyConfiguration() {
@@ -112,6 +120,10 @@ public:
 
   bool getLcdDebug() {
     return lcdDebug;
+  }
+
+  void setInfo(const char* s) {
+  	infoBuffer.fill(s);
   }
 };
 

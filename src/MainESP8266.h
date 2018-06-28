@@ -208,6 +208,11 @@ void loopArchitecture() {
     SaveCrash.print();
   }
 
+  // Report interesting information about the device
+  Buffer<INFO_BUFFER_LENGTH> infoBuffer;
+  infoBuffer.fill("crs: %d, ver: %s, upt: %lu", SaveCrash.count(), STRINGIFY(PROJ_VERSION), millis());
+  s->setInfo(infoBuffer.getBuffer());
+
   // Handle log level as per settings
   setLogLevel((char)(s->getLogLevel() % 4));
 
@@ -255,8 +260,8 @@ bool haveToInterrupt() {
   while(digitalRead(BUTTON0_PIN)) {
     holdCyc++;
     log(CLASS_MAIN, Debug, "%d", holdCyc);
-    digitalWrite(LED_INT_PIN, holdCyc % 2 == 0); // toggle
-    delay(1000);
+    digitalWrite(LED_INT_PIN, holdCyc % 2 != 0); // toggle
+    delay(500);
   }
   buttonHeld(holdCyc);
 
