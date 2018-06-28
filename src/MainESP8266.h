@@ -83,6 +83,8 @@ Servo servoLeft;
 Servo servoRight;
 Adafruit_SSD1306 lcd(-1);
 
+#define LED_INT_PIN LEDW_PIN // led showing interruptions
+
 void lcdClear(int line) {
   lcd.fillRect(0, line * 8, 128, 8, BLACK);
 }
@@ -220,21 +222,48 @@ void reactCommandCustom() {
   reactCommand(Telnet.getLastCommand().c_str());
 }
 
+void buttonHeld(int cycles) {
+	switch (cycles) {
+		case 0: {
+        int routine = (int)random(0, m.getSettings()->getNroRoutinesForButton());
+        log(CLASS_MAIN, Debug, "Routine %d...", routine);
+        m.getBody()->performMove(routine);
+      }
+      break;
+		case 1: {
+        m.getBody()->performMove(1);
+      }
+      break;
+		case 2: {
+        m.getBody()->performMove(2);
+      }
+      break;
+		default:
+      break;
+	}
+}
+
 bool haveToInterrupt() {
-  delay(100); // avoid bouncing
-  int level = digitalRead(BUTTON0_PIN);
-  if (ints > 0 && level) {
-    log(CLASS_MAIN, Debug, "Btn.hold(%d)...", ints);
-    log(CLASS_MAIN, Debug, "Done (%d)", ints);
-  } else if (ints > 0 && !level) { // pressed the button, but not currently being pressed
-    log(CLASS_MAIN, Debug, "Btn.quick(%d)...", ints);
-    int routine = (int)random(0, m.getSettings()->getNroRoutinesForButton());
-    log(CLASS_MAIN, Debug, "Routine %d...", routine);
-    m.getBody()->performMove(routine);
-    log(CLASS_MAIN, Debug, "Done (%d)", ints);
+
+  delay(100);
+
+  if (ints <= 0) {
+  	return false;
   }
-  digitalWrite(LEDW_PIN, HIGH);
+
+  int holdCyc = 0;
+  while(digitalRead(BUTTON0_PIN)) {
+    holdCyc++;
+    log(CLASS_MAIN, Debug, "%d", holdCyc);
+    digitalWrite(LED_INT_PIN, holdCyc % 2 == 0); // toggle
+    delay(1000);
+  }
+  buttonHeld(holdCyc);
+
+  log(CLASS_MAIN, Debug, "Done (%d)", ints);
+  digitalWrite(LED_INT_PIN, HIGH); // switch off
   ints = 0;
+
   return false;
 }
 
@@ -297,7 +326,7 @@ void performHardwareTest() {
 ICACHE_RAM_ATTR
 void buttonPressed() {
   ints++;
-  digitalWrite(LEDW_PIN, LOW);
+  digitalWrite(LED_INT_PIN, LOW); // switch on
 }
 
 void messageFunc(int line, const char *str, int size) {
