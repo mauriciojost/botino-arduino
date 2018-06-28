@@ -121,7 +121,7 @@ void lcdPrintLogLine(const char *logStr) {
 void displayUserInfo() {
   Buffer<32> aux;
   log(CLASS_MAIN, Debug, "USER INFO");
-  aux.fill("VER: %s", PROJ_VERSION);
+  aux.fill("VER: %s", STRINGIFY(PROJ_VERSION));
   messageFunc(0, aux.getBuffer(), 2);
   log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(3000);
