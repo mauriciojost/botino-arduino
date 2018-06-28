@@ -100,10 +100,14 @@ public:
   }
 
   void updateProps(int actorIndex) {
-    ParamStream httpBodyResponse;
     Actor *actor = bot->getActors()->get(actorIndex);
-    const char* actorName = actor->getName();
 
+    if (actor->getNroProps() == 0) {
+    	return; // nothing to be syncd
+    }
+
+    ParamStream httpBodyResponse;
+    const char* actorName = actor->getName();
     log(CLASS_PROPSYNC, Debug, "LoadTarg:%s", actorName);
     urlAuxBuffer.fill(DWEET_IO_API_URL_GET_TARGET, actorName);
     int errorCode = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
@@ -139,8 +143,12 @@ public:
   }
 
   void updateInfos(int actorIndex) {
-    ParamStream httpBodyResponse;
     Actor *actor = bot->getActors()->get(actorIndex);
+    if (actor->getNroInfos() == 0) {
+    	return; // nothing to be syncd
+    }
+
+    ParamStream httpBodyResponse;
     const char* actorName = actor->getName();
     Buffer<MAX_JSON_STR_LENGTH> jsonAuxBuffer;
     bot->getInfosJson(&jsonAuxBuffer, actorIndex);
