@@ -20,6 +20,8 @@ bool initWifiInit() {
   delay(1 * 2000);
   messageFunc(0, WIFI_SSID_INIT, 2);
   delay(1 * 2000);
+  messageFunc(0, WIFI_PASSWORD_INIT, 2);
+  delay(1 * 2000);
   bool connected = initWifi(WIFI_SSID_INIT, WIFI_PASSWORD_INIT, false, 20);
   if (connected) {
     messageFunc(0, "HOTSPOT OK", 2);
@@ -40,12 +42,10 @@ bool initWifiSteady() {
     const char *wifiSsid = s->getSsid();
     const char *wifiPass = s->getPass();
     log(CLASS_MAIN, Info, "W.steady");
-    messageFunc(0, "WIFI?", 2);
-    delay(1 * 2000);
-    messageFunc(0, wifiSsid, 2);
-    delay(1 * 2000);
     bool connected = initWifi(wifiSsid, wifiPass, connectedOnce, 10);
     if (!connectedOnce) {
+      messageFunc(0, "WIFI?", 2);
+      delay(1 * 2000);
       messageFunc(0, wifiSsid, 2);
       delay(1 * 2000);
       if (connected) { // first time
