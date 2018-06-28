@@ -19,7 +19,7 @@
 #endif // PROJ_VERSION
 
 #define DELAY_MS_SPI 3
-#define FRAG_TO_SLEEP_MS_MAX 2000 // maximum sleeping time for which the module can be unresponsive
+#define FRAG_TO_SLEEP_MS_MAX 1000 // maximum sleeping time for which the module can be unresponsive
 
 #ifndef PERIOD_SEC
 #define PERIOD_SEC 60
