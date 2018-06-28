@@ -210,7 +210,7 @@ void loopArchitecture() {
 
   // Report interesting information about the device
   Buffer<INFO_BUFFER_LENGTH> infoBuffer;
-  infoBuffer.fill("crs: %d, ver: %s, upt: %lu", SaveCrash.count(), STRINGIFY(PROJ_VERSION), millis());
+  infoBuffer.fill("crs %d / ver %s / upt %lu h", SaveCrash.count(), STRINGIFY(PROJ_VERSION), (millis() / 1000) / 3600);
   s->setInfo(infoBuffer.getBuffer());
 
   // Handle log level as per settings
@@ -387,14 +387,15 @@ int httpGet(const char *url, ParamStream *response) {
   httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
 
   int errorCode = httpClient.GET();
-  log(CLASS_MAIN, Debug, "GET:%d..%s", errorCode, tailStr(url, URL_PRINT_MAX_LENGTH));
+  log(CLASS_MAIN, Debug, "> GET:%d..%s", errorCode, tailStr(url, URL_PRINT_MAX_LENGTH));
 
   if (errorCode == HTTP_OK) {
     if (response != NULL) {
       httpClient.writeToStream(response);
     }
   } else {
-    log(CLASS_MAIN, Error, "GET:%d %s", errorCode, httpClient.errorToString(errorCode).c_str());
+    log(CLASS_MAIN, Error, "> GET:%d %s", errorCode, httpClient.errorToString(errorCode).c_str());
+    log(CLASS_MAIN, Error, "< %s", httpClient.getString().c_str());
   }
   httpClient.end();
 
@@ -409,14 +410,16 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
   httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
 
   int errorCode = httpClient.POST(body);
-  log(CLASS_MAIN, Debug, "POST:%d..%s", errorCode, tailStr(url, URL_PRINT_MAX_LENGTH));
+  log(CLASS_MAIN, Debug, "> POST:'%s'", body);
+  log(CLASS_MAIN, Debug, "> POST:%d..%s", errorCode, tailStr(url, URL_PRINT_MAX_LENGTH));
 
   if (errorCode == HTTP_OK) {
     if (response != NULL) {
       httpClient.writeToStream(response);
     }
   } else {
-    log(CLASS_MAIN, Error, "POST:%d %s", errorCode, httpClient.errorToString(errorCode).c_str());
+    log(CLASS_MAIN, Error, "> POST:%d %s", errorCode, httpClient.errorToString(errorCode).c_str());
+    log(CLASS_MAIN, Error, "< %s", httpClient.getString().c_str());
   }
   httpClient.end();
 
