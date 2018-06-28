@@ -15,7 +15,7 @@
 #define DWEET_IO_API_URL_POST_CURRENT "http://dweet.io/dweet/for/" DEVICE_NAME "-%s-current"
 #define DWEET_IO_API_URL_POST_TARGET "http://dweet.io/dweet/for/" DEVICE_NAME "-%s-target"
 #define DWEET_IO_API_URL_GET_TARGET "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-%s-target"
-#define DWEET_IO_API_URL_INFOS "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-%s-infos"
+#define DWEET_IO_API_URL_POST_INFOS  "http://dweet.io/dweet/for/" DEVICE_NAME "-%s-infos"
 
 enum PropSyncProps {
   PropSyncFreqProp = 0,
@@ -150,7 +150,7 @@ public:
 
     const char* actorName = actor->getName();
     bot->getInfosJson(&jsonAuxBuffer, actorIndex);
-    urlAuxBuffer.fill(DWEET_IO_API_URL_INFOS, actorName);
+    urlAuxBuffer.fill(DWEET_IO_API_URL_POST_INFOS, actorName);
     log(CLASS_PROPSYNC, Debug, "UpdInfos:%s", actorName);
     httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort
   }
