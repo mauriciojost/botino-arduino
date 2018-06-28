@@ -150,12 +150,15 @@ However this method is not recommended.
 To upload the firmware just do: 
 
 ```
-export VERSION=`cat library.json | jshon -e version -u` && export PLATFORMIO_BUILD_FLAGS="'-D PROJ_VERSION=\"$VERSION\"'"
+export VERSION=`cat library.json | jshon -e version -u`
+export VERSION=$(git rev-parse --short HEAD) 
 
 # then compile, upload, and display logs doing either:
 
 platformio run --target upload # via serial port
  ./serial_monitor 0
+
+ (you could also export PLATFORMIO_BUILD_FLAGS="'-D PROJ_VERSION=\"$VERSION\"'")
 
 # or:
 
