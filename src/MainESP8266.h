@@ -197,6 +197,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
 }
 
 void loopArchitecture() {
+  Buffer<INFO_BUFFER_LENGTH> auxBuffer;
   Settings *s = m.getSettings();
 
   // Handle stack-traces stored in memory
@@ -216,11 +217,18 @@ void loopArchitecture() {
   // Handle log level as per settings
   setLogLevel((char)(s->getLogLevel() % 4));
 
-  // Handle telnet log server
+  // Handle telnet log server and commands
   Telnet.handle();
 
   // Handle OTA
   ArduinoOTA.handle();
+
+  // Handle serial commands
+  auxBuffer.clear();
+  if (Serial.available()) {
+  	Serial.readBytesUntil('\n', auxBuffer.getUnsafeBuffer(), INFO_BUFFER_LENGTH);
+  	command(auxBuffer.getBuffer());
+  }
 }
 
 void reactCommandCustom() {
