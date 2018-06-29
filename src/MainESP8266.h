@@ -257,8 +257,10 @@ bool haveToInterrupt() {
   while(digitalRead(BUTTON0_PIN)) {
     holdCyc++;
     log(CLASS_MAIN, Debug, "%d", holdCyc);
-    digitalWrite(LED_INT_PIN, holdCyc % 2 != 0); // toggle
-    delay(500);
+    digitalWrite(LED_INT_PIN, LOW); // switch on
+    delay(100);
+    digitalWrite(LED_INT_PIN, HIGH); // switch off
+    delay(900);
   }
   bool ret = buttonHeld(holdCyc);
 
