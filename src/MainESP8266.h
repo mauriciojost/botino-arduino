@@ -227,7 +227,7 @@ void reactCommandCustom() {
   command(Telnet.getLastCommand().c_str());
 }
 
-void buttonHeld(int cycles) {
+bool buttonHeld(int cycles) {
 	switch (cycles) {
 		case 0: {
         int routine = (int)random(0, m.getSettings()->getNroRoutinesForButton());
@@ -239,13 +239,10 @@ void buttonHeld(int cycles) {
         m.getBody()->performMove(1);
       }
       break;
-		case 2: {
-        m.getBody()->performMove(2);
-      }
-      break;
 		default:
-      break;
+			return true;
 	}
+	return false;
 }
 
 bool haveToInterrupt() {
@@ -263,13 +260,13 @@ bool haveToInterrupt() {
     digitalWrite(LED_INT_PIN, holdCyc % 2 != 0); // toggle
     delay(500);
   }
-  buttonHeld(holdCyc);
+  bool ret = buttonHeld(holdCyc);
 
   log(CLASS_MAIN, Debug, "Done (%d)", ints);
   digitalWrite(LED_INT_PIN, HIGH); // switch off
   ints = 0;
 
-  return false;
+  return ret;
 }
 
 void performHardwareTest() {
