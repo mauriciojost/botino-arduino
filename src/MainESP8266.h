@@ -401,7 +401,6 @@ int httpGet(const char *url, ParamStream *response) {
     }
   } else {
     log(CLASS_MAIN, Error, "> GET:%d %s", errorCode, httpClient.errorToString(errorCode).c_str());
-    log(CLASS_MAIN, Error, "< %s", httpClient.getString().c_str());
   }
   httpClient.end();
 
@@ -425,7 +424,6 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
     }
   } else {
     log(CLASS_MAIN, Error, "> POST:%d %s", errorCode, httpClient.errorToString(errorCode).c_str());
-    log(CLASS_MAIN, Error, "< %s", httpClient.getString().c_str());
   }
   httpClient.end();
 
