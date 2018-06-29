@@ -65,12 +65,12 @@ bool initWifiSteady() {
   }
 }
 
-void reactCommand(const char *cmd) {
-  char command[COMMAND_MAX_LENGTH];
-  strncpy(command, cmd, COMMAND_MAX_LENGTH);
-  log(CLASS_MAIN, Info, "Command: %s", command);
+void command(const char *cmd) {
+  char buf[COMMAND_MAX_LENGTH];
+  strncpy(buf, cmd, COMMAND_MAX_LENGTH);
+  log(CLASS_MAIN, Info, "Command: %s", buf);
 
-  char *c = strtok(command, " ");
+  char *c = strtok(buf, " ");
 
   if (strcmp("conf", c) == 0) {
     log(CLASS_MAIN, Info, "-> Conf mode");

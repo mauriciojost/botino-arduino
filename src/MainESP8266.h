@@ -224,7 +224,7 @@ void loopArchitecture() {
 }
 
 void reactCommandCustom() {
-  reactCommand(Telnet.getLastCommand().c_str());
+  command(Telnet.getLastCommand().c_str());
 }
 
 void buttonHeld(int cycles) {

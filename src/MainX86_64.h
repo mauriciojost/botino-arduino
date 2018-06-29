@@ -18,7 +18,7 @@ void loopArchitecture() {
 	gets(str);
 	printf("Parsing: '%s'\n", str);
 	if (strlen(str) != 0) {
-    reactCommand(str);
+    command(str);
 	}
 }
 

@@ -45,7 +45,7 @@ void setup();
 void loop();
 bool initWifiInit();
 bool initWifiSteady();
-void reactCommand(const char *cmd); // TODO better integrate into the API
+void command(const char *cmd);
 ///////////////////////////////
 // To be provided by the Main of a specific architecture
 ///////////////////////////////
