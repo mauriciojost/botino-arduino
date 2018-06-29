@@ -274,6 +274,7 @@ bool haveToInterrupt() {
 
 void performHardwareTest() {
   log(CLASS_MAIN, Debug, "HW test");
+#ifdef HARDWARE_TEST
   delay(HARDWARE_TEST_STEP_DELAY_MS);
   ios('r', false);
   ios('y', false);
@@ -322,6 +323,14 @@ void performHardwareTest() {
   ios('f', false);
   log(CLASS_MAIN, Debug, "..Random %lu %lu %lu", random(10000), random(10000), random(10000));
   delay(HARDWARE_TEST_STEP_DELAY_MS);
+#endif
+
+  ios('r', false);
+  ios('y', false);
+  ios('w', false);
+  ios('f', false);
+  lcdImg('l', NULL);
+
 }
 
 /*****************/
@@ -529,9 +538,7 @@ void setupArchitecture() {
     messageFunc(0, "REGULAR mode", 2);
     delay(1000);
     displayUserInfo();
-#ifdef HARDWARE_TEST
     performHardwareTest();
-#endif
   }
 }
 
