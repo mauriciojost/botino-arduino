@@ -17,6 +17,14 @@
 #define HARDWARE_TEST_STEP_DELAY_MS 2000
 #define DUTY_CYCLE_THRESHOLD_PERC 50
 
+#ifndef USER_DELAY_MS
+#define USER_DELAY_MS 3000
+#endif // USER_DELAY_MS
+
+#ifndef WIFI_DELAY_MS
+#define WIFI_DELAY_MS 3000
+#endif // WIFI_DELAY_MS
+
 #define SERVO0_STEP_DEGREES (SERVO0_RANGE_DEGREES / MAX_SERVO_STEPS)
 #define SERVO1_STEP_DEGREES (SERVO1_RANGE_DEGREES / MAX_SERVO_STEPS)
 
@@ -124,23 +132,23 @@ void displayUserInfo() {
   aux.fill("VER: %s", STRINGIFY(PROJ_VERSION));
   messageFunc(0, aux.getBuffer(), 2);
   log(CLASS_MAIN, Debug, aux.getBuffer());
-  delay(3000);
+  delay(USER_DELAY_MS);
   aux.fill("NAM: %s", DEVICE_NAME);
   messageFunc(0, aux.getBuffer(), 2);
   log(CLASS_MAIN, Debug, aux.getBuffer());
-  delay(3000);
+  delay(USER_DELAY_MS);
   aux.fill("ID : %d", ESP.getChipId());
   messageFunc(0, aux.getBuffer(), 2);
   log(CLASS_MAIN, Debug, aux.getBuffer());
-  delay(3000);
+  delay(USER_DELAY_MS);
   aux.fill("SSI: %s", WIFI_SSID_INIT);
   messageFunc(0, aux.getBuffer(), 2);
   log(CLASS_MAIN, Debug, aux.getBuffer());
-  delay(3000);
+  delay(USER_DELAY_MS);
   aux.fill("PAS: %s", WIFI_PASSWORD_INIT);
   messageFunc(0, aux.getBuffer(), 2);
   log(CLASS_MAIN, Debug, aux.getBuffer());
-  delay(3000);
+  delay(USER_DELAY_MS);
 }
 
 void bitmapToLcd(uint8_t bitmap[]) {
@@ -173,7 +181,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
     log(CLASS_MAIN, Info, "W.Off.");
     WiFi.disconnect();
     WiFi.mode(WIFI_OFF); // to be removed after SDK update to 1.5.4
-    delay(3000);
+    delay(WIFI_DELAY_MS);
   }
 
   WiFi.mode(WIFI_STA);
@@ -181,7 +189,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
 
   int attemptsLeft = retries;
   while (true) {
-    delay(3000);
+    delay(WIFI_DELAY_MS);
     status = WiFi.status();
     log(CLASS_MAIN, Info, " ..retry(%d)", attemptsLeft);
     attemptsLeft--;
