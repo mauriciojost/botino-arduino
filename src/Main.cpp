@@ -68,7 +68,7 @@ bool initWifiSteady() {
 void command(const char *cmd) {
   char buf[COMMAND_MAX_LENGTH];
   strncpy(buf, cmd, COMMAND_MAX_LENGTH);
-  log(CLASS_MAIN, Info, "Command: %s", buf);
+  log(CLASS_MAIN, Info, "Command: '%s'", buf);
 
   char *c = strtok(buf, " ");
 
