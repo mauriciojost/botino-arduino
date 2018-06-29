@@ -37,6 +37,14 @@
 
 #define URL_PRINT_MAX_LENGTH 20
 
+#ifndef USER_DELAY_MS
+#define USER_DELAY_MS 3000
+#endif // USER_DELAY_MS
+
+#ifndef WIFI_DELAY_MS
+#define WIFI_DELAY_MS 3000
+#endif // WIFI_DELAY_MS
+
 ///////////////////////////////
 // Provided by generic Main
 ///////////////////////////////
