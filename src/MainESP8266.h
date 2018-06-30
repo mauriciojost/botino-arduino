@@ -62,7 +62,7 @@ extern "C" {
 #include "user_interface.h"
 }
 
-volatile unsigned char ints = 0;
+volatile unsigned char buttonInterrupts = 0;
 
 // clang-format off
 
@@ -224,13 +224,6 @@ void loopArchitecture() {
   // Handle OTA
   ArduinoOTA.handle();
 
-  // Handle serial commands
-  auxBuffer.clear();
-  if (Serial.available()) {
-  	Serial.readBytesUntil('\n', auxBuffer.getUnsafeBuffer(), INFO_BUFFER_LENGTH);
-  	auxBuffer.replace('\n', ' ');
-  	command(auxBuffer.getBuffer());
-  }
 }
 
 void reactCommandCustom() {
@@ -256,33 +249,39 @@ bool buttonHeld(int cycles) {
 }
 
 bool haveToInterrupt() {
-
   if (Serial.available()) {
-  	return true;
-  }
-
-  delay(100);
-
-  if (ints <= 0) {
+    // Handle serial commands
+    Buffer<INFO_BUFFER_LENGTH> auxBuffer;
+    log(CLASS_MAIN, Debug, "Serial available, listening...");
+    auxBuffer.clear();
+  	Serial.readBytesUntil('\n', auxBuffer.getUnsafeBuffer(), INFO_BUFFER_LENGTH);
+  	auxBuffer.replace('\n', '\0');
+  	auxBuffer.replace('\r', '\0');
+  	command(auxBuffer.getBuffer());
   	return false;
-  }
-
-  int holdCyc = 0;
-  while(digitalRead(BUTTON0_PIN)) {
-    holdCyc++;
-    log(CLASS_MAIN, Debug, "%d", holdCyc);
-    digitalWrite(LED_INT_PIN, LOW); // switch on
-    delay(100);
+  } else if (buttonInterrupts > 0) {
+    // Handle button commands
+    log(CLASS_MAIN, Debug, "Button command (%d)", buttonInterrupts);
+    int holds = 0;
+    delay(50); // anti-bouncing
+    while(digitalRead(BUTTON0_PIN)) {
+      holds++;
+      log(CLASS_MAIN, Debug, "%d", holds);
+      digitalWrite(LED_INT_PIN, LOW); // switch on
+      delay(100);
+      digitalWrite(LED_INT_PIN, HIGH); // switch off
+      delay(900);
+    }
+    bool interruptMe = buttonHeld(holds);
     digitalWrite(LED_INT_PIN, HIGH); // switch off
-    delay(900);
+    buttonInterrupts = 0;
+
+    log(CLASS_MAIN, Debug, "Done");
+    return interruptMe;
+  } else {
+    // Nothing to handle, no reason to interrupt
+    return false;
   }
-  bool ret = buttonHeld(holdCyc);
-
-  log(CLASS_MAIN, Debug, "Done (%d)", ints);
-  digitalWrite(LED_INT_PIN, HIGH); // switch off
-  ints = 0;
-
-  return ret;
 }
 
 void performHardwareTest() {
@@ -352,7 +351,7 @@ void performHardwareTest() {
 
 ICACHE_RAM_ATTR
 void buttonPressed() {
-  ints++;
+  buttonInterrupts++;
   digitalWrite(LED_INT_PIN, LOW); // switch on
 }
 
