@@ -227,6 +227,7 @@ void loopArchitecture() {
   auxBuffer.clear();
   if (Serial.available()) {
   	Serial.readBytesUntil('\n', auxBuffer.getUnsafeBuffer(), INFO_BUFFER_LENGTH);
+  	auxBuffer.replace('\n', ' ');
   	command(auxBuffer.getBuffer());
   }
 }
@@ -254,6 +255,10 @@ bool buttonHeld(int cycles) {
 }
 
 bool haveToInterrupt() {
+
+  if (Serial.available()) {
+  	return true;
+  }
 
   delay(100);
 
@@ -499,6 +504,7 @@ void setupArchitecture() {
 
   // Intialize the logging framework
   Serial.begin(115200);            // Initialize serial port
+  Serial.setTimeout(10000);        // Timeout for read
   Telnet.begin("ESP" DEVICE_NAME); // Intialize the remote logging framework
   ArduinoOTA.begin();              // Intialize OTA
   lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C);
