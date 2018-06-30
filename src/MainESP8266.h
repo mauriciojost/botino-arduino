@@ -216,6 +216,7 @@ void loopArchitecture() {
 
   // Handle log level as per settings
   setLogLevel((char)(s->getLogLevel() % 4));
+  Serial.setDebugOutput(s->getLogLevel() > 4); // deep HW logs
 
   // Handle telnet log server and commands
   Telnet.handle();
