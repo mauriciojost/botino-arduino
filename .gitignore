@@ -122,3 +122,5 @@
 /output2
 /simulator.bin
 /.simulator.bin
+/profiles/demo.prof
+/profiles/dev1.prof

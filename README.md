@@ -151,18 +151,19 @@ To upload the firmware just do:
 
 ```
 export VERSION=`cat library.json | jshon -e version -u`
+# or
 export VERSION=$(git rev-parse --short HEAD) 
 
 # then compile, upload, and display logs doing either:
 
-platformio run --target upload # via serial port
+MAVARDUINO_CONFIG_FILE_FLAGS=`cat profiles/botino.prof` platformio run --target upload # via serial port
  ./serial_monitor 0
 
  (you could also export PLATFORMIO_BUILD_FLAGS="'-D PROJ_VERSION=\"$VERSION\"'")
 
 # or:
 
-platformio run --target upload --upload-port <IP> # OTA
+MAVARDUINO_CONFIG_FILE_FLAGS=`cat profiles/botino.prof` platformio run --target upload --upload-port <IP> # OTA
 telnet <IP>
 
 ```

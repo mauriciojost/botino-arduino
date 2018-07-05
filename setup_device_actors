@@ -37,17 +37,17 @@ curl_cmd $url
 # Set up body
 url="http://dweet.io/dweet/for/$DEVICE-body-target"
 url+="?"
-url+="mv0=LryMp1B88W9.W9.Zz." # move fun
+url+="mv0=LryA99A09Fs2W5.Zz." # move fun
 url+="&"
 url+="t0=0" # timing fun
 url+="&"
-url+="mv1=Mc4W9.Zz." # move clock
+url+="mv1=Mc4W9." # move clock
 url+="&"
 url+="t1=201016060" # timing clock
 url+="&"
-url+="mv2=B99M13W9.F0.W9.M13W9.Zz." # move standup
+url+="mv2=B99M13W9.F0.W9.M13W9.W9.Zz." # move standup
 url+="&"
-url+="t2=177103000" # timing standup
+url+="t2=177101500" # timing standup
 url+="&"
 url+="mv3=LwyM04W9.Zz." # move H20
 url+="&"
@@ -57,7 +57,7 @@ curl_cmd $url
 
 # Set up properties synchronizer
 url="http://dweet.io/dweet/for/$DEVICE-propsync-target?"
-url+="freq=201010560" # sync all properties every 15 minutes
+url+="freq=201011560" # sync all properties every 15 minutes
 url+="&"
 url+="updateprops=true"
 url+="&"

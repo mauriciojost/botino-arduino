@@ -11,15 +11,15 @@ pipeline {
       steps {
         script {
           sshagent(['bitbucket_key']) {
-            sh 'export GIT_COMMITTER_NAME=mjost && export GIT_COMMITTER_EMAIL=mauriciojost@gmail.com && set && ./pull_dependencies'
-            sh 'platformio run'
+            sh 'export GIT_COMMITTER_NAME=jenkinsbot && export GIT_COMMITTER_EMAIL=mauriciojostx@gmail.com && set && ./pull_dependencies'
+            sh 'PLATFORMIO_BUILD_FLAGS="`cat profiles/botino.prof`" platformio run'
           }
         }
       }
     }
     stage('Test') {
       steps {
-        sh './launch_tests'
+        sh 'PLATFORMIO_BUILD_FLAGS="`cat profiles/test.prof`" ./launch_tests'
       }
     }
   }
