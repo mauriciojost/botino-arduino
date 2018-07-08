@@ -87,11 +87,7 @@ void command(const char *cmd) {
 
   char *c = strtok(buf, " ");
 
-  if (strcmp("conf", c) == 0) {
-    log(CLASS_MAIN, Info, "-> Conf mode");
-    m.getBot()->setMode(ConfigureMode);
-    return;
-  } else if (strcmp("move", c) == 0) {
+  if (strcmp("move", c) == 0) {
     c = strtok(NULL, " ");
     if (c == NULL) {
       log(CLASS_MAIN, Error, "Argument needed:\n  move <move>");
@@ -165,8 +161,6 @@ void loop() {
     case (RunMode):
       m.loop(false, false, true);
       sleepInterruptable(cycleBegin, PERIOD_MSEC);
-      break;
-    case (ConfigureMode):
       break;
     default:
       m.getBot()->setMode(RunMode);

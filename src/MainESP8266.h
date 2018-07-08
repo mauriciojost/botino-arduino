@@ -578,8 +578,7 @@ void setupArchitecture() {
 
   log(CLASS_MAIN, Debug, "Setup commands");
   Telnet.setCallBackProjectCmds(reactCommandCustom);
-  String helpCli("\n  conf   : go to configuration mode"
-                 "\n  run    : go to run mode"
+  String helpCli("\n  run    : go to run mode"
                  "\n  get    : display actors properties"
                  "\n  set    : set an actor property (example: 'set body msg0 HELLO')"
                  "\n  move   : execute a move (example: 'move A00C55')"
