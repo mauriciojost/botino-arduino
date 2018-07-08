@@ -117,7 +117,7 @@ void lcdPrintLogLine(const char *logStr) {
   lcd.setTextColor(WHITE);
   lcd.setCursor(0, line * 8);
   lcd.println(logStr);
-  line = (line + 1) % 8;
+  line = (line + 1) % 2;
   lcdHighlight(line); // clear next line too (to indicate move)
   lcd.display();
   delay(DELAY_MS_SPI);
