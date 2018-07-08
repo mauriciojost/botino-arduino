@@ -50,6 +50,8 @@
 
 #define DEV_USER_DELAY_MS 1000
 
+#define LOG_LINE 8
+
 #ifndef WIFI_SSID_INIT
 #error "Must provide WIFI_SSID_INIT"
 #define WIFI_SSID_INIT ""
@@ -98,14 +100,12 @@ void lcdPrintLogLine(const char *logStr) {
   if (!m.getSettings()->getLcdDebug()) {
     return;
   }
-  static int line = 0;
   lcd.setTextWrap(false);
-  lcdClear(line); // clear line
+  lcdClear(LOG_LINE); // clear line
   lcd.setTextSize(1);
   lcd.setTextColor(WHITE);
-  lcd.setCursor(0, line * 8);
+  lcd.setCursor(0, LOG_LINE * 8);
   lcd.println(logStr);
-  line = (line + 1) % 1;
   lcd.display();
   delay(DELAY_MS_SPI);
 }
