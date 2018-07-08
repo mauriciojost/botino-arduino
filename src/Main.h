@@ -54,6 +54,7 @@ void loop();
 bool initWifiInit();
 bool initWifiSteady();
 void command(const char *cmd);
+void messageFuncExt(int line, int size, const char *format, ...);
 ///////////////////////////////
 // To be provided by the Main of a specific architecture
 ///////////////////////////////

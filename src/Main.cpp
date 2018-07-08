@@ -65,6 +65,16 @@ bool initWifiSteady() {
   }
 }
 
+void messageFuncExt(int line, int size, const char *format, ...) {
+  char buffer[MAX_LOG_MSG_LENGTH];
+  va_list args;
+  va_start(args, format);
+  vsnprintf(buffer, MAX_LOG_MSG_LENGTH, format, args);
+  buffer[MAX_LOG_MSG_LENGTH - 1] = 0;
+  messageFunc(0, buffer, size);
+  va_end(args);
+}
+
 void command(const char *cmd) {
 
   char buf[COMMAND_MAX_LENGTH];

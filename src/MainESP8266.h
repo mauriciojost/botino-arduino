@@ -240,7 +240,7 @@ void reactCommandCustom() {
 bool reactToButtonHeld(int cycles, bool onlyMsg) {
 	switch (cycles) {
 		case 0: {
-        messageFunc(0, "0.Random routine", 1);
+        messageFuncExt(0, 1, "0. Random routine");
 			  if (!onlyMsg) {
           int routine = (int)random(0, m.getSettings()->getNroRoutinesForButton());
           log(CLASS_MAIN, Debug, "Routine %d...", routine);
@@ -253,6 +253,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
 			  if (!onlyMsg) {
           Settings *s = m.getSettings();
           s->setLogLevel(s->getLogLevel() + 1);
+          messageFuncExt(0, 1, "0. Log %d", s->getLogLevel());
 			  }
       }
       break;
@@ -261,6 +262,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
 			  if (!onlyMsg) {
           Settings *s = m.getSettings();
           s->setLcdDebug(!s->getLcdDebug());
+          messageFuncExt(0, 1, "0. Lcd %d", s->getLcdDebug());
 			  }
       }
       break;
