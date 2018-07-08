@@ -48,6 +48,8 @@
 #define SERVO1_RANGE_DEGREES 140
 #endif // SERVO1_RANGE_DEGREES
 
+#define DEV_USER_DELAY_MS 1000
+
 #ifndef WIFI_SSID_INIT
 #error "Must provide WIFI_SSID_INIT"
 #define WIFI_SSID_INIT ""
@@ -225,12 +227,6 @@ void loopArchitecture() {
   setLogLevel((char)(s->getLogLevel() % 4));
   Serial.setDebugOutput(s->getLogLevel() > 4); // deep HW logs
 
-  // Handle telnet log server and commands
-  Telnet.handle();
-
-  // Handle OTA
-  ArduinoOTA.handle();
-
 }
 
 void reactCommandCustom() {
@@ -240,7 +236,7 @@ void reactCommandCustom() {
 bool reactToButtonHeld(int cycles, bool onlyMsg) {
 	switch (cycles) {
 		case 0: {
-        messageFuncExt(0, 1, "0. Random routine");
+        messageFuncExt(0, 2, "0. Random routine");
 			  if (!onlyMsg) {
           int routine = (int)random(0, m.getSettings()->getNroRoutinesForButton());
           log(CLASS_MAIN, Debug, "Routine %d...", routine);
@@ -249,25 +245,48 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
       }
       break;
 		case 1: {
-        messageFunc(0, "1.Set log level", 1);
+        messageFunc(0, "1.Set log level", 2);
 			  if (!onlyMsg) {
           Settings *s = m.getSettings();
-          s->setLogLevel(s->getLogLevel() + 1);
-          messageFuncExt(0, 1, "0. Log %d", s->getLogLevel());
+          s->setLogLevel((s->getLogLevel() + 1) % 5);
+          messageFuncExt(0, 1, "Log level %d", s->getLogLevel());
 			  }
       }
       break;
 		case 2: {
-        messageFunc(0, "1.Set LCD log", 1);
+        messageFunc(0, "2.Set LCD log", 2);
 			  if (!onlyMsg) {
           Settings *s = m.getSettings();
           s->setLcdDebug(!s->getLcdDebug());
-          messageFuncExt(0, 1, "0. Lcd %d", s->getLcdDebug());
+          messageFuncExt(0, 1, "Lcd log %d", s->getLcdDebug());
+			  }
+      }
+      break;
+		case 3: {
+        messageFunc(0, "3.Clear crash", 2);
+			  if (!onlyMsg) {
+          Settings *s = m.getSettings();
+          s->setClear(!s->getClear());
+          messageFuncExt(0, 1, "Clear crash %d", s->getClear());
+			  }
+      }
+      break;
+		case 4: {
+        messageFunc(0, "4.OTA/telnet", 2);
+			  if (!onlyMsg) {
+          messageFuncExt(0, 1, "OTA/telnet (wifi)...");
+          initWifiSteady();
+          for (int i = 0; i < 20; i++) {
+            messageFuncExt(0, 1, "telnet %s (%d)", WiFi.localIP().toString().c_str(), i);
+            Telnet.handle(); // Handle telnet log server and commands
+            ArduinoOTA.handle();
+            delay(DEV_USER_DELAY_MS);
+          }
 			  }
       }
       break;
 		default:{
-        messageFunc(0, "x.Abort", 1);
+        messageFunc(0, "Abort", 1);
       }
       break;
 	}
@@ -567,21 +586,9 @@ void setupArchitecture() {
                  "\n");
   Telnet.setHelpProjectsCmds(helpCli);
 
-  if (digitalRead(BUTTON0_PIN) == HIGH) {
-    log(CLASS_MAIN, Info, "CLI mode");
-    messageFunc(0, "CLI mode", 2);
-    delay(1000);
-    initWifiSteady();
-    m.getBot()->setMode(ConfigureMode);
-    log(CLASS_MAIN, Info, "telnet");
-    log(CLASS_MAIN, Info, "  %s", WiFi.localIP().toString().c_str());
-  } else {
-    log(CLASS_MAIN, Info, "REGULAR mode");
-    messageFunc(0, "REGULAR mode", 2);
-    delay(1000);
-    displayUserInfo();
-    performHardwareTest();
-  }
+  delay(1000);
+  displayUserInfo();
+  performHardwareTest();
 }
 
 void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {

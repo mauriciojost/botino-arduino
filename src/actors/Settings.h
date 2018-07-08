@@ -110,6 +110,10 @@ public:
     return clearStackTrace;
   }
 
+  void setClear(bool b) {
+    clearStackTrace = b;
+  }
+
   int getLogLevel() {
     return logLevel;
   }
