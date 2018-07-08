@@ -212,7 +212,7 @@ void loopArchitecture() {
 
   // Handle log level as per settings
   setLogLevel((char)(s->getLogLevel() % 4));
-  Serial.setDebugOutput(s->getLogLevel() > 4); // deep HW logs
+  Serial.setDebugOutput(s->getLogLevel() < 0); // deep HW logs
 
 }
 
