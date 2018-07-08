@@ -276,7 +276,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
 			  if (!onlyMsg) {
           messageFuncExt(0, 1, "OTA/telnet (wifi)...");
           initWifiSteady();
-          for (int i = 0; i < 20; i++) {
+          for (int i = 0; i < 60; i++) {
             messageFuncExt(0, 1, "telnet %s (%d)", WiFi.localIP().toString().c_str(), i);
             Telnet.handle(); // Handle telnet log server and commands
             ArduinoOTA.handle();
