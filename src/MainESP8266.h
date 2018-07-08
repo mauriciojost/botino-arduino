@@ -150,11 +150,6 @@ void bitmapToLcd(uint8_t bitmap[]) {
   }
 }
 
-void stopWifi() {
-  WiFi.disconnect();
-  WiFi.mode(WIFI_OFF); // to be removed after SDK update to 1.5.4
-}
-
 bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries) {
   wl_status_t status;
   log(CLASS_MAIN, Info, "To '%s'/'%s'...", ssid, pass);
@@ -168,7 +163,8 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
     }
   } else {
     log(CLASS_MAIN, Info, "W.Off.");
-    stopWifi();
+    WiFi.disconnect();
+    WiFi.mode(WIFI_OFF); // to be removed after SDK update to 1.5.4
     delay(WIFI_DELAY_MS);
   }
 
@@ -544,10 +540,6 @@ void setupArchitecture() {
   delay(DELAY_MS_SPI); // Initialize LCD
   setupLog(logLine);   // Initialize log callback
 
-  log(CLASS_MAIN, Debug, "Setup WiFi");
-  wifi_set_sleep_type(LIGHT_SLEEP_T);
-  stopWifi();
-
   log(CLASS_MAIN, Debug, "Setup pins");
   pinMode(LEDR_PIN, OUTPUT);
   pinMode(LEDW_PIN, OUTPUT);
@@ -590,7 +582,7 @@ void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {
       break;
     }
     unsigned long fragToSleepMs = MINIM(periodMs - spentMs, FRAG_TO_SLEEP_MS_MAX);
-    stopWifi();
+    wifi_set_sleep_type(LIGHT_SLEEP_T);
     delay(fragToSleepMs);
     spentMs = millis() - cycleBegin;
   }
