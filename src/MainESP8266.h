@@ -540,6 +540,9 @@ void setupArchitecture() {
   delay(DELAY_MS_SPI); // Initialize LCD
   setupLog(logLine);   // Initialize log callback
 
+  log(CLASS_MAIN, Debug, "Setup wifi sleep");
+  wifi_set_sleep_type(LIGHT_SLEEP_T);
+
   log(CLASS_MAIN, Debug, "Setup pins");
   pinMode(LEDR_PIN, OUTPUT);
   pinMode(LEDW_PIN, OUTPUT);
@@ -582,7 +585,6 @@ void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {
       break;
     }
     unsigned long fragToSleepMs = MINIM(periodMs - spentMs, FRAG_TO_SLEEP_MS_MAX);
-    wifi_set_sleep_type(LIGHT_SLEEP_T);
     delay(fragToSleepMs);
     spentMs = millis() - cycleBegin;
   }
