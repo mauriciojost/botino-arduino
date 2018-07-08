@@ -94,18 +94,6 @@ void lcdClear(int line) {
   lcd.fillRect(0, line * 8, 128, 8, BLACK);
 }
 
-void lcdHighlight(int line) {
-  int offset;
-  offset = 0;
-  lcd.fillRect(0, line * 8 + offset, 128, 8 - offset, BLACK);
-  offset = 2;
-  lcd.fillRect(0, line * 8 + offset, 128, 8 - offset, WHITE);
-  offset = 4;
-  lcd.fillRect(0, line * 8 + offset, 128, 8 - offset, BLACK);
-  offset = 6;
-  lcd.fillRect(0, line * 8 + offset, 128, 8 - offset, BLACK);
-}
-
 void lcdPrintLogLine(const char *logStr) {
   if (!m.getSettings()->getLcdDebug()) {
     return;
@@ -117,8 +105,7 @@ void lcdPrintLogLine(const char *logStr) {
   lcd.setTextColor(WHITE);
   lcd.setCursor(0, line * 8);
   lcd.println(logStr);
-  line = (line + 1) % 2;
-  lcdHighlight(line); // clear next line too (to indicate move)
+  line = (line + 1) % 1;
   lcd.display();
   delay(DELAY_MS_SPI);
 }
