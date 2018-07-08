@@ -58,6 +58,9 @@
 #define WIFI_PASSWORD_INIT ""
 #endif
 
+#define ONLY_SHOW_MSG true
+#define SHOW_MSG_AND_GO false
+
 extern "C" {
 #include "user_interface.h"
 }
@@ -234,20 +237,37 @@ void reactCommandCustom() {
   command(Telnet.getLastCommand().c_str());
 }
 
-bool buttonHeld(int cycles) {
+bool reactToButtonHeld(int cycles, bool onlyMsg) {
 	switch (cycles) {
 		case 0: {
-        int routine = (int)random(0, m.getSettings()->getNroRoutinesForButton());
-        log(CLASS_MAIN, Debug, "Routine %d...", routine);
-        m.getBody()->performMove(routine);
+        messageFunc(0, "0.Random routine", 1);
+			  if (!onlyMsg) {
+          int routine = (int)random(0, m.getSettings()->getNroRoutinesForButton());
+          log(CLASS_MAIN, Debug, "Routine %d...", routine);
+          m.getBody()->performMove(routine);
+			  }
       }
       break;
 		case 1: {
-        m.getBody()->performMove(1);
+        messageFunc(0, "1.Set log level", 1);
+			  if (!onlyMsg) {
+          Settings *s = m.getSettings();
+          s->setLogLevel(s->getLogLevel() + 1);
+			  }
       }
       break;
-		default:
-			return true;
+		case 2: {
+        messageFunc(0, "1.Set LCD log", 1);
+			  if (!onlyMsg) {
+          Settings *s = m.getSettings();
+          s->setLcdDebug(!s->getLcdDebug());
+			  }
+      }
+      break;
+		default:{
+        messageFunc(0, "x.Abort", 1);
+      }
+      break;
 	}
 	return false;
 }
@@ -271,12 +291,13 @@ bool haveToInterrupt() {
     while(digitalRead(BUTTON0_PIN)) {
       holds++;
       log(CLASS_MAIN, Debug, "%d", holds);
+      reactToButtonHeld(holds, ONLY_SHOW_MSG);
       digitalWrite(LED_INT_PIN, LOW); // switch on
       delay(100);
       digitalWrite(LED_INT_PIN, HIGH); // switch off
       delay(900);
     }
-    bool interruptMe = buttonHeld(holds);
+    bool interruptMe = reactToButtonHeld(holds, SHOW_MSG_AND_GO);
     digitalWrite(LED_INT_PIN, HIGH); // switch off
     buttonInterrupts = 0;
 

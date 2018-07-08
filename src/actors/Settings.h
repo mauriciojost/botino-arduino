@@ -114,12 +114,21 @@ public:
     return logLevel;
   }
 
+  void setLogLevel(int i) {
+    logLevel = i;
+  }
+
+
   int getNroRoutinesForButton() {
     return buttonRoutineUntil;
   }
 
   bool getLcdDebug() {
     return lcdDebug;
+  }
+
+  void setLcdDebug(bool b) {
+    lcdDebug = b;
   }
 
   void setInfo(const char* s) {
