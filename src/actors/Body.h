@@ -327,11 +327,10 @@ Codes:
         break;
 
       // SHORT MESSAGES
-      case 'S':
+      case 'S': {
           Buffer<3> s;
           s.fill("%c%c", c2, c3);
           log(CLASS_BODY, Debug, "Msg short '%s'", s.getBuffer());
-          Predictions::getPrediction(&pr);
           messageFunc(0, s.getBuffer(), 4);
         }
         break;
