@@ -197,12 +197,14 @@ Codes:
 
     switch (c1) {
 
+    	// WAIT
       case 'W': {
         int v = getInt(c2);
         log(CLASS_BODY, Debug, "Wait %d s", v);
         delay(v * 1000);
       } break;
 
+      // FACES
       case 'F':
         switch (c2) {
           case '0':
@@ -250,24 +252,31 @@ Codes:
         }
         break;
 
+      // ARMS FAST
       case 'A': {
         int l = getInt(c2);
         int r = getInt(c3);
         log(CLASS_BODY, Debug, "Armsf %d&%d", l, r);
         arms(l, r, ARM_FAST_STEPS);
       } break;
+
+      // ARMS MEDIUM
       case 'B': {
         int l = getInt(c2);
         int r = getInt(c3);
         log(CLASS_BODY, Debug, "Armsn %d&%d", l, r);
         arms(l, r, ARM_NORMAL_STEPS);
       } break;
+
+      // ARMS SLOW
       case 'C': {
         int l = getInt(c2);
         int r = getInt(c3);
         log(CLASS_BODY, Debug, "Armss %d&%d", l, r);
         arms(l, r, ARM_SLOW_STEPS);
       } break;
+
+      // MESSAGES
       case 'M':
         switch (c2) {
           case '0':
@@ -311,6 +320,9 @@ Codes:
         }
         break;
 
+
+
+      // IO (LEDS / FAN)
       case 'L':
         switch (c2) {
           case 'r': {
