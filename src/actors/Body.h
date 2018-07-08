@@ -43,9 +43,7 @@
 
 #define GET_POSE(a, b) (int)(((int)(a)) * 256 + (b))
 
-#define NRO_MSGS 4
-#define NRO_ROUTINES 4
-#define NRO_IMGS 4
+#define NRO_ROUTINES 8
 
 #define ARM_SLOW_STEPS 100
 #define ARM_NORMAL_STEPS 40
@@ -58,10 +56,18 @@ enum BodyProps {
   BodyMove1Prop,     // string, move for the routine 1 (same as above)
   BodyMove2Prop,     // string, move
   BodyMove3Prop,     // string, move
+  BodyMove4Prop,     // string, move
+  BodyMove5Prop,     // string, move
+  BodyMove6Prop,     // string, move
+  BodyMove7Prop,     // string, move
   BodyTime0Prop,     // time/freq of acting for the routine 0
   BodyTime1Prop,     // time/freq of acting for the routine 1
   BodyTime2Prop,     // time/freq
   BodyTime3Prop,     // time/freq
+  BodyTime4Prop,     // time/freq
+  BodyTime5Prop,     // time/freq
+  BodyTime6Prop,     // time/freq
+  BodyTime7Prop,     // time/freq
   BodyPropsDelimiter // delimiter of the configuration states
 };
 
@@ -450,6 +456,14 @@ public:
         return "mv2";
       case (BodyMove3Prop):
         return "mv3";
+      case (BodyMove4Prop):
+        return "mv4";
+      case (BodyMove5Prop):
+        return "mv5";
+      case (BodyMove6Prop):
+        return "mv6";
+      case (BodyMove7Prop):
+        return "mv7";
       case (BodyTime0Prop):
         return "t0"; // timing 0 (for routine 0)
       case (BodyTime1Prop):
@@ -458,6 +472,14 @@ public:
         return "t2";
       case (BodyTime3Prop):
         return "t3";
+      case (BodyTime4Prop):
+        return "t4";
+      case (BodyTime5Prop):
+        return "t5";
+      case (BodyTime6Prop):
+        return "t6";
+      case (BodyTime7Prop):
+        return "t7";
       default:
         return "";
     }
