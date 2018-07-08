@@ -18,11 +18,8 @@ function run_test() {
   export headers_unity="-I libs/Unity/src"
   export src_unity="libs/Unity/src/*.c"
 
-  #echo "HEADERS: $headers"
-  #echo "SOURCES C: $src_c"
-  #echo "SOURCES C++: $src_cpp"
-
-  g++ -Wno-deprecated-declarations -g -ggdb -o simulator.bin $flags $src_c $src_cpp $src_unity $main_src $headers -I src $headers_unity
+  cmd_l="g++ -Wno-deprecated-declarations -g -ggdb -o simulator.bin $flags "$PLATFORMIO_BUILD_FLAGS" $src_c $src_cpp $src_unity $main_src $headers -I src $headers_unity"
+  $cmd_l 
 
   ./simulator.bin
   #gdbtui simulator.bin
@@ -33,15 +30,6 @@ function run_test() {
 
 
 source mavarduino.conf
-
-if [ "$is_library" == "true" ]
-then
-  echo "### Testing a library"
-else
-  echo "### Testing a final project (not a library)"
-  platformio run
-fi
-
 
 for f in $(find test -name *.cpp)
 do
