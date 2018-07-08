@@ -286,7 +286,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
       }
       break;
 		default:{
-        messageFunc(0, "Abort", 1);
+        messageFunc(0, "Abort", 2);
       }
       break;
 	}
