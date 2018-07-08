@@ -175,6 +175,12 @@ Codes:
   Mp1 : show random future reading (with font size 1)
   Mq1 : show random quote (with font size 1)
 
+
+MESSAGE SHORT POSES: show a certain short message (a few letters)
+Codes:
+  Mxx : show message 'xx' (can be replaced by any characters)
+
+
 COMPOSED POSES: dances and other predefined moves usable as poses
 Codes:
   Da0 : dance 0
@@ -320,6 +326,15 @@ Codes:
         }
         break;
 
+      // SHORT MESSAGES
+      case 'S':
+          Buffer<3> s;
+          s.fill("%c%c", c2, c3);
+          log(CLASS_BODY, Debug, "Msg short '%s'", s.getBuffer());
+          Predictions::getPrediction(&pr);
+          messageFunc(0, s.getBuffer(), 4);
+        }
+        break;
 
 
       // IO (LEDS / FAN)
