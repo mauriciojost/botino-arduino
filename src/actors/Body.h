@@ -177,9 +177,9 @@ Codes:
 
 COMPOSED POSES: dances and other predefined moves usable as poses
 Codes:
-  S00 : dance 0
-  S01 : dance 1
-  S02 : dance 2
+  Da0 : dance 0
+  Da1 : dance 1
+  Da2 : dance 2
 
 
 WAIT POSES: wait a given number of seconds
@@ -359,7 +359,7 @@ Codes:
 
         switch (GET_POSE(c1, c2)) {
 
-          case GET_POSE('S', '0'):
+          case GET_POSE('D', 'a'):
             switch (c3) {
               case '0':
                 performMove(MOVE_DANCE0);
