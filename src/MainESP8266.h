@@ -155,7 +155,6 @@ void wifiOn() {
 }
 
 void wifiOff() {
-  wifi_set_sleep_type(LIGHT_SLEEP_T);
 }
 
 bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries) {
@@ -579,6 +578,9 @@ void setupArchitecture() {
   delay(DELAY_MS_SPI); // Initialize LCD
   setupLog(logLine);   // Initialize log callback
 
+  log(CLASS_MAIN, Debug, "Setup wifi");
+  wifi_set_sleep_type(LIGHT_SLEEP_T);
+
   log(CLASS_MAIN, Debug, "Setup pins");
   pinMode(LEDR_PIN, OUTPUT);
   pinMode(LEDW_PIN, OUTPUT);
@@ -613,7 +615,6 @@ void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {
   int dc = (spentMs * 100) / periodMs;
 
   log(CLASS_MAIN, Info, "Disable wifi...");
-  wifiOff();
 
   log(CLASS_MAIN, Info, "D.C.:%d%%", dc);
   if (dc > DUTY_CYCLE_THRESHOLD_PERC) {
