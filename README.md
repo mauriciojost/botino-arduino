@@ -156,14 +156,13 @@ export VERSION=$(git rev-parse --short HEAD)
 
 # then compile, upload, and display logs doing either:
 
-MAVARDUINO_CONFIG_FILE_FLAGS=`cat profiles/botino.prof` platformio run --target upload # via serial port
+export PLATFORMIO_BUILD_FLAGS="`cat profiles/demo.prof`" 
+
+platformio run --target upload 
+# or:
+platformio run --target upload --upload-port <IP> # OTA
+
  ./serial_monitor 0
 
- (you could also export PLATFORMIO_BUILD_FLAGS="'-D PROJ_VERSION=\"$VERSION\"'")
-
-# or:
-
-MAVARDUINO_CONFIG_FILE_FLAGS=`cat profiles/botino.prof` platformio run --target upload --upload-port <IP> # OTA
-telnet <IP>
 
 ```
