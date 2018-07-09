@@ -166,3 +166,10 @@ platformio run --target upload --upload-port <IP> # OTA
 
 
 ```
+
+To upload the `data` folder just do: 
+
+```
+PLATFORMIO_BUILD_FLAGS="`cat profiles/demo.prof`" platformio run --target buildfs
+PLATFORMIO_BUILD_FLAGS="`cat profiles/demo.prof`" platformio run --target uploadfs
+```
