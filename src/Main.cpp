@@ -163,7 +163,6 @@ void loop() {
       sleepInterruptable(cycleBegin, PERIOD_MSEC);
       break;
     default:
-      m.getBot()->setMode(RunMode);
       break;
   }
 }

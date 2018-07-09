@@ -188,10 +188,8 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
   }
 }
 
-void loopArchitecture() {
-  Buffer<INFO_BUFFER_LENGTH> auxBuffer;
+void handleStacktraces() {
   Settings *s = m.getSettings();
-
   // Handle stack-traces stored in memory
   if (s->getClear() && SaveCrash.count() > 0) {
     log(CLASS_MAIN, Debug, "Clearing stack-trcs");
@@ -200,6 +198,14 @@ void loopArchitecture() {
     log(CLASS_MAIN, Warn, "Stack-trcs (!!!)");
     SaveCrash.print();
   }
+}
+
+
+void loopArchitecture() {
+  Buffer<INFO_BUFFER_LENGTH> auxBuffer;
+  Settings *s = m.getSettings();
+
+  handleStacktraces();
 
   // Report interesting information about the device
   Buffer<INFO_BUFFER_LENGTH> infoBuffer;
@@ -209,6 +215,19 @@ void loopArchitecture() {
   // Handle log level as per settings
   setLogLevel((char)(s->getLogLevel() % 4));
   Serial.setDebugOutput(s->getLogLevel() < 0); // deep HW logs
+
+  switch (m.getBot()->getMode()) {
+    case (ConfigureMode): {
+        initWifiSteady();
+        messageFuncExt(0, 1, "telnet %s", WiFi.localIP().toString().c_str());
+        Telnet.handle(); // Handle telnet log server and commands
+        ArduinoOTA.handle(); // Handle on the air firmware load
+        delay(DEV_USER_DELAY_MS);
+      }
+      break;
+    default:
+      break;
+  }
 
 }
 
