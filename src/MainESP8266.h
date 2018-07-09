@@ -238,7 +238,15 @@ void reactCommandCustom() {
 bool reactToButtonHeld(int cycles, bool onlyMsg) {
 	switch (cycles) {
 		case 0: {
-        messageFuncExt(0, 2, "0. Random routine");
+        messageFuncExt(0, 2, "Zzz routine?");
+			  if (!onlyMsg) {
+          log(CLASS_MAIN, Debug, "Routine Zzz...");
+          m.getBody()->performMove("Zz.");
+			  }
+      }
+      break;
+		case 1: {
+        messageFuncExt(0, 2, "Random routine?");
 			  if (!onlyMsg) {
           int routine = (int)random(0, m.getSettings()->getNroRoutinesForButton());
           log(CLASS_MAIN, Debug, "Routine %d...", routine);
@@ -246,17 +254,17 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
 			  }
       }
       break;
-		case 1: {
-        messageFunc(0, "1.Set log level", 2);
+		case 2: {
+        messageFuncExt(0, 2, "Log level?");
 			  if (!onlyMsg) {
           Settings *s = m.getSettings();
-          s->setLogLevel((s->getLogLevel() + 1) % 5);
+          s->setLogLevel((s->getLogLevel() + 1) % 4);
           messageFuncExt(0, 1, "Log level %d", s->getLogLevel());
 			  }
       }
       break;
-		case 2: {
-        messageFunc(0, "2.Set LCD log", 2);
+		case 3: {
+        messageFuncExt(0, 2, "LCD log?");
 			  if (!onlyMsg) {
           Settings *s = m.getSettings();
           s->setLcdDebug(!s->getLcdDebug());
@@ -264,31 +272,35 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
 			  }
       }
       break;
-		case 3: {
-        messageFunc(0, "3.Clear crash", 2);
+		case 4: {
+        messageFuncExt(0, 2, "Clear crash?");
 			  if (!onlyMsg) {
-          Settings *s = m.getSettings();
-          s->setClear(!s->getClear());
-          messageFuncExt(0, 1, "Clear crash %d", s->getClear());
+			  	SaveCrash.clear();
+          messageFuncExt(0, 1, "Cleared");
 			  }
       }
       break;
-		case 4: {
-        messageFunc(0, "4.OTA/telnet", 2);
+		case 5: {
+        messageFuncExt(0, 2, "Config mode?");
 			  if (!onlyMsg) {
-          messageFuncExt(0, 1, "OTA/telnet (wifi)...");
-          initWifiSteady();
-          for (int i = 0; i < 60; i++) {
-            messageFuncExt(0, 1, "telnet %s (%d)", WiFi.localIP().toString().c_str(), i);
-            Telnet.handle(); // Handle telnet log server and commands
-            ArduinoOTA.handle();
-            delay(DEV_USER_DELAY_MS);
-          }
+			  	m.getBot()->setMode(ConfigureMode);
+          messageFuncExt(0, 1, "In config mode");
+			  }
+      }
+      break;
+		case 6: {
+        messageFuncExt(0, 2, "Run mode?");
+			  if (!onlyMsg) {
+			  	m.getBot()->setMode(RunMode);
+          messageFuncExt(0, 1, "In run mode");
 			  }
       }
       break;
 		default:{
-        messageFunc(0, "Abort", 2);
+        messageFunc(0, "Abort?", 2);
+			  if (!onlyMsg) {
+          messageFuncExt(0, 1, "Aborted");
+			  }
       }
       break;
 	}
