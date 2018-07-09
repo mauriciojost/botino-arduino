@@ -15,7 +15,7 @@
 #include <Module.h>
 
 #ifndef PROJ_VERSION
-#define PROJ_VERSION 1master
+#error "No PROJ_VERSION defined"
 #endif // PROJ_VERSION
 
 #define DELAY_MS_SPI 3
