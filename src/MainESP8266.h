@@ -150,6 +150,14 @@ void bitmapToLcd(uint8_t bitmap[]) {
   }
 }
 
+void wifiOn() {
+  WiFi.mode(WIFI_STA);
+}
+
+void wifiOff() {
+  wifi_set_sleep_type(LIGHT_SLEEP_T);
+}
+
 bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries) {
   wl_status_t status;
   log(CLASS_MAIN, Info, "To '%s'/'%s'...", ssid, pass);
@@ -168,7 +176,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
     delay(WIFI_DELAY_MS);
   }
 
-  WiFi.mode(WIFI_STA);
+  wifiOn();
   WiFi.begin(ssid, pass);
 
   int attemptsLeft = retries;
@@ -571,9 +579,6 @@ void setupArchitecture() {
   delay(DELAY_MS_SPI); // Initialize LCD
   setupLog(logLine);   // Initialize log callback
 
-  log(CLASS_MAIN, Debug, "Setup wifi sleep");
-  wifi_set_sleep_type(LIGHT_SLEEP_T);
-
   log(CLASS_MAIN, Debug, "Setup pins");
   pinMode(LEDR_PIN, OUTPUT);
   pinMode(LEDW_PIN, OUTPUT);
@@ -606,6 +611,10 @@ void setupArchitecture() {
 void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {
   unsigned long spentMs = millis() - cycleBegin;
   int dc = (spentMs * 100) / periodMs;
+
+  log(CLASS_MAIN, Info, "Disable wifi...");
+  wifiOff();
+
   log(CLASS_MAIN, Info, "D.C.:%d%%", dc);
   if (dc > DUTY_CYCLE_THRESHOLD_PERC) {
     log(CLASS_MAIN, Warn, "Cycle: %lums", spentMs);
