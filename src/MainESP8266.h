@@ -220,7 +220,7 @@ void loopArchitecture() {
   s->setInfo(infoBuffer.getBuffer());
 
   // Handle log level as per settings
-  setLogLevel((char)(s->getLogLevel() % 4));
+  setLogLevel((char)(s->getLogLevel()));
   Serial.setDebugOutput(s->getLogLevel() < 0); // deep HW logs
 
   switch (m.getBot()->getMode()) {
