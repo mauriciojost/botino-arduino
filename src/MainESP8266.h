@@ -581,6 +581,7 @@ void setupArchitecture() {
   setupLog(logLine);   // Initialize log callback
 
   log(CLASS_MAIN, Debug, "Setup wifi");
+  ESP.eraseConfig();
   wifi_set_sleep_type(LIGHT_SLEEP_T);
 
   log(CLASS_MAIN, Debug, "Setup pins");
