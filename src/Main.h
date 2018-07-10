@@ -18,8 +18,6 @@
 #error "No PROJ_VERSION defined"
 #endif // PROJ_VERSION
 
-#define DELAY_MS_SPI 3
-
 #ifndef FRAG_TO_SLEEP_MS_MAX
 #define FRAG_TO_SLEEP_MS_MAX 1000 // maximum sleeping time for which the module can be unresponsive
 #endif // FRAG_TO_SLEEP_MS_MAX

@@ -14,6 +14,8 @@
 #include <Servo.h>
 #include <Wire.h>
 
+#define DELAY_MS_SPI 3
+
 #define HARDWARE_TEST_STEP_DELAY_MS 2000
 #define DUTY_CYCLE_THRESHOLD_PERC 50
 
