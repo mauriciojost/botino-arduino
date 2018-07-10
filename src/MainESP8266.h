@@ -52,7 +52,7 @@
 
 #define DEV_USER_DELAY_MS 1000
 
-#define LOG_LINE 8
+#define LOG_LINE 7
 
 #ifndef WIFI_SSID_INIT
 #error "Must provide WIFI_SSID_INIT"
