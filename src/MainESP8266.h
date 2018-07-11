@@ -211,9 +211,10 @@ void handleStacktraces() {
 
 
 void logArchitecture() {
-  log(CLASS_MAIN, Debug, "Logs of architecture");
-  log(CLASS_MAIN, Debug, "Memory: %ud", ESP.getFreeHeap());
-  log(CLASS_MAIN, Debug, "Crashes: %d", SaveCrash.count());
+  log(CLASS_MAIN, Info, "\n\nLogs of architecture:");
+  log(CLASS_MAIN, Info, "Memory: %lu", ESP.getFreeHeap());
+  log(CLASS_MAIN, Info, "Crashes: %d", SaveCrash.count());
+  log(CLASS_MAIN, Info, "HTTP size: %d", httpClient.getSize());
 }
 
 void loopArchitecture() {
