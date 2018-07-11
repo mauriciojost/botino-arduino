@@ -210,6 +210,12 @@ void handleStacktraces() {
 }
 
 
+void logArchitecture() {
+  log(CLASS_MAIN, Debug, "Logs of architecture");
+  log(CLASS_MAIN, Debug, "Memory: %ud", ESP.getFreeHeap());
+  log(CLASS_MAIN, Debug, "Crashes: %d", SaveCrash.count());
+}
+
 void loopArchitecture() {
   Buffer<INFO_BUFFER_LENGTH> auxBuffer;
   Settings *s = m.getSettings();
@@ -224,6 +230,8 @@ void loopArchitecture() {
   // Handle log level as per settings
   setLogLevel((char)(s->getLogLevel()));
   Serial.setDebugOutput(s->getLogLevel() < 0); // deep HW logs
+
+  logArchitecture();
 
   switch (m.getBot()->getMode()) {
     case (ConfigureMode): {
