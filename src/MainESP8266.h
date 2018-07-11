@@ -596,11 +596,9 @@ void setupArchitecture() {
   WiFi.hostname(DEVICE_NAME);
   WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
 
-  log(CLASS_MAIN, Debug, "Setup HTTP");
+  log(CLASS_MAIN, Debug, "Setup http");
   httpClient.setTimeout(10);
-
-  log(CLASS_MAIN, Debug, "Setup WDT");
-  ESP.wdtEnable(1000);
+  httpClient.setReuse(true);
 
   log(CLASS_MAIN, Debug, "Setup pins");
   pinMode(LEDR_PIN, OUTPUT);
