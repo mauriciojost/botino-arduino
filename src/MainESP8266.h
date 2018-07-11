@@ -494,7 +494,8 @@ int httpGet(const char *url, ParamStream *response) {
       httpClient.writeToStream(response);
     }
   } else {
-    log(CLASS_MAIN, Error, "> GET:%d %s", errorCode, httpClient.errorToString(errorCode).c_str());
+    int e = httpClient.writeToStream(&Serial);
+    log(CLASS_MAIN, Error, "> GET(%d):%d %s", e, errorCode, httpClient.errorToString(errorCode).c_str());
   }
   httpClient.end();
 
@@ -518,7 +519,8 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
       httpClient.writeToStream(response);
     }
   } else {
-    log(CLASS_MAIN, Error, "> POST:%d %s", errorCode, httpClient.errorToString(errorCode).c_str());
+    int e = httpClient.writeToStream(&Serial);
+    log(CLASS_MAIN, Error, "> POST(%d):%d %s", e, errorCode, httpClient.errorToString(errorCode).c_str());
   }
   httpClient.end();
 
