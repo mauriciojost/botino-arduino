@@ -582,7 +582,9 @@ void setupArchitecture() {
 
   log(CLASS_MAIN, Debug, "Setup wifi");
   ESP.eraseConfig();
-  wifi_set_sleep_type(LIGHT_SLEEP_T);
+  WiFi.persistent(false);
+  WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
+
 
   log(CLASS_MAIN, Debug, "Setup pins");
   pinMode(LEDR_PIN, OUTPUT);
