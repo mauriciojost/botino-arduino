@@ -591,6 +591,9 @@ void setupArchitecture() {
   delay(DELAY_MS_SPI); // Initialize LCD
   setupLog(logLine);   // Initialize log callback
 
+  log(CLASS_MAIN, Debug, "Setup wdt");
+  ESP.wdtEnable(1); // argument not used
+
   log(CLASS_MAIN, Debug, "Setup wifi");
   ESP.eraseConfig();
   WiFi.persistent(false);
