@@ -43,7 +43,7 @@ public:
   Settings(const char *n) {
     name = n;
     clearStackTrace = false;
-    logLevel = -1;
+    logLevel = 0;
     lcdDebug = true;
     buttonRoutineUntil = 1;
     freqConf.setFrequency(Never);
