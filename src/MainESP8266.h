@@ -484,8 +484,9 @@ int httpGet(const char *url, ParamStream *response) {
   httpClient.addHeader("Content-Type", "application/json");
   httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
 
+  log(CLASS_MAIN, Debug, "> GET:..%s", tailStr(url, URL_PRINT_MAX_LENGTH));
   int errorCode = httpClient.GET();
-  log(CLASS_MAIN, Debug, "> GET:%d..%s", errorCode, tailStr(url, URL_PRINT_MAX_LENGTH));
+  log(CLASS_MAIN, Debug, "> GET:%d", errorCode);
 
   if (errorCode == HTTP_OK) {
     if (response != NULL) {
@@ -506,9 +507,10 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
   httpClient.addHeader("Content-Type", "application/json");
   httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
 
-  int errorCode = httpClient.POST(body);
+  log(CLASS_MAIN, Debug, "> POST:..%s", tailStr(url, URL_PRINT_MAX_LENGTH));
   log(CLASS_MAIN, Debug, "> POST:'%s'", body);
-  log(CLASS_MAIN, Debug, "> POST:%d..%s", errorCode, tailStr(url, URL_PRINT_MAX_LENGTH));
+  int errorCode = httpClient.POST(body);
+  log(CLASS_MAIN, Debug, "> POST:%d", errorCode);
 
   if (errorCode == HTTP_OK) {
     if (response != NULL) {
