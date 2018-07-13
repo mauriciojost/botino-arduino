@@ -594,17 +594,16 @@ void setupArchitecture() {
   setupLog(logLine);   // Initialize log callback
 
   log(CLASS_MAIN, Debug, "Setup wdt");
-  ESP.wdtEnable(1); // argument not used
-
+  //ESP.wdtEnable(1); // argument not used
   log(CLASS_MAIN, Debug, "Setup wifi");
-  ESP.eraseConfig();
-  WiFi.persistent(false);
-  WiFi.hostname(DEVICE_NAME);
-  WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
+  //ESP.eraseConfig();
+  //WiFi.persistent(false);
+  //WiFi.hostname(DEVICE_NAME);
+  //WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
 
   log(CLASS_MAIN, Debug, "Setup http");
-  httpClient.setTimeout(10);
-  httpClient.setReuse(true);
+  //httpClient.setTimeout(10);
+  //httpClient.setReuse(true);
 
   log(CLASS_MAIN, Debug, "Setup pins");
   pinMode(LEDR_PIN, OUTPUT);
