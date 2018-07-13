@@ -71,6 +71,8 @@ extern "C" {
 #include "user_interface.h"
 }
 
+#define HTTP_TIMEOUT_MS 3000
+
 volatile unsigned char buttonInterrupts = 0;
 
 // clang-format off
@@ -603,7 +605,7 @@ void setupArchitecture() {
   WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
 
   log(CLASS_MAIN, Debug, "Setup http");
-  httpClient.setTimeout(10);
+  httpClient.setTimeout(HTTP_TIMEOUT_MS);
   httpClient.setReuse(true);
 
   log(CLASS_MAIN, Debug, "Setup pins");
