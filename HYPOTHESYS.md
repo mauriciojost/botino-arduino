@@ -29,6 +29,7 @@
 ## What we know
 
 - All http fail!!!!!!!! 1st priority! Probably related to the issue!!!
+- Try to reproduce in the simplest version ever in branch simplest
 - Using -1 as log level makes the system crash
 - Using frequent propsync fires it
 
