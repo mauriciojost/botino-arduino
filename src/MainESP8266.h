@@ -599,7 +599,7 @@ void setupArchitecture() {
   ESP.wdtEnable(1); // argument not used
 
   log(CLASS_MAIN, Debug, "Setup wifi");
-  //ESP.eraseConfig();
+  ESP.eraseConfig();
   WiFi.persistent(false);
   WiFi.hostname(DEVICE_NAME);
 
