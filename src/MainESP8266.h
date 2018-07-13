@@ -598,8 +598,8 @@ void setupArchitecture() {
 
   log(CLASS_MAIN, Debug, "Setup wifi");
   //ESP.eraseConfig();
-  //WiFi.persistent(false);
-  //WiFi.hostname(DEVICE_NAME);
+  WiFi.persistent(false);
+  WiFi.hostname(DEVICE_NAME);
   //WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
 
   log(CLASS_MAIN, Debug, "Setup http");
