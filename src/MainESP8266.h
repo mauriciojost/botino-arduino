@@ -603,8 +603,8 @@ void setupArchitecture() {
   //WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
 
   log(CLASS_MAIN, Debug, "Setup http");
-  //httpClient.setTimeout(10);
-  //httpClient.setReuse(true);
+  httpClient.setTimeout(10);
+  httpClient.setReuse(true);
 
   log(CLASS_MAIN, Debug, "Setup pins");
   pinMode(LEDR_PIN, OUTPUT);
