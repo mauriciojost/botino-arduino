@@ -5,6 +5,7 @@
 
 ## MAYBE CULPRIT
 
+- PC with hidden settings?
 - Interrupts?
 - Why so many Jul 11 20:18:07 MA E > GET:-1 connection refused???? ALL!
 - Every time there is a connection refused and the body not read the httpclient grows 
@@ -27,6 +28,7 @@
 
 ## What we know
 
+- All http fail!!!!!!!! 1st priority! Probably related to the issue!!!
 - Using -1 as log level makes the system crash
 - Using frequent propsync fires it
 
