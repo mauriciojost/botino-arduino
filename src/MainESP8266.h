@@ -600,7 +600,7 @@ void setupArchitecture() {
   //ESP.eraseConfig();
   WiFi.persistent(false);
   WiFi.hostname(DEVICE_NAME);
-  //WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
+  WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
 
   log(CLASS_MAIN, Debug, "Setup http");
   httpClient.setTimeout(10);
