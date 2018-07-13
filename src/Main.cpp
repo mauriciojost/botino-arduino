@@ -1,168 +1,55 @@
-/**
- * This file aims to be the only HW specific source code file in the whole project.
- * The rest of the classes (and the 100% of their code) should be testeable without need
- * of Arduino specific HW.
- */
-
-#include <Main.h>
-
-Module m;
-
-#ifndef SIMULATE // on ESP8266
-#include <MainESP8266.h>
-#else // on PC
-#include <MainX86_64.h>
-#endif // SIMULATE
-
-bool initWifiInit() {
-  log(CLASS_MAIN, Info, "W.init");
-  messageFunc(0, "HOTSPOT?", 2);
-  delay(USER_DELAY_MS);
-  messageFunc(0, WIFI_SSID_INIT, 2);
-  delay(USER_DELAY_MS);
-  messageFunc(0, WIFI_PASSWORD_INIT, 2);
-  delay(USER_DELAY_MS);
-  bool connected = initWifi(WIFI_SSID_INIT, WIFI_PASSWORD_INIT, false, 20);
-  if (connected) {
-    messageFunc(0, "HOTSPOT OK", 2);
-    log(CLASS_MAIN, Info, "HOSTPOT OK");
-    delay(USER_DELAY_MS);
-  } else {
-    messageFunc(0, "HOTSPOT KO", 2);
-    log(CLASS_MAIN, Info, "HOSTPOT KO");
-    delay(USER_DELAY_MS);
-  }
-  return connected;
-}
-
-bool initWifiSteady() {
-  SetupSync *s = m.getSetupSync();
-  static bool connectedOnce = false;
-  if (s->isInitialized()) {
-    const char *wifiSsid = s->getSsid();
-    const char *wifiPass = s->getPass();
-    log(CLASS_MAIN, Info, "W.steady");
-    bool connected = initWifi(wifiSsid, wifiPass, connectedOnce, 10);
-    if (!connectedOnce) {
-      messageFunc(0, "WIFI?", 2);
-      delay(USER_DELAY_MS);
-      messageFunc(0, wifiSsid, 2);
-      delay(USER_DELAY_MS);
-      if (connected) { // first time
-        messageFunc(0, "WIFI OK", 2);
-        log(CLASS_MAIN, Info, "WIFI OK");
-        delay(USER_DELAY_MS * 2);
-      } else {
-        messageFunc(0, "WIFI KO", 2);
-        log(CLASS_MAIN, Info, "WIFI KO");
-      }
-    }
-    connectedOnce = connectedOnce || connected;
-    return connected;
-  } else {
-    log(CLASS_MAIN, Info, "W.steady null");
-    return false;
-  }
-}
-
-void messageFuncExt(int line, int size, const char *format, ...) {
-  char buffer[MAX_LOG_MSG_LENGTH];
-  va_list args;
-  va_start(args, format);
-  vsnprintf(buffer, MAX_LOG_MSG_LENGTH, format, args);
-  buffer[MAX_LOG_MSG_LENGTH - 1] = 0;
-  messageFunc(0, buffer, size);
-  va_end(args);
-}
-
-void command(const char *cmd) {
-
-  char buf[COMMAND_MAX_LENGTH];
-  strncpy(buf, cmd, COMMAND_MAX_LENGTH);
-  log(CLASS_MAIN, Info, "Command: '%s'", buf);
-
-  if (strlen(buf) == 0) {
-  	return;
-  }
-
-  char *c = strtok(buf, " ");
-
-  if (strcmp("move", c) == 0) {
-    c = strtok(NULL, " ");
-    if (c == NULL) {
-      log(CLASS_MAIN, Error, "Argument needed:\n  move <move>");
-      return;
-    }
-    log(CLASS_MAIN, Info, "-> Move %s", c);
-    m.getBody()->performMove(c);
-    return;
-  } else if (strcmp("set", c) == 0) {
-    const char *actor = strtok(NULL, " ");
-    const char *prop = strtok(NULL, " ");
-    const char *v = strtok(NULL, " ");
-    if (actor == NULL || prop == NULL || v == NULL) {
-      log(CLASS_MAIN, Error, "Arguments needed:\n  set <actor> <prop> <value>");
-      return;
-    }
-    log(CLASS_MAIN, Info, "-> Set %s.%s = %s", actor, prop, v);
-    Buffer<64> value(v);
-    m.getBot()->setProp(actor, prop, &value);
-    return;
-  } else if (strcmp("get", c) == 0) {
-    log(CLASS_MAIN, Info, "-> Get");
-    Array<Actor *> *actors = m.getBot()->getActors();
-    for (int i = 0; i < actors->size(); i++) {
-      Actor *actor = actors->get(i);
-      log(CLASS_MAIN, Info, " '%s'", actor->getName());
-      for (int j = 0; j < actor->getNroProps(); j++) {
-        Buffer<COMMAND_MAX_LENGTH> value;
-        actor->getPropValue(j, &value);
-        log(CLASS_MAIN, Info, "   '%s': '%s'", actor->getPropName(j), value.getBuffer());
-      }
-      log(CLASS_MAIN, Info, " ");
-    }
-    log(CLASS_MAIN, Info, " ");
-    return;
-  } else if (strcmp("run", c) == 0) {
-    log(CLASS_MAIN, Info, "-> Run mode");
-    m.getBot()->setMode(RunMode);
-    return;
-  } else {
-    log(CLASS_MAIN, Error, "Invalid command (try: ?)");
-    return;
-  }
-}
-
+#include <ESP8266HTTPClient.h>
+#include <ESP8266WiFi.h>
 
 void setup() {
+  delay(2 * 1000);
+  Serial.begin(115200);
+  delay(1000);
+  Serial.printf("Startup\n");
+}
 
-  m.getBody()->setLcdImgFunc(lcdImg);
-  m.getBody()->setArmsFunc(arms);
-  m.getBody()->setMessageFunc(messageFunc);
-  m.getBody()->setIosFunc(ios);
-  m.getPropSync()->setInitWifi(initWifiSteady);
-  m.getPropSync()->setHttpPost(httpPost);
-  m.getPropSync()->setHttpGet(httpGet);
-  m.getClockSync()->setInitWifi(initWifiSteady);
-  m.getClockSync()->setHttpGet(httpGet);
-  m.getSetupSync()->setInitWifiSteady(initWifiSteady);
-  m.getSetupSync()->setInitWifiInit(initWifiInit);
-  m.getSetupSync()->setHttpGet(httpGet);
-  m.getQuotes()->setHttpGet(httpGet);
-  m.getQuotes()->setInitWifi(initWifiSteady);
+bool initWifi(const char *ssid, const char *pass, int retries) {
+  wl_status_t status;
+  Serial.printf("Connect to '%s'/'%s'...\n", ssid, pass);
 
-  setupArchitecture();
+  Serial.printf("W.Off.\n");
+  WiFi.disconnect();
+  WiFi.mode(WIFI_OFF); // to be removed after SDK update to 1.5.4
+  delay(1000);
+
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, pass);
+
+  int attemptsLeft = retries;
+  while (true) {
+    delay(1000);
+    status = WiFi.status();
+    Serial.printf(" ..retry(%d)\n", attemptsLeft);
+    attemptsLeft--;
+    if (status == WL_CONNECTED) {
+      Serial.printf("IP: %s\n", WiFi.localIP().toString().c_str());
+      return true; // connected
+    }
+    if (attemptsLeft < 0) {
+      Serial.printf("Conn. failed %d\n", status);
+      return false; // not connected
+    }
+  }
 }
 
 void loop() {
-  unsigned long cycleBegin = millis();
-  loopArchitecture();
-  switch (m.getBot()->getMode()) {
-    case (RunMode):
-      m.loop(false, false, true);
-      sleepInterruptable(cycleBegin, PERIOD_MSEC);
-      break;
-    default:
-      break;
-  }
+  bool connected = initWifi("aphone", "apassword", 20);
+  HTTPClient httpClient;
+  const char* url = "http://dweet.io/get/latest/dweet/for/demo2-setupsync-target";
+  httpClient.begin(url);
+  httpClient.addHeader("Content-Type", "application/json");
+  Serial.printf("> GET:..%s\n", url);
+  int errorCode = httpClient.GET();
+  //int errorCode2 = httpClient.POST(body);
+  Serial.printf("> GET:%d\n", errorCode);
+  int e = httpClient.writeToStream(&Serial);
+  Serial.printf("> GET(%d):%d %s\n", e, errorCode, httpClient.errorToString(errorCode).c_str());
+  httpClient.end();
+  delay(1000);
+
 }
