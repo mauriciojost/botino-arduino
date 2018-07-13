@@ -639,6 +639,7 @@ void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {
   int dc = (spentMs * 100) / periodMs;
 
   log(CLASS_MAIN, Info, "Disable wifi...");
+  wifiOff();
 
   log(CLASS_MAIN, Info, "D.C.:%d%%", dc);
   if (dc > DUTY_CYCLE_THRESHOLD_PERC) {
