@@ -156,6 +156,7 @@ void bitmapToLcd(uint8_t bitmap[]) {
 
 void wifiOn() {
   WiFi.mode(WIFI_STA);
+  delay(WIFI_DELAY_MS);
 }
 
 void wifiOff() {
@@ -175,6 +176,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
   } else {
     log(CLASS_MAIN, Info, "W.Off.");
     WiFi.disconnect();
+    delay(WIFI_DELAY_MS);
     WiFi.mode(WIFI_OFF); // to be removed after SDK update to 1.5.4
     delay(WIFI_DELAY_MS);
   }
@@ -599,7 +601,6 @@ void setupArchitecture() {
   ESP.wdtEnable(1); // argument not used
 
   log(CLASS_MAIN, Debug, "Setup wifi");
-  ESP.eraseConfig();
   WiFi.persistent(false);
   WiFi.hostname(DEVICE_NAME);
 
