@@ -554,7 +554,7 @@ public:
       log(CLASS_BODY, Warn, "Invalid move: %s", move);
       return;
     }
-    for (int i = 0; i < strlen(move); i += POSE_STR_LENGTH) {
+    for (size_t i = 0; i < strlen(move); i += POSE_STR_LENGTH) {
       performPose(move[i + 0], move[i + 1], move[i + 2]);
     }
   }

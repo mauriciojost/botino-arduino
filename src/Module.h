@@ -73,7 +73,6 @@ public:
 
   void loop(bool mode, bool set, bool cycle) {
 
-    bool anyButtonPressed = mode || set;
     TimingInterrupt interruptType = TimingInterruptNone;
 
     if (cycle) {

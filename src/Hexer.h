@@ -29,7 +29,7 @@ public:
     if (inputLen % 2 != 0) {
       log(CLASS_HEXER, Error, "Bad hexa string (odd %d)", inputLen);
     } else {
-      for (int i = 0; i < inputLen; i = i + 2) {
+      for (size_t i = 0; i < inputLen; i = i + 2) {
         bytes[i / 2] = hexToValue(inputHex[i]) * 16 + hexToValue(inputHex[i + 1]);
       }
     }

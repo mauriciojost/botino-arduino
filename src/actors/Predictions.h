@@ -20,7 +20,7 @@ class Predictions {
 
 private:
 public:
-  static const char *getPrediction(Buffer<200> *msg) {
+  static void getPrediction(Buffer<200> *msg) {
     msg->fill("%s will %s %s %s", getObject(), getTransitiveVerb(), getObject(), getWhere());
   }
 
