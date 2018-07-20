@@ -71,7 +71,7 @@ extern "C" {
 #include "user_interface.h"
 }
 
-#define HTTP_TIMEOUT_MS 3000
+#define HTTP_TIMEOUT_MS 8000
 
 volatile unsigned char buttonInterrupts = 0;
 
