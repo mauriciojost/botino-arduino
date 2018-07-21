@@ -69,16 +69,11 @@ public:
       return;
     }
     if (freqConf.matches()) {
-      log(CLASS_PROPSYNC, Debug, "Propsync starts");
+      log(CLASS_PROPSYNC, Info, "Propsync starts");
       bool connected = initWifiFunc();
       if (connected) {
         for (int i = 0; i < bot->getActors()->size(); i++) {
-          if (updatePropsEnabled) {
-            updateProps(i);
-          }
-          if (updateInfosEnabled) {
-            updateInfos(i);
-          }
+          updateActor(i);
         }
       }
     }
@@ -94,6 +89,16 @@ public:
 
   void setHttpPost(int (*h)(const char *url, const char *body, ParamStream *response)) {
     httpPost = h;
+  }
+
+  void updateActor(int actorIndex) {
+    log(CLASS_PROPSYNC, Info, "Sync: %s", bot->getActors()->get(actorIndex)->getName());
+    if (updatePropsEnabled) {
+      updateProps(actorIndex);
+    }
+    if (updateInfosEnabled) {
+      updateInfos(actorIndex);
+    }
   }
 
   void updateProps(int actorIndex) {
