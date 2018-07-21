@@ -71,6 +71,7 @@ void messageFuncExt(int line, int size, const char *format, ...) {
   va_start(args, format);
   vsnprintf(buffer.getUnsafeBuffer(), MAX_LOG_MSG_LENGTH, format, args);
   buffer.getUnsafeBuffer()[MAX_LOG_MSG_LENGTH - 1] = 0;
+  log(CLASS_MAIN, Debug, "MSG: %s", buffer.getBuffer());
   buffer.replace(' ', '\n');
   messageFunc(0, buffer.getBuffer(), size);
   va_end(args);
