@@ -13,6 +13,9 @@ Features:
 - Random quote of the day
 - Random future reading
 
+Hardware: 
+- ESP8266 ESP-12E (see [all variants here](https://www.esp8266.com/wiki/doku.php?id=esp8266-module-family))
+
 ## 1. Get Started
 
 ### 1.1. Plug It
