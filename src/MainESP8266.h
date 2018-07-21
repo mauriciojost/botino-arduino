@@ -503,7 +503,6 @@ void arms(int left, int right, int steps) {
 int httpGet(const char *url, ParamStream *response) {
   httpClient.begin(url);
   httpClient.addHeader("Content-Type", "application/json");
-  httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
 
   log(CLASS_MAIN, Debug, "> GET:..%s", tailStr(url, URL_PRINT_MAX_LENGTH));
   int errorCode = httpClient.GET();
@@ -527,7 +526,6 @@ int httpGet(const char *url, ParamStream *response) {
 int httpPost(const char *url, const char *body, ParamStream *response) {
   httpClient.begin(url);
   httpClient.addHeader("Content-Type", "application/json");
-  httpClient.addHeader("X-Auth-Token", DWEET_IO_API_TOKEN);
 
   log(CLASS_MAIN, Debug, "> POST:..%s", tailStr(url, URL_PRINT_MAX_LENGTH));
   log(CLASS_MAIN, Debug, "> POST:'%s'", body);
