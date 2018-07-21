@@ -64,8 +64,3 @@ url+="&"
 url+="updateinfos=true"
 curl_cmd $url
 
-# Set up clock synchronizer
-url="http://dweet.io/dweet/for/$DEVICE-clocksync-target?"
-url+="freq=201066060" # sync clock once every 6 hours
-curl_cmd $url
-
