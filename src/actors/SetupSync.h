@@ -141,9 +141,9 @@ public:
     strcpy(ssid, WIFI_SSID_STEADY);
     strcpy(pass, WIFI_PASSWORD_STEADY);
     httpGet = NULL;
-    timing.setFrequency(OnceEvery1Minute);
     Hexer::hexToByte(key, ENCRYPT_KEY, KEY_LENGTH * 2);
     AES_init_ctx(&ctx, key);
+    timing.setFrequency(OnceEvery1Minute);
   }
 
   const char *getName() {

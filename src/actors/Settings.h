@@ -46,8 +46,8 @@ public:
     logLevel = 0;
     lcdDebug = true;
     buttonRoutineUntil = 1;
-    freqConf.setFrequency(Never);
     infoBuffer.clear();
+    freqConf.setFrequency(Never);
   }
 
   const char *getName() {

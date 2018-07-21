@@ -50,9 +50,9 @@ public:
     initWifiFunc = NULL;
     httpGet = NULL;
     httpPost = NULL;
-    freqConf.setFrequency(OnceEvery1Minute);
     updatePropsEnabled = true;
     updateInfosEnabled = false;
+    freqConf.setFrequency(OnceEvery5Minutes);
   }
 
   void setBot(SerBot *b) {

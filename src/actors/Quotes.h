@@ -39,7 +39,7 @@ public:
     name = n;
     httpGet = NULL;
     initWifiFunc = NULL;
-    timing.setFrequency(OnceEvery5Minutes);
+    timing.setFrequency(TwicePerDay);
     for (int i = 0; i < NRO_QUOTES; i++) {
       quotes[i] = new Buffer<QUOTE_MAX_LENGTH>("Damn! No quote yet! :(");
     }
