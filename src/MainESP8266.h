@@ -611,6 +611,9 @@ void setupArchitecture() {
   delay(DELAY_MS_SPI); // Initialize LCD
   setupLog(logLine);   // Initialize log callback
 
+  log(CLASS_MAIN, Debug, "Setup timing");
+  setExternalMillis(millis);
+
   log(CLASS_MAIN, Debug, "Setup wdt");
   ESP.wdtEnable(1); // argument not used
 
@@ -649,10 +652,6 @@ void setupArchitecture() {
   displayUserInfo();
   performHardwareTest();
 
-}
-
-uint32_t cmillis() {
-  return millis();
 }
 
 

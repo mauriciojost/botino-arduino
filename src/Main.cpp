@@ -151,8 +151,6 @@ void setup() {
   m.getQuotes()->setHttpGet(httpGet);
   m.getQuotes()->setInitWifi(initWifiSteady);
 
-  setCustomMillis(cmillis);
-
   setupArchitecture();
 }
 
