@@ -484,6 +484,8 @@ void arms(int left, int right, int steps) {
   servoRight.detach();
 }
 
+// TODO: add https support, which requires fingerprint of server that can be obtained as follows:
+//  openssl s_client -connect dweet.io:443 < /dev/null 2>/dev/null | openssl x509 -fingerprint -noout -in /dev/stdin
 int httpGet(const char *url, ParamStream *response) {
   httpClient.begin(url);
   httpClient.addHeader("Content-Type", "application/json");
