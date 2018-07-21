@@ -30,10 +30,6 @@
 
 #define COMMAND_MAX_LENGTH 64
 
-#ifndef DWEET_IO_API_TOKEN
-#error "Must provide DWEET_IO_API_TOKEN"
-#endif
-
 #define WAIT_BEFORE_HTTP_MS 1500
 
 #define URL_PRINT_MAX_LENGTH 20
