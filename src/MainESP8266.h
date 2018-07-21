@@ -620,7 +620,6 @@ void setupArchitecture() {
 
   log(CLASS_MAIN, Debug, "Setup http");
   httpClient.setTimeout(HTTP_TIMEOUT_MS);
-  httpClient.setReuse(true);
 
   log(CLASS_MAIN, Debug, "Setup pins");
   pinMode(LEDR_PIN, OUTPUT);
