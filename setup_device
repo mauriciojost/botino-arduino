@@ -3,14 +3,15 @@
 # Encrypt and publish sensitive setup information
 # for your devide. This includes wifi ssid and password. 
 # Usage: 
-#   script <device> <wifi_ssid> <wifi_password> <encryption_key>
+#   script <device> <wifi_ssid> <wifi_password> <ifttt key> <encryption_key>
 
 PRETTY='python -m json.tool'
 
 DEVICE=$1
 WIFI_SSID=$2
 WIFI_PASSWORD=$3
-KEY_HEX=${4:-11112233445566778899aabbccddeeff}
+IFTTT_KEY=$4
+KEY_HEX=${5:-11112233445566778899aabbccddeeff}
 
 # Print a single-line hexadecimal representation of a file's content.
 function file_to_hex() {
@@ -27,7 +28,7 @@ function ecb_encrypt() {
   local outputf=`mktemp`
   echo "$input" > "$inputf"
   local size=${#input}
-  local remaining=`echo "31 - $size" | bc`
+  local remaining=`echo "63 - $size" | bc`
 
   dd if=/dev/zero of="$inputf" bs=1 seek="$size" count="$remaining" # fill in remaining bytes with null chars
 
@@ -37,11 +38,13 @@ function ecb_encrypt() {
 
 WIFI_SSID_ENCRYPTED=$(file_to_hex `ecb_encrypt "$WIFI_SSID" "$KEY_HEX"`)
 WIFI_PASSWORD_ENCRYPTED=$(file_to_hex `ecb_encrypt "$WIFI_PASSWORD" "$KEY_HEX"`)
+IFTTT_KEY_ENCRYPTED=$(file_to_hex `ecb_encrypt "$IFTTT_KEY" "$KEY_HEX"`)
 
 # Set up settings
 url="http://dweet.io/dweet/for/$DEVICE-setup?"
 url+="ssid=$WIFI_SSID_ENCRYPTED&"
-url+="pass=$WIFI_PASSWORD_ENCRYPTED"
+url+="pass=$WIFI_PASSWORD_ENCRYPTED&"
+url+="ifttt=$IFTTT_KEY_ENCRYPTED"
 curl -XPOST $url | $PRETTY
 
 echo "# Done."

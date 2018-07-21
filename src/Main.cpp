@@ -150,12 +150,29 @@ void setup() {
   m.getSetupSync()->setHttpGet(httpGet);
   m.getQuotes()->setHttpGet(httpGet);
   m.getQuotes()->setInitWifi(initWifiSteady);
+  m.getIfttt()->setInitWifi(initWifiSteady);
+  m.getIfttt()->setHttpPost(httpPost);
 
   setupArchitecture();
 }
 
+void loopUpdates() {
+
+  // Handle log level as per settings
+  Settings *se = m.getSettings();
+  setLogLevel((char)(se->getLogLevel()));
+
+  // Handle keys
+  SetupSync *ss = m.getSetupSync();
+  if (ss->isInitialized()) {
+  	m.getIfttt()->setKey(ss->getIfttt());
+  }
+
+}
+
 void loop() {
   unsigned long cycleBegin = millis();
+  loopUpdates();
   loopArchitecture();
   switch (m.getBot()->getMode()) {
     case (RunMode):

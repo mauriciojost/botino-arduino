@@ -234,7 +234,6 @@ void loopArchitecture() {
   s->setInfo(infoBuffer.getBuffer());
 
   // Handle log level as per settings
-  setLogLevel((char)(s->getLogLevel()));
   Serial.setDebugOutput(s->getLogLevel() < 0); // deep HW logs
 
   logArchitecture();
@@ -269,6 +268,30 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
       }
       break;
 		case 1: {
+        messageFuncExt(0, 2, "Push event %d?", cycles);
+			  if (!onlyMsg) {
+			  	bool suc = m.getIfttt()->event(cycles);
+			  	if (suc) {
+            messageFuncExt(0, 1, "Event pushed");
+			  	} else {
+            messageFuncExt(0, 1, "Failed: event not pushed");
+			  	}
+			  }
+      }
+      break;
+		case 2: {
+        messageFuncExt(0, 2, "Push event %d?", cycles);
+			  if (!onlyMsg) {
+			  	bool suc = m.getIfttt()->event(cycles);
+			  	if (suc) {
+            messageFuncExt(0, 1, "Event pushed");
+			  	} else {
+            messageFuncExt(0, 1, "Failed: event not pushed");
+			  	}
+			  }
+      }
+      break;
+		case 3: {
         messageFuncExt(0, 2, "Random routine?");
 			  if (!onlyMsg) {
           int routine = (int)random(0, m.getSettings()->getNroRoutinesForButton());
@@ -277,7 +300,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
 			  }
       }
       break;
-		case 2: {
+		case 4: {
         messageFuncExt(0, 2, "Log level?");
 			  if (!onlyMsg) {
           Settings *s = m.getSettings();
@@ -286,7 +309,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
 			  }
       }
       break;
-		case 3: {
+		case 5: {
         messageFuncExt(0, 2, "LCD log?");
 			  if (!onlyMsg) {
           Settings *s = m.getSettings();
@@ -295,7 +318,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
 			  }
       }
       break;
-		case 4: {
+		case 6: {
         messageFuncExt(0, 2, "Clear crash?");
 			  if (!onlyMsg) {
 			  	SaveCrash.clear();
@@ -303,7 +326,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
 			  }
       }
       break;
-		case 5: {
+		case 7: {
         messageFuncExt(0, 2, "Config mode?");
 			  if (!onlyMsg) {
 			  	m.getBot()->setMode(ConfigureMode);
@@ -311,7 +334,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
 			  }
       }
       break;
-		case 6: {
+		case 8: {
         messageFuncExt(0, 2, "Run mode?");
 			  if (!onlyMsg) {
 			  	m.getBot()->setMode(RunMode);
@@ -351,9 +374,9 @@ bool haveToInterrupt() {
       log(CLASS_MAIN, Debug, "%d", holds);
       reactToButtonHeld(holds, ONLY_SHOW_MSG);
       digitalWrite(LED_INT_PIN, LOW); // switch on
-      delay(100);
+      delay(50);
       digitalWrite(LED_INT_PIN, HIGH); // switch off
-      delay(900);
+      delay(950);
     }
     bool interruptMe = reactToButtonHeld(holds, SHOW_MSG_AND_GO);
     digitalWrite(LED_INT_PIN, HIGH); // switch off

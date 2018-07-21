@@ -10,6 +10,7 @@
 #include <actors/Images.h>
 #include <actors/PropSync.h>
 #include <actors/SetupSync.h>
+#include <actors/Ifttt.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Array.h>
@@ -35,6 +36,7 @@ private:
   Quotes *quotes;
   Images *images;
   Messages *messages;
+  Ifttt *ifttt;
 
 public:
   Module() {
@@ -48,8 +50,9 @@ public:
     body = new Body("body");
     images = new Images("images");
     messages = new Messages("messages");
+    ifttt = new Ifttt("ifttt");
 
-    actors = new Array<Actor *>(9);
+    actors = new Array<Actor *>(10);
     actors->set(0, (Actor *)setupSync);
     actors->set(1, (Actor *)propSync);
     actors->set(2, (Actor *)clockSync);
@@ -59,6 +62,7 @@ public:
     actors->set(6, (Actor *)body);
     actors->set(7, (Actor *)images);
     actors->set(8, (Actor *)messages);
+    actors->set(9, (Actor *)ifttt);
 
     bot = new SerBot(clock, actors);
 
@@ -114,6 +118,11 @@ public:
   Quotes *getQuotes() {
     return quotes;
   }
+
+  Ifttt *getIfttt() {
+    return ifttt;
+  }
+
 };
 
 #endif // MODULE_INC

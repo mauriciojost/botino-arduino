@@ -34,7 +34,12 @@
 #define WIFI_PASSWORD_STEADY "???"
 #endif // WIFI_PASSWORD_STEADY
 
-#define N_BLOCKS 2 // 2 times KEY_LENGTH
+#ifndef IFTTT_KEY
+#define IFTTT_KEY "???"
+#endif // IFTTT_KEY
+
+
+#define N_BLOCKS 4 // N times KEY_LENGTH
 
 #define ENCRYPTION_BUFFER_SIZE (N_BLOCKS * KEY_LENGTH + 1) // encryption zone + trailing null character
 
@@ -53,6 +58,7 @@ private:
 
   char ssid[ENCRYPTION_BUFFER_SIZE];
   char pass[ENCRYPTION_BUFFER_SIZE];
+  char ifttt[ENCRYPTION_BUFFER_SIZE];
   Timing timing; // configuration of the frequency at which this actor will get triggered
   bool (*initWifiSteadyFunc)();
   bool (*initWifiInitFunc)();
@@ -80,12 +86,16 @@ private:
           JsonObject &withJson = json["with"][0];
           if (withJson.containsKey("content")) {
             JsonObject &content = withJson["content"];
-            if (content.containsKey("ssid") && content.containsKey("pass")) {
+            if (content.containsKey("ssid") && content.containsKey("pass") && content.containsKey("ifttt")) {
               log(CLASS_SETUPSYNC, Debug, "Decrypt ssid");
               decryptEncoded(content["ssid"].as<char *>(), ssid);
               log(CLASS_SETUPSYNC, Debug, "Decrypt pass");
               decryptEncoded(content["pass"].as<char *>(), pass);
-              log(CLASS_SETUPSYNC, Debug, "Got %s/***", ssid);
+              log(CLASS_SETUPSYNC, Debug, "Got wifi %s/***", ssid);
+
+              log(CLASS_SETUPSYNC, Debug, "Decrypt ifttt");
+              decryptEncoded(content["ifttt"].as<char *>(), ifttt);
+              log(CLASS_SETUPSYNC, Debug, "Got ifttt %s", ifttt);
             } else {
               log(CLASS_SETUPSYNC, Warn, "No 'ssid'");
             }
@@ -140,6 +150,7 @@ public:
     initWifiInitFunc = NULL;
     strcpy(ssid, WIFI_SSID_STEADY);
     strcpy(pass, WIFI_PASSWORD_STEADY);
+    strcpy(ifttt, IFTTT_KEY);
     httpGet = NULL;
     Hexer::hexToByte(key, ENCRYPT_KEY, KEY_LENGTH * 2);
     AES_init_ctx(&ctx, key);
@@ -215,12 +226,17 @@ public:
     return pass;
   }
 
+  const char *getIfttt() {
+    return ifttt;
+  }
+
+
   Timing *getFrequencyConfiguration() {
     return &timing;
   }
 
   bool isInitialized() {
-    return ssid[0] != '?' && pass[0] != '?';
+    return ssid[0] != '?' && pass[0] != '?' && ifttt[0] != '?';
   }
 };
 
