@@ -13,9 +13,6 @@ Features:
 - Random quote of the day
 - Random future reading
 
-Hardware: 
-- ESP8266 ESP-12E (see [all variants here](https://www.esp8266.com/wiki/doku.php?id=esp8266-module-family))
-
 ## 1. Get Started
 
 ### 1.1. Plug It
@@ -116,6 +113,9 @@ For example: if you want the actor to wake up every 2 hours, just set its freque
 ## 3.1. Hardware
 
 For information, the Board used is [NODEMCU / ESP-01](http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family).
+
+- ESP8266 ESP-12E (see a full [list of variants here](https://www.esp8266.com/wiki/doku.php?id=esp8266-module-family))
+
 
 ## 3.2. Software
 
