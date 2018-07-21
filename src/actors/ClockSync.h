@@ -83,14 +83,7 @@ public:
         log(CLASS_CLOCKSYNC, Debug, "Retrieved: '%s'", formatted);
         int parsed = sscanf(formatted, "%04d-%02d-%02d %02d:%02d:%02d", &y, &mo, &d, &h, &m, &s);
         if (parsed > 0) {
-          Buffer<8> time(formatted + 11);
-          clock->setAutoAdjust(true);
-          clock->set(DONT_CHANGE, h, m, s);
-          clock->setAutoAdjust(false);
-          // TODO clock should support year, month and day too because this is too fragile
-          // for instance: what happens if sync takes place at midnight?
-          clock->set(DONT_CHANGE, h, m, s);
-          log(CLASS_CLOCKSYNC, Info, "Set time: %s", time.getBuffer());
+          clock->set(h, m, s, d, mo, y);
         } else {
           log(CLASS_CLOCKSYNC, Info, "Invalid time");
         }
