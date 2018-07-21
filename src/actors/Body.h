@@ -396,7 +396,7 @@ Codes:
             iosFunc('w', false);
             iosFunc('y', false);
             iosFunc('f', false);
-            arms(0, 0, ARM_SLOW_STEPS);
+            arms(0, 0, ARM_FAST_STEPS);
             break;
 
           // DEFAULT
