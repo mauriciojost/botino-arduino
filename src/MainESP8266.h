@@ -303,11 +303,14 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
       }
       break;
 		case 4: {
-        messageFuncExt(0, 2, "Log level?");
+        messageFuncExt(0, 2, "All act?");
 			  if (!onlyMsg) {
-          Settings *s = m.getSettings();
-          s->setLogLevel((s->getLogLevel() + 1) % 4);
-          messageFuncExt(0, 1, "Log level %d", s->getLogLevel());
+          messageFuncExt(0, 1, "All act one-off");
+			  	for (int i=0; i < m.getBot()->getActors()->size(); i++) {
+            Actor* a = m.getBot()->getActors()->get(i);
+            log(CLASS_MAIN, Debug, "One off: %s", a->getName());
+			  		a->oneOff();
+			  	}
 			  }
       }
       break;
@@ -341,6 +344,15 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
 			  if (!onlyMsg) {
 			  	m.getBot()->setMode(RunMode);
           messageFuncExt(0, 1, "In run mode");
+			  }
+      }
+      break;
+		case 9: {
+        messageFuncExt(0, 2, "Log level?");
+			  if (!onlyMsg) {
+          Settings *s = m.getSettings();
+          s->setLogLevel((s->getLogLevel() + 1) % 4);
+          messageFuncExt(0, 1, "Log level %d", s->getLogLevel());
 			  }
       }
       break;
