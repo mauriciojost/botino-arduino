@@ -126,3 +126,7 @@
 /profiles/dev1.prof
 /profiles/demo2.prof
 /libs/Time/
+/src/DateStrings.cpp
+/src/Time.cpp
+/src/Time.h
+/src/TimeLib.h
