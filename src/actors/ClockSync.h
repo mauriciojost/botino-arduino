@@ -73,6 +73,7 @@ public:
   }
 
   void updateClockProperties() {
+    log(CLASS_CLOCKSYNC, Info, "Updating clock");
     ParamStream s;
     int errorCode = httpGet(TIMEZONE_DB_API_URL_GET, &s);
     if (errorCode == HTTP_OK) {
