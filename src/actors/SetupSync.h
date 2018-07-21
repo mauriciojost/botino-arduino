@@ -97,7 +97,7 @@ private:
               decryptEncoded(content["ifttt"].as<char *>(), ifttt);
               log(CLASS_SETUPSYNC, Debug, "Got ifttt %s", ifttt);
             } else {
-              log(CLASS_SETUPSYNC, Warn, "No 'ssid'");
+              log(CLASS_SETUPSYNC, Warn, "Missing json elements");
             }
           } else {
             log(CLASS_SETUPSYNC, Info, "No 'content'");
