@@ -92,4 +92,7 @@ void ios(char led, bool v);
 // Show an image (either a catalog image or a custom bitmap)
 void lcdImg(char img, uint8_t bitmap[]);
 
+// Retrieve the estimation of the current milliseconds since the boot
+uint32_t cmillis();
+
 #endif // MAIN_INC

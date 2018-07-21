@@ -651,6 +651,12 @@ void setupArchitecture() {
 
 }
 
+uint32_t cmillis() {
+  return millis();
+}
+
+
+// TODO: buggy (what happens on overrun?), and can be simplified using the clock and time_t
 void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {
   unsigned long spentMs = millis() - cycleBegin;
   int dc = (spentMs * 100) / periodMs;

@@ -78,6 +78,10 @@ void lcdImg(char img, uint8_t bitmap[]) {
   log(CLASS_MAIN, Debug, "Img '%c'", img);
 }
 
+uint32_t cmillis() {
+  return currentMillis;
+}
+
 void setupArchitecture() {
   // nothing to be done here
 }
