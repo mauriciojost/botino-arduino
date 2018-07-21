@@ -418,6 +418,19 @@ void performHardwareTest() {
   ios('f', false);
   log(CLASS_MAIN, Debug, "..Random %lu %lu %lu", random(10000), random(10000), random(10000));
   delay(HARDWARE_TEST_STEP_DELAY_MS);
+
+  log(CLASS_MAIN, Debug, "..SPIFFS");
+	SPIFFS.begin();
+	File f = SPIFFS.open("/version.txt", "r");
+	if (!f) {
+    log(CLASS_MAIN, Warn, "File reading failed");
+	} else {
+		String s = f.readString();
+    log(CLASS_MAIN, Info, "File content: %s", s.c_str());
+	}
+	SPIFFS.end();
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
+
 #endif
 
   ios('r', false);
@@ -638,17 +651,6 @@ void setupArchitecture() {
   delay(1000);
   displayUserInfo();
   performHardwareTest();
-
-  // To put in hardware test
-	SPIFFS.begin();
-	File f = SPIFFS.open("/version.txt", "r");
-	if (!f) {
-    log(CLASS_MAIN, Warn, "File reading failed");
-	} else {
-		String s = f.readString();
-    log(CLASS_MAIN, Info, "File content: %s", s.c_str());
-	}
-	SPIFFS.end();
 
 }
 
