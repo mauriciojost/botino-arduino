@@ -236,8 +236,6 @@ void loopArchitecture() {
   // Handle log level as per settings
   Serial.setDebugOutput(s->getLogLevel() < 0); // deep HW logs
 
-  logArchitecture();
-
   switch (m.getBot()->getMode()) {
     case (ConfigureMode): {
         initWifiSteady();
@@ -245,6 +243,10 @@ void loopArchitecture() {
         Telnet.handle(); // Handle telnet log server and commands
         ArduinoOTA.handle(); // Handle on the air firmware load
         delay(DEV_USER_DELAY_MS);
+      }
+      break;
+    case (RunMode): {
+        logArchitecture();
       }
       break;
     default:
