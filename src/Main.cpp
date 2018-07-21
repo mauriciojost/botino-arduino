@@ -66,12 +66,13 @@ bool initWifiSteady() {
 }
 
 void messageFuncExt(int line, int size, const char *format, ...) {
-  char buffer[MAX_LOG_MSG_LENGTH];
+  Buffer<MAX_LOG_MSG_LENGTH-1> buffer;
   va_list args;
   va_start(args, format);
-  vsnprintf(buffer, MAX_LOG_MSG_LENGTH, format, args);
-  buffer[MAX_LOG_MSG_LENGTH - 1] = 0;
-  messageFunc(0, buffer, size);
+  vsnprintf(buffer.getUnsafeBuffer(), MAX_LOG_MSG_LENGTH, format, args);
+  buffer.getUnsafeBuffer()[MAX_LOG_MSG_LENGTH - 1] = 0;
+  buffer.replace(' ', '\n');
+  messageFunc(0, buffer.getBuffer(), size);
   va_end(args);
 }
 
