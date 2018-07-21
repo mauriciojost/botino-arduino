@@ -21,7 +21,6 @@ enum PropSyncProps {
   PropSyncFreqProp = 0,
   PropSyncUpdatePropsProp,
   PropSyncUpdateInfosProp,
-  PropSyncClearTargetOnLoadProp,
   PropSyncPropsgDelimiter // count of properties
 };
 
@@ -43,7 +42,6 @@ private:
   int (*httpPost)(const char *url, const char *body, ParamStream *response);
   bool updatePropsEnabled;
   bool updateInfosEnabled;
-  bool clearTargetOnLoad;
 
 public:
   PropSync(const char *n) {
@@ -55,7 +53,6 @@ public:
     freqConf.setFrequency(OnceEvery1Minute);
     updatePropsEnabled = true;
     updateInfosEnabled = false;
-    clearTargetOnLoad = false;
   }
 
   void setBot(SerBot *b) {
@@ -110,15 +107,23 @@ public:
     const char* actorName = actor->getName();
     log(CLASS_PROPSYNC, Debug, "LoadTarg:%s", actorName);
     urlAuxBuffer.fill(DWEET_IO_API_URL_GET_TARGET, actorName);
-    int errorCode = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
-    if (errorCode == HTTP_OK) {
+    int errorCodeGet = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
+    if (errorCodeGet == HTTP_OK) {
       JsonObject &json = httpBodyResponse.parse();
       if (json.containsKey("with")) {
         JsonObject &withJson = json["with"][0];
         if (withJson.containsKey("content")) {
           JsonObject &content = withJson["content"];
           log(CLASS_PROPSYNC, Debug, "SetProp:%s", actorName);
-          bot->setPropsJson(content, actorIndex);
+
+          urlAuxBuffer.fill(DWEET_IO_API_URL_POST_TARGET, actorName);
+          log(CLASS_PROPSYNC, Debug, "ClrTarg:%s", actorName);
+          int errorCodePost = httpPost(urlAuxBuffer.getBuffer(), "{}", NULL); // TODO: best effort for atomicity, but not good enough
+          if (errorCodePost == HTTP_OK) {
+            bot->setPropsJson(content, actorIndex);
+          } else {
+            log(CLASS_PROPSYNC, Info, "Failed to clean target");
+          }
         } else {
           log(CLASS_PROPSYNC, Info, "No 'content'");
         }
@@ -126,19 +131,13 @@ public:
         log(CLASS_PROPSYNC, Info, "Inv. JSON(no 'with')");
       }
     } else {
-      log(CLASS_PROPSYNC, Warn, "KO: %d", errorCode);
-    }
-
-    if (clearTargetOnLoad) {
-      urlAuxBuffer.fill(DWEET_IO_API_URL_POST_TARGET, actorName);
-      log(CLASS_PROPSYNC, Debug, "ClrTarg:%s", actorName);
-      httpPost(urlAuxBuffer.getBuffer(), "{}", NULL); // best effort
+      log(CLASS_PROPSYNC, Warn, "KO: %d", errorCodeGet);
     }
 
     bot->getPropsJson(&jsonAuxBuffer, actorIndex);
     urlAuxBuffer.fill(DWEET_IO_API_URL_POST_CURRENT, actorName);
     log(CLASS_PROPSYNC, Debug, "UpdCurr:%s", actorName);
-    httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort
+    httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort to push current status
 
   }
 
@@ -163,8 +162,6 @@ public:
         return "updateprops";
       case (PropSyncUpdateInfosProp):
         return "updateinfos";
-      case (PropSyncClearTargetOnLoadProp):
-        return "clearonload";
       default:
         return "";
     }
@@ -185,9 +182,6 @@ public:
       } break;
       case (PropSyncUpdateInfosProp): {
         setPropBoolean(m, targetValue, actualValue, &updateInfosEnabled);
-      } break;
-      case (PropSyncClearTargetOnLoadProp): {
-        setPropBoolean(m, targetValue, actualValue, &clearTargetOnLoad);
       } break;
       default:
         break;
