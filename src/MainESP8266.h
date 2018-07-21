@@ -119,23 +119,23 @@ void displayUserInfo() {
   Buffer<32> aux;
   log(CLASS_MAIN, Debug, "USER INFO");
   aux.fill("VER: %s", STRINGIFY(PROJ_VERSION));
-  messageFunc(0, aux.getBuffer(), 2);
+  messageFuncExt(0, 2, aux.getBuffer());
   log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(USER_DELAY_MS);
   aux.fill("NAM: %s", DEVICE_NAME);
-  messageFunc(0, aux.getBuffer(), 2);
+  messageFuncExt(0, 2, aux.getBuffer());
   log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(USER_DELAY_MS);
   aux.fill("ID : %d", ESP.getChipId());
-  messageFunc(0, aux.getBuffer(), 2);
+  messageFuncExt(0, 2, aux.getBuffer());
   log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(USER_DELAY_MS);
   aux.fill("SSI: %s", WIFI_SSID_INIT);
-  messageFunc(0, aux.getBuffer(), 2);
+  messageFuncExt(0, 2, aux.getBuffer());
   log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(USER_DELAY_MS);
   aux.fill("PAS: %s", WIFI_PASSWORD_INIT);
-  messageFunc(0, aux.getBuffer(), 2);
+  messageFuncExt(0, 2, aux.getBuffer());
   log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(USER_DELAY_MS);
 }
@@ -343,7 +343,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
       }
       break;
 		default:{
-        messageFunc(0, "Abort?", 2);
+        messageFuncExt(0, 2, "Abort?");
 			  if (!onlyMsg) {
           messageFuncExt(0, 1, "Aborted");
 			  }
