@@ -147,7 +147,7 @@ void test_body_performs_basic_moves() {
   TEST_ASSERT_EQUAL(true, fan);
 
   executeMove(&b, "Zz.");
-  TEST_ASSERT_EQUAL_STRING("left:0,right:0,steps:100", lastArms);
+  TEST_ASSERT_EQUAL_STRING("left:0,right:0,steps:20", lastArms);
   TEST_ASSERT_EQUAL(false, ledY);
   TEST_ASSERT_EQUAL(false, ledR);
   TEST_ASSERT_EQUAL(false, ledW);

@@ -16,8 +16,6 @@
 
 #define MV2 "A90A09W5."
 
-const char *replyClock = JSON_PREFIX "{\"h\":3}" JSON_SUFFIX;
-
 const char *replyBody = JSON_PREFIX "{"
                                     "\"mv0\":\"A99A55W5.W5.A99A55A00F2.W4.M02W5.Mc4W2.\","
                                     "\"mv1\":\"A90A09W5.W5.A09A55A00F1.W4.M12W5.Mc4W2.\","
@@ -31,7 +29,7 @@ const char *replyBody = JSON_PREFIX "{"
                                     "\"t3\":\"201016060\""
                                     "}" JSON_SUFFIX;
 
-void setUp() {}
+void setUp(void) {}
 
 void tearDown() {}
 
@@ -40,10 +38,7 @@ bool initWifi() {
 }
 
 int httpGet(const char *url, ParamStream *response) {
-  if (strcmp("http://dweet.io/get/latest/dweet/for/device1-clock-target", url) == 0) {
-    response->fill(replyClock);
-    return HTTP_OK;
-  } else if (strcmp("http://dweet.io/get/latest/dweet/for/device1-body-target", url) == 0) {
+  if (strcmp("http://dweet.io/get/latest/dweet/for/device1-body-target", url) == 0) {
     response->fill(replyBody);
     return HTTP_OK;
   }
@@ -51,29 +46,7 @@ int httpGet(const char *url, ParamStream *response) {
 }
 
 int httpPost(const char *url, const char *body, ParamStream *response) {
-  return 1;
-}
-
-void test_propsync_syncs_properties() {
-  Clock clock("clock");
-
-  Array<Actor *> actors(1);
-  actors.set(0, &clock);
-
-  SerBot b(&clock, &actors);
-
-  PropSync p("p");
-  p.setBot(&b);
-
-  p.setInitWifi(initWifi);
-  p.setHttpGet(httpGet);
-  p.setHttpPost(httpPost);
-
-  p.getFrequencyConfiguration()->setFrequency(OnceEvery1Second);
-
-  p.act();
-
-  TEST_ASSERT_EQUAL(3, GET_HOURS(clock.currentTime()));
+  return HTTP_OK;
 }
 
 void test_propsync_syncs_several_body_properties() {
@@ -102,7 +75,6 @@ void test_propsync_syncs_several_body_properties() {
 
 int main() {
   UNITY_BEGIN();
-  RUN_TEST(test_propsync_syncs_properties);
   RUN_TEST(test_propsync_syncs_several_body_properties);
   return (UNITY_END());
 }
