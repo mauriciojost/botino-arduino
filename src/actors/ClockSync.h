@@ -40,7 +40,7 @@ public:
     clock = NULL;
     initWifiFunc = NULL;
     httpGet = NULL;
-    timing.setFrequency(OnceEvery5Minutes);
+    timing.setFrequency(TwicePerDay);
   }
 
   void setClock(Clock *c) {
