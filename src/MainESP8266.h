@@ -95,7 +95,14 @@ Servo servoLeft;
 Servo servoRight;
 Adafruit_SSD1306 lcd(-1);
 
-#define LED_INT_PIN LEDW_PIN // led showing interruptions
+#define LED_INT_PIN LEDY_PIN // led showing interruptions
+#define LED_INT_ON digitalWrite(LED_INT_PIN, LOW)
+#define LED_INT_OFF digitalWrite(LED_INT_PIN, HIGH)
+
+#define LED_ALIVE_PIN LEDR_PIN // led showing device alive
+#define LED_ALIVE_ON digitalWrite(LED_ALIVE_PIN, LOW);
+#define LED_ALIVE_OFF digitalWrite(LED_ALIVE_PIN, HIGH);
+
 
 void bitmapToLcd(uint8_t bitmap[]);
 void reactCommandCustom();
@@ -327,7 +334,10 @@ void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {
       break;
     }
     unsigned long fragToSleepMs = MINIM(periodMs - spentMs, FRAG_TO_SLEEP_MS_MAX);
-    delay(fragToSleepMs);
+    LED_ALIVE_ON;
+    delay(fragToSleepMs/100*1);
+    LED_ALIVE_OFF;
+    delay(fragToSleepMs/100*99);
     spentMs = millis() - cycleBegin;
   }
 }
@@ -353,13 +363,13 @@ bool haveToInterrupt() {
     while(digitalRead(BUTTON0_PIN)) {
       holds++;
       log(CLASS_MAIN, Debug, "%d", holds);
-      digitalWrite(LED_INT_PIN, LOW); // switch on
+      LED_INT_ON;
       reactToButtonHeld(holds, ONLY_SHOW_MSG);
-      digitalWrite(LED_INT_PIN, HIGH); // switch off
+      LED_INT_OFF;
       delay(950);
     }
     bool interruptMe = reactToButtonHeld(holds, SHOW_MSG_AND_REACT);
-    digitalWrite(LED_INT_PIN, HIGH); // switch off
+    LED_INT_OFF;
     buttonInterrupts = 0;
 
     log(CLASS_MAIN, Debug, "Done");
@@ -538,7 +548,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
 ICACHE_RAM_ATTR
 void buttonPressed() {
   buttonInterrupts++;
-  digitalWrite(LED_INT_PIN, LOW); // switch on
+  LED_INT_ON;
 }
 
 
