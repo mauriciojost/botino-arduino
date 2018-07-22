@@ -282,15 +282,6 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
 			  }
       }
       break;
-		case 9: {
-        messageFuncExt(0, 2, "Log level?");
-			  if (!onlyMsg) {
-          Settings *s = m.getSettings();
-          s->setLogLevel((s->getLogLevel() + 1) % 4);
-          messageFuncExt(0, 1, "Log level %d", s->getLogLevel());
-			  }
-      }
-      break;
 		default:{
         messageFuncExt(0, 2, "Abort?");
 			  if (!onlyMsg) {
