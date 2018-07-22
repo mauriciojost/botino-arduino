@@ -335,13 +335,13 @@ void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {
 bool haveToInterrupt() {
   if (Serial.available()) {
     // Handle serial commands
-    Buffer<INFO_BUFFER_LENGTH> auxBuffer;
-    log(CLASS_MAIN, Debug, "Serial available, listening...");
-    auxBuffer.clear();
-  	Serial.readBytesUntil('\n', auxBuffer.getUnsafeBuffer(), INFO_BUFFER_LENGTH);
-  	auxBuffer.replace('\n', '\0');
-  	auxBuffer.replace('\r', '\0');
-  	bool interrupt = command(auxBuffer.getBuffer());
+    Buffer<COMMAND_MAX_LENGTH> cmdBuffer;
+    log(CLASS_MAIN, Info, "Listening...");
+    cmdBuffer.clear();
+  	Serial.readBytesUntil('\n', cmdBuffer.getUnsafeBuffer(), COMMAND_MAX_LENGTH);
+  	cmdBuffer.replace('\n', '\0');
+  	cmdBuffer.replace('\r', '\0');
+  	bool interrupt = command(cmdBuffer.getBuffer());
   	log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
   	return interrupt;
   } else if (buttonInterrupts > 0) {
