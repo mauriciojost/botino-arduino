@@ -73,7 +73,13 @@ enum BodyProps {
 
 #define MOVE_DANCE0 "LwyFs.B09B90LwnFw.B09B90LwyFb.B55"
 #define MOVE_DANCE1 "FfyLyyLwyFs.A50A05Fb.LryLwnA00A99Fw.LrnLwyA90A09Fb.LwnLyyA90A09Fw.Fs."
-#define MOVE_DANCE2 "A87A78A87A78A12A21A12A21"
+#define MOVE_DANCE2  "A87A78L?.A87A78L?.A12A21L?.A12A21L?."
+#define MOVE_DANCE3 "Fa.Da/SooDa\\Fr.DauSppDanFn.Sxx"
+
+#define MOVE_DANCE_U "A87A78L?.A87A78L?.A87A78L?.A87A78L?."
+#define MOVE_DANCE_n "A12A21L?.A12A21L?.A12A21L?.A12A21L?."
+#define MOVE_DANCE_BACK_SLASH "A71A82L?.A71A82L?.A71A82L?.A71A82"
+#define MOVE_DANCE_FORW_SLASH "A17A28L?.A17A28L?.A17A28L?.A17A28"
 
 // Create images with:
 // https://docs.google.com/spreadsheets/d/1jXa9mFxeiN_bUji_WiCPKO_gB6pxQUeQ5QxgoSINqdc/edit#gid=0
@@ -163,6 +169,7 @@ Codes:
   Lrn : turn off (n) the Red led
   Lwy : turn on (y) led White
   Lyy : turn on (y) led Yellow
+  L?. : turn randomly all leds
   Lfy : turn on (y) Fan
 
 
@@ -178,14 +185,20 @@ Codes:
 
 MESSAGE SHORT POSES: show a certain short message (a few letters)
 Codes:
-  Mxx : show message 'xx' (can be replaced by any characters)
+  Sxx : show message 'xx' (can be replaced by any characters)
 
 
 COMPOSED POSES: dances and other predefined moves usable as poses
 Codes:
+  Dan : dance n
+  Dau : dance u
+  Da\ : dance \
+  Da/ : dance /
+
   Da0 : dance 0
   Da1 : dance 1
   Da2 : dance 2
+  Da3 : dance 3
 
 
 WAIT POSES: wait a given number of seconds
@@ -331,7 +344,7 @@ Codes:
           Buffer<3> s;
           s.fill("%c%c", c2, c3);
           log(CLASS_BODY, Debug, "Msg short '%s'", s.getBuffer());
-          messageFunc(0, s.getBuffer(), 4);
+          messageFunc(0, s.getBuffer(), 6);
         }
         break;
 
@@ -355,6 +368,12 @@ Codes:
             bool b = getBool(c3);
             log(CLASS_BODY, Debug, "Led yellow: %d", b);
             iosFunc('y', b);
+            break;
+          }
+          case '?': {
+            iosFunc('r', random(2) == 0);
+            iosFunc('w', random(2) == 0);
+            iosFunc('y', random(2) == 0);
             break;
           }
           case 'f': {
@@ -383,6 +402,21 @@ Codes:
                 break;
               case '2':
                 performMove(MOVE_DANCE2);
+                break;
+              case '3':
+                performMove(MOVE_DANCE3);
+                break;
+              case 'n':
+                performMove(MOVE_DANCE_n);
+                break;
+              case 'u':
+                performMove(MOVE_DANCE_U);
+                break;
+              case '\\':
+                performMove(MOVE_DANCE_BACK_SLASH);
+                break;
+              case '/':
+                performMove(MOVE_DANCE_FORW_SLASH);
                 break;
               default:
                 log(CLASS_BODY, Debug, "Inv.S.pose:%c%c%c", c1, c2, c3);
