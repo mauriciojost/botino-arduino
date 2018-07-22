@@ -66,7 +66,7 @@
 #endif
 
 #define ONLY_SHOW_MSG true
-#define SHOW_MSG_AND_GO false
+#define SHOW_MSG_AND_REACT false
 
 extern "C" {
 #include "user_interface.h"
@@ -255,7 +255,7 @@ void loopArchitecture() {
 
 }
 
-void reactCommandCustom() {
+void reactCommandCustom() { // for the use via telnet
   command(Telnet.getLastCommand().c_str());
 }
 
@@ -382,7 +382,7 @@ bool haveToInterrupt() {
       digitalWrite(LED_INT_PIN, HIGH); // switch off
       delay(950);
     }
-    bool interruptMe = reactToButtonHeld(holds, SHOW_MSG_AND_GO);
+    bool interruptMe = reactToButtonHeld(holds, SHOW_MSG_AND_REACT);
     digitalWrite(LED_INT_PIN, HIGH); // switch off
     buttonInterrupts = 0;
 
