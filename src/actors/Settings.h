@@ -39,7 +39,7 @@ public:
   Settings(const char *n) {
     name = n;
     devDebug = false;
-    buttonRoutineUntil = 1;
+    buttonRoutineUntil = 4;
     infoBuffer.clear();
     freqConf.setFrequency(Never);
   }

@@ -75,6 +75,10 @@ enum BodyProps {
 #define MOVE_DANCE1 "FfyLyyLwyFs.A50A05Fb.LryLwnA00A99Fw.LrnLwyA90A09Fb.LwnLyyA90A09Fw.Fs."
 #define MOVE_DANCE2  "A87A78L?.A87A78L?.A12A21L?.A12A21L?."
 #define MOVE_DANCE3 "Fa.Da/SooDa\\Fr.DauSppDanFn.Sxx"
+#define MOVE_DANCE4 "S4?"
+#define MOVE_DANCE5 "S5?"
+#define MOVE_DANCE6 "S6?"
+#define MOVE_DANCE7 "S7?"
 
 #define MOVE_DANCE_U "A87A78L?.A87A78L?.A87A78L?.A87A78L?."
 #define MOVE_DANCE_n "A12A21L?.A12A21L?.A12A21L?.A12A21L?."
@@ -406,6 +410,18 @@ Codes:
               case '3':
                 performMove(MOVE_DANCE3);
                 break;
+              case '4':
+                performMove(MOVE_DANCE4);
+                break;
+              case '5':
+                performMove(MOVE_DANCE5);
+                break;
+              case '6':
+                performMove(MOVE_DANCE6);
+                break;
+              case '7':
+                performMove(MOVE_DANCE7);
+                break;
               case 'n':
                 performMove(MOVE_DANCE_n);
                 break;
@@ -457,6 +473,7 @@ public:
       routines[i]->timingConf = 0L; // Never
       routines[i]->timing.setCustom(routines[i]->timingConf);
       routines[i]->timing.setFrequency(Custom);
+      routines[i]->move.fill("Da%d", i);
     }
   }
 
