@@ -177,7 +177,6 @@ void runModeArchitecture() {
 
 void logsArchitecture() {
   log(CLASS_MAIN, Info, "DEV NAME: %s", DEVICE_NAME);
-  log(CLASS_MAIN, Info, "Hostname: %s", WiFi.hostname().c_str());
   log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
   log(CLASS_MAIN, Info, "Memory: %lu", ESP.getFreeHeap());
   log(CLASS_MAIN, Info, "Crashes: %d", SaveCrash.count());
