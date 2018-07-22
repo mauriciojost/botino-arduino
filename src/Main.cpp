@@ -130,6 +130,9 @@ void command(const char *cmd) {
     log(CLASS_MAIN, Info, "-> Configure mode");
     m.getBot()->setMode(ConfigureMode);
     return;
+  } else if (strcmp("wifi", c) == 0) {
+    initWifiSteady();
+    return;
   } else if (strcmp("help", c) == 0) {
     log(CLASS_MAIN, Error, "%s", HELP_COMMAND_CLI); // error level to ensure in any case the message is delivered
     return;
