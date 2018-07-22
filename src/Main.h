@@ -82,15 +82,6 @@ void messageFuncExt(int line, int size, const char *format, ...);
 // The log function (that will print to screen, Serial, telnet, or whatever wished)
 void logLine(const char *str);
 
-// Setup step specific to the architecture
-void setupArchitecture();
-
-// Loop in run mode specific to the architecture
-void runModeArchitecture();
-
-// Loop in configure mode specific to the architecture
-void configureModeArchitecture();
-
 // Setup wifi using provided parameters
 bool initWifi(const char *ssid, const char *pass, bool skipIfAlreadyConnected, int retries);
 
@@ -128,5 +119,13 @@ void lcdImg(char img, uint8_t bitmap[]);
 // Invoked in RunMode only every cycle
 void logsArchitecture();
 
+// Setup step specific to the architecture
+void setupArchitecture();
+
+// Loop in run mode specific to the architecture
+void runModeArchitecture();
+
+// Loop in configure mode specific to the architecture
+void configureModeArchitecture();
 
 #endif // MAIN_INC
