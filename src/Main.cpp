@@ -89,7 +89,7 @@ void command(const char *cmd) {
   if (strcmp("move", c) == 0) {
     c = strtok(NULL, " ");
     if (c == NULL) {
-      log(CLASS_MAIN, Error, "Argument needed:\n  move <move>");
+      log(CLASS_MAIN, Info, "Argument needed:\n  move <move>");
       return;
     }
     log(CLASS_MAIN, Info, "-> Move %s", c);
@@ -100,7 +100,7 @@ void command(const char *cmd) {
     const char *prop = strtok(NULL, " ");
     const char *v = strtok(NULL, " ");
     if (actor == NULL || prop == NULL || v == NULL) {
-      log(CLASS_MAIN, Error, "Arguments needed:\n  set <actor> <prop> <value>");
+      log(CLASS_MAIN, Info, "Arguments needed:\n  set <actor> <prop> <value>");
       return;
     }
     log(CLASS_MAIN, Info, "-> Set %s.%s = %s", actor, prop, v);
