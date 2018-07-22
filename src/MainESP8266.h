@@ -309,7 +309,8 @@ bool haveToInterrupt() {
     // Handle button commands
     log(CLASS_MAIN, Debug, "Button command (%d)", buttonInterrupts);
     int holds = 0;
-    delay(50); // anti-bouncing
+    reactToButtonHeld(holds, ONLY_SHOW_MSG);
+    delay(100); // anti-bouncing
     while(digitalRead(BUTTON0_PIN)) {
       holds++;
       log(CLASS_MAIN, Debug, "%d", holds);
