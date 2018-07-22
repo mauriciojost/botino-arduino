@@ -97,237 +97,16 @@ Adafruit_SSD1306 lcd(-1);
 
 #define LED_INT_PIN LEDW_PIN // led showing interruptions
 
-void bitmapToLcd(uint8_t bitmap[]) {
-  for (char yi = 0; yi < 8; yi++) {
-    for (char xi = 0; xi < 2; xi++) {
-      uint8_t imgbyte = bitmap[yi * 2 + xi];
-      for (char b = 0; b < 8; b++) {
-        uint8_t color = (imgbyte << b) & 0b10000000;
-        int16_t xl = (int16_t)xi * 64 + (int16_t)b * 8;
-        int16_t yl = (int16_t)yi * 8;
-        uint16_t cl = color == 0 ? BLACK : WHITE;
-        lcd.fillRect(xl, yl, 8, 8, cl);
-      }
-    }
-  }
-}
+void bitmapToLcd(uint8_t bitmap[]);
+void reactCommandCustom();
+void hwTest();
+void buttonPressed();
+bool reactToButtonHeld(int cycles, bool onlyMsg);
 
-void wifiOn() {
-  WiFi.mode(WIFI_STA);
-  delay(WIFI_DELAY_MS);
-}
+////////////////////////////////////////
+// Functions requested for architecture
+////////////////////////////////////////
 
-bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries) {
-  wl_status_t status;
-  log(CLASS_MAIN, Info, "To '%s'/'%s'...", ssid, pass);
-
-  if (skipIfConnected) {
-    log(CLASS_MAIN, Info, "Conn.?");
-    status = WiFi.status();
-    if (status == WL_CONNECTED) {
-      log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
-      return true; // connected
-    }
-  } else {
-    log(CLASS_MAIN, Info, "W.Off.");
-    WiFi.disconnect();
-    delay(WIFI_DELAY_MS);
-    WiFi.mode(WIFI_OFF); // to be removed after SDK update to 1.5.4
-    delay(WIFI_DELAY_MS);
-  }
-
-  wifiOn();
-  WiFi.begin(ssid, pass);
-
-  int attemptsLeft = retries;
-  while (true) {
-    delay(WIFI_DELAY_MS);
-    status = WiFi.status();
-    log(CLASS_MAIN, Info, " ..retry(%d)", attemptsLeft);
-    attemptsLeft--;
-    if (status == WL_CONNECTED) {
-      log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
-      return true; // connected
-    }
-    if (attemptsLeft < 0) {
-      log(CLASS_MAIN, Warn, "Conn. failed %d", status);
-      return false; // not connected
-    }
-  }
-}
-
-void runModeArchitecture() {
-  Settings *s = m.getSettings();
-
-  // Logs
-  log(CLASS_MAIN, Info, "DEV NAME: %s", DEVICE_NAME);
-  log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
-  log(CLASS_MAIN, Info, "Memory: %lu", ESP.getFreeHeap());
-  log(CLASS_MAIN, Info, "Crashes: %d", SaveCrash.count());
-  log(CLASS_MAIN, Info, "HTTP size: %d", httpClient.getSize());
-
-  // Handle stack-traces stored in memory
-  if (SaveCrash.count() > 0) {
-    log(CLASS_MAIN, Warn, "Stack-trcs (!!!)");
-    SaveCrash.print();
-  }
-
-  // Report interesting information about the device
-  Buffer<INFO_BUFFER_LENGTH> infoBuffer;
-  infoBuffer.fill("crs %d / ver %s / upt %lu h", SaveCrash.count(), STRINGIFY(PROJ_VERSION), (millis() / 1000) / 3600);
-  s->setInfo(infoBuffer.getBuffer());
-
-  // Handle log level as per settings
-  Serial.setDebugOutput(s->getDebug()); // deep HW logs
-
-}
-
-void configureModeArchitecture() {
-  messageFuncExt(0, 1, "telnet %s", WiFi.localIP().toString().c_str());
-  Telnet.begin("ESP" DEVICE_NAME); // Intialize the remote logging framework
-  Telnet.handle();     // Handle telnet log server and commands
-  ArduinoOTA.begin();  // Intialize OTA
-  ArduinoOTA.handle(); // Handle on the air firmware load
-}
-
-void reactCommandCustom() { // for the use via telnet
-  command(Telnet.getLastCommand().c_str());
-}
-
-bool reactToButtonHeld(int cycles, bool onlyMsg) {
-	switch (cycles) {
-		case 0: {
-        messageFuncExt(0, 2, "Zzz routine?");
-			  if (!onlyMsg) {
-          log(CLASS_MAIN, Debug, "Routine Zzz...");
-          m.getBody()->performMove("Zz.");
-			  }
-      }
-      break;
-		case 1:
-		case 2: {
-        const char* evtName = m.getIfttt()->getEventName(cycles);
-        messageFuncExt(0, 2, "Push event %s?", evtName);
-			  if (!onlyMsg) {
-			  	bool suc = m.getIfttt()->triggerEvent(cycles);
-			  	if (suc) {
-            messageFuncExt(0, 1, "Event %s pushed!", evtName);
-			  	} else {
-            messageFuncExt(0, 1, "Failed: event not pushed");
-			  	}
-			  }
-      }
-      break;
-		case 3: {
-        messageFuncExt(0, 2, "Random routine?");
-			  if (!onlyMsg) {
-          int routine = (int)random(0, m.getSettings()->getNroRoutinesForButton());
-          log(CLASS_MAIN, Debug, "Routine %d...", routine);
-          m.getBody()->performMove(routine);
-			  }
-      }
-      break;
-		case 4: {
-        messageFuncExt(0, 2, "All act?");
-			  if (!onlyMsg) {
-          messageFuncExt(0, 1, "All act one-off");
-			  	for (int i=0; i < m.getBot()->getActors()->size(); i++) {
-            Actor* a = m.getBot()->getActors()->get(i);
-            log(CLASS_MAIN, Debug, "One off: %s", a->getName());
-			  		a->oneOff();
-			  	}
-			  }
-      }
-      break;
-		case 5: {
-        messageFuncExt(0, 2, "Config mode?");
-			  if (!onlyMsg) {
-			  	m.getBot()->setMode(ConfigureMode);
-          messageFuncExt(0, 1, "In config mode");
-			  }
-      }
-      break;
-		case 6: {
-        messageFuncExt(0, 2, "Run mode?");
-			  if (!onlyMsg) {
-			  	m.getBot()->setMode(RunMode);
-          messageFuncExt(0, 1, "In run mode");
-			  }
-      }
-      break;
-		default:{
-        messageFuncExt(0, 2, "Abort?");
-			  if (!onlyMsg) {
-          messageFuncExt(0, 1, "Aborted");
-			  }
-      }
-      break;
-	}
-	return false;
-}
-
-bool haveToInterrupt() {
-  if (Serial.available()) {
-    // Handle serial commands
-    Buffer<INFO_BUFFER_LENGTH> auxBuffer;
-    log(CLASS_MAIN, Debug, "Serial available, listening...");
-    auxBuffer.clear();
-  	Serial.readBytesUntil('\n', auxBuffer.getUnsafeBuffer(), INFO_BUFFER_LENGTH);
-  	auxBuffer.replace('\n', '\0');
-  	auxBuffer.replace('\r', '\0');
-  	bool interrupt = command(auxBuffer.getBuffer());
-  	log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
-  	return interrupt;
-  } else if (buttonInterrupts > 0) {
-    // Handle button commands
-    log(CLASS_MAIN, Debug, "Button command (%d)", buttonInterrupts);
-    int holds = 0;
-    reactToButtonHeld(holds, ONLY_SHOW_MSG);
-    delay(100); // anti-bouncing
-    while(digitalRead(BUTTON0_PIN)) {
-      holds++;
-      log(CLASS_MAIN, Debug, "%d", holds);
-      digitalWrite(LED_INT_PIN, LOW); // switch on
-      reactToButtonHeld(holds, ONLY_SHOW_MSG);
-      digitalWrite(LED_INT_PIN, HIGH); // switch off
-      delay(950);
-    }
-    bool interruptMe = reactToButtonHeld(holds, SHOW_MSG_AND_REACT);
-    digitalWrite(LED_INT_PIN, HIGH); // switch off
-    buttonInterrupts = 0;
-
-    log(CLASS_MAIN, Debug, "Done");
-    return interruptMe;
-  } else {
-    // Nothing to handle, no reason to interrupt
-    return false;
-  }
-}
-
-void clearDevice() {
-  SaveCrash.clear();
-}
-
-/*****************/
-/*** CALLBACKS ***/
-/*****************/
-
-ICACHE_RAM_ATTR
-void buttonPressed() {
-  buttonInterrupts++;
-  digitalWrite(LED_INT_PIN, LOW); // switch on
-}
-
-void messageFunc(int line, const char *str, int size) {
-  lcd.clearDisplay();
-  lcd.setTextWrap(true);
-  lcd.setTextSize(size);
-  lcd.setTextColor(WHITE);
-  lcd.setCursor(0, line * 2 * 8);
-  lcd.println(str);
-  lcd.display();
-  delay(DELAY_MS_SPI);
-}
 
 void logLine(const char *str) {
 	// serial print
@@ -349,34 +128,44 @@ void logLine(const char *str) {
   }
 }
 
-void arms(int left, int right, int steps) {
-  static int lastPosL = -1;
-  static int lastPosR = -1;
+bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries) {
+  wl_status_t status;
+  log(CLASS_MAIN, Info, "To '%s'/'%s'...", ssid, pass);
 
-  log(CLASS_MAIN, Debug, "Arms>%d&%d", left, right);
-  int targetPosL = SERVO_INVERT_POS(((POSIT(left) % MAX_SERVO_STEPS) * SERVO0_STEP_DEGREES) + SERVO0_BASE_DEGREES, SERVO0_INVERTED);
-  int targetPosR = SERVO_INVERT_POS(((POSIT(right) % MAX_SERVO_STEPS) * SERVO1_STEP_DEGREES) + SERVO1_BASE_DEGREES, SERVO1_INVERTED);
-  servoLeft.attach(SERVO0_PIN);
-  servoRight.attach(SERVO1_PIN);
-
-  // leave as target if first time
-  lastPosL = (lastPosL == -1 ? targetPosL : lastPosL);
-  lastPosR = (lastPosR == -1 ? targetPosR : lastPosR);
-
-  log(CLASS_MAIN, Debug, "Sv.L%d>%d", lastPosL, targetPosL);
-  log(CLASS_MAIN, Debug, "Sv.R%d>%d", lastPosR, targetPosR);
-  for (int i = 1; i <= steps; i++) {
-    float factor = ((float)i) / steps;
-    int vL = lastPosL + ((targetPosL - lastPosL) * factor);
-    int vR = lastPosR + ((targetPosR - lastPosR) * factor);
-    servoLeft.write(vL);
-    servoRight.write(vR);
-    delay(15);
+  if (skipIfConnected) {
+    log(CLASS_MAIN, Info, "Conn.?");
+    status = WiFi.status();
+    if (status == WL_CONNECTED) {
+      log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
+      return true; // connected
+    }
+  } else {
+    log(CLASS_MAIN, Info, "W.Off.");
+    WiFi.disconnect();
+    delay(WIFI_DELAY_MS);
+    WiFi.mode(WIFI_OFF); // to be removed after SDK update to 1.5.4
+    delay(WIFI_DELAY_MS);
   }
-  lastPosL = targetPosL;
-  lastPosR = targetPosR;
-  servoLeft.detach();
-  servoRight.detach();
+
+  WiFi.mode(WIFI_STA);
+  delay(WIFI_DELAY_MS);
+  WiFi.begin(ssid, pass);
+
+  int attemptsLeft = retries;
+  while (true) {
+    delay(WIFI_DELAY_MS);
+    status = WiFi.status();
+    log(CLASS_MAIN, Info, " ..retry(%d)", attemptsLeft);
+    attemptsLeft--;
+    if (status == WL_CONNECTED) {
+      log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
+      return true; // connected
+    }
+    if (attemptsLeft < 0) {
+      log(CLASS_MAIN, Warn, "Conn. failed %d", status);
+      return false; // not connected
+    }
+  }
 }
 
 // TODO: add https support, which requires fingerprint of server that can be obtained as follows:
@@ -428,6 +217,47 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
   return errorCode;
 }
 
+void messageFunc(int line, const char *str, int size) {
+  lcd.clearDisplay();
+  lcd.setTextWrap(true);
+  lcd.setTextSize(size);
+  lcd.setTextColor(WHITE);
+  lcd.setCursor(0, line * 2 * 8);
+  lcd.println(str);
+  lcd.display();
+  delay(DELAY_MS_SPI);
+}
+
+void arms(int left, int right, int steps) {
+  static int lastPosL = -1;
+  static int lastPosR = -1;
+
+  log(CLASS_MAIN, Debug, "Arms>%d&%d", left, right);
+  int targetPosL = SERVO_INVERT_POS(((POSIT(left) % MAX_SERVO_STEPS) * SERVO0_STEP_DEGREES) + SERVO0_BASE_DEGREES, SERVO0_INVERTED);
+  int targetPosR = SERVO_INVERT_POS(((POSIT(right) % MAX_SERVO_STEPS) * SERVO1_STEP_DEGREES) + SERVO1_BASE_DEGREES, SERVO1_INVERTED);
+  servoLeft.attach(SERVO0_PIN);
+  servoRight.attach(SERVO1_PIN);
+
+  // leave as target if first time
+  lastPosL = (lastPosL == -1 ? targetPosL : lastPosL);
+  lastPosR = (lastPosR == -1 ? targetPosR : lastPosR);
+
+  log(CLASS_MAIN, Debug, "Sv.L%d>%d", lastPosL, targetPosL);
+  log(CLASS_MAIN, Debug, "Sv.R%d>%d", lastPosR, targetPosR);
+  for (int i = 1; i <= steps; i++) {
+    float factor = ((float)i) / steps;
+    int vL = lastPosL + ((targetPosL - lastPosL) * factor);
+    int vR = lastPosR + ((targetPosR - lastPosR) * factor);
+    servoLeft.write(vL);
+    servoRight.write(vR);
+    delay(15);
+  }
+  lastPosL = targetPosL;
+  lastPosR = targetPosR;
+  servoLeft.detach();
+  servoRight.detach();
+}
+
 void ios(char led, bool v) {
   log(CLASS_MAIN, Debug, "Led'%c'->%d", led, (int)v);
   switch (led) {
@@ -446,6 +276,10 @@ void ios(char led, bool v) {
     default:
       break;
   }
+}
+
+void clearDevice() {
+  SaveCrash.clear();
 }
 
 void lcdImg(char img, uint8_t bitmap[]) {
@@ -476,6 +310,64 @@ void lcdImg(char img, uint8_t bitmap[]) {
   }
   lcd.display();
   delay(DELAY_MS_SPI);
+}
+
+// TODO: buggy (what happens on overrun?), and can be simplified using the clock and time_t
+void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {
+  unsigned long spentMs = millis() - cycleBegin;
+  int dc = (spentMs * 100) / periodMs;
+
+  log(CLASS_MAIN, Debug, "D.C.:%d%%", dc);
+  if (dc > DUTY_CYCLE_THRESHOLD_PERC) {
+    log(CLASS_MAIN, Debug, "Cycle: %lums", spentMs);
+  }
+  log(CLASS_MAIN, Debug, "L.Sleep(%lums)...", periodMs);
+  while (spentMs < periodMs) {
+    if (haveToInterrupt()) {
+      break;
+    }
+    unsigned long fragToSleepMs = MINIM(periodMs - spentMs, FRAG_TO_SLEEP_MS_MAX);
+    delay(fragToSleepMs);
+    spentMs = millis() - cycleBegin;
+  }
+}
+
+bool haveToInterrupt() {
+  if (Serial.available()) {
+    // Handle serial commands
+    Buffer<INFO_BUFFER_LENGTH> auxBuffer;
+    log(CLASS_MAIN, Debug, "Serial available, listening...");
+    auxBuffer.clear();
+  	Serial.readBytesUntil('\n', auxBuffer.getUnsafeBuffer(), INFO_BUFFER_LENGTH);
+  	auxBuffer.replace('\n', '\0');
+  	auxBuffer.replace('\r', '\0');
+  	bool interrupt = command(auxBuffer.getBuffer());
+  	log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
+  	return interrupt;
+  } else if (buttonInterrupts > 0) {
+    // Handle button commands
+    log(CLASS_MAIN, Debug, "Button command (%d)", buttonInterrupts);
+    int holds = 0;
+    reactToButtonHeld(holds, ONLY_SHOW_MSG);
+    delay(100); // anti-bouncing
+    while(digitalRead(BUTTON0_PIN)) {
+      holds++;
+      log(CLASS_MAIN, Debug, "%d", holds);
+      digitalWrite(LED_INT_PIN, LOW); // switch on
+      reactToButtonHeld(holds, ONLY_SHOW_MSG);
+      digitalWrite(LED_INT_PIN, HIGH); // switch off
+      delay(950);
+    }
+    bool interruptMe = reactToButtonHeld(holds, SHOW_MSG_AND_REACT);
+    digitalWrite(LED_INT_PIN, HIGH); // switch off
+    buttonInterrupts = 0;
+
+    log(CLASS_MAIN, Debug, "Done");
+    return interruptMe;
+  } else {
+    // Nothing to handle, no reason to interrupt
+    return false;
+  }
 }
 
 void setupArchitecture() {
@@ -523,7 +415,148 @@ void setupArchitecture() {
   String helpCli(HELP_COMMAND_CLI);
   Telnet.setHelpProjectsCmds(helpCli);
 
-  delay(1000);
+  hwTest();
+
+}
+
+void runModeArchitecture() {
+  Settings *s = m.getSettings();
+
+  // Logs
+  log(CLASS_MAIN, Info, "DEV NAME: %s", DEVICE_NAME);
+  log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
+  log(CLASS_MAIN, Info, "Memory: %lu", ESP.getFreeHeap());
+  log(CLASS_MAIN, Info, "Crashes: %d", SaveCrash.count());
+  log(CLASS_MAIN, Info, "HTTP size: %d", httpClient.getSize());
+
+  // Handle stack-traces stored in memory
+  if (SaveCrash.count() > 0) {
+    log(CLASS_MAIN, Warn, "Stack-trcs (!!!)");
+    SaveCrash.print();
+  }
+
+  // Report interesting information about the device
+  Buffer<INFO_BUFFER_LENGTH> infoBuffer;
+  infoBuffer.fill("crs %d / ver %s / upt %lu h", SaveCrash.count(), STRINGIFY(PROJ_VERSION), (millis() / 1000) / 3600);
+  s->setInfo(infoBuffer.getBuffer());
+
+  // Handle log level as per settings
+  Serial.setDebugOutput(s->getDebug()); // deep HW logs
+
+}
+
+void configureModeArchitecture() {
+  messageFuncExt(0, 1, "telnet %s", WiFi.localIP().toString().c_str());
+  Telnet.begin("ESP" DEVICE_NAME); // Intialize the remote logging framework
+  Telnet.handle();     // Handle telnet log server and commands
+  ArduinoOTA.begin();  // Intialize OTA
+  ArduinoOTA.handle(); // Handle on the air firmware load
+}
+
+
+////////////////////////////////////////
+// Architecture specific functions
+////////////////////////////////////////
+
+bool reactToButtonHeld(int cycles, bool onlyMsg) {
+	switch (cycles) {
+		case 0:
+		case 1: {
+        const char* evtName = m.getIfttt()->getEventName(cycles);
+        messageFuncExt(0, 2, "Push event %s?", evtName);
+			  if (!onlyMsg) {
+			  	bool suc = m.getIfttt()->triggerEvent(cycles);
+			  	if (suc) {
+            messageFuncExt(0, 1, "Event %s pushed!", evtName);
+			  	} else {
+            messageFuncExt(0, 1, "Failed: event not pushed");
+			  	}
+			  }
+      }
+      break;
+		case 2: {
+        messageFuncExt(0, 2, "Zzz routine?");
+			  if (!onlyMsg) {
+          log(CLASS_MAIN, Debug, "Routine Zzz...");
+          m.getBody()->performMove("Zz.");
+			  }
+      }
+      break;
+		case 3: {
+        messageFuncExt(0, 2, "Random routine?");
+			  if (!onlyMsg) {
+          int routine = (int)random(0, m.getSettings()->getNroRoutinesForButton());
+          log(CLASS_MAIN, Debug, "Routine %d...", routine);
+          m.getBody()->performMove(routine);
+			  }
+      }
+      break;
+		case 4: {
+        messageFuncExt(0, 2, "All act?");
+			  if (!onlyMsg) {
+          messageFuncExt(0, 1, "All act one-off");
+			  	for (int i=0; i < m.getBot()->getActors()->size(); i++) {
+            Actor* a = m.getBot()->getActors()->get(i);
+            log(CLASS_MAIN, Debug, "One off: %s", a->getName());
+			  		a->oneOff();
+			  	}
+			  }
+      }
+      break;
+		case 5: {
+        messageFuncExt(0, 2, "Config mode?");
+			  if (!onlyMsg) {
+			  	m.getBot()->setMode(ConfigureMode);
+          messageFuncExt(0, 1, "In config mode");
+			  }
+      }
+      break;
+		case 6: {
+        messageFuncExt(0, 2, "Run mode?");
+			  if (!onlyMsg) {
+			  	m.getBot()->setMode(RunMode);
+          messageFuncExt(0, 1, "In run mode");
+			  }
+      }
+      break;
+		default:{
+        messageFuncExt(0, 2, "Abort?");
+			  if (!onlyMsg) {
+          messageFuncExt(0, 1, "");
+			  }
+      }
+      break;
+	}
+	return false;
+}
+
+ICACHE_RAM_ATTR
+void buttonPressed() {
+  buttonInterrupts++;
+  digitalWrite(LED_INT_PIN, LOW); // switch on
+}
+
+
+void bitmapToLcd(uint8_t bitmap[]) {
+  for (char yi = 0; yi < 8; yi++) {
+    for (char xi = 0; xi < 2; xi++) {
+      uint8_t imgbyte = bitmap[yi * 2 + xi];
+      for (char b = 0; b < 8; b++) {
+        uint8_t color = (imgbyte << b) & 0b10000000;
+        int16_t xl = (int16_t)xi * 64 + (int16_t)b * 8;
+        int16_t yl = (int16_t)yi * 8;
+        uint16_t cl = color == 0 ? BLACK : WHITE;
+        lcd.fillRect(xl, yl, 8, 8, cl);
+      }
+    }
+  }
+}
+
+void reactCommandCustom() { // for the use via telnet
+  command(Telnet.getLastCommand().c_str());
+}
+
+void hwTest() {
 
   Buffer<32> aux;
   log(CLASS_MAIN, Debug, "USER INFO");
@@ -618,25 +651,4 @@ void setupArchitecture() {
   ios('w', false);
   ios('f', false);
   lcdImg('l', NULL);
-
-}
-
-// TODO: buggy (what happens on overrun?), and can be simplified using the clock and time_t
-void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {
-  unsigned long spentMs = millis() - cycleBegin;
-  int dc = (spentMs * 100) / periodMs;
-
-  log(CLASS_MAIN, Debug, "D.C.:%d%%", dc);
-  if (dc > DUTY_CYCLE_THRESHOLD_PERC) {
-    log(CLASS_MAIN, Debug, "Cycle: %lums", spentMs);
-  }
-  log(CLASS_MAIN, Debug, "L.Sleep(%lums)...", periodMs);
-  while (spentMs < periodMs) {
-    if (haveToInterrupt()) {
-      break;
-    }
-    unsigned long fragToSleepMs = MINIM(periodMs - spentMs, FRAG_TO_SLEEP_MS_MAX);
-    delay(fragToSleepMs);
-    spentMs = millis() - cycleBegin;
-  }
 }

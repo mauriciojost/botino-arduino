@@ -60,26 +60,34 @@
     "\n"
 
 
-///////////////////////////////
+//////////////////////////////////////////////////////////////
 // Provided by generic Main
-///////////////////////////////
+//////////////////////////////////////////////////////////////
 
 // Standard arduino setup
 void setup();
+
 // Standard arduino loop
 void loop();
+
 // Initialize init  wifi
 bool initWifiInit();
+
 // Initialize steady wifi
 bool initWifiSteady();
+
 // Execute a given command and tell if such has to interrupt the current cycle
 bool command(const char *cmd);
+
 // Extended "message to user" function (printf way)
 void messageFuncExt(int line, int size, const char *format, ...);
 
-///////////////////////////////
+//////////////////////////////////////////////////////////////
 // To be provided by the Main of a specific architecture
-///////////////////////////////
+//////////////////////////////////////////////////////////////
+
+// Callbacks
+///////////////////
 
 // The log function (that will print to screen, Serial, telnet, or whatever wished)
 void logLine(const char *str);
@@ -87,26 +95,17 @@ void logLine(const char *str);
 // Setup wifi using provided parameters
 bool initWifi(const char *ssid, const char *pass, bool skipIfAlreadyConnected, int retries);
 
-// Interruptable sleep function (haveToInterrupt called within).
-void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs);
-
-// Function to execute whenever a button is pressed (interrupt handling)
-bool haveToInterrupt();
-
-// Message function. Directly connected with user.
-void messageFunc(int line, const char *str, int size);
-
-// Log function.
-void logLine(const char *str);
-
-// Arms control function.
-void arms(int left, int right, int steps);
-
 // HTTP GET function.
 int httpGet(const char *url, ParamStream *response);
 
 // HTTP POST function.
 int httpPost(const char *url, const char *body, ParamStream *response);
+
+// Message function. Directly connected with user.
+void messageFunc(int line, const char *str, int size);
+
+// Arms control function.
+void arms(int left, int right, int steps);
 
 // IO control function.
 void ios(char led, bool v);
@@ -116,6 +115,15 @@ void clearDevice();
 
 // Show an image (either a catalog image or a custom bitmap)
 void lcdImg(char img, uint8_t bitmap[]);
+
+// Execution
+///////////////////
+
+// Interruptable sleep function (haveToInterrupt called within).
+void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs);
+
+// Function to execute whenever a button is pressed (interrupt handling)
+bool haveToInterrupt();
 
 // Setup step specific to the architecture
 void setupArchitecture();
