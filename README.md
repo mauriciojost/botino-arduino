@@ -4,14 +4,16 @@ This is a cool-geek-fully-configurable alarm project.
 
 ![Botino](misc/images/botino-v0.jpg)
 
-Features:
+What it does:
 
-- Innovative design
-- Setup REST JSON
-- Several configurable alarms
-- Highly customizable routines: face expressions, LCD custom images, messages, LEDs, arms, fan, among others.
+- It connects to Wifi
+- It gets set up via REST JSON
+- It offers several moves (smily arms up, greetings, dances, disco night, rainy, etc.)
+- It offers severall alarms (can invoke moves)
+- It offers moves using: LCD, mobile arms, messages, LEDs, fan, IFTTT service
 - Random quote of the day
 - Random future reading
+- IFTTT connectivity (as This component for now)
 
 ## 1. Get Started
 
@@ -44,21 +46,22 @@ Just replace `DEVICENAME` with your device name, and `ACTORNAME` with the name o
 
 | Purpose                       | HTTP VERB | URL                                                               |
 | ----------------------------- | --------- | ----------------------------------------------------------------- |
+| Get the information of an actor | GET       | http://dweet.io/get/latest/dweet/for/DEVICENAME-ACTORNAME-infos |
 | Get the status of an actor    | GET       | http://dweet.io/get/latest/dweet/for/DEVICENAME-ACTORNAME-current |
 | Change the status of an actor | POST      | http://dweet.io/dweet/for/DEVICENAME-ACTORNAME-target             |
 
 
-To change the current status of the actor follow the same schema as observed with GET.
+To change the current status of the actor follow the same schema as observed with GET status.
 
 #### Actors 
 
-| Actor name    | Actor description                                                                                | Properties                         |
-| ------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------- |
-| settings      | Is in charge of gather general purpose settings, mostly for development purposes.                | [Settings.h](src/actors/Settings.h)|
-| body          | This is the core of the alarm, driven by routines triggered at specific moments.                 | [Body.h](src/actors/Body.h)        |
-| images        | Holds custom images to be used.                                                                  | [Images.h](src/actors/Images.h)    |
-| messages      | Holds custom messages to be used.                                                                | [Messages.h](src/actors/Messages.h)|
-| ...           |                                                                                                  | [...](src/actors/)                 |
+| Actor name    | Actor description                                                                    | Properties                         |
+| ------------- | ------------------------------------------------------------------------------------ | ---------------------------------- |
+| settings      | Is in charge of gather general purpose settings, mostly for development purposes.    | [Settings.h](src/actors/Settings.h)|
+| body          | This is the core of the alarm, driven by routines triggered at specific moments.     | [Body.h](src/actors/Body.h)        |
+| images        | Holds custom images to be used.                                                      | [Images.h](src/actors/Images.h)    |
+| messages      | Holds custom messages to be used.                                                    | [Messages.h](src/actors/Messages.h)|
+| ...           |                                                                                      | [...](src/actors/)                 |
 
 # 2. Extras
 
@@ -67,7 +70,7 @@ To change the current status of the actor follow the same schema as observed wit
 You can telnet the device for debugging purposes. You will get the logs via Wifi. 
 
 You can also control the device. To do so you need to enter in configuration mode, by sending via telnet the command `conf` (and wait
-for the device to pick it up). Then send the command `?` for help.
+for the device to pick it up). Then send the command `help` for help.
 
 ## Poses
 
@@ -83,23 +86,25 @@ The frequency at which a given actor will act depends on its timing configuratio
 
 A timing is expressed as an integer value. It is possible to specify several types of timing: 
 
-| Timing type       | Description                                                  | Format       | Example                                  |
-| ----------------- | ------------------------------------------------------------ |:-------------|:----------------------------------------:|
-| never             | No matching ever.                                            | `0`          | `0`                                      |
+| Timing type       | Description                                                  | Format       | Example                                |
+| ----------------- | ------------------------------------------------------------ |:-------------|:--------------------------------------:|
+| never             | No matching ever.                                            | `0`          | `0`                                    |
 | day-time          | Match a custom day-time (within a month).                    | `1DDHHMMSS` | `177050000` (any day, 05h00m00s)        |
 | modulo-frequency  | Match a component-modulo expression.                         | `2DDHHMMSS` | `201013060` (any day, every 30 minutes) |
+| period secs       | Match every given seconds period.                            | `3xxxxxxxx` | `300000099` (every 99 seconds)          |
+| one-off           | Match only once, then come back to previous setting          | `4xxxxxxxx` | `400000000` (match once, then as before)|
 
 ### Never
 
 Simply `0` value. There will be no matching (the actor will not act).
 
-### Concrete date-time
+### Concrete day-time
 
 Simply use `1DDHHMMSS` (DD for days, HH for hours, MM for minutes, SS for seconds). 
 
 For instance, if you want the actor to wake up at 15h00 any day, just set its frequency to `177150000` (the expression can be read as follows: 1 for concrete date-time mode, 77 for any day matching, 15 for matching only at 15h, 00 for matching only at 00m, and 00 for matching only at 00s).
 
-### Frequency
+### Modulo/Frequency
 
 Simply use `2DDHHMMSS`. 
 
@@ -107,6 +112,19 @@ The actor will act when the actual time component modulo the provided component 
 
 For example: if you want the actor to wake up every 2 hours, just set its frequency to `201026060` (the expression can be read as follows: 2 for frequency mode; 01 for any day, as any day number modulo 1 equals 0; 02 meaning every 2 hours, as any pair hour value modulo 2 equals 0, while odd hours will give 1, so no matching; 60 for matching only at 00m, and 00 for matching only at 00s).
 
+### Period Seconds
+
+Simply use `3xxxxxxxx`. 
+
+The actor will act with the period given as argument (in the `xxx...`).
+
+For example: if you want the actor to wake up every 999 seconds, just set its frequency to `300000999`.
+
+### One off
+
+Simply use `4xxxxxxxx`. 
+
+The actor will act immediately. 
 
 # 3. Contribute
 
