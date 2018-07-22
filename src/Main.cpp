@@ -188,7 +188,9 @@ void logs() {
 }
 
 void configureMode() {
+  unsigned long cycleBegin = millis();
   configureModeArchitecture();
+  sleepInterruptable(cycleBegin, PERIOD_CONFIGURE_MSEC);
 }
 
 void runMode() {
