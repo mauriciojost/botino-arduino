@@ -230,7 +230,7 @@ void loopArchitecture() {
 
   // Report interesting information about the device
   Buffer<INFO_BUFFER_LENGTH> infoBuffer;
-  infoBuffer.fill("crs %d / ver %s / upt %lu h / ip %s", SaveCrash.count(), STRINGIFY(PROJ_VERSION), (millis() / 1000) / 3600, WiFi.localIP().toString().c_str());
+  infoBuffer.fill("crs %d / ver %s / upt %lu h", SaveCrash.count(), STRINGIFY(PROJ_VERSION), (millis() / 1000) / 3600);
   s->setInfo(infoBuffer.getBuffer());
 
   // Handle log level as per settings
