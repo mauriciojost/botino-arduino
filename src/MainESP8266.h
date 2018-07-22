@@ -223,7 +223,6 @@ void logArchitecture() {
 }
 
 void loopArchitecture() {
-  Buffer<INFO_BUFFER_LENGTH> auxBuffer;
   Settings *s = m.getSettings();
 
   handleStacktraces();
