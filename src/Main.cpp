@@ -125,8 +125,11 @@ void command(const char *cmd) {
     log(CLASS_MAIN, Info, "-> Run mode");
     m.getBot()->setMode(RunMode);
     return;
+  } else if (strcmp("help", c) == 0) {
+    log(CLASS_MAIN, Error, "%s", HELP_COMMAND_CLI); // error level to ensure in any case the message is delivered
+    return;
   } else {
-    log(CLASS_MAIN, Error, "Invalid command (try: ?)");
+  	log(CLASS_MAIN, Error, "What? (try: 'help')");
     return;
   }
 }

@@ -44,6 +44,15 @@
 #define WIFI_DELAY_MS 3000
 #endif // WIFI_DELAY_MS
 
+#define HELP_COMMAND_CLI \
+    "\n  run    : go to run mode" \
+    "\n  get    : display actors properties" \
+    "\n  set    : set an actor property (example: 'set body msg0 HELLO')" \
+    "\n  move   : execute a move (example: 'move A00C55')" \
+    "\n  help   : show this help" \
+    "\n"
+
+
 ///////////////////////////////
 // Provided by generic Main
 ///////////////////////////////
