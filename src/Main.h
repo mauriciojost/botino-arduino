@@ -52,6 +52,7 @@
     "\n  set    : set an actor property (example: 'set body msg0 HELLO')" \
     "\n  move   : execute a move (example: 'move A00C55')" \
     "\n  logl   : change log level" \
+    "\n  clear  : clear crashes stacktrace" \
     "\n  help   : show this help" \
     "\n  (all messages are shown as info log level)" \
     "\n"
@@ -61,12 +62,19 @@
 // Provided by generic Main
 ///////////////////////////////
 
+// Standard arduino setup
 void setup();
+// Standard arduino loop
 void loop();
+// Initialize init  wifi
 bool initWifiInit();
+// Initialize steady wifi
 bool initWifiSteady();
-void command(const char *cmd);
+// Execute a given command and tell if such has to interrupt the current cycle
+bool command(const char *cmd);
+// Extended "message to user" function (printf way)
 void messageFuncExt(int line, int size, const char *format, ...);
+
 ///////////////////////////////
 // To be provided by the Main of a specific architecture
 ///////////////////////////////
@@ -109,6 +117,9 @@ int httpPost(const char *url, const char *body, ParamStream *response);
 
 // IO control function.
 void ios(char led, bool v);
+
+// Clear device (for development purposes, to clear logs, stacktraces, etc)
+void clearDevice();
 
 // Show an image (either a catalog image or a custom bitmap)
 void lcdImg(char img, uint8_t bitmap[]);

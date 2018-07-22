@@ -266,23 +266,6 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
 			  }
       }
       break;
-		case 5: {
-        messageFuncExt(0, 2, "LCD log?");
-			  if (!onlyMsg) {
-          Settings *s = m.getSettings();
-          s->setLcdDebug(!s->getLcdDebug());
-          messageFuncExt(0, 1, "Lcd log %d", s->getLcdDebug());
-			  }
-      }
-      break;
-		case 6: {
-        messageFuncExt(0, 2, "Clear crash?");
-			  if (!onlyMsg) {
-			  	SaveCrash.clear();
-          messageFuncExt(0, 1, "Cleared");
-			  }
-      }
-      break;
 		case 7: {
         messageFuncExt(0, 2, "Config mode?");
 			  if (!onlyMsg) {
@@ -328,8 +311,9 @@ bool haveToInterrupt() {
   	Serial.readBytesUntil('\n', auxBuffer.getUnsafeBuffer(), INFO_BUFFER_LENGTH);
   	auxBuffer.replace('\n', '\0');
   	auxBuffer.replace('\r', '\0');
-  	command(auxBuffer.getBuffer());
-  	return false;
+  	bool interrupt = command(auxBuffer.getBuffer());
+  	log(CLASS_MAIN, Debug, "Interrupt: %s", interrupt);
+  	return interrupt;
   } else if (buttonInterrupts > 0) {
     // Handle button commands
     log(CLASS_MAIN, Debug, "Button command (%d)", buttonInterrupts);
@@ -427,6 +411,10 @@ void performHardwareTest() {
   ios('f', false);
   lcdImg('l', NULL);
 
+}
+
+void clearDevice() {
+  SaveCrash.clear();
 }
 
 /*****************/
