@@ -133,6 +133,16 @@ void command(const char *cmd) {
   } else if (strcmp("wifi", c) == 0) {
     initWifiSteady();
     return;
+  } else if (strcmp("logl", c) == 0) {
+    c = strtok(NULL, " ");
+    if (c == NULL) {
+      log(CLASS_MAIN, Info, "Argument needed:\n  logl <loglevel>");
+      return;
+    }
+    int ll = atoi(c);
+    setLogLevel(ll);
+    log(CLASS_MAIN, Info, "Log level: %d", ll);
+    return;
   } else if (strcmp("help", c) == 0) {
     logLine(HELP_COMMAND_CLI);
     return;

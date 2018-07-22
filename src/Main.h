@@ -51,6 +51,7 @@
     "\n  get    : display actors properties" \
     "\n  set    : set an actor property (example: 'set body msg0 HELLO')" \
     "\n  move   : execute a move (example: 'move A00C55')" \
+    "\n  logl   : change log level" \
     "\n  help   : show this help" \
     "\n  (all messages are shown as info log level)" \
     "\n"
