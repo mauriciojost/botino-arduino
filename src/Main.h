@@ -46,6 +46,7 @@
 
 #define HELP_COMMAND_CLI \
     "\n  run    : go to run mode" \
+    "\n  conf   : go to conf mode" \
     "\n  get    : display actors properties" \
     "\n  set    : set an actor property (example: 'set body msg0 HELLO')" \
     "\n  move   : execute a move (example: 'move A00C55')" \
