@@ -1,16 +1,17 @@
 # TODO
 
 - Package electronics without breadboard
-- Make a good pass and fix data types (avoid char, use better uint8 for instance)
-- Fix warnings
 - Improve simulator
 - Find better alternative to scripts and replace them (simulator, format, ...)
-- Share settings between uploader and simulator
-- Add one-shot timing setting
+- Make body be able to call ifttt event in a pose
 
 
 # DONE
 
+- Add one-shot timing setting
+- Share settings between uploader and simulator
+- Make a good pass and fix data types (avoid char, use better uint8 for instance)
+- Fix warnings
 - Improve documentation (use tables when convenient)
 - Add a simulator
 - Create script to set up wifi parameters for the first time.
