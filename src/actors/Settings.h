@@ -19,9 +19,7 @@
 #define INFO_BUFFER_LENGTH 256
 
 enum SettingsProps {
-  SettingsClearStackTraceProp = 0, // boolean, clear the stack trace log if full
-  SettingsLogLevelProp,            // integer, define the log level
-  SettingsLcdDebugProp,            // boolean, define if the LCD shows the debug logs
+  SettingsDebugProp,               // boolean, define if the device is in debug mode
   SettingsButtonRoutineLimitProp,  // integer, define the first X routines that are randomly executed when the button is pressed
   SettingsPropsDelimiter           // amount of properties
 };
@@ -30,9 +28,7 @@ class Settings : public Actor {
 
 private:
   const char *name;
-  bool clearStackTrace;
-  int logLevel;
-  bool lcdDebug;
+  bool devDebug;
   int buttonRoutineUntil;
 
   Buffer<INFO_BUFFER_LENGTH> infoBuffer;
@@ -42,9 +38,7 @@ private:
 public:
   Settings(const char *n) {
     name = n;
-    clearStackTrace = false;
-    logLevel = 0;
-    lcdDebug = true;
+    devDebug = false;
     buttonRoutineUntil = 1;
     infoBuffer.clear();
     freqConf.setFrequency(Never);
@@ -58,12 +52,8 @@ public:
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
-      case (SettingsClearStackTraceProp):
-        return "crashclear";
-      case (SettingsLogLevelProp):
-        return "loglevel";
-      case (SettingsLcdDebugProp):
-        return "lcddebug";
+      case (SettingsDebugProp):
+        return "debug";
       case (SettingsButtonRoutineLimitProp):
         return "btnrout";
       default:
@@ -73,14 +63,8 @@ public:
 
   void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
-      case (SettingsClearStackTraceProp):
-        setPropBoolean(m, targetValue, actualValue, &clearStackTrace);
-        break;
-      case (SettingsLogLevelProp):
-        setPropInteger(m, targetValue, actualValue, &logLevel);
-        break;
-      case (SettingsLcdDebugProp):
-        setPropBoolean(m, targetValue, actualValue, &lcdDebug);
+      case (SettingsDebugProp):
+        setPropBoolean(m, targetValue, actualValue, &devDebug);
         break;
       case (SettingsButtonRoutineLimitProp):
         setPropInteger(m, targetValue, actualValue, &buttonRoutineUntil);
@@ -106,33 +90,16 @@ public:
     return &freqConf;
   }
 
-  bool getClear() {
-    return clearStackTrace;
-  }
-
-  void setClear(bool b) {
-    clearStackTrace = b;
-  }
-
-  int getLogLevel() {
-    return logLevel;
-  }
-
-  void setLogLevel(int i) {
-    logLevel = i;
-  }
-
-
   int getNroRoutinesForButton() {
     return buttonRoutineUntil;
   }
 
-  bool getLcdDebug() {
-    return lcdDebug;
+  bool getDebug() {
+    return devDebug;
   }
 
-  void setLcdDebug(bool b) {
-    lcdDebug = b;
+  void setDebug(bool b) {
+    devDebug = b;
   }
 
   void setInfo(const char* s) {

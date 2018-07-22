@@ -192,10 +192,6 @@ void runMode() {
   unsigned long cycleBegin = millis();
   logs();
 
-  // Handle log level as per settings
-  Settings *se = m.getSettings();
-  setLogLevel((char)(se->getLogLevel()));
-
   // Handle keys
   SetupSync *ss = m.getSetupSync();
   if (ss->isInitialized()) {

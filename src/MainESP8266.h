@@ -97,24 +97,6 @@ Adafruit_SSD1306 lcd(-1);
 
 #define LED_INT_PIN LEDW_PIN // led showing interruptions
 
-void lcdClear(int line) {
-  lcd.fillRect(0, line * 8, 128, 8, BLACK);
-}
-
-void lcdPrintLogLine(const char *logStr) {
-  if (!m.getSettings()->getLcdDebug()) {
-    return;
-  }
-  lcd.setTextWrap(false);
-  lcdClear(LOG_LINE); // clear line
-  lcd.setTextSize(1);
-  lcd.setTextColor(WHITE);
-  lcd.setCursor(0, LOG_LINE * 8);
-  lcd.println(logStr);
-  lcd.display();
-  delay(DELAY_MS_SPI);
-}
-
 void displayUserInfo() {
   Buffer<32> aux;
   log(CLASS_MAIN, Debug, "USER INFO");
@@ -206,10 +188,7 @@ void runModeArchitecture() {
   Settings *s = m.getSettings();
 
   // Handle stack-traces stored in memory
-  if (s->getClear() && SaveCrash.count() > 0) {
-    log(CLASS_MAIN, Debug, "Clearing stack-trcs");
-    SaveCrash.clear();
-  } else if (SaveCrash.count() > 0) {
+  if (SaveCrash.count() > 0) {
     log(CLASS_MAIN, Warn, "Stack-trcs (!!!)");
     SaveCrash.print();
   }
@@ -220,7 +199,7 @@ void runModeArchitecture() {
   s->setInfo(infoBuffer.getBuffer());
 
   // Handle log level as per settings
-  Serial.setDebugOutput(s->getLogLevel() < 0); // deep HW logs
+  Serial.setDebugOutput(s->getDebug()); // deep HW logs
 
 }
 
@@ -475,9 +454,23 @@ void messageFunc(int line, const char *str, int size) {
 }
 
 void logLine(const char *str) {
-  lcdPrintLogLine(str);
+	// serial print
   Serial.println(str);
-  Telnet.printf("%s\n", str);
+	// telnet print
+  if (Telnet.isActive()){
+    Telnet.printf("%s\n", str);
+  }
+	// lcd print
+  if (m.getSettings()->getDebug()) {
+    lcd.setTextWrap(false);
+    lcd.fillRect(0, LOG_LINE * 8, 128, 8, BLACK);
+    lcd.setTextSize(1);
+    lcd.setTextColor(WHITE);
+    lcd.setCursor(0, LOG_LINE * 8);
+    lcd.println(str);
+    lcd.display();
+    delay(DELAY_MS_SPI);
+  }
 }
 
 void arms(int left, int right, int steps) {
