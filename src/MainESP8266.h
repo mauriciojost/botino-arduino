@@ -266,7 +266,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
 			  }
       }
       break;
-		case 7: {
+		case 5: {
         messageFuncExt(0, 2, "Config mode?");
 			  if (!onlyMsg) {
 			  	m.getBot()->setMode(ConfigureMode);
@@ -274,7 +274,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
 			  }
       }
       break;
-		case 8: {
+		case 6: {
         messageFuncExt(0, 2, "Run mode?");
 			  if (!onlyMsg) {
 			  	m.getBot()->setMode(RunMode);
