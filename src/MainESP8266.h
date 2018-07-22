@@ -269,24 +269,14 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
 			  }
       }
       break;
-		case 1: {
-        messageFuncExt(0, 2, "Push event %d?", cycles);
-			  if (!onlyMsg) {
-			  	bool suc = m.getIfttt()->event(cycles);
-			  	if (suc) {
-            messageFuncExt(0, 1, "Event pushed");
-			  	} else {
-            messageFuncExt(0, 1, "Failed: event not pushed");
-			  	}
-			  }
-      }
-      break;
+		case 1:
 		case 2: {
-        messageFuncExt(0, 2, "Push event %d?", cycles);
+        const char* evtName = m.getIfttt()->getEventName(cycles);
+        messageFuncExt(0, 2, "Push event %s?", evtName);
 			  if (!onlyMsg) {
-			  	bool suc = m.getIfttt()->event(cycles);
+			  	bool suc = m.getIfttt()->triggerEvent(cycles);
 			  	if (suc) {
-            messageFuncExt(0, 1, "Event pushed");
+            messageFuncExt(0, 1, "Event %s pushed!", evtName);
 			  	} else {
             messageFuncExt(0, 1, "Failed: event not pushed");
 			  	}

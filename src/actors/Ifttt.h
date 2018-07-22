@@ -11,7 +11,18 @@
 
 #define CLASS_IFTTT "IF"
 
-#define IFTTT_API_URL_POS "http://maker.ifttt.com/trigger/%s_%d/with/key/%s"
+#define IFTTT_API_URL_POS "http://maker.ifttt.com/trigger/%s/with/key/%s"
+#define NRO_EVENTS 4
+#define EVENT_NAME_MAX_LENGTH 32
+
+enum IftttProps {
+  IftttEvtName0Prop = 0,
+  IftttEvtName1Prop,
+  IftttEvtName2Prop,
+  IftttEvtName3Prop,
+  IftttPropsDelimiter // delimiter of the configuration states
+};
+
 
 /**
  * This actor interacts wit IFTTT service.
@@ -26,6 +37,7 @@ private:
 
   Buffer<64> iftttKey;
   Buffer<128> urlAuxBuffer;
+  Buffer<EVENT_NAME_MAX_LENGTH> *eventNames[NRO_EVENTS];
 
 public:
   Ifttt(const char *n) {
@@ -33,6 +45,10 @@ public:
     initWifiFunc = NULL;
     httpPost = NULL;
     timing.setFrequency(Never);
+    for (int i = 0; i < NRO_EVENTS; i++) {
+    	eventNames[i] = new Buffer<EVENT_NAME_MAX_LENGTH>();
+      eventNames[i]->fill("event_%d", i);
+    }
   }
 
   const char *getName() {
@@ -53,14 +69,21 @@ public:
     httpPost = h;
   }
 
-  bool event(int eventNumber) {
+  const char* getEventName(int eventNumber) {
+    int safeEvtNumber = POSIT(eventNumber % NRO_EVENTS);
+  	return eventNames[safeEvtNumber]->getBuffer();
+  }
+
+  bool triggerEvent(int eventNumber) {
   	if (initWifiFunc == NULL || httpPost == NULL) {
       log(CLASS_IFTTT, Error, "Init needed");
       return false;
   	}
     bool connected = initWifiFunc();
     if (connected) {
-      urlAuxBuffer.fill(IFTTT_API_URL_POS, DEVICE_NAME, eventNumber, iftttKey.getBuffer());
+    	int safeEvtNumber = POSIT(eventNumber % NRO_EVENTS);
+    	const char* eventName = getEventName(safeEvtNumber);
+      urlAuxBuffer.fill(IFTTT_API_URL_POS, DEVICE_NAME, eventName, iftttKey.getBuffer());
       int errorCodePost = httpPost(urlAuxBuffer.getBuffer(), "{}", NULL);
       if (errorCodePost == HTTP_OK) {
         return true;
@@ -69,15 +92,30 @@ public:
     return false;
   }
 
-
-  void getSetPropValue(int propIndex, GetSetMode set, const Value *targetValue, Value *actualValue) {}
+  void getSetPropValue(int propIndex, GetSetMode setMode, const Value *targetValue, Value *actualValue) {
+    if (propIndex >= IftttEvtName0Prop && propIndex < (NRO_EVENTS + IftttEvtName0Prop)) {
+      int i = (int)propIndex - (int)IftttEvtName0Prop;
+      setPropValue(setMode, targetValue, actualValue, eventNames[i]);
+    }
+  }
 
   int getNroProps() {
-    return 0;
+    return IftttPropsDelimiter;
   }
 
   const char *getPropName(int propIndex) {
-    return "";
+    switch (propIndex) {
+      case (IftttEvtName0Prop):
+        return "evt0";
+      case (IftttEvtName1Prop):
+        return "evt1";
+      case (IftttEvtName2Prop):
+        return "evt2";
+      case (IftttEvtName3Prop):
+        return "evt3";
+      default:
+        return "";
+    }
   }
 
   void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}
