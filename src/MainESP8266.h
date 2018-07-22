@@ -377,7 +377,6 @@ bool haveToInterrupt() {
       log(CLASS_MAIN, Debug, "%d", holds);
       digitalWrite(LED_INT_PIN, LOW); // switch on
       reactToButtonHeld(holds, ONLY_SHOW_MSG);
-      delay(50);
       digitalWrite(LED_INT_PIN, HIGH); // switch off
       delay(950);
     }
