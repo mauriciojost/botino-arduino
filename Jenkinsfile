@@ -12,7 +12,7 @@ pipeline {
         script {
           sshagent(['bitbucket_key']) {
             sh 'export GIT_COMMITTER_NAME=jenkinsbot && export GIT_COMMITTER_EMAIL=mauriciojostx@gmail.com && set && ./pull_dependencies'
-            sh 'PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=test `cat profiles/botino.prof`" platformio run'
+            sh 'PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=test `cat profiles/jenkins.prof`" platformio run'
           }
         }
       }
