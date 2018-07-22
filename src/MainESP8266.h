@@ -303,7 +303,7 @@ bool haveToInterrupt() {
   	auxBuffer.replace('\n', '\0');
   	auxBuffer.replace('\r', '\0');
   	bool interrupt = command(auxBuffer.getBuffer());
-  	log(CLASS_MAIN, Debug, "Interrupt: %s", interrupt);
+  	log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
   	return interrupt;
   } else if (buttonInterrupts > 0) {
     // Handle button commands
@@ -636,11 +636,11 @@ void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {
   unsigned long spentMs = millis() - cycleBegin;
   int dc = (spentMs * 100) / periodMs;
 
-  log(CLASS_MAIN, Info, "D.C.:%d%%", dc);
+  log(CLASS_MAIN, Debug, "D.C.:%d%%", dc);
   if (dc > DUTY_CYCLE_THRESHOLD_PERC) {
-    log(CLASS_MAIN, Warn, "Cycle: %lums", spentMs);
+    log(CLASS_MAIN, Debug, "Cycle: %lums", spentMs);
   }
-  log(CLASS_MAIN, Info, "L.Sleep(%lums)...", periodMs);
+  log(CLASS_MAIN, Debug, "L.Sleep(%lums)...", periodMs);
   while (spentMs < periodMs) {
     if (haveToInterrupt()) {
       break;
