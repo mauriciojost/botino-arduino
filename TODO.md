@@ -4,6 +4,7 @@
 - Improve simulator
 - Find better alternative to scripts and replace them (simulator, format, ...)
 - Make body be able to call ifttt event in a pose
+- Add smoke test that includes a whole architecture (to ensure it goes smootly for 100 cycles)
 
 
 # DONE

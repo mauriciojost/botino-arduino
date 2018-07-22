@@ -114,7 +114,6 @@ bool reactToButtonHeld(int cycles, bool onlyMsg);
 // Functions requested for architecture
 ////////////////////////////////////////
 
-
 void logLine(const char *str) {
 	// serial print
   Serial.println(str);
@@ -550,7 +549,6 @@ void buttonPressed() {
   buttonInterrupts++;
   LED_INT_ON;
 }
-
 
 void bitmapToLcd(uint8_t bitmap[]) {
   for (char yi = 0; yi < 8; yi++) {
