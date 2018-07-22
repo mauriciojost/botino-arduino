@@ -460,12 +460,13 @@ void configureModeArchitecture() {
 
 bool reactToButtonHeld(int cycles, bool onlyMsg) {
 	switch (cycles) {
-		case 0:
-		case 1: {
-        const char* evtName = m.getIfttt()->getEventName(cycles);
+		case 1:
+		case 2: {
+        int event = cycles - 1;
+        const char* evtName = m.getIfttt()->getEventName(event);
         messageFuncExt(0, 2, "Push event %s?", evtName);
 			  if (!onlyMsg) {
-			  	bool suc = m.getIfttt()->triggerEvent(cycles);
+			  	bool suc = m.getIfttt()->triggerEvent(event);
 			  	if (suc) {
             messageFuncExt(0, 1, "Event %s pushed!", evtName);
 			  	} else {
@@ -474,7 +475,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
 			  }
       }
       break;
-		case 2: {
+		case 0: {
         messageFuncExt(0, 2, "Zzz routine?");
 			  if (!onlyMsg) {
           log(CLASS_MAIN, Debug, "Routine Zzz...");
