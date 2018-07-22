@@ -142,9 +142,6 @@ void wifiOn() {
   delay(WIFI_DELAY_MS);
 }
 
-void wifiOff() {
-}
-
 bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries) {
   wl_status_t status;
   log(CLASS_MAIN, Info, "To '%s'/'%s'...", ssid, pass);
@@ -659,9 +656,6 @@ void setupArchitecture() {
 void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {
   unsigned long spentMs = millis() - cycleBegin;
   int dc = (spentMs * 100) / periodMs;
-
-  log(CLASS_MAIN, Info, "Disable wifi...");
-  wifiOff();
 
   log(CLASS_MAIN, Info, "D.C.:%d%%", dc);
   if (dc > DUTY_CYCLE_THRESHOLD_PERC) {
