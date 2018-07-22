@@ -576,7 +576,7 @@ public:
   }
 
   const char *getMove(int moveIndex) {
-    return routines[moveIndex % NRO_ROUTINES]->move.getBuffer();
+    return routines[POSIT(moveIndex % NRO_ROUTINES)]->move.getBuffer();
   }
 
   void performMove(int moveIndex) {
