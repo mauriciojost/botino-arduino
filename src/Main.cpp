@@ -16,20 +16,18 @@ Module m;
 
 bool initWifiInit() {
   log(CLASS_MAIN, Info, "W.init");
-  messageFunc(0, "HOTSPOT?", 2);
+  messageFuncExt(0, 2, "HOTSPOT?");
   delay(USER_DELAY_MS);
-  messageFunc(0, WIFI_SSID_INIT, 2);
+  messageFuncExt(0, 2, WIFI_SSID_INIT);
   delay(USER_DELAY_MS);
-  messageFunc(0, WIFI_PASSWORD_INIT, 2);
+  messageFuncExt(0, 2, WIFI_PASSWORD_INIT);
   delay(USER_DELAY_MS);
   bool connected = initWifi(WIFI_SSID_INIT, WIFI_PASSWORD_INIT, false, 20);
   if (connected) {
-    messageFunc(0, "HOTSPOT OK", 2);
-    log(CLASS_MAIN, Info, "HOSTPOT OK");
+    messageFuncExt(0, 2, "HOTSPOT OK");
     delay(USER_DELAY_MS);
   } else {
-    messageFunc(0, "HOTSPOT KO", 2);
-    log(CLASS_MAIN, Info, "HOSTPOT KO");
+    messageFuncExt(0, 2, "HOTSPOT KO");
     delay(USER_DELAY_MS);
   }
   return connected;
@@ -44,17 +42,15 @@ bool initWifiSteady() {
     log(CLASS_MAIN, Info, "W.steady");
     bool connected = initWifi(wifiSsid, wifiPass, connectedOnce, 10);
     if (!connectedOnce) {
-      messageFunc(0, "WIFI?", 2);
+      messageFuncExt(0, 2, "WIFI?");
       delay(USER_DELAY_MS);
-      messageFunc(0, wifiSsid, 2);
+      messageFuncExt(0, 2, wifiSsid);
       delay(USER_DELAY_MS);
       if (connected) { // first time
-        messageFunc(0, "WIFI OK", 2);
-        log(CLASS_MAIN, Info, "WIFI OK");
+        messageFuncExt(0, 2, "WIFI OK");
         delay(USER_DELAY_MS * 2);
       } else {
-        messageFunc(0, "WIFI KO", 2);
-        log(CLASS_MAIN, Info, "WIFI KO");
+        messageFuncExt(0, 2, "WIFI KO");
       }
     }
     connectedOnce = connectedOnce || connected;
