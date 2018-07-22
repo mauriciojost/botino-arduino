@@ -446,10 +446,14 @@ void runModeArchitecture() {
 }
 
 void configureModeArchitecture() {
+  static bool firstTime = true;
+  if (firstTime) {
+    Telnet.begin("ESP" DEVICE_NAME); // Intialize the remote logging framework
+    ArduinoOTA.begin();  // Intialize OTA
+  }
+
   messageFuncExt(0, 1, "telnet %s", WiFi.localIP().toString().c_str());
-  Telnet.begin("ESP" DEVICE_NAME); // Intialize the remote logging framework
   Telnet.handle();     // Handle telnet log server and commands
-  ArduinoOTA.begin();  // Intialize OTA
   ArduinoOTA.handle(); // Handle on the air firmware load
 }
 
