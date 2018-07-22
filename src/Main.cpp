@@ -178,15 +178,6 @@ void setup() {
   setupArchitecture();
 }
 
-void logs() {
-  log(CLASS_MAIN, Info, "");
-  log(CLASS_MAIN, Info, "");
-  log(CLASS_MAIN, Info, "Version: %s", STRINGIFY(PROJ_VERSION));
-  logsArchitecture();
-  log(CLASS_MAIN, Info, "");
-  log(CLASS_MAIN, Info, "");
-}
-
 void configureMode() {
   unsigned long cycleBegin = millis();
   configureModeArchitecture();
@@ -195,7 +186,7 @@ void configureMode() {
 
 void runMode() {
   unsigned long cycleBegin = millis();
-  logs();
+  log(CLASS_MAIN, Info, "Version: %s", STRINGIFY(PROJ_VERSION));
 
   // Handle keys
   SetupSync *ss = m.getSetupSync();

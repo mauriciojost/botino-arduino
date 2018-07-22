@@ -159,6 +159,13 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
 void runModeArchitecture() {
   Settings *s = m.getSettings();
 
+  // Logs
+  log(CLASS_MAIN, Info, "DEV NAME: %s", DEVICE_NAME);
+  log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
+  log(CLASS_MAIN, Info, "Memory: %lu", ESP.getFreeHeap());
+  log(CLASS_MAIN, Info, "Crashes: %d", SaveCrash.count());
+  log(CLASS_MAIN, Info, "HTTP size: %d", httpClient.getSize());
+
   // Handle stack-traces stored in memory
   if (SaveCrash.count() > 0) {
     log(CLASS_MAIN, Warn, "Stack-trcs (!!!)");
@@ -173,14 +180,6 @@ void runModeArchitecture() {
   // Handle log level as per settings
   Serial.setDebugOutput(s->getDebug()); // deep HW logs
 
-}
-
-void logsArchitecture() {
-  log(CLASS_MAIN, Info, "DEV NAME: %s", DEVICE_NAME);
-  log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
-  log(CLASS_MAIN, Info, "Memory: %lu", ESP.getFreeHeap());
-  log(CLASS_MAIN, Info, "Crashes: %d", SaveCrash.count());
-  log(CLASS_MAIN, Info, "HTTP size: %d", httpClient.getSize());
 }
 
 void configureModeArchitecture() {

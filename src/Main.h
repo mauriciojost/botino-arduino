@@ -117,10 +117,6 @@ void clearDevice();
 // Show an image (either a catalog image or a custom bitmap)
 void lcdImg(char img, uint8_t bitmap[]);
 
-// Report via log in info level information about the architecture (such as crashes, memory free, etc.)
-// Invoked in RunMode only every cycle
-void logsArchitecture();
-
 // Setup step specific to the architecture
 void setupArchitecture();
 
