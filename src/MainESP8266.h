@@ -202,8 +202,9 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
   }
 }
 
-void handleStacktraces() {
+void runModeArchitecture() {
   Settings *s = m.getSettings();
+
   // Handle stack-traces stored in memory
   if (s->getClear() && SaveCrash.count() > 0) {
     log(CLASS_MAIN, Debug, "Clearing stack-trcs");
@@ -212,20 +213,6 @@ void handleStacktraces() {
     log(CLASS_MAIN, Warn, "Stack-trcs (!!!)");
     SaveCrash.print();
   }
-}
-
-
-void logArchitecture() {
-  log(CLASS_MAIN, Info, "\n\nLogs of architecture:");
-  log(CLASS_MAIN, Info, "Memory: %lu", ESP.getFreeHeap());
-  log(CLASS_MAIN, Info, "Crashes: %d", SaveCrash.count());
-  log(CLASS_MAIN, Info, "HTTP size: %d", httpClient.getSize());
-}
-
-void loopArchitecture() {
-  Settings *s = m.getSettings();
-
-  handleStacktraces();
 
   // Report interesting information about the device
   Buffer<INFO_BUFFER_LENGTH> infoBuffer;
@@ -235,23 +222,23 @@ void loopArchitecture() {
   // Handle log level as per settings
   Serial.setDebugOutput(s->getLogLevel() < 0); // deep HW logs
 
-  switch (m.getBot()->getMode()) {
-    case (ConfigureMode): {
-        initWifiSteady();
-        messageFuncExt(0, 1, "telnet %s", WiFi.localIP().toString().c_str());
-        Telnet.handle(); // Handle telnet log server and commands
-        ArduinoOTA.handle(); // Handle on the air firmware load
-        delay(DEV_USER_DELAY_MS);
-      }
-      break;
-    case (RunMode): {
-        logArchitecture();
-      }
-      break;
-    default:
-      break;
-  }
+}
 
+void logsArchitecture() {
+  log(CLASS_MAIN, Info, "DEV NAME: %s", DEVICE_NAME);
+  log(CLASS_MAIN, Info, "Hostname: %s", WiFi.hostname().c_str());
+  log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
+  log(CLASS_MAIN, Info, "Memory: %lu", ESP.getFreeHeap());
+  log(CLASS_MAIN, Info, "Crashes: %d", SaveCrash.count());
+  log(CLASS_MAIN, Info, "HTTP size: %d", httpClient.getSize());
+}
+
+void configureModeArchitecture() {
+  initWifiSteady();
+  messageFuncExt(0, 1, "telnet %s", WiFi.localIP().toString().c_str());
+  Telnet.handle(); // Handle telnet log server and commands
+  ArduinoOTA.handle(); // Handle on the air firmware load
+  delay(DEV_USER_DELAY_MS);
 }
 
 void reactCommandCustom() { // for the use via telnet
@@ -674,7 +661,6 @@ void setupArchitecture() {
   performHardwareTest();
 
 }
-
 
 // TODO: buggy (what happens on overrun?), and can be simplified using the clock and time_t
 void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {

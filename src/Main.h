@@ -70,8 +70,11 @@ void messageFuncExt(int line, int size, const char *format, ...);
 // Setup step specific to the architecture
 void setupArchitecture();
 
-// Loop specific to the architecture
-void loopArchitecture();
+// Loop in run mode specific to the architecture
+void runModeArchitecture();
+
+// Loop in configure mode specific to the architecture
+void configureModeArchitecture();
 
 // Setup wifi using provided parameters
 bool initWifi(const char *ssid, const char *pass, bool skipIfAlreadyConnected, int retries);
@@ -102,6 +105,10 @@ void ios(char led, bool v);
 
 // Show an image (either a catalog image or a custom bitmap)
 void lcdImg(char img, uint8_t bitmap[]);
+
+// Report via log in info level information about the architecture (such as crashes, memory free, etc.)
+// Invoked in RunMode only every cycle
+void logsArchitecture();
 
 
 #endif // MAIN_INC

@@ -73,6 +73,7 @@ void messageFuncExt(int line, int size, const char *format, ...) {
   va_end(args);
 }
 
+
 void command(const char *cmd) {
 
   char buf[COMMAND_MAX_LENGTH];
@@ -157,7 +158,22 @@ void setup() {
   setupArchitecture();
 }
 
-void loopUpdates() {
+void logs() {
+  log(CLASS_MAIN, Info, "");
+  log(CLASS_MAIN, Info, "");
+  log(CLASS_MAIN, Info, "Version: %s", STRINGIFY(PROJ_VERSION));
+  logsArchitecture();
+  log(CLASS_MAIN, Info, "");
+  log(CLASS_MAIN, Info, "");
+}
+
+void configureMode() {
+  configureModeArchitecture();
+}
+
+void runMode() {
+  unsigned long cycleBegin = millis();
+  logs();
 
   // Handle log level as per settings
   Settings *se = m.getSettings();
@@ -169,16 +185,19 @@ void loopUpdates() {
   	m.getIfttt()->setKey(ss->getIfttt());
   }
 
+  runModeArchitecture();
+
+  m.loop(false, false, true);
+  sleepInterruptable(cycleBegin, PERIOD_MSEC);
 }
 
 void loop() {
-  unsigned long cycleBegin = millis();
-  loopUpdates();
-  loopArchitecture();
   switch (m.getBot()->getMode()) {
     case (RunMode):
-      m.loop(false, false, true);
-      sleepInterruptable(cycleBegin, PERIOD_MSEC);
+    	runMode();
+      break;
+    case (ConfigureMode):
+      configureMode();
       break;
     default:
       break;
