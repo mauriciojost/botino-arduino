@@ -52,6 +52,7 @@
     "\n  set    : set an actor property (example: 'set body msg0 HELLO')" \
     "\n  move   : execute a move (example: 'move A00C55')" \
     "\n  help   : show this help" \
+    "\n  (all messages are shown as info log level)" \
     "\n"
 
 
@@ -68,6 +69,9 @@ void messageFuncExt(int line, int size, const char *format, ...);
 ///////////////////////////////
 // To be provided by the Main of a specific architecture
 ///////////////////////////////
+
+// The log function (that will print to screen, Serial, telnet, or whatever wished)
+void logLine(const char *str);
 
 // Setup step specific to the architecture
 void setupArchitecture();

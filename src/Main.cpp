@@ -134,10 +134,10 @@ void command(const char *cmd) {
     initWifiSteady();
     return;
   } else if (strcmp("help", c) == 0) {
-    log(CLASS_MAIN, Error, "%s", HELP_COMMAND_CLI); // error level to ensure in any case the message is delivered
+    logLine(HELP_COMMAND_CLI);
     return;
   } else {
-  	log(CLASS_MAIN, Error, "What? (try: 'help')");
+    logLine("What? (try: 'help')");
     return;
   }
 }
