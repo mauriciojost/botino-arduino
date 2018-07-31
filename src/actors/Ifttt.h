@@ -83,7 +83,7 @@ public:
     if (connected) {
     	int safeEvtNumber = POSIT(eventNumber % NRO_EVENTS);
     	const char* eventName = getEventName(safeEvtNumber);
-      urlAuxBuffer.fill(IFTTT_API_URL_POS, DEVICE_NAME, eventName, iftttKey.getBuffer());
+      urlAuxBuffer.fill(IFTTT_API_URL_POS, eventName, iftttKey.getBuffer());
       int errorCodePost = httpPost(urlAuxBuffer.getBuffer(), "{}", NULL);
       if (errorCodePost == HTTP_OK) {
         return true;
