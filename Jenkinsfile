@@ -11,15 +11,19 @@ pipeline {
       steps {
         script {
           sshagent(['bitbucket_key']) {
-            sh 'export GIT_COMMITTER_NAME=jenkinsbot && export GIT_COMMITTER_EMAIL=mauriciojostx@gmail.com && set && ./pull_dependencies'
-            sh 'PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=test `cat profiles/jenkins.prof`" platformio run'
+            wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
+              sh 'export GIT_COMMITTER_NAME=jenkinsbot && export GIT_COMMITTER_EMAIL=mauriciojostx@gmail.com && set && ./pull_dependencies'
+              sh 'PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=test `cat profiles/jenkins.prof`" platformio run'
+            }
           }
         }
       }
     }
     stage('Test') {
       steps {
-        sh 'PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=test `cat profiles/test.prof`" ./launch_tests'
+        wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
+          sh 'PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=test `cat profiles/test.prof`" ./launch_tests'
+        }
       }
     }
   }
