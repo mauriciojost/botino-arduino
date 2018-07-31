@@ -545,7 +545,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
 		case 7: {
         messageFuncExt(0, 2, "Show info?");
 			  if (!onlyMsg) {
-          messageFuncExt(0, 1, "Name: %s\nVersion: %s\nCrashes: %d\nUptime: %lu", DEVICE_NAME, STRINGIFY(PROJ_VERSION), SaveCrash.count(), (millis() / 1000) / 3600);
+          messageFuncExt(0, 1, "Name..:%s\nVersio:%s\nCrashe:%d\nUptime:%luh", DEVICE_NAME, STRINGIFY(PROJ_VERSION), SaveCrash.count(), (millis() / 1000) / 3600);
 			  }
       }
       break;
