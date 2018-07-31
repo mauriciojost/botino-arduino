@@ -98,7 +98,6 @@ class Routine {
 public:
   Buffer<MOVE_STR_LENGTH> move;
   Timing timing;
-  long timingConf;
 };
 
 class Body : public Actor {
@@ -470,8 +469,7 @@ public:
     timing.setFrequency(OnceEvery1Minute);
     for (int i = 0; i < NRO_ROUTINES; i++) {
       routines[i] = new Routine();
-      routines[i]->timingConf = 0L; // Never
-      routines[i]->timing.setCustom(routines[i]->timingConf);
+      routines[i]->timing.setCustom(0L); // never
       routines[i]->timing.setFrequency(Custom);
       routines[i]->move.fill("Da%d", i);
     }
@@ -514,7 +512,7 @@ public:
     for (int i = 0; i < NRO_ROUTINES; i++) {
       while (routines[i]->timing.catchesUp(timing.getCurrentTime())) {
         if (routines[i]->timing.matches()) {
-          const long timing = routines[i]->timingConf;
+          const long timing = routines[i]->timing.getCustom();
           const char *move = routines[i]->move.getBuffer();
           log(CLASS_BODY, Debug, "Rne %d: %ld %s", i, timing, move);
           performMove(i);
@@ -568,8 +566,14 @@ public:
       setPropValue(m, targetValue, actualValue, &routines[i]->move);
     } else if (propIndex >= BodyTime0Prop && propIndex < (NRO_ROUTINES + BodyTime0Prop)) {
       int i = (int)propIndex - (int)BodyTime0Prop;
-      setPropLong(m, targetValue, actualValue, &routines[i]->timingConf);
-      routines[i]->timing.setCustom(routines[i]->timingConf);
+      if (m == SetCustomValue) {
+        Long b(targetValue);
+        routines[i]->timing.setCustom(b.get());
+      }
+      if (actualValue != NULL) {
+        Long b(routines[i]->timing.getCustom());
+        actualValue->load(&b);
+      }
     } else {
       switch (propIndex) {
         default:
