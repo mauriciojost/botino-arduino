@@ -333,10 +333,19 @@ void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {
       break;
     }
     unsigned long fragToSleepMs = MINIM(periodMs - spentMs, FRAG_TO_SLEEP_MS_MAX);
-    LED_ALIVE_ON;
-    delay(fragToSleepMs/100*1);
-    LED_ALIVE_OFF;
-    delay(fragToSleepMs/100*99);
+    if (SaveCrash.count() > 0) {
+      LED_ALIVE_OFF;
+    } else {
+      LED_ALIVE_ON;
+
+    }
+    delay(fragToSleepMs/200*1);
+    if (SaveCrash.count() > 0) {
+      LED_ALIVE_ON;
+    } else {
+      LED_ALIVE_OFF;
+    }
+    delay(fragToSleepMs/200*199);
     spentMs = millis() - cycleBegin;
   }
 }
