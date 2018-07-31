@@ -475,8 +475,8 @@ public:
     }
 
     // Overwrite last to setup clock
-    routines[NRO_ROUTINES-1]->timing.setCustom(201013060); // once every 30 minutes
-    routines[NRO_ROUTINES-1]->move.fill("Mc3W3.Zz.");
+    routines[NRO_ROUTINES-1]->timing.setCustom(201010160); // once every 1 minutes
+    routines[NRO_ROUTINES-1]->move.fill("Mc3");
 
   }
 
