@@ -473,6 +473,11 @@ public:
       routines[i]->timing.setFrequency(Custom);
       routines[i]->move.fill("Da%d", i);
     }
+
+    // Overwrite last to setup clock
+    routines[NRO_ROUTINES-1]->timing.setCustom(201013060); // once every 30 minutes
+    routines[NRO_ROUTINES-1]->move.fill("Mc3W3.Zz.");
+
   }
 
   const char *getName() {
