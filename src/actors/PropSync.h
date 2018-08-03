@@ -12,10 +12,10 @@
 
 #define CLASS_PROPSYNC "PY"
 
-#define DWEET_IO_API_URL_POST_CURRENT "http://dweet.io/dweet/for/" DEVICE_NAME "-%s-current"
-#define DWEET_IO_API_URL_POST_TARGET "http://dweet.io/dweet/for/" DEVICE_NAME "-%s-target"
-#define DWEET_IO_API_URL_GET_TARGET "http://dweet.io/get/latest/dweet/for/" DEVICE_NAME "-%s-target"
-#define DWEET_IO_API_URL_POST_INFOS  "http://dweet.io/dweet/for/" DEVICE_NAME "-%s-infos"
+#define BOTINOBE_API_URL_BASE "http://10.0.0.8:8080/api/v1/devices/" DEVICE_NAME
+#define BOTINOBE_API_URL_POST_CURRENT BOTINOBE_API_URL_BASE "/actors/%s/reports"
+#define BOTINOBE_API_URL_GET_TARGET BOTINOBE_API_URL_BASE "/actors/%s/targets/summary?clean=true"
+#define BOTINOBE_API_URL_POST_INFOS  BOTINOBE_API_URL_BASE "/dweet/for/" DEVICE_NAME "-%s-infos"
 
 enum PropSyncProps {
   PropSyncFreqProp = 0,
@@ -96,9 +96,9 @@ public:
     if (updatePropsEnabled) {
       updateProps(actorIndex);
     }
-    if (updateInfosEnabled) {
-      updateInfos(actorIndex);
-    }
+    //if (updateInfosEnabled) {
+    //  updateInfos(actorIndex);
+    //}
   }
 
   void updateProps(int actorIndex) {
@@ -111,53 +111,34 @@ public:
     ParamStream httpBodyResponse;
     const char* actorName = actor->getName();
     log(CLASS_PROPSYNC, Debug, "LoadTarg:%s", actorName);
-    urlAuxBuffer.fill(DWEET_IO_API_URL_GET_TARGET, actorName);
+    urlAuxBuffer.fill(BOTINOBE_API_URL_GET_TARGET, actorName);
     int errorCodeGet = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
     if (errorCodeGet == HTTP_OK) {
       JsonObject &json = httpBodyResponse.parse();
-      if (json.containsKey("with")) {
-        JsonObject &withJson = json["with"][0];
-        if (withJson.containsKey("content")) {
-          JsonObject &content = withJson["content"];
-          log(CLASS_PROPSYNC, Debug, "SetProp:%s", actorName);
-
-          urlAuxBuffer.fill(DWEET_IO_API_URL_POST_TARGET, actorName);
-          log(CLASS_PROPSYNC, Debug, "ClrTarg:%s", actorName);
-          int errorCodePost = httpPost(urlAuxBuffer.getBuffer(), "{}", NULL); // TODO: best effort for atomicity, but not good enough
-          if (errorCodePost == HTTP_OK) {
-            bot->setPropsJson(content, actorIndex);
-          } else {
-            log(CLASS_PROPSYNC, Info, "Failed to clean target");
-          }
-        } else {
-          log(CLASS_PROPSYNC, Info, "No 'content'");
-        }
-      } else {
-        log(CLASS_PROPSYNC, Info, "Inv. JSON(no 'with')");
-      }
+      bot->setPropsJson(json, actorIndex);
     } else {
       log(CLASS_PROPSYNC, Warn, "KO: %d", errorCodeGet);
     }
 
     bot->getPropsJson(&jsonAuxBuffer, actorIndex);
-    urlAuxBuffer.fill(DWEET_IO_API_URL_POST_CURRENT, actorName);
+    urlAuxBuffer.fill(BOTINOBE_API_URL_POST_CURRENT, actorName);
     log(CLASS_PROPSYNC, Debug, "UpdCurr:%s", actorName);
     httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort to push current status
 
   }
 
-  void updateInfos(int actorIndex) {
-    Actor *actor = bot->getActors()->get(actorIndex);
-    if (actor->getNroInfos() == 0) {
-    	return; // nothing to be syncd
-    }
+  //void updateInfos(int actorIndex) {
+  //  Actor *actor = bot->getActors()->get(actorIndex);
+  //  if (actor->getNroInfos() == 0) {
+  //  	return; // nothing to be syncd
+  //  }
 
-    const char* actorName = actor->getName();
-    bot->getInfosJson(&jsonAuxBuffer, actorIndex);
-    urlAuxBuffer.fill(DWEET_IO_API_URL_POST_INFOS, actorName);
-    log(CLASS_PROPSYNC, Debug, "UpdInfos:%s", actorName);
-    httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort
-  }
+  //  const char* actorName = actor->getName();
+  //  bot->getInfosJson(&jsonAuxBuffer, actorIndex);
+  //  urlAuxBuffer.fill(BOTINOBE_API_URL_POST_INFOS, actorName);
+  //  log(CLASS_PROPSYNC, Debug, "UpdInfos:%s", actorName);
+  //  httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort
+  //}
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {

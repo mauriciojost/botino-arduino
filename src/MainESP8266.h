@@ -208,7 +208,7 @@ int httpPost(const char *url, const char *body, ParamStream *response) {
   int errorCode = httpClient.POST(body);
   log(CLASS_MAIN, Debug, "> POST:%d", errorCode);
 
-  if (errorCode == HTTP_OK) {
+  if (errorCode == HTTP_OK || errorCode == HTTP_CREATED) {
     if (response != NULL) {
       httpClient.writeToStream(response);
     }
