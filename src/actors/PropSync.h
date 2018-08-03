@@ -14,7 +14,7 @@
 
 #define BOTINOBE_API_URL_BASE "http://10.0.0.8:8080/api/v1/devices/" DEVICE_NAME
 #define BOTINOBE_API_URL_POST_CURRENT BOTINOBE_API_URL_BASE "/actors/%s/reports"
-#define BOTINOBE_API_URL_GET_TARGET BOTINOBE_API_URL_BASE "/actors/%s/targets/summary?clean=true"
+#define BOTINOBE_API_URL_GET_TARGET BOTINOBE_API_URL_BASE "/actors/%s/targets/summary?clean=true&created=true"
 #define BOTINOBE_API_URL_POST_INFOS  BOTINOBE_API_URL_BASE "/dweet/for/" DEVICE_NAME "-%s-infos"
 
 enum PropSyncProps {
