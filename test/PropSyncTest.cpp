@@ -14,7 +14,7 @@
 #define JSON_PREFIX "{\"with\":[{\"content\":"
 #define JSON_SUFFIX "}]}"
 
-#define MV2 "A90A09W5."
+#define MV2 "Da2"
 
 const char *replyBody = JSON_PREFIX "{"
                                     "\"mv0\":\"A99A55W5.W5.A99A55A00F2.W4.M02W5.Mc4W2.\","
