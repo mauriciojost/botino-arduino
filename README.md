@@ -84,49 +84,8 @@ Properties: see [here for more information](src/actors/Body.h)
 
 ## Timing
 
-The frequency at which a given actor will act depends on its timing configuration. It can normally be set up as any other property of the actor.
+Refer to the `Timing` section of the documentation of `main4ino`.
 
-A timing is expressed as an integer value. It is possible to specify several types of timing: 
-
-| Timing type       | Description                                                  | Format       | Example                                |
-| ----------------- | ------------------------------------------------------------ |:-------------|:--------------------------------------:|
-| never             | No matching ever.                                            | `0`          | `0`                                    |
-| day-time          | Match a custom day-time (within a month).                    | `1DDHHMMSS` | `177050000` (any day, 05h00m00s)        |
-| modulo-frequency  | Match a component-modulo expression.                         | `2DDHHMMSS` | `201013060` (any day, every 30 minutes) |
-| period secs       | Match every given seconds period.                            | `3xxxxxxxx` | `300000099` (every 99 seconds)          |
-| one-off           | Match only once, then come back to previous setting          | `4xxxxxxxx` | `400000000` (match once, then as before)|
-
-### Never
-
-Simply `0` value. There will be no matching (the actor will not act).
-
-### Concrete day-time
-
-Simply use `1DDHHMMSS` (DD for days, HH for hours, MM for minutes, SS for seconds). 
-
-For instance, if you want the actor to wake up at 15h00 any day, just set its frequency to `177150000` (the expression can be read as follows: 1 for concrete date-time mode, 77 for any day matching, 15 for matching only at 15h, 00 for matching only at 00m, and 00 for matching only at 00s).
-
-### Modulo/Frequency
-
-Simply use `2DDHHMMSS`. 
-
-The actor will act when the actual time component modulo the provided component equals zero. 
-
-For example: if you want the actor to wake up every 2 hours, just set its frequency to `201026060` (the expression can be read as follows: 2 for frequency mode; 01 for any day, as any day number modulo 1 equals 0; 02 meaning every 2 hours, as any pair hour value modulo 2 equals 0, while odd hours will give 1, so no matching; 60 for matching only at 00m, and 00 for matching only at 00s).
-
-### Period Seconds
-
-Simply use `3xxxxxxxx`. 
-
-The actor will act with the period given as argument (in the `xxx...`).
-
-For example: if you want the actor to wake up every 999 seconds, just set its frequency to `300000999`.
-
-### One off
-
-Simply use `4xxxxxxxx`. 
-
-The actor will act immediately. 
 
 # 3. Contribute
 
