@@ -51,6 +51,11 @@
 #define SERVO1_RANGE_DEGREES 140
 #endif // SERVO1_RANGE_DEGREES
 
+#ifndef API_TOKEN
+#error "Must define API_TOKEN"
+#endif // API_TOKEN
+
+
 #define DEV_USER_DELAY_MS 1000
 
 #define LOG_LINE 7
@@ -179,6 +184,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
 int httpGet(const char *url, ParamStream *response) {
   httpClient.begin(url);
   httpClient.addHeader("Content-Type", "application/json");
+  httpClient.addHeader("Authorization", "token " API_TOKEN);
 
   log(CLASS_MAIN, Debug, "> GET:..%s", tailStr(url, URL_PRINT_MAX_LENGTH));
   int errorCode = httpClient.GET();
@@ -202,6 +208,7 @@ int httpGet(const char *url, ParamStream *response) {
 int httpPost(const char *url, const char *body, ParamStream *response) {
   httpClient.begin(url);
   httpClient.addHeader("Content-Type", "application/json");
+  httpClient.addHeader("Authorization", "token " API_TOKEN);
 
   log(CLASS_MAIN, Debug, "> POST:..%s", tailStr(url, URL_PRINT_MAX_LENGTH));
   log(CLASS_MAIN, Debug, "> POST:'%s'", body);
