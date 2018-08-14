@@ -12,15 +12,18 @@
 
 #define CLASS_PROPSYNC "PY"
 
-#define BOTINOBE_API_URL_BASE "http://10.0.0.8:8080/api/v1/devices/" DEVICE_NAME
+#ifndef BOTINOBE_API_HOST_BASE
+#error "Must define BOTINOBE_API_HOST_BASE"
+#endif
+
+#define BOTINOBE_API_URL_BASE BOTINOBE_API_HOST_BASE "/api/v1/devices/" DEVICE_NAME
 #define BOTINOBE_API_URL_POST_CURRENT BOTINOBE_API_URL_BASE "/actors/%s/reports"
-#define BOTINOBE_API_URL_GET_TARGET BOTINOBE_API_URL_BASE "/actors/%s/targets/summary?clean=true&created=true"
+#define BOTINOBE_API_URL_GET_TARGET BOTINOBE_API_URL_BASE "/actors/%s/targets/summary?consume=true&status=C"
 #define BOTINOBE_API_URL_POST_INFOS  BOTINOBE_API_URL_BASE "/dweet/for/" DEVICE_NAME "-%s-infos"
 
 enum PropSyncProps {
   PropSyncFreqProp = 0,
   PropSyncUpdatePropsProp,
-  PropSyncUpdateInfosProp,
   PropSyncPropsgDelimiter // count of properties
 };
 
@@ -41,7 +44,6 @@ private:
   int (*httpGet)(const char *url, ParamStream *response);
   int (*httpPost)(const char *url, const char *body, ParamStream *response);
   bool updatePropsEnabled;
-  bool updateInfosEnabled;
 
 public:
   PropSync(const char *n) {
@@ -51,7 +53,6 @@ public:
     httpGet = NULL;
     httpPost = NULL;
     updatePropsEnabled = true;
-    updateInfosEnabled = false;
     freqConf.setFrequency(OnceEvery5Minutes);
   }
 
@@ -96,9 +97,6 @@ public:
     if (updatePropsEnabled) {
       updateProps(actorIndex);
     }
-    //if (updateInfosEnabled) {
-    //  updateInfos(actorIndex);
-    //}
   }
 
   void updateProps(int actorIndex) {
@@ -127,27 +125,12 @@ public:
 
   }
 
-  //void updateInfos(int actorIndex) {
-  //  Actor *actor = bot->getActors()->get(actorIndex);
-  //  if (actor->getNroInfos() == 0) {
-  //  	return; // nothing to be syncd
-  //  }
-
-  //  const char* actorName = actor->getName();
-  //  bot->getInfosJson(&jsonAuxBuffer, actorIndex);
-  //  urlAuxBuffer.fill(BOTINOBE_API_URL_POST_INFOS, actorName);
-  //  log(CLASS_PROPSYNC, Debug, "UpdInfos:%s", actorName);
-  //  httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort
-  //}
-
   const char *getPropName(int propIndex) {
     switch (propIndex) {
       case (PropSyncFreqProp):
         return "freq";
       case (PropSyncUpdatePropsProp):
         return "updateprops";
-      case (PropSyncUpdateInfosProp):
-        return "updateinfos";
       default:
         return "";
     }
@@ -165,9 +148,6 @@ public:
       } break;
       case (PropSyncUpdatePropsProp): {
         setPropBoolean(m, targetValue, actualValue, &updatePropsEnabled);
-      } break;
-      case (PropSyncUpdateInfosProp): {
-        setPropBoolean(m, targetValue, actualValue, &updateInfosEnabled);
       } break;
       default:
         break;
