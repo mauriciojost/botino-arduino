@@ -1,5 +1,7 @@
 # BOTINO
 
+[![Build Status](https://jenkins.martinenhome.com/buildStatus/icon?job=botino/master)](https://jenkins.martinenhome.com/job/botino/job/master/)
+
 This is a cool-geek-fully-configurable alarm project.
 
 ![Botino](misc/images/botino-v0.jpg)
