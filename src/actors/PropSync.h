@@ -19,7 +19,6 @@
 #define BOTINOBE_API_URL_BASE BOTINOBE_API_HOST_BASE "/api/v1/devices/" DEVICE_NAME
 #define BOTINOBE_API_URL_POST_CURRENT BOTINOBE_API_URL_BASE "/actors/%s/reports"
 #define BOTINOBE_API_URL_GET_TARGET BOTINOBE_API_URL_BASE "/actors/%s/targets/summary?consume=true&status=C"
-#define BOTINOBE_API_URL_POST_INFOS  BOTINOBE_API_URL_BASE "/dweet/for/" DEVICE_NAME "-%s-infos"
 
 enum PropSyncProps {
   PropSyncFreqProp = 0,
