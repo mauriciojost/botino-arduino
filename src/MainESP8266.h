@@ -357,7 +357,7 @@ bool haveToInterrupt() {
   	Serial.readBytesUntil('\n', cmdBuffer.getUnsafeBuffer(), COMMAND_MAX_LENGTH);
   	cmdBuffer.replace('\n', '\0');
   	cmdBuffer.replace('\r', '\0');
-  	bool interrupt = command(cmdBuffer.getBuffer());
+  	bool interrupt = m.command(cmdBuffer.getBuffer());
   	log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
   	return interrupt;
   } else if (buttonInterrupts > 0) {
@@ -580,7 +580,7 @@ void bitmapToLcd(uint8_t bitmap[]) {
 }
 
 void reactCommandCustom() { // for the use via telnet
-  command(Telnet.getLastCommand().c_str());
+  m.command(Telnet.getLastCommand().c_str());
 }
 
 void hwTest() {

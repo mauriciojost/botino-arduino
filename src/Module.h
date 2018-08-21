@@ -19,6 +19,22 @@
 
 #define CLASS_MODULE "MD"
 
+#define COMMAND_MAX_LENGTH 128
+
+#define HELP_COMMAND_CLI \
+    "\n  run    : go to run mode" \
+    "\n  conf   : go to conf mode" \
+    "\n  wifi   : init steady wifi" \
+    "\n  get    : display actors properties" \
+    "\n  set    : set an actor property (example: 'set body msg0 HELLO')" \
+    "\n  move   : execute a move (example: 'move A00C55')" \
+    "\n  logl   : change log level" \
+    "\n  clear  : clear crashes stacktrace" \
+    "\n  help   : show this help" \
+    "\n  (all messages are shown as info log level)" \
+    "\n"
+
+
 /**
  * This class represents the integration of all components (LCD, buttons, buzzer, etc).
  */
@@ -37,6 +53,9 @@ private:
   Images *images;
   Messages *messages;
   Ifttt *ifttt;
+
+  bool (*initWifiSteadyFunc)();
+  void (*clearDeviceFunc)();
 
 public:
   Module() {
@@ -72,7 +91,9 @@ public:
     body->setImages(images);
     body->setMessages(messages);
 
-    bot->setMode(RunMode);
+    initWifiSteadyFunc = NULL;
+    clearDeviceFunc = NULL;
+
   }
 
   void setup(
@@ -83,7 +104,8 @@ public:
     bool (*initWifiInit)(),
     bool (*initWifiSteady)(),
     int (*httpPost)(const char *url, const char *body, ParamStream *response),
-    int (*httpGet)(const char *url, ParamStream *response)
+    int (*httpGet)(const char *url, ParamStream *response),
+    void (*clearDevice)()
   ) {
 
     body->setLcdImgFunc(lcdImg);
@@ -102,7 +124,94 @@ public:
     quotes->setInitWifi(initWifiSteady);
     ifttt->setInitWifi(initWifiSteady);
     ifttt->setHttpPost(httpPost);
+
+    initWifiSteadyFunc = initWifiSteady;
+    clearDeviceFunc = clearDevice;
+
+    bot->setMode(RunMode);
   }
+
+bool command(const char *cmd) {
+
+  char buf[COMMAND_MAX_LENGTH];
+  strncpy(buf, cmd, COMMAND_MAX_LENGTH);
+  log(CLASS_MODULE, Info, "Command: '%s'", buf);
+
+  if (strlen(buf) == 0) {
+  	return false;
+  }
+
+  char *c = strtok(buf, " ");
+
+  if (strcmp("move", c) == 0) {
+    c = strtok(NULL, " ");
+    if (c == NULL) {
+      log(CLASS_MODULE, Info, "Argument needed:\n  move <move>");
+      return false;
+    }
+    log(CLASS_MODULE, Info, "-> Move %s", c);
+    body->performMove(c);
+    return false;
+  } else if (strcmp("set", c) == 0) {
+    const char *actor = strtok(NULL, " ");
+    const char *prop = strtok(NULL, " ");
+    const char *v = strtok(NULL, " ");
+    if (actor == NULL || prop == NULL || v == NULL) {
+      log(CLASS_MODULE, Info, "Arguments needed:\n  set <actor> <prop> <value>");
+      return false;
+    }
+    log(CLASS_MODULE, Info, "-> Set %s.%s = %s", actor, prop, v);
+    Buffer<64> value(v);
+    bot->setProp(actor, prop, &value);
+    return false;
+  } else if (strcmp("get", c) == 0) {
+    log(CLASS_MODULE, Info, "-> Get");
+    Array<Actor *> *actors = bot->getActors();
+    for (int i = 0; i < actors->size(); i++) {
+      Actor *actor = actors->get(i);
+      log(CLASS_MODULE, Info, " '%s'", actor->getName());
+      for (int j = 0; j < actor->getNroProps(); j++) {
+        Buffer<COMMAND_MAX_LENGTH> value;
+        actor->getPropValue(j, &value);
+        log(CLASS_MODULE, Info, "   '%s': '%s'", actor->getPropName(j), value.getBuffer());
+      }
+      log(CLASS_MODULE, Info, " ");
+    }
+    log(CLASS_MODULE, Info, " ");
+    return false;
+  } else if (strcmp("run", c) == 0) {
+    log(CLASS_MODULE, Info, "-> Run mode");
+    bot->setMode(RunMode);
+    return true;
+  } else if (strcmp("conf", c) == 0) {
+    log(CLASS_MODULE, Info, "-> Configure mode");
+    bot->setMode(ConfigureMode);
+    return true;
+  } else if (strcmp("wifi", c) == 0) {
+    initWifiSteadyFunc();
+    return false;
+  } else if (strcmp("clear", c) == 0) {
+    clearDeviceFunc();
+    return false;
+  } else if (strcmp("logl", c) == 0) {
+    c = strtok(NULL, " ");
+    if (c == NULL) {
+      log(CLASS_MODULE, Info, "Argument needed:\n  logl <loglevel>");
+      return false;
+    }
+    int ll = atoi(c);
+    setLogLevel(ll);
+    log(CLASS_MODULE, Info, "Log level: %d", ll);
+    return false;
+  } else if (strcmp("help", c) == 0) {
+    log(CLASS_MODULE, Warn, HELP_COMMAND_CLI);
+    return false;
+  } else {
+    log(CLASS_MODULE, Warn, "What? (try: 'help', log level is Info)");
+    return false;
+  }
+}
+
 
   void loop(bool mode, bool set, bool cycle) {
 
@@ -121,11 +230,6 @@ public:
   Bot *getBot() {
     return bot;
   }
-
-  Clock *getClock() {
-    return clock;
-  }
-
   Settings *getSettings() {
     return settings;
   }
@@ -136,18 +240,6 @@ public:
 
   SetupSync *getSetupSync() {
     return setupSync;
-  }
-
-  PropSync *getPropSync() {
-    return propSync;
-  }
-
-  ClockSync *getClockSync() {
-    return clockSync;
-  }
-
-  Quotes *getQuotes() {
-    return quotes;
   }
 
   Ifttt *getIfttt() {

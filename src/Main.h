@@ -30,8 +30,6 @@
 
 #define PERIOD_CONFIGURE_MSEC 4000
 
-#define COMMAND_MAX_LENGTH 128
-
 #define WAIT_BEFORE_HTTP_MS 1500
 
 #ifndef URL_PRINT_MAX_LENGTH
@@ -45,20 +43,6 @@
 #ifndef WIFI_DELAY_MS
 #define WIFI_DELAY_MS 3000
 #endif // WIFI_DELAY_MS
-
-#define HELP_COMMAND_CLI \
-    "\n  run    : go to run mode" \
-    "\n  conf   : go to conf mode" \
-    "\n  wifi   : init steady wifi" \
-    "\n  get    : display actors properties" \
-    "\n  set    : set an actor property (example: 'set body msg0 HELLO')" \
-    "\n  move   : execute a move (example: 'move A00C55')" \
-    "\n  logl   : change log level" \
-    "\n  clear  : clear crashes stacktrace" \
-    "\n  help   : show this help" \
-    "\n  (all messages are shown as info log level)" \
-    "\n"
-
 
 //////////////////////////////////////////////////////////////
 // Provided by generic Main
@@ -75,9 +59,6 @@ bool initWifiInit();
 
 // Initialize steady wifi
 bool initWifiSteady();
-
-// Execute a given command and tell if such has to interrupt the current cycle
-bool command(const char *cmd);
 
 // Extended "message to user" function (printf way)
 void messageFuncExt(int line, int size, const char *format, ...);

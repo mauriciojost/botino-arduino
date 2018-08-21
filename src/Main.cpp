@@ -73,87 +73,6 @@ void messageFuncExt(int line, int size, const char *format, ...) {
 }
 
 
-bool command(const char *cmd) {
-
-  char buf[COMMAND_MAX_LENGTH];
-  strncpy(buf, cmd, COMMAND_MAX_LENGTH);
-  log(CLASS_MAIN, Info, "Command: '%s'", buf);
-
-  if (strlen(buf) == 0) {
-  	return false;
-  }
-
-  char *c = strtok(buf, " ");
-
-  if (strcmp("move", c) == 0) {
-    c = strtok(NULL, " ");
-    if (c == NULL) {
-      log(CLASS_MAIN, Info, "Argument needed:\n  move <move>");
-      return false;
-    }
-    log(CLASS_MAIN, Info, "-> Move %s", c);
-    m.getBody()->performMove(c);
-    return false;
-  } else if (strcmp("set", c) == 0) {
-    const char *actor = strtok(NULL, " ");
-    const char *prop = strtok(NULL, " ");
-    const char *v = strtok(NULL, " ");
-    if (actor == NULL || prop == NULL || v == NULL) {
-      log(CLASS_MAIN, Info, "Arguments needed:\n  set <actor> <prop> <value>");
-      return false;
-    }
-    log(CLASS_MAIN, Info, "-> Set %s.%s = %s", actor, prop, v);
-    Buffer<64> value(v);
-    m.getBot()->setProp(actor, prop, &value);
-    return false;
-  } else if (strcmp("get", c) == 0) {
-    log(CLASS_MAIN, Info, "-> Get");
-    Array<Actor *> *actors = m.getBot()->getActors();
-    for (int i = 0; i < actors->size(); i++) {
-      Actor *actor = actors->get(i);
-      log(CLASS_MAIN, Info, " '%s'", actor->getName());
-      for (int j = 0; j < actor->getNroProps(); j++) {
-        Buffer<COMMAND_MAX_LENGTH> value;
-        actor->getPropValue(j, &value);
-        log(CLASS_MAIN, Info, "   '%s': '%s'", actor->getPropName(j), value.getBuffer());
-      }
-      log(CLASS_MAIN, Info, " ");
-    }
-    log(CLASS_MAIN, Info, " ");
-    return false;
-  } else if (strcmp("run", c) == 0) {
-    log(CLASS_MAIN, Info, "-> Run mode");
-    m.getBot()->setMode(RunMode);
-    return true;
-  } else if (strcmp("conf", c) == 0) {
-    log(CLASS_MAIN, Info, "-> Configure mode");
-    m.getBot()->setMode(ConfigureMode);
-    return true;
-  } else if (strcmp("wifi", c) == 0) {
-    initWifiSteady();
-    return false;
-  } else if (strcmp("clear", c) == 0) {
-    clearDevice();
-    return false;
-  } else if (strcmp("logl", c) == 0) {
-    c = strtok(NULL, " ");
-    if (c == NULL) {
-      log(CLASS_MAIN, Info, "Argument needed:\n  logl <loglevel>");
-      return false;
-    }
-    int ll = atoi(c);
-    setLogLevel(ll);
-    log(CLASS_MAIN, Info, "Log level: %d", ll);
-    return false;
-  } else if (strcmp("help", c) == 0) {
-    logLine(HELP_COMMAND_CLI);
-    return false;
-  } else {
-    logLine("What? (try: 'help')");
-    return false;
-  }
-}
-
 
 void setup() {
 
@@ -165,7 +84,8 @@ void setup() {
     initWifiInit,
     initWifiSteady,
     httpPost,
-    httpGet
+    httpGet,
+    clearDevice
   );
 
   setupArchitecture();
