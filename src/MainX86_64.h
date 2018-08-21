@@ -120,12 +120,16 @@ int main(int argc, const char *argv[]) {
 }
 
 unsigned long millis() {
+	static unsigned long boot = -1;
   struct timespec tms;
   if (clock_gettime(CLOCK_REALTIME,&tms)) {
     log(CLASS_MAIN, Warn, "Couldn't get time");
     return -1;
   }
   unsigned long m = tms.tv_sec * 1000 + tms.tv_nsec / 1000000;
+  if (boot == -1) {
+  	boot = m;
+  }
   //log(CLASS_MAIN, Debug, "Millis: %lu", m);
-  return m;
+  return m - boot;
 }

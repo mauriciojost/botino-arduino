@@ -7,20 +7,7 @@ rm -f .simulator.bin
 
 PARAM_FLAGS="$@"
 
-FLAGS="
--D WIFI_SSID_INIT=\"wifi\"
--D WIFI_PASSWORD_INIT=\"pass\"
--D ENCRYPT_KEY=\"11112233445566778899aabbccddeeff\"
--D TIMEZONE_DB_KEY=\"akey\"
--D TIMEZONE_DB_ZONE=\"Europe/Paris\"
--D UNIT_TEST
--D LOG_LEVEL=0
--D DEVICE_NAME=\"simulated\"
--D MAX_LOG_MSG_LENGTH=1024
--D PERIOD_SEC=1
--D SIMULATE
-$PARAM_FLAGS
-"
+FLAGS="-D SIMULATE $PARAM_FLAGS"
 
 SRC="
 src/Main.cpp
