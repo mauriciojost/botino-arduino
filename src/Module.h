@@ -75,6 +75,35 @@ public:
     bot->setMode(RunMode);
   }
 
+  void setup(
+    void (*lcdImg)(char img, uint8_t bitmap[]),
+    void (*arms)(int left, int right, int steps),
+    void (*messageFunc)(int line, const char *str, int size),
+    void (*ios)(char led, bool v),
+    bool (*initWifiInit)(),
+    bool (*initWifiSteady)(),
+    int (*httpPost)(const char *url, const char *body, ParamStream *response),
+    int (*httpGet)(const char *url, ParamStream *response)
+  ) {
+
+    body->setLcdImgFunc(lcdImg);
+    body->setArmsFunc(arms);
+    body->setMessageFunc(messageFunc);
+    body->setIosFunc(ios);
+    propSync->setInitWifi(initWifiSteady);
+    propSync->setHttpPost(httpPost);
+    propSync->setHttpGet(httpGet);
+    clockSync->setInitWifi(initWifiSteady);
+    clockSync->setHttpGet(httpGet);
+    setupSync->setInitWifiSteady(initWifiSteady);
+    setupSync->setInitWifiInit(initWifiInit);
+    setupSync->setHttpGet(httpGet);
+    quotes->setHttpGet(httpGet);
+    quotes->setInitWifi(initWifiSteady);
+    ifttt->setInitWifi(initWifiSteady);
+    ifttt->setHttpPost(httpPost);
+  }
+
   void loop(bool mode, bool set, bool cycle) {
 
     TimingInterrupt interruptType = TimingInterruptNone;
@@ -87,6 +116,8 @@ public:
     bot->cycle(mode, set, interruptType);
   }
 
+  // All getters should be removed, and initialization of these instances below should
+  // be done in Module itself. This should help decrease the size of
   Bot *getBot() {
     return bot;
   }

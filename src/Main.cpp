@@ -157,22 +157,16 @@ bool command(const char *cmd) {
 
 void setup() {
 
-  m.getBody()->setLcdImgFunc(lcdImg);
-  m.getBody()->setArmsFunc(arms);
-  m.getBody()->setMessageFunc(messageFunc);
-  m.getBody()->setIosFunc(ios);
-  m.getPropSync()->setInitWifi(initWifiSteady);
-  m.getPropSync()->setHttpPost(httpPost);
-  m.getPropSync()->setHttpGet(httpGet);
-  m.getClockSync()->setInitWifi(initWifiSteady);
-  m.getClockSync()->setHttpGet(httpGet);
-  m.getSetupSync()->setInitWifiSteady(initWifiSteady);
-  m.getSetupSync()->setInitWifiInit(initWifiInit);
-  m.getSetupSync()->setHttpGet(httpGet);
-  m.getQuotes()->setHttpGet(httpGet);
-  m.getQuotes()->setInitWifi(initWifiSteady);
-  m.getIfttt()->setInitWifi(initWifiSteady);
-  m.getIfttt()->setHttpPost(httpPost);
+	m.setup(
+    lcdImg,
+    arms,
+    messageFunc,
+    ios,
+    initWifiInit,
+    initWifiSteady,
+    httpPost,
+    httpGet
+  );
 
   setupArchitecture();
 }
