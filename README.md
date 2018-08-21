@@ -155,3 +155,10 @@ To upload the `data` folder just do:
 PLATFORMIO_BUILD_FLAGS="`cat profiles/demo.prof`" platformio run --target buildfs
 PLATFORMIO_BUILD_FLAGS="`cat profiles/demo.prof`" platformio run --target uploadfs
 ```
+
+## 3.4. Simulate
+
+```
+./simulate '-D PROJ_VERSION="1master"' `cat profiles/simulate.prof`
+```
+
