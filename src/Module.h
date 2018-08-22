@@ -117,9 +117,6 @@ public:
     propSync->setHttpGet(httpGet);
     clockSync->setInitWifi(initWifiSteady);
     clockSync->setHttpGet(httpGet);
-    setupSync->setInitWifiSteady(initWifiSteady);
-    setupSync->setInitWifiInit(initWifiInit);
-    setupSync->setHttpGet(httpGet);
     quotes->setHttpGet(httpGet);
     quotes->setInitWifi(initWifiSteady);
     ifttt->setInitWifi(initWifiSteady);
@@ -230,6 +227,7 @@ bool command(const char *cmd) {
   Bot *getBot() {
     return bot;
   }
+
   Settings *getSettings() {
     return settings;
   }
