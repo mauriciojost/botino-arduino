@@ -22,15 +22,18 @@
 #define COMMAND_MAX_LENGTH 128
 
 #define HELP_COMMAND_CLI \
-    "\n  run    : go to run mode" \
-    "\n  conf   : go to conf mode" \
-    "\n  wifi   : init steady wifi" \
-    "\n  get    : display actors properties" \
-    "\n  set    : set an actor property (example: 'set body msg0 HELLO')" \
-    "\n  move   : execute a move (example: 'move A00C55')" \
-    "\n  logl   : change log level" \
-    "\n  clear  : clear crashes stacktrace" \
-    "\n  help   : show this help" \
+    "\n  run        : go to run mode" \
+    "\n  conf       : go to conf mode" \
+    "\n  wifi       : init steady wifi" \
+    "\n  get        : display actors properties" \
+    "\n  set        : set an actor property (example: 'set body msg0 HELLO')" \
+    "\n  move       : execute a move (example: 'move A00C55')" \
+    "\n  logl       : change log level" \
+    "\n  clear      : clear crashes stacktrace" \
+    "\n  wifissid   : set wifi ssid" \
+    "\n  wifipass   : set wifi pass" \
+    "\n  ifttttoken : set ifttt token" \
+    "\n  help       : show this help" \
     "\n  (all messages are shown as info log level)" \
     "\n"
 
@@ -199,6 +202,33 @@ bool command(const char *cmd) {
     int ll = atoi(c);
     setLogLevel(ll);
     log(CLASS_MODULE, Info, "Log level: %d", ll);
+    return false;
+  } else if (strcmp("wifissid", c) == 0) {
+    c = strtok(NULL, " ");
+    if (c == NULL) {
+      log(CLASS_MODULE, Info, "Argument needed:\n  wifissid <ssid>");
+      return false;
+    }
+    setupSync->setSsid(c);
+    log(CLASS_MODULE, Info, "Wifi ssid: %s", setupSync->getSsid());
+    return false;
+  } else if (strcmp("wifipass", c) == 0) {
+    c = strtok(NULL, " ");
+    if (c == NULL) {
+      log(CLASS_MODULE, Info, "Argument needed:\n  wifipass <pass>");
+      return false;
+    }
+    setupSync->setPass(c);
+    log(CLASS_MODULE, Info, "Wifi pass: %s", setupSync->getPass());
+    return false;
+  } else if (strcmp("ifttttoken", c) == 0) {
+    c = strtok(NULL, " ");
+    if (c == NULL) {
+      log(CLASS_MODULE, Info, "Argument needed:\n  ifttttoken <token>");
+      return false;
+    }
+    setupSync->setIfttt(c);
+    log(CLASS_MODULE, Info, "Ifttt token: %s", setupSync->getIfttt());
     return false;
   } else if (strcmp("help", c) == 0) {
     log(CLASS_MODULE, Warn, HELP_COMMAND_CLI);
