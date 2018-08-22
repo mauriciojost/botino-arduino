@@ -33,6 +33,7 @@
     "\n  wifissid   : set wifi ssid" \
     "\n  wifipass   : set wifi pass" \
     "\n  ifttttoken : set ifttt token" \
+    "\n  timezonekey: set timezonedb.com/v2 api key" \
     "\n  help       : show this help" \
     "\n  (all messages are shown as info log level)" \
     "\n"
@@ -229,6 +230,15 @@ bool command(const char *cmd) {
     }
     setupSync->setIfttt(c);
     log(CLASS_MODULE, Info, "Ifttt token: %s", setupSync->getIfttt());
+    return false;
+  } else if (strcmp("timezonekey", c) == 0) {
+    c = strtok(NULL, " ");
+    if (c == NULL) {
+      log(CLASS_MODULE, Info, "Argument needed:\n  timezonekey <key>");
+      return false;
+    }
+    clockSync->setDbKey(c);
+    log(CLASS_MODULE, Info, "TimeZoneDb key: %s", clockSync->getDbKey());
     return false;
   } else if (strcmp("help", c) == 0) {
     log(CLASS_MODULE, Warn, HELP_COMMAND_CLI);

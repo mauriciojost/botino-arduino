@@ -12,14 +12,19 @@
 #define CLASS_CLOCKSYNC "CS"
 
 #ifndef TIMEZONE_DB_KEY
-#error "Must provide TIMEZONE_DB_KEY"
+#define TIMEZONE_DB_KEY "xxx"
 #endif
 #ifndef TIMEZONE_DB_ZONE
-#error "Must provide TIMEZONE_DB_ZONE"
+#define TIMEZONE_DB_ZONE "xxx"
 #endif
 
-#define TIMEZONE_DB_API_URL_GET                                                                                                            \
-  "http://api.timezonedb.com/v2/get-time-zone?key=" TIMEZONE_DB_KEY "&format=json&by=zone&zone=" TIMEZONE_DB_ZONE
+#define TIMEZONE_DB_API_URL_GET "http://api.timezonedb.com/v2/get-time-zone?key=%s&format=json&by=zone&zone=%s"
+
+enum ClockSyncProps {
+  ClockSyncZone0Prop = 0, // zone to take the time from (as per api.timezonedb.com/v2)
+  ClockSyncPropsDelimiter // delimiter of the configuration states
+};
+
 
 /**
  * This actor exchanges status via HTTP to synchronize
@@ -31,6 +36,8 @@ private:
   const char *name;
   Clock *clock;
   Timing timing; // configuration of the frequency at which this actor will get triggered
+  Buffer<32> dbZone;
+  Buffer<32> dbKey;
   bool (*initWifiFunc)();
   int (*httpGet)(const char *url, ParamStream *response);
 
@@ -41,6 +48,8 @@ public:
     initWifiFunc = NULL;
     httpGet = NULL;
     timing.setFrequency(TwicePerDay);
+    dbKey.fill(TIMEZONE_DB_KEY);
+    dbZone.fill(TIMEZONE_DB_ZONE);
   }
 
   void setClock(Clock *c) {
@@ -75,7 +84,9 @@ public:
   void updateClockProperties() {
     log(CLASS_CLOCKSYNC, Info, "Updating clock");
     ParamStream s;
-    int errorCode = httpGet(TIMEZONE_DB_API_URL_GET, &s);
+    Buffer<128> urlAuxBuffer;
+    urlAuxBuffer.fill(TIMEZONE_DB_API_URL_GET, dbZone.getBuffer(), dbKey.getBuffer());
+    int errorCode = httpGet(urlAuxBuffer.getBuffer(), &s);
     if (errorCode == HTTP_OK) {
       JsonObject &json = s.parse();
       if (json.containsKey("formatted")) {
@@ -96,17 +107,38 @@ public:
     }
   }
 
-  void getSetPropValue(int propIndex, GetSetMode set, const Value *targetValue, Value *actualValue) {}
+  void getSetPropValue(int propIndex, GetSetMode setMode, const Value *targetValue, Value *actualValue) {
+    switch (propIndex) {
+      case (ClockSyncZone0Prop):
+        setPropValue(setMode, targetValue, actualValue, &dbZone);
+        break;
+      default:
+        break;
+    }
+  }
 
   int getNroProps() {
     return 0;
   }
 
   const char *getPropName(int propIndex) {
-    return "";
+    switch (propIndex) {
+      case (ClockSyncZone0Prop):
+        return "zone";
+      default:
+        return "";
+    }
   }
 
   void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}
+
+  void setDbKey(const char* k) {
+  	dbKey.fill(k);
+  }
+
+  const char* getDbKey() {
+  	dbKey.getBuffer();
+  }
 
   int getNroInfos() {
     return 0;
