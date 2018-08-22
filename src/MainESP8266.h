@@ -181,7 +181,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
 
 // TODO: add https support, which requires fingerprint of server that can be obtained as follows:
 //  openssl s_client -connect dweet.io:443 < /dev/null 2>/dev/null | openssl x509 -fingerprint -noout -in /dev/stdin
-int httpGet(const char *url, ParamStream *response) {
+int httpGet(const char *url, ParamStream *response) { // TODO: allow to pass at least one header
   httpClient.begin(url);
   httpClient.addHeader("Content-Type", "application/json");
   httpClient.addHeader("Authorization", "token " API_TOKEN);
