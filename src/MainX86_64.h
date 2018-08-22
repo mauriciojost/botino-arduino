@@ -1,6 +1,7 @@
 #include <Main.h>
 
 #include <time.h>
+#include <unistd.h>
 
 #define CL_MAX_LENGTH 1000
 #define CURL_COMMAND_GET "curl --silent -XGET '%s'"
@@ -88,6 +89,7 @@ void lcdImg(char img, uint8_t bitmap[]) {
 
 void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMsec) {
   log(CLASS_MAIN, Info, "L.Sleep(%lums)...", periodMsec);
+  sleep(1);
 }
 
 bool haveToInterrupt() {
