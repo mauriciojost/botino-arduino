@@ -97,11 +97,11 @@ public:
     Actor *actor = bot->getActors()->get(actorIndex);
 
     if (actor->getNroProps() == 0) {
-    	return; // nothing to be syncd
+      return; // nothing to be syncd
     }
 
     ParamStream httpBodyResponse;
-    const char* actorName = actor->getName();
+    const char *actorName = actor->getName();
     log(CLASS_PROPSYNC, Debug, "LoadTarg:%s", actorName);
     urlAuxBuffer.fill(BOTINOBE_API_URL_GET_TARGET, actorName);
     int errorCodeGet = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
@@ -116,7 +116,6 @@ public:
     urlAuxBuffer.fill(BOTINOBE_API_URL_POST_CURRENT, actorName);
     log(CLASS_PROPSYNC, Debug, "UpdCurr:%s", actorName);
     httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort to push current status
-
   }
 
   const char *getPropName(int propIndex) {

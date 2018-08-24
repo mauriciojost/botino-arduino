@@ -73,7 +73,7 @@ enum BodyProps {
 
 #define MOVE_DANCE0 "LwyFs.B09B90LwnFw.B09B90LwyFb.B55"
 #define MOVE_DANCE1 "FfyLyyLwyFs.A50A05Fb.LryLwnA00A99Fw.LrnLwyA90A09Fb.LwnLyyA90A09Fw.Fs."
-#define MOVE_DANCE2  "A87A78L?.A87A78L?.A12A21L?.A12A21L?."
+#define MOVE_DANCE2 "A87A78L?.A87A78L?.A12A21L?.A12A21L?."
 #define MOVE_DANCE3 "Fa.Da/SooDa\\Fr.DauSppDanFn.Sxx"
 #define MOVE_DANCE4 "S4?"
 #define MOVE_DANCE5 "S5?"
@@ -219,7 +219,7 @@ Codes:
 
     switch (c1) {
 
-    	// WAIT
+        // WAIT
       case 'W': {
         int v = getInt(c2);
         log(CLASS_BODY, Debug, "Wait %d s", v);
@@ -344,13 +344,11 @@ Codes:
 
       // SHORT MESSAGES
       case 'S': {
-          Buffer<3> s;
-          s.fill("%c%c", c2, c3);
-          log(CLASS_BODY, Debug, "Msg short '%s'", s.getBuffer());
-          messageFunc(0, s.getBuffer(), 6);
-        }
-        break;
-
+        Buffer<3> s;
+        s.fill("%c%c", c2, c3);
+        log(CLASS_BODY, Debug, "Msg short '%s'", s.getBuffer());
+        messageFunc(0, s.getBuffer(), 6);
+      } break;
 
       // IO (LEDS / FAN)
       case 'L':
@@ -475,9 +473,8 @@ public:
     }
 
     // Overwrite last to setup clock
-    routines[NRO_ROUTINES-1]->timing.setCustom(201010160); // once every 1 minutes
-    routines[NRO_ROUTINES-1]->move.fill("Mc3");
-
+    routines[NRO_ROUTINES - 1]->timing.setCustom(201010160); // once every 1 minutes
+    routines[NRO_ROUTINES - 1]->move.fill("Mc3");
   }
 
   const char *getName() {

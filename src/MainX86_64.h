@@ -23,12 +23,12 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
 }
 
 void loopArchitecture() {
-	char str[100];
-	gets(str);
-	printf("Parsing: '%s'\n", str);
-	if (strlen(str) != 0) {
+  char str[100];
+  gets(str);
+  printf("Parsing: '%s'\n", str);
+  if (strlen(str) != 0) {
     m.command(str);
-	}
+  }
 }
 
 int httpGet(const char *url, ParamStream *response) {
@@ -109,7 +109,6 @@ void configureModeArchitecture() {
   // nothing to be done here
 }
 
-
 ////////////////////////////////////////
 // Architecture specific functions
 ////////////////////////////////////////
@@ -122,16 +121,16 @@ int main(int argc, const char *argv[]) {
 }
 
 unsigned long millis() {
-	static unsigned long boot = -1;
+  static unsigned long boot = -1;
   struct timespec tms;
-  if (clock_gettime(CLOCK_REALTIME,&tms)) {
+  if (clock_gettime(CLOCK_REALTIME, &tms)) {
     log(CLASS_MAIN, Warn, "Couldn't get time");
     return -1;
   }
   unsigned long m = tms.tv_sec * 1000 + tms.tv_nsec / 1000000;
   if (boot == -1) {
-  	boot = m;
+    boot = m;
   }
-  //log(CLASS_MAIN, Debug, "Millis: %lu", m);
+  // log(CLASS_MAIN, Debug, "Millis: %lu", m);
   return m - boot;
 }

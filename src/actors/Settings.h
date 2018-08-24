@@ -19,9 +19,9 @@
 #define INFO_BUFFER_LENGTH 256
 
 enum SettingsProps {
-  SettingsDebugProp,               // boolean, define if the device is in debug mode
-  SettingsButtonRoutineLimitProp,  // integer, define the first X routines that are randomly executed when the button is pressed
-  SettingsPropsDelimiter           // amount of properties
+  SettingsDebugProp,              // boolean, define if the device is in debug mode
+  SettingsButtonRoutineLimitProp, // integer, define the first X routines that are randomly executed when the button is pressed
+  SettingsPropsDelimiter          // amount of properties
 };
 
 class Settings : public Actor {
@@ -79,7 +79,7 @@ public:
   }
 
   void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {
-  	info->load(&infoBuffer);
+    info->load(&infoBuffer);
   }
 
   int getNroInfos() {
@@ -102,8 +102,8 @@ public:
     devDebug = b;
   }
 
-  void setInfo(const char* s) {
-  	infoBuffer.fill(s);
+  void setInfo(const char *s) {
+    infoBuffer.fill(s);
   }
 };
 

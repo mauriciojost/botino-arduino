@@ -23,7 +23,6 @@ enum IftttProps {
   IftttPropsDelimiter // delimiter of the configuration states
 };
 
-
 /**
  * This actor interacts wit IFTTT service.
  */
@@ -46,7 +45,7 @@ public:
     httpPost = NULL;
     timing.setFrequency(Never);
     for (int i = 0; i < NRO_EVENTS; i++) {
-    	eventNames[i] = new Buffer<EVENT_NAME_MAX_LENGTH>();
+      eventNames[i] = new Buffer<EVENT_NAME_MAX_LENGTH>();
       eventNames[i]->fill("event_%d", i);
     }
   }
@@ -57,8 +56,8 @@ public:
 
   void act() {}
 
-  void setKey(const char* k) {
-  	iftttKey.fill("%s", k);
+  void setKey(const char *k) {
+    iftttKey.fill("%s", k);
   }
 
   void setInitWifi(bool (*f)()) {
@@ -69,20 +68,20 @@ public:
     httpPost = h;
   }
 
-  const char* getEventName(int eventNumber) {
+  const char *getEventName(int eventNumber) {
     int safeEvtNumber = POSIT(eventNumber % NRO_EVENTS);
-  	return eventNames[safeEvtNumber]->getBuffer();
+    return eventNames[safeEvtNumber]->getBuffer();
   }
 
   bool triggerEvent(int eventNumber) {
-  	if (initWifiFunc == NULL || httpPost == NULL) {
+    if (initWifiFunc == NULL || httpPost == NULL) {
       log(CLASS_IFTTT, Error, "Init needed");
       return false;
-  	}
+    }
     bool connected = initWifiFunc();
     if (connected) {
-    	int safeEvtNumber = POSIT(eventNumber % NRO_EVENTS);
-    	const char* eventName = getEventName(safeEvtNumber);
+      int safeEvtNumber = POSIT(eventNumber % NRO_EVENTS);
+      const char *eventName = getEventName(safeEvtNumber);
       urlAuxBuffer.fill(IFTTT_API_URL_POS, eventName, iftttKey.getBuffer());
       int errorCodePost = httpPost(urlAuxBuffer.getBuffer(), "{}", NULL);
       if (errorCodePost == HTTP_OK) {

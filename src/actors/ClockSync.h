@@ -25,7 +25,6 @@ enum ClockSyncProps {
   ClockSyncPropsDelimiter // delimiter of the configuration states
 };
 
-
 /**
  * This actor exchanges status via HTTP to synchronize
  * internal clock with time provided by the Internet.
@@ -132,12 +131,12 @@ public:
 
   void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}
 
-  void setDbKey(const char* k) {
-  	dbKey.fill(k);
+  void setDbKey(const char *k) {
+    dbKey.fill(k);
   }
 
-  const char* getDbKey() {
-  	dbKey.getBuffer();
+  const char *getDbKey() {
+    dbKey.getBuffer();
   }
 
   int getNroInfos() {

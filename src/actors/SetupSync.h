@@ -64,19 +64,25 @@ public:
 
   void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {}
 
-  int getNroProps() {return 0;}
+  int getNroProps() {
+    return 0;
+  }
 
-  const char *getPropName(int propIndex) { return ""; }
+  const char *getPropName(int propIndex) {
+    return "";
+  }
 
   void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}
 
-  int getNroInfos() {return 0;}
+  int getNroInfos() {
+    return 0;
+  }
 
   const char *getSsid() {
     return ssid;
   }
 
-  void setSsid(const char * s) {
+  void setSsid(const char *s) {
     strcpy(ssid, s);
   }
 
@@ -84,7 +90,7 @@ public:
     return pass;
   }
 
-  void setPass(const char * s) {
+  void setPass(const char *s) {
     strcpy(pass, s);
   }
 
@@ -92,7 +98,7 @@ public:
     return ifttt;
   }
 
-  void setIfttt(const char * s) {
+  void setIfttt(const char *s) {
     strcpy(ifttt, s);
   }
 
@@ -103,7 +109,6 @@ public:
   bool isInitialized() {
     return ssid[0] != '?' && pass[0] != '?' && ifttt[0] != '?';
   }
-
 };
 
 #endif // SETUPSYNC_INC

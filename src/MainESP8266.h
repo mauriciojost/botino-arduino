@@ -55,7 +55,6 @@
 #error "Must define API_TOKEN"
 #endif // API_TOKEN
 
-
 #define DEV_USER_DELAY_MS 1000
 
 #define LOG_LINE 7
@@ -108,7 +107,6 @@ Adafruit_SSD1306 lcd(-1);
 #define LED_ALIVE_ON digitalWrite(LED_ALIVE_PIN, LOW);
 #define LED_ALIVE_OFF digitalWrite(LED_ALIVE_PIN, HIGH);
 
-
 void bitmapToLcd(uint8_t bitmap[]);
 void reactCommandCustom();
 void hwTest();
@@ -120,13 +118,13 @@ bool reactToButtonHeld(int cycles, bool onlyMsg);
 ////////////////////////////////////////
 
 void logLine(const char *str) {
-	// serial print
+  // serial print
   Serial.println(str);
-	// telnet print
-  if (Telnet.isActive()){
+  // telnet print
+  if (Telnet.isActive()) {
     Telnet.printf("%s\n", str);
   }
-	// lcd print
+  // lcd print
   if (m.getSettings()->getDebug()) {
     lcd.setTextWrap(false);
     lcd.fillRect(0, LOG_LINE * 8, 128, 8, BLACK);
@@ -340,10 +338,18 @@ void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {
       break;
     }
     unsigned long fragToSleepMs = MINIM(periodMs - spentMs, FRAG_TO_SLEEP_MS_MAX);
-    if (SaveCrash.count() > 0) { LED_ALIVE_OFF; } else { LED_ALIVE_ON; }
-    delay(fragToSleepMs/500*1);
-    if (SaveCrash.count() > 0) { LED_ALIVE_ON; } else { LED_ALIVE_OFF; }
-    delay(fragToSleepMs/500*499);
+    if (SaveCrash.count() > 0) {
+      LED_ALIVE_OFF;
+    } else {
+      LED_ALIVE_ON;
+    }
+    delay(fragToSleepMs / 500 * 1);
+    if (SaveCrash.count() > 0) {
+      LED_ALIVE_ON;
+    } else {
+      LED_ALIVE_OFF;
+    }
+    delay(fragToSleepMs / 500 * 499);
     spentMs = millis() - cycleBegin;
   }
 }
@@ -354,19 +360,19 @@ bool haveToInterrupt() {
     Buffer<COMMAND_MAX_LENGTH> cmdBuffer;
     log(CLASS_MAIN, Info, "Listening...");
     cmdBuffer.clear();
-  	Serial.readBytesUntil('\n', cmdBuffer.getUnsafeBuffer(), COMMAND_MAX_LENGTH);
-  	cmdBuffer.replace('\n', '\0');
-  	cmdBuffer.replace('\r', '\0');
-  	bool interrupt = m.command(cmdBuffer.getBuffer());
-  	log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
-  	return interrupt;
+    Serial.readBytesUntil('\n', cmdBuffer.getUnsafeBuffer(), COMMAND_MAX_LENGTH);
+    cmdBuffer.replace('\n', '\0');
+    cmdBuffer.replace('\r', '\0');
+    bool interrupt = m.command(cmdBuffer.getBuffer());
+    log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
+    return interrupt;
   } else if (buttonInterrupts > 0) {
     // Handle button commands
     log(CLASS_MAIN, Debug, "Button command (%d)", buttonInterrupts);
     int holds = 0;
     reactToButtonHeld(holds, ONLY_SHOW_MSG);
     delay(100); // anti-bouncing
-    while(digitalRead(BUTTON0_PIN)) {
+    while (digitalRead(BUTTON0_PIN)) {
       holds++;
       log(CLASS_MAIN, Debug, "%d", holds);
       LED_INT_ON;
@@ -392,8 +398,8 @@ void setupArchitecture() {
   delay(2 * 1000);
 
   // Intialize the logging framework
-  Serial.begin(115200);            // Initialize serial port
-  Serial.setTimeout(10000);        // Timeout for read
+  Serial.begin(115200);     // Initialize serial port
+  Serial.setTimeout(10000); // Timeout for read
   lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   delay(DELAY_MS_SPI); // Initialize LCD
   setupLog(logLine);   // Initialize log callback
@@ -432,7 +438,6 @@ void setupArchitecture() {
   Telnet.setHelpProjectsCmds(helpCli);
 
   hwTest();
-
 }
 
 void runModeArchitecture() {
@@ -458,14 +463,13 @@ void runModeArchitecture() {
 
   // Handle log level as per settings
   Serial.setDebugOutput(s->getDebug()); // deep HW logs
-
 }
 
 void configureModeArchitecture() {
   static bool firstTime = true;
   if (firstTime) {
     Telnet.begin("ESP" DEVICE_NAME); // Intialize the remote logging framework
-    ArduinoOTA.begin();  // Intialize OTA
+    ArduinoOTA.begin();              // Intialize OTA
   }
 
   messageFuncExt(0, 1, "telnet %s", WiFi.localIP().toString().c_str());
@@ -473,89 +477,86 @@ void configureModeArchitecture() {
   ArduinoOTA.handle(); // Handle on the air firmware load
 }
 
-
 ////////////////////////////////////////
 // Architecture specific functions
 ////////////////////////////////////////
 
 bool reactToButtonHeld(int cycles, bool onlyMsg) {
-	switch (cycles) {
-		case 1:
-		case 2: {
-        int event = cycles - 1;
-        const char* evtName = m.getIfttt()->getEventName(event);
-        messageFuncExt(0, 2, "Push event %s?", evtName);
-			  if (!onlyMsg) {
-			  	bool suc = m.getIfttt()->triggerEvent(event);
-			  	if (suc) {
-            messageFuncExt(0, 1, "Event %s pushed!", evtName);
-			  	} else {
-            messageFuncExt(0, 1, "Failed: event not pushed");
-			  	}
-			  }
+  switch (cycles) {
+    case 1:
+    case 2: {
+      int event = cycles - 1;
+      const char *evtName = m.getIfttt()->getEventName(event);
+      messageFuncExt(0, 2, "Push event %s?", evtName);
+      if (!onlyMsg) {
+        bool suc = m.getIfttt()->triggerEvent(event);
+        if (suc) {
+          messageFuncExt(0, 1, "Event %s pushed!", evtName);
+        } else {
+          messageFuncExt(0, 1, "Failed: event not pushed");
+        }
       }
-      break;
-		case 0: {
-        messageFuncExt(0, 2, "Zzz routine?");
-			  if (!onlyMsg) {
-          log(CLASS_MAIN, Debug, "Routine Zzz...");
-          m.getBody()->performMove("Zz.");
-			  }
+    } break;
+    case 0: {
+      messageFuncExt(0, 2, "Zzz routine?");
+      if (!onlyMsg) {
+        log(CLASS_MAIN, Debug, "Routine Zzz...");
+        m.getBody()->performMove("Zz.");
       }
-      break;
-		case 3: {
-        messageFuncExt(0, 2, "Random routine?");
-			  if (!onlyMsg) {
-          int routine = (int)random(0, m.getSettings()->getNroRoutinesForButton());
-          log(CLASS_MAIN, Debug, "Routine %d...", routine);
-          m.getBody()->performMove(routine);
-			  }
+    } break;
+    case 3: {
+      messageFuncExt(0, 2, "Random routine?");
+      if (!onlyMsg) {
+        int routine = (int)random(0, m.getSettings()->getNroRoutinesForButton());
+        log(CLASS_MAIN, Debug, "Routine %d...", routine);
+        m.getBody()->performMove(routine);
       }
-      break;
-		case 4: {
-        messageFuncExt(0, 2, "All act?");
-			  if (!onlyMsg) {
-          messageFuncExt(0, 1, "All act one-off");
-			  	for (int i=0; i < m.getBot()->getActors()->size(); i++) {
-            Actor* a = m.getBot()->getActors()->get(i);
-            log(CLASS_MAIN, Debug, "One off: %s", a->getName());
-			  		a->oneOff();
-			  	}
-			  }
+    } break;
+    case 4: {
+      messageFuncExt(0, 2, "All act?");
+      if (!onlyMsg) {
+        messageFuncExt(0, 1, "All act one-off");
+        for (int i = 0; i < m.getBot()->getActors()->size(); i++) {
+          Actor *a = m.getBot()->getActors()->get(i);
+          log(CLASS_MAIN, Debug, "One off: %s", a->getName());
+          a->oneOff();
+        }
       }
-      break;
-		case 5: {
-        messageFuncExt(0, 2, "Config mode?");
-			  if (!onlyMsg) {
-			  	m.getBot()->setMode(ConfigureMode);
-          messageFuncExt(0, 1, "In config mode");
-			  }
+    } break;
+    case 5: {
+      messageFuncExt(0, 2, "Config mode?");
+      if (!onlyMsg) {
+        m.getBot()->setMode(ConfigureMode);
+        messageFuncExt(0, 1, "In config mode");
       }
-      break;
-		case 6: {
-        messageFuncExt(0, 2, "Run mode?");
-			  if (!onlyMsg) {
-			  	m.getBot()->setMode(RunMode);
-          messageFuncExt(0, 1, "In run mode");
-			  }
+    } break;
+    case 6: {
+      messageFuncExt(0, 2, "Run mode?");
+      if (!onlyMsg) {
+        m.getBot()->setMode(RunMode);
+        messageFuncExt(0, 1, "In run mode");
       }
-      break;
-		case 7: {
-        messageFuncExt(0, 2, "Show info?");
-			  if (!onlyMsg) {
-          messageFuncExt(0, 1, "Name..:%s\nVersio:%s\nCrashe:%d\nUptime:%luh", DEVICE_NAME, STRINGIFY(PROJ_VERSION), SaveCrash.count(), (millis() / 1000) / 3600);
-			  }
+    } break;
+    case 7: {
+      messageFuncExt(0, 2, "Show info?");
+      if (!onlyMsg) {
+        messageFuncExt(0,
+                       1,
+                       "Name..:%s\nVersio:%s\nCrashe:%d\nUptime:%luh",
+                       DEVICE_NAME,
+                       STRINGIFY(PROJ_VERSION),
+                       SaveCrash.count(),
+                       (millis() / 1000) / 3600);
       }
-      break;
-		default:{
-        messageFuncExt(0, 2, "Abort?");
-			  if (!onlyMsg) {
-          messageFuncExt(0, 1, "");
-			  }
+    } break;
+    default: {
+      messageFuncExt(0, 2, "Abort?");
+      if (!onlyMsg) {
+        messageFuncExt(0, 1, "");
       }
-      break;
-	}
-	return false;
+    } break;
+  }
+  return false;
 }
 
 ICACHE_RAM_ATTR
@@ -660,15 +661,15 @@ void hwTest() {
   delay(HARDWARE_TEST_STEP_DELAY_MS);
 
   log(CLASS_MAIN, Debug, "..SPIFFS");
-	SPIFFS.begin();
-	File f = SPIFFS.open("/version.txt", "r");
-	if (!f) {
+  SPIFFS.begin();
+  File f = SPIFFS.open("/version.txt", "r");
+  if (!f) {
     log(CLASS_MAIN, Warn, "File reading failed");
-	} else {
-		String s = f.readString();
+  } else {
+    String s = f.readString();
     log(CLASS_MAIN, Info, "File content: %s", s.c_str());
-	}
-	SPIFFS.end();
+  }
+  SPIFFS.end();
   delay(HARDWARE_TEST_STEP_DELAY_MS);
 
 #endif

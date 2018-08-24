@@ -62,7 +62,7 @@ bool initWifiSteady() {
 }
 
 void messageFuncExt(int line, int size, const char *format, ...) {
-  Buffer<MAX_LOG_MSG_LENGTH-1> buffer;
+  Buffer<MAX_LOG_MSG_LENGTH - 1> buffer;
   va_list args;
   va_start(args, format);
   vsnprintf(buffer.getUnsafeBuffer(), MAX_LOG_MSG_LENGTH, format, args);
@@ -104,7 +104,7 @@ void runMode() {
   // Handle keys
   SetupSync *ss = m.getSetupSync();
   if (ss->isInitialized()) {
-  	m.getIfttt()->setKey(ss->getIfttt());
+    m.getIfttt()->setKey(ss->getIfttt());
   }
 
   runModeArchitecture();
@@ -116,7 +116,7 @@ void runMode() {
 void loop() {
   switch (m.getBot()->getMode()) {
     case (RunMode):
-    	runMode();
+      runMode();
       break;
     case (ConfigureMode):
       configureMode();
