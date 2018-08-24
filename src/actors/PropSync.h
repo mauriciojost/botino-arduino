@@ -22,7 +22,6 @@
 
 enum PropSyncProps {
   PropSyncFreqProp = 0,
-  PropSyncUpdatePropsProp,
   PropSyncPropsgDelimiter // count of properties
 };
 
@@ -42,7 +41,6 @@ private:
   bool (*initWifiFunc)();
   int (*httpGet)(const char *url, ParamStream *response);
   int (*httpPost)(const char *url, const char *body, ParamStream *response);
-  bool updatePropsEnabled;
 
 public:
   PropSync(const char *n) {
@@ -51,7 +49,6 @@ public:
     initWifiFunc = NULL;
     httpGet = NULL;
     httpPost = NULL;
-    updatePropsEnabled = true;
     freqConf.setFrequency(OnceEvery5Minutes);
   }
 
@@ -93,9 +90,7 @@ public:
 
   void updateActor(int actorIndex) {
     log(CLASS_PROPSYNC, Info, "Sync: %s", bot->getActors()->get(actorIndex)->getName());
-    if (updatePropsEnabled) {
-      updateProps(actorIndex);
-    }
+    updateProps(actorIndex);
   }
 
   void updateProps(int actorIndex) {
@@ -128,8 +123,6 @@ public:
     switch (propIndex) {
       case (PropSyncFreqProp):
         return "freq";
-      case (PropSyncUpdatePropsProp):
-        return "updateprops";
       default:
         return "";
     }
@@ -144,9 +137,6 @@ public:
           freqConf.setCustom(freq);
           freqConf.setFrequency(Custom);
         }
-      } break;
-      case (PropSyncUpdatePropsProp): {
-        setPropBoolean(m, targetValue, actualValue, &updatePropsEnabled);
       } break;
       default:
         break;
