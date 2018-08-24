@@ -85,7 +85,7 @@ public:
     log(CLASS_CLOCKSYNC, Info, "Updating clock");
     ParamStream s;
     Buffer<128> urlAuxBuffer;
-    urlAuxBuffer.fill(TIMEZONE_DB_API_URL_GET, dbZone.getBuffer(), dbKey.getBuffer());
+    urlAuxBuffer.fill(TIMEZONE_DB_API_URL_GET, dbKey.getBuffer(), dbZone.getBuffer());
     int errorCode = httpGet(urlAuxBuffer.getBuffer(), &s);
     if (errorCode == HTTP_OK) {
       JsonObject &json = s.parse();
