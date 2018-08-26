@@ -1,6 +1,6 @@
 # BOTINO
 
-[![Build Status](https://jenkins.martinenhome.com/buildStatus/icon?job=botino/master)](https://jenkins.martinenhome.com/job/botino/job/master/)
+[![Build Status](https://jenkins.martinenhome.com/buildStatus/icon?job=botino-arduino/master)](https://jenkins.martinenhome.com/job/botino-arduino/job/master/)
 
 This is a cool-geek-fully-configurable alarm project.
 
