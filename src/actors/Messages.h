@@ -35,7 +35,7 @@ class Messages : public Actor {
 
 private:
   const char *name;
-  Timing timing;
+  Metadata* md;
   Buffer<MSG_MAX_LENGTH> *msgs[NRO_MSGS];
 
 public:
@@ -44,7 +44,7 @@ public:
     for (int i = 0; i < NRO_MSGS; i++) {
       msgs[i] = new Buffer<MSG_MAX_LENGTH>("");
     }
-    timing.setFrequency(Never);
+    md = new Metadata(n);
   }
 
   const char *getName() {
@@ -85,8 +85,8 @@ public:
     return 0;
   }
 
-  Timing *getFrequencyConfiguration() {
-    return &timing;
+  Metadata *getMetadata() {
+    return md;
   }
 
   const char *get(int i) {

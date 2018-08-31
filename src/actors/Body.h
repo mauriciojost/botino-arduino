@@ -104,7 +104,7 @@ class Body : public Actor {
 
 private:
   const char *name;
-  Timing timing;
+  Metadata* md;
   void (*arms)(int left, int right, int steps);
   void (*messageFunc)(int line, const char *msg, int size);
   void (*iosFunc)(char led, bool v);
@@ -319,8 +319,8 @@ Codes:
             break;
           case 'c': {
             log(CLASS_BODY, Debug, "Msg clock");
-            int h = GET_HOURS(timing.getCurrentTime());
-            int m = GET_MINUTES(timing.getCurrentTime());
+            int h = GET_HOURS(getTiming()->getCurrentTime());
+            int m = GET_MINUTES(getTiming()->getCurrentTime());
             Buffer<6> t("");
             t.fill("%02d:%02d", h, m);
             messageFunc(0, t.getBuffer(), getInt(c3));
@@ -464,16 +464,16 @@ public:
     quotes = NULL;
     images = NULL;
     messages = NULL;
-    timing.setFrequency(OnceEvery1Minute);
+    md = new Metadata(n);
+    md->getTiming()->setFrek(201010101);
     for (int i = 0; i < NRO_ROUTINES; i++) {
       routines[i] = new Routine();
-      routines[i]->timing.setCustom(0L); // never
-      routines[i]->timing.setFrequency(Custom);
+      routines[i]->timing.setFrek(0L); // never
       routines[i]->move.fill("Da%d", i);
     }
 
     // Overwrite last to setup clock
-    routines[NRO_ROUTINES - 1]->timing.setCustom(201010160); // once every 1 minutes
+    routines[NRO_ROUTINES - 1]->timing.setFrek(201010160); // once every 1 minutes
     routines[NRO_ROUTINES - 1]->move.fill("Mc3");
   }
 
@@ -512,9 +512,9 @@ public:
       return;
     }
     for (int i = 0; i < NRO_ROUTINES; i++) {
-      while (routines[i]->timing.catchesUp(timing.getCurrentTime())) {
+      while (routines[i]->timing.catchesUp(getTiming()->getCurrentTime())) {
         if (routines[i]->timing.matches()) {
-          const long timing = routines[i]->timing.getCustom();
+          const long timing = routines[i]->timing.getFrek();
           const char *move = routines[i]->move.getBuffer();
           log(CLASS_BODY, Debug, "Rne %d: %ld %s", i, timing, move);
           performMove(i);
@@ -570,10 +570,10 @@ public:
       int i = (int)propIndex - (int)BodyTime0Prop;
       if (m == SetCustomValue) {
         Long b(targetValue);
-        routines[i]->timing.setCustom(b.get());
+        routines[i]->timing.setFrek(b.get());
       }
       if (actualValue != NULL) {
-        Long b(routines[i]->timing.getCustom());
+        Long b(routines[i]->timing.getFrek());
         actualValue->load(&b);
       }
     } else {
@@ -594,8 +594,8 @@ public:
     return 0;
   }
 
-  Timing *getFrequencyConfiguration() {
-    return &timing;
+  Metadata *getMetadata() {
+    return md;
   }
 
   const char *getMove(int moveIndex) {

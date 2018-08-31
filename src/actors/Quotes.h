@@ -25,7 +25,7 @@ class Quotes : public Actor {
 
 private:
   const char *name;
-  Timing timing;
+  Metadata* md;
   Buffer<QUOTE_MAX_LENGTH> *quotes[NRO_QUOTES];
   int (*httpGet)(const char *url, ParamStream *response);
   bool (*initWifiFunc)();
@@ -39,7 +39,8 @@ public:
     name = n;
     httpGet = NULL;
     initWifiFunc = NULL;
-    timing.setFrequency(TwicePerDay);
+    md = new Metadata(n);
+    md->getTiming()->setFrek(201126060);
     for (int i = 0; i < NRO_QUOTES; i++) {
       quotes[i] = new Buffer<QUOTE_MAX_LENGTH>("Damn! No quote yet! :(");
     }
@@ -62,7 +63,7 @@ public:
       log(CLASS_QUOTES, Warn, "No init!");
       return;
     }
-    if (timing.matches()) {
+    if (getTiming()->matches()) {
       for (int i = 0; i < NRO_QUOTES; i++) {
         fillQuote(i);
       }
@@ -99,8 +100,8 @@ public:
     return 0;
   }
 
-  Timing *getFrequencyConfiguration() {
-    return &timing;
+  Metadata *getMetadata() {
+    return md;
   }
 
   const char *getQuote(int i) {

@@ -30,7 +30,7 @@ class Ifttt : public Actor {
 
 private:
   const char *name;
-  Timing timing;
+  Metadata* md;
   bool (*initWifiFunc)();
   int (*httpPost)(const char *url, const char *body, ParamStream *response);
 
@@ -43,7 +43,7 @@ public:
     name = n;
     initWifiFunc = NULL;
     httpPost = NULL;
-    timing.setFrequency(Never);
+    md = new Metadata(n);
     for (int i = 0; i < NRO_EVENTS; i++) {
       eventNames[i] = new Buffer<EVENT_NAME_MAX_LENGTH>();
       eventNames[i]->fill("event_%d", i);
@@ -123,9 +123,10 @@ public:
     return 0;
   }
 
-  Timing *getFrequencyConfiguration() {
-    return &timing;
+  Metadata *getMetadata() {
+    return md;
   }
+
 };
 
 #endif // IFTTT_INC

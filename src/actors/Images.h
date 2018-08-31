@@ -41,7 +41,7 @@ class Images : public Actor {
 
 private:
   const char *name;
-  Timing timing;
+  Metadata* md;
   uint8_t *images[NRO_IMGS];
 
 public:
@@ -53,7 +53,7 @@ public:
         images[i][j] = 0;
       }
     }
-    timing.setFrequency(Never);
+    md = new Metadata(n);
   }
 
   const char *getName() {
@@ -105,8 +105,8 @@ public:
     return 0;
   }
 
-  Timing *getFrequencyConfiguration() {
-    return &timing;
+  Metadata *getMetadata() {
+    return md;
   }
 
   uint8_t *get(int i) {

@@ -10,6 +10,7 @@
 #include <main4ino/Bot.h>
 #include <main4ino/Clock.h>
 #include <main4ino/Misc.h>
+#include <main4ino/Metadata.h>
 
 #define CLASS_SETUPSYNC "SS"
 
@@ -40,7 +41,7 @@ private:
   char ssid[CREDENTIAL_BUFFER_SIZE];
   char pass[CREDENTIAL_BUFFER_SIZE];
   char ifttt[CREDENTIAL_BUFFER_SIZE];
-  Timing timing; // configuration of the frequency at which this actor will get triggered
+  Metadata* md;
 
 public:
   SetupSync(const char *n) {
@@ -48,7 +49,7 @@ public:
     strcpy(ssid, WIFI_SSID_STEADY);
     strcpy(pass, WIFI_PASSWORD_STEADY);
     strcpy(ifttt, IFTTT_KEY);
-    timing.setFrequency(Never);
+    md = new Metadata(n);
   }
 
   const char *getName() {
@@ -57,7 +58,7 @@ public:
 
   void act() {
 
-    if (timing.matches()) {
+    if (getTiming()->matches()) {
       // do nothing
     }
   }
@@ -102,8 +103,8 @@ public:
     strcpy(ifttt, s);
   }
 
-  Timing *getFrequencyConfiguration() {
-    return &timing;
+  Metadata *getMetadata() {
+    return md;
   }
 
   bool isInitialized() {

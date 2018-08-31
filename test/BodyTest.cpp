@@ -94,7 +94,7 @@ void test_body_shows_time() {
   TEST_ASSERT_EQUAL(0, faceCleared);
   TEST_ASSERT_EQUAL_STRING("", lastMsg);
 
-  Timing *t = b.getFrequencyConfiguration();
+  Timing *t = b.getTiming();
   t->setCurrentTime(3600 * 2 + 60 * 33 + 10);
   b.act();
 
@@ -106,7 +106,7 @@ void executeMove(Body *b, const char *move) {
   Buffer<20> mv0;
   mv0.fill(move);
   b->setPropValue(BodyMove0Prop, &mv0);
-  Timing *t = b->getFrequencyConfiguration();
+  Timing *t = b->getTiming();
   t->setCurrentTime(t->getCurrentTime() + 1); // assumes configured to act every second
   b->act();
 }

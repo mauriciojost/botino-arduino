@@ -30,10 +30,8 @@ private:
   const char *name;
   bool devDebug;
   int buttonRoutineUntil;
-
   Buffer<INFO_BUFFER_LENGTH> infoBuffer;
-
-  Timing freqConf;
+  Metadata* md;
 
 public:
   Settings(const char *n) {
@@ -41,7 +39,7 @@ public:
     devDebug = false;
     buttonRoutineUntil = 4;
     infoBuffer.clear();
-    freqConf.setFrequency(Never);
+    md = new Metadata(n);
   }
 
   const char *getName() {
@@ -86,8 +84,8 @@ public:
     return 1;
   }
 
-  Timing *getFrequencyConfiguration() {
-    return &freqConf;
+  Metadata *getMetadata() {
+    return md;
   }
 
   int getNroRoutinesForButton() {

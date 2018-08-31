@@ -35,12 +35,13 @@ class PropSync : public Actor {
 private:
   const char *name;
   SerBot *bot;
-  Timing freqConf; // configuration of the frequency at which this actor will get triggered
+  Metadata* md;
   Buffer<128> urlAuxBuffer;
   Buffer<MAX_JSON_STR_LENGTH> jsonAuxBuffer;
   bool (*initWifiFunc)();
   int (*httpGet)(const char *url, ParamStream *response);
   int (*httpPost)(const char *url, const char *body, ParamStream *response);
+  bool boot;
 
 public:
   PropSync(const char *n) {
@@ -49,7 +50,9 @@ public:
     initWifiFunc = NULL;
     httpGet = NULL;
     httpPost = NULL;
-    freqConf.setFrequency(OnceEvery5Minutes);
+    md = new Metadata(n);
+    md->getTiming()->setFrek(201010560);
+    boot = true;
   }
 
   void setBot(SerBot *b) {
@@ -65,12 +68,13 @@ public:
       log(CLASS_PROPSYNC, Error, "Init needed");
       return;
     }
-    if (freqConf.matches()) {
+    if (getTiming()->matches()) {
       log(CLASS_PROPSYNC, Info, "Propsync starts");
       bool connected = initWifiFunc();
       if (connected) {
         for (int i = 0; i < bot->getActors()->size(); i++) {
-          updateActor(i);
+          log(CLASS_PROPSYNC, Info, "Sync: %s", bot->getActors()->get(i)->getName());
+          updateProps(i);
         }
       }
     }
@@ -86,11 +90,6 @@ public:
 
   void setHttpPost(int (*h)(const char *url, const char *body, ParamStream *response)) {
     httpPost = h;
-  }
-
-  void updateActor(int actorIndex) {
-    log(CLASS_PROPSYNC, Info, "Sync: %s", bot->getActors()->get(actorIndex)->getName());
-    updateProps(actorIndex);
   }
 
   void updateProps(int actorIndex) {
@@ -130,11 +129,10 @@ public:
   void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
       case (PropSyncFreqProp): {
-        long freq = freqConf.getCustom();
+        long freq = md->getTiming()->getFrek();
         setPropLong(m, targetValue, actualValue, &freq);
         if (m == SetCustomValue) {
-          freqConf.setCustom(freq);
-          freqConf.setFrequency(Custom);
+          md->getTiming()->setFrek(freq);
         }
       } break;
       default:
@@ -152,9 +150,10 @@ public:
     return 0;
   }
 
-  Timing *getFrequencyConfiguration() {
-    return &freqConf;
+  Metadata *getMetadata() {
+    return md;
   }
+
 };
 
 #endif // PROPSYNC_INC

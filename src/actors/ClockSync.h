@@ -34,7 +34,7 @@ class ClockSync : public Actor {
 private:
   const char *name;
   Clock *clock;
-  Timing timing; // configuration of the frequency at which this actor will get triggered
+  Metadata* md;
   Buffer<32> dbZone;
   Buffer<32> dbKey;
   bool (*initWifiFunc)();
@@ -46,7 +46,8 @@ public:
     clock = NULL;
     initWifiFunc = NULL;
     httpGet = NULL;
-    timing.setFrequency(TwicePerDay);
+    md = new Metadata(n);
+    md->getTiming()->setFrek(201126060);
     dbKey.fill(TIMEZONE_DB_KEY);
     dbZone.fill(TIMEZONE_DB_ZONE);
   }
@@ -64,7 +65,7 @@ public:
       log(CLASS_CLOCKSYNC, Error, "Init needed");
       return;
     }
-    if (timing.matches()) {
+    if (getTiming()->matches()) {
       bool connected = initWifiFunc();
       if (connected) {
         updateClockProperties();
@@ -143,9 +144,10 @@ public:
     return 0;
   }
 
-  Timing *getFrequencyConfiguration() {
-    return &timing;
+  Metadata *getMetadata() {
+    return md;
   }
+
 };
 
 #endif // CLOCKSYNC_INC

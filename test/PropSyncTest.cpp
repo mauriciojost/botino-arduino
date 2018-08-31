@@ -66,7 +66,7 @@ void test_propsync_syncs_several_body_properties() {
   p.setHttpGet(httpGet);
   p.setHttpPost(httpPost);
 
-  p.getFrequencyConfiguration()->setFrequency(OnceEvery1Second);
+  p.getTiming()->setFrek(201010101); // every second
 
   p.act();
 
