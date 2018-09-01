@@ -97,7 +97,10 @@ uint8_t IMG_SLEEPY[] = {0x00, 0x00, 0x00, 0x00, 0x12, 0x48, 0x0C, 0x30, 0x01, 0x
 class Routine {
 public:
   Buffer<MOVE_STR_LENGTH> move;
-  Timing timing;
+  Timing* timing;
+  Routine(const char* n) {
+  	timing = new Timing(n);
+  }
 };
 
 class Body : public Actor {
@@ -467,13 +470,13 @@ public:
     md = new Metadata(n);
     md->getTiming()->setFrek(201010101);
     for (int i = 0; i < NRO_ROUTINES; i++) {
-      routines[i] = new Routine();
-      routines[i]->timing.setFrek(0L); // never
+      routines[i] = new Routine("mv");
+      routines[i]->timing->setFrek(0L); // never
       routines[i]->move.fill("Da%d", i);
     }
 
     // Overwrite last to setup clock
-    routines[NRO_ROUTINES - 1]->timing.setFrek(201010160); // once every 1 minutes
+    routines[NRO_ROUTINES - 1]->timing->setFrek(201010160); // once every 1 minutes
     routines[NRO_ROUTINES - 1]->move.fill("Mc3");
   }
 
@@ -512,9 +515,9 @@ public:
       return;
     }
     for (int i = 0; i < NRO_ROUTINES; i++) {
-      while (routines[i]->timing.catchesUp(getTiming()->getCurrentTime())) {
-        if (routines[i]->timing.matches()) {
-          const long timing = routines[i]->timing.getFrek();
+      while (routines[i]->timing->catchesUp(getTiming()->getCurrentTime())) {
+        if (routines[i]->timing->matches()) {
+          const long timing = routines[i]->timing->getFrek();
           const char *move = routines[i]->move.getBuffer();
           log(CLASS_BODY, Debug, "Rne %d: %ld %s", i, timing, move);
           performMove(i);
@@ -570,10 +573,10 @@ public:
       int i = (int)propIndex - (int)BodyTime0Prop;
       if (m == SetCustomValue) {
         Long b(targetValue);
-        routines[i]->timing.setFrek(b.get());
+        routines[i]->timing->setFrek(b.get());
       }
       if (actualValue != NULL) {
-        Long b(routines[i]->timing.getFrek());
+        Long b(routines[i]->timing->getFrek());
         actualValue->load(&b);
       }
     } else {
