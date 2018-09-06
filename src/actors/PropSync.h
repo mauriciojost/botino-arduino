@@ -104,19 +104,21 @@ public:
 
     log(CLASS_PROPSYNC, Info, "Sync: %s", actor->getName());
 
-    if (!actor->getMetadata()->isRestored()) {
+    if (!actor->getMetadata()->isRestored()) { // actor data not restored yet
     	// Restore from previous status
       log(CLASS_PROPSYNC, Debug, "RestTarg:%s", actorName);
       urlAuxBuffer.fill(BOTINOBE_API_URL_RESTORE_CURRENT, actorName);
       int errorCodeRes = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
-      if (errorCodeRes == HTTP_OK) {
+      if (errorCodeRes == HTTP_OK) { // data stored in the server and retrieved
         JsonObject &json = httpBodyResponse.parse();
         bot->setPropsJson(json, actorIndex);
         actor->getMetadata()->restored();
-      } else {
+      } else if (errorCodeRes == HTTP_EXPECTATION_FAILED) { // no data stored in the server
+        actor->getMetadata()->restored();
+      } else { // failure, will retry after
         log(CLASS_PROPSYNC, Warn, "KO: %d", errorCodeRes);
       }
-    } else {
+    } else { // actor data already restored from server
     	// Regular run
       log(CLASS_PROPSYNC, Debug, "LoadTarg:%s", actorName);
       urlAuxBuffer.fill(BOTINOBE_API_URL_GET_TARGET, actorName);
