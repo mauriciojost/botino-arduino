@@ -137,7 +137,7 @@ public:
   }
 
   const char *getDbKey() {
-    dbKey.getBuffer();
+    return dbKey.getBuffer();
   }
 
   int getNroInfos() {
