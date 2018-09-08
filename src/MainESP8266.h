@@ -491,7 +491,9 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
       }
     } break;
     case 1:
-    case 2: {
+    case 2:
+    case 3:
+    case 4: {
       int event = cycles - 1;
       const char *evtName = m.getIfttt()->getEventName(event);
       messageFuncExt(0, 2, "Push event %s?", evtName);
@@ -504,35 +506,35 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
         }
       }
     } break;
-    case 3: {
+    case 5: {
       messageFuncExt(0, 2, "Random routine?");
       if (!onlyMsg) {
       	m.command("rnd");
       	messageFuncExt(0, 1, "Random routine...");
       }
     } break;
-    case 4: {
+    case 6: {
       messageFuncExt(0, 2, "All act?");
       if (!onlyMsg) {
         m.command("actall");
         messageFuncExt(0, 1, "All act one-off");
       }
     } break;
-    case 5: {
+    case 7: {
       messageFuncExt(0, 2, "Config mode?");
       if (!onlyMsg) {
         m.command("conf");
         messageFuncExt(0, 1, "In config mode");
       }
     } break;
-    case 6: {
+    case 8: {
       messageFuncExt(0, 2, "Run mode?");
       if (!onlyMsg) {
         m.command("run");
         messageFuncExt(0, 1, "In run mode");
       }
     } break;
-    case 7: {
+    case 9: {
       messageFuncExt(0, 2, "Show info?");
       if (!onlyMsg) {
         messageFuncExt(0,
