@@ -14,7 +14,7 @@ unsigned long millis();
 ////////////////////////////////////////
 
 void logLine(const char *str) {
-  printf("LOG: %s\n", str);
+  printf("LOG: %s", str);
 }
 
 bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries) {

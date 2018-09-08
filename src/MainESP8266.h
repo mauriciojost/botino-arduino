@@ -119,11 +119,10 @@ bool reactToButtonHeld(int cycles, bool onlyMsg);
 
 void logLine(const char *str) {
   // serial print
-  Serial.println(str);
-  Serial.println("\n");
+  Serial.print(str);
   // telnet print
   if (Telnet.isActive()) {
-    Telnet.printf("%s\n", str);
+    Telnet.printf("%s", str);
   }
   // lcd print
   if (m.getSettings()->getDebug()) {
@@ -132,7 +131,7 @@ void logLine(const char *str) {
     lcd.setTextSize(1);
     lcd.setTextColor(WHITE);
     lcd.setCursor(0, LOG_LINE * 8);
-    lcd.println(str);
+    lcd.print(str);
     lcd.display();
     delay(DELAY_MS_SPI);
   }
