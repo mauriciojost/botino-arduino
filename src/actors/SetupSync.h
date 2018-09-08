@@ -56,12 +56,7 @@ public:
     return name;
   }
 
-  void act() {
-
-    if (getTiming()->matches()) {
-      // do nothing
-    }
-  }
+  void act() {}
 
   void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {}
 
