@@ -1,4 +1,7 @@
-#!/usr/bin/env bash -x -e
+#!/usr/bin/env bash
+
+set -e
+set -x
 
 PROFILE="$1"
 COMMIT_ID=`git rev-parse --short HEAD`
