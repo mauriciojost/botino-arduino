@@ -236,10 +236,12 @@ public:
         log(CLASS_MODULE, Info, "One off: %s", a->getName());
         a->oneOff();
       }
+      return false;
     } else if (strcmp("rnd", c) == 0) {
       int routine = (int)random(0, getSettings()->getNroRoutinesForButton());
-        log(CLASS_MODULE, Debug, "Routine %d...", routine);
-        getBody()->performMove(routine);
+      log(CLASS_MODULE, Debug, "Routine %d...", routine);
+      getBody()->performMove(routine);
+      return false;
     } else if (strcmp("timezonekey", c) == 0) {
       c = strtok(NULL, " ");
       if (c == NULL) {
