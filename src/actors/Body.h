@@ -187,6 +187,7 @@ Codes:
   ...
   M32 : show message 3 with font size 2 (user provided)
   Mc4 : show message containing current time (with font size 4)
+  Mk3 : show message containing current date-time (with font size 3)
   Mp1 : show random future reading (with font size 1)
   Mq1 : show random quote (with font size 1)
 
@@ -341,6 +342,18 @@ Codes:
             Buffer<6> t("");
             t.fill("%02d:%02d", h, m);
             messageFunc(0, t.getBuffer(), getInt(c3));
+          } break;
+          case 'k': {
+            log(CLASS_BODY, Debug, "Msg date");
+            long t = getTiming()->getCurrentTime();
+            int h = GET_HOURS(t);
+            int m = GET_MINUTES(t);
+            int dd = GET_DAYS(t);
+            int mm = GET_MONTHS(t);
+            int yyyy = GET_YEARS(t);
+            Buffer<18> b("");
+            b.fill("%4d-%02d-%02d\n%02d:%02d", yyyy, mm, dd, h, m);
+            messageFunc(0, b.getBuffer(), getInt(c3));
           } break;
           case 'q': {
             log(CLASS_BODY, Debug, "Msg quote");
