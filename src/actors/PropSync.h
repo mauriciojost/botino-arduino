@@ -125,7 +125,7 @@ public:
     } else { // actor data already restored from server
     	// Regular run
     	if (toConsumeProps == 0) {
-        log(CLASS_PROPSYNC, Debug, "Skip LoadTarg:%s (no props)", actorName);
+        log(CLASS_PROPSYNC, Debug, "Skip LoadTarg:%s(no remote changes)", actorName);
     	} else {
         log(CLASS_PROPSYNC, Debug, "LoadTarg:%s", actorName);
         urlAuxBuffer.fill(BOTINOBE_API_URL_GET_TARGET, actorName);
@@ -150,6 +150,8 @@ public:
         } else {
           log(CLASS_PROPSYNC, Warn, "KO: %d", errorCodePo);
         }
+    	} else {
+        log(CLASS_PROPSYNC, Debug, "Skip UpdCurr:%s(no local changes)", actorName);
     	}
     }
   }
