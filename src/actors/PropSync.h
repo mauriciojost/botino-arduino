@@ -150,15 +150,16 @@ public:
     int errorCodeGet = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
     if (errorCodeGet == HTTP_OK) {
       JsonObject &json = httpBodyResponse.parse();
-      if (json.containsKey("count")) {
+      if (json.success() && json.containsKey("count")) {
         const char *cnt = json["count"].as<char *>();
         if (cnt != NULL) {
-          log(CLASS_PROPSYNC, Info, "Maybe...");
-        	return atoi(cnt);
+          int v = atoi(cnt);
+          log(CLASS_PROPSYNC, Info, "Count: %d", v);
+        	return v;
         }
       }
-      log(CLASS_PROPSYNC, Info, "Can't determine");
-      return 0;
+      log(CLASS_PROPSYNC, Info, "Can't determine count");
+      return -1;
     } else {
       log(CLASS_PROPSYNC, Warn, "KO: %d", errorCodeGet);
       return -1;
