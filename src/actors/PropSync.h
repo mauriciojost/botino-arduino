@@ -20,6 +20,7 @@
 #define BOTINOBE_API_URL_POST_CURRENT BOTINOBE_API_URL_BASE "/actors/%s/reports"
 #define BOTINOBE_API_URL_GET_TARGET BOTINOBE_API_URL_BASE "/actors/%s/targets/summary?consume=true&status=C"
 #define BOTINOBE_API_URL_RESTORE_CURRENT BOTINOBE_API_URL_BASE "/actors/%s/reports/last"
+#define BOTINOBE_API_URL_GET_PROPS_TO_CONSUME_COUNT BOTINOBE_API_URL_BASE "/targets/count?status=C"
 
 enum PropSyncProps {
   PropSyncFreqProp = 0,
@@ -72,9 +73,10 @@ public:
     if (getTiming()->matches()) {
       log(CLASS_PROPSYNC, Info, "Propsync starts");
       bool connected = initWifiFunc();
+      int toConsumeProps = getToConsumeProps();
       if (connected) {
         for (int i = 0; i < bot->getActors()->size(); i++) {
-          updateProps(i);
+          updateProps(i, toConsumeProps);
         }
       }
     }
@@ -92,7 +94,7 @@ public:
     httpPost = h;
   }
 
-  void updateProps(int actorIndex) {
+  void updateProps(int actorIndex, int toConsumeProps) {
     Actor *actor = bot->getActors()->get(actorIndex);
 
     if (actor->getNroProps() == 0) {
@@ -120,20 +122,46 @@ public:
       }
     } else { // actor data already restored from server
     	// Regular run
-      log(CLASS_PROPSYNC, Debug, "LoadTarg:%s", actorName);
-      urlAuxBuffer.fill(BOTINOBE_API_URL_GET_TARGET, actorName);
-      int errorCodeGet = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
-      if (errorCodeGet == HTTP_OK) {
-        JsonObject &json = httpBodyResponse.parse();
-        bot->setPropsJson(json, actorIndex);
-      } else {
-        log(CLASS_PROPSYNC, Warn, "KO: %d", errorCodeGet);
-      }
+    	if (toConsumeProps == 0) {
+        log(CLASS_PROPSYNC, Debug, "Skip LoadTarg:%s (no props)", actorName);
+    	} else {
+        log(CLASS_PROPSYNC, Debug, "LoadTarg:%s", actorName);
+        urlAuxBuffer.fill(BOTINOBE_API_URL_GET_TARGET, actorName);
+        int errorCodeGet = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
+        if (errorCodeGet == HTTP_OK) {
+          JsonObject &json = httpBodyResponse.parse();
+          bot->setPropsJson(json, actorIndex);
+        } else {
+          log(CLASS_PROPSYNC, Warn, "KO: %d", errorCodeGet);
+        }
+    	}
 
       bot->getPropsJson(&jsonAuxBuffer, actorIndex);
       urlAuxBuffer.fill(BOTINOBE_API_URL_POST_CURRENT, actorName);
       log(CLASS_PROPSYNC, Debug, "UpdCurr:%s", actorName);
       httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort to push current status
+    }
+  }
+
+  int getToConsumeProps() {
+    ParamStream httpBodyResponse;
+    log(CLASS_PROPSYNC, Info, "Props to consume?");
+    urlAuxBuffer.fill(BOTINOBE_API_URL_GET_PROPS_TO_CONSUME_COUNT);
+    int errorCodeGet = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
+    if (errorCodeGet == HTTP_OK) {
+      JsonObject &json = httpBodyResponse.parse();
+      if (json.containsKey("count")) {
+        const char *cnt = json["count"].as<char *>();
+        if (cnt != NULL) {
+          log(CLASS_PROPSYNC, Info, "Maybe...");
+        	return atoi(cnt);
+        }
+      }
+      log(CLASS_PROPSYNC, Info, "Can't determine");
+      return 0;
+    } else {
+      log(CLASS_PROPSYNC, Warn, "KO: %d", errorCodeGet);
+      return -1;
     }
   }
 
