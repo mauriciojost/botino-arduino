@@ -96,6 +96,9 @@ public:
       int i = (int)propIndex - (int)IftttEvtName0Prop;
       setPropValue(setMode, targetValue, actualValue, eventNames[i]);
     }
+    if (setMode != GetValue) {
+    	getMetadata()->changed();
+    }
   }
 
   int getNroProps() {

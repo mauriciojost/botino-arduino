@@ -70,6 +70,9 @@ public:
       default:
         break;
     }
+    if (m != GetValue) {
+    	getMetadata()->changed();
+    }
   }
 
   int getNroProps() {
@@ -97,6 +100,9 @@ public:
   }
 
   void setDebug(bool b) {
+  	if (b != devDebug) {
+      getMetadata()->changed();
+  	}
     devDebug = b;
   }
 

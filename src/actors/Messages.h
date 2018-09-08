@@ -73,6 +73,9 @@ public:
       int i = (int)propIndex - (int)MessagesMsg0Prop;
       setPropValue(setMode, targetValue, actualValue, msgs[i]);
     }
+    if (setMode != GetValue) {
+    	getMetadata()->changed();
+    }
   }
 
   int getNroProps() {

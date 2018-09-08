@@ -76,7 +76,7 @@ public:
       int toConsumeProps = getToConsumeProps();
       if (connected) {
         for (int i = 0; i < bot->getActors()->size(); i++) {
-          updateProps(i, toConsumeProps);
+        	updateProps(i, toConsumeProps);
         }
       }
     }
@@ -112,10 +112,12 @@ public:
       urlAuxBuffer.fill(BOTINOBE_API_URL_RESTORE_CURRENT, actorName);
       int errorCodeRes = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
       if (errorCodeRes == HTTP_OK) { // data stored in the server and retrieved
+        log(CLASS_PROPSYNC, Debug, "OK: %d", errorCodeRes);
         JsonObject &json = httpBodyResponse.parse();
         bot->setPropsJson(json, actorIndex);
         actor->getMetadata()->restored();
       } else if (errorCodeRes == HTTP_EXPECTATION_FAILED) { // no data stored in the server
+        log(CLASS_PROPSYNC, Debug, "OK: %d", errorCodeRes);
         actor->getMetadata()->restored();
       } else { // failure, will retry after
         log(CLASS_PROPSYNC, Warn, "KO: %d", errorCodeRes);
@@ -129,6 +131,7 @@ public:
         urlAuxBuffer.fill(BOTINOBE_API_URL_GET_TARGET, actorName);
         int errorCodeGet = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
         if (errorCodeGet == HTTP_OK) {
+          log(CLASS_PROPSYNC, Debug, "OK: %d", errorCodeGet);
           JsonObject &json = httpBodyResponse.parse();
           bot->setPropsJson(json, actorIndex);
         } else {
@@ -136,10 +139,18 @@ public:
         }
     	}
 
-      bot->getPropsJson(&jsonAuxBuffer, actorIndex);
-      urlAuxBuffer.fill(BOTINOBE_API_URL_POST_CURRENT, actorName);
-      log(CLASS_PROPSYNC, Debug, "UpdCurr:%s", actorName);
-      httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL); // best effort to push current status
+    	if (actor->getMetadata()->hasChanged()) {
+        bot->getPropsJson(&jsonAuxBuffer, actorIndex);
+        urlAuxBuffer.fill(BOTINOBE_API_URL_POST_CURRENT, actorName);
+        log(CLASS_PROPSYNC, Debug, "UpdCurr:%s", actorName);
+        int errorCodePo = httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL);
+        if (errorCodePo == HTTP_CREATED) {
+          log(CLASS_PROPSYNC, Debug, "OK: %d", errorCodePo);
+          actor->getMetadata()->clearChanged();
+        } else {
+          log(CLASS_PROPSYNC, Warn, "KO: %d", errorCodePo);
+        }
+    	}
     }
   }
 
@@ -186,6 +197,9 @@ public:
       } break;
       default:
         break;
+    }
+    if (m != GetValue) {
+    	getMetadata()->changed();
     }
   }
 

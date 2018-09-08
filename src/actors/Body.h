@@ -611,11 +611,9 @@ public:
         Long b(routines[i]->timing->getFrek());
         actualValue->load(&b);
       }
-    } else {
-      switch (propIndex) {
-        default:
-          break;
-      }
+    }
+    if (m != GetValue) {
+    	getMetadata()->changed();
     }
   }
 

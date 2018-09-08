@@ -87,11 +87,9 @@ public:
       if (actualValue != NULL) {
         actualValue->load("<*>");
       }
-    } else {
-      switch (propIndex) {
-        default:
-          break;
-      }
+    }
+    if (m != GetValue) {
+    	getMetadata()->changed();
     }
   }
 

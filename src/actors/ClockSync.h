@@ -115,6 +115,9 @@ public:
       default:
         break;
     }
+    if (setMode != GetValue) {
+    	getMetadata()->changed();
+    }
   }
 
   int getNroProps() {
