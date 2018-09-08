@@ -71,6 +71,7 @@ void messageFuncExt(int line, int size, const char *format, ...);
 ///////////////////
 
 // The log function (that will print to screen, Serial, telnet, or whatever wished)
+// It should not include "\n" ending.
 void logLine(const char *str);
 
 // Setup wifi using provided parameters

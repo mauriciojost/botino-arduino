@@ -30,6 +30,8 @@
   "\n  move       : execute a move (example: 'move A00C55')"                                                                               \
   "\n  logl       : change log level"                                                                                                      \
   "\n  clear      : clear crashes stacktrace"                                                                                              \
+  "\n  actall     : all act"                                                                                                               \
+  "\n  rnd        : execute random routine"                                                                                                \
   "\n  wifissid   : set wifi ssid"                                                                                                         \
   "\n  wifipass   : set wifi pass"                                                                                                         \
   "\n  ifttttoken : set ifttt token"                                                                                                       \
@@ -227,6 +229,16 @@ public:
       setupSync->setIfttt(c);
       log(CLASS_MODULE, Info, "Ifttt token: %s", setupSync->getIfttt());
       return false;
+    } else if (strcmp("actall", c) == 0) {
+      for (int i = 0; i < getBot()->getActors()->size(); i++) {
+        Actor *a = getBot()->getActors()->get(i);
+        log(CLASS_MODULE, Info, "One off: %s", a->getName());
+        a->oneOff();
+      }
+    } else if (strcmp("rnd", c) == 0) {
+      int routine = (int)random(0, getSettings()->getNroRoutinesForButton());
+        log(CLASS_MODULE, Debug, "Routine %d...", routine);
+        getBody()->performMove(routine);
     } else if (strcmp("timezonekey", c) == 0) {
       c = strtok(NULL, " ");
       if (c == NULL) {

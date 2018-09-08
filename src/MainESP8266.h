@@ -120,6 +120,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg);
 void logLine(const char *str) {
   // serial print
   Serial.println(str);
+  Serial.println("\n");
   // telnet print
   if (Telnet.isActive()) {
     Telnet.printf("%s\n", str);
@@ -483,6 +484,12 @@ void configureModeArchitecture() {
 
 bool reactToButtonHeld(int cycles, bool onlyMsg) {
   switch (cycles) {
+    case 0: {
+      messageFuncExt(0, 2, "Zzz routine?");
+      if (!onlyMsg) {
+        m.command("move Zz.");
+      }
+    } break;
     case 1:
     case 2: {
       int event = cycles - 1;
@@ -497,43 +504,31 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
         }
       }
     } break;
-    case 0: {
-      messageFuncExt(0, 2, "Zzz routine?");
-      if (!onlyMsg) {
-        log(CLASS_MAIN, Debug, "Routine Zzz...");
-        m.getBody()->performMove("Zz.");
-      }
-    } break;
     case 3: {
       messageFuncExt(0, 2, "Random routine?");
       if (!onlyMsg) {
-        int routine = (int)random(0, m.getSettings()->getNroRoutinesForButton());
-        log(CLASS_MAIN, Debug, "Routine %d...", routine);
-        m.getBody()->performMove(routine);
+      	m.command("rnd");
+      	messageFuncExt(0, 1, "Random routine...");
       }
     } break;
     case 4: {
       messageFuncExt(0, 2, "All act?");
       if (!onlyMsg) {
+        m.command("actall");
         messageFuncExt(0, 1, "All act one-off");
-        for (int i = 0; i < m.getBot()->getActors()->size(); i++) {
-          Actor *a = m.getBot()->getActors()->get(i);
-          log(CLASS_MAIN, Debug, "One off: %s", a->getName());
-          a->oneOff();
-        }
       }
     } break;
     case 5: {
       messageFuncExt(0, 2, "Config mode?");
       if (!onlyMsg) {
-        m.getBot()->setMode(ConfigureMode);
+        m.command("conf");
         messageFuncExt(0, 1, "In config mode");
       }
     } break;
     case 6: {
       messageFuncExt(0, 2, "Run mode?");
       if (!onlyMsg) {
-        m.getBot()->setMode(RunMode);
+        m.command("run");
         messageFuncExt(0, 1, "In run mode");
       }
     } break;
