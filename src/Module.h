@@ -143,7 +143,7 @@ public:
     if (strcmp("move", c) == 0) {
       c = strtok(NULL, " ");
       if (c == NULL) {
-        log(CLASS_MODULE, Info, "Argument needed:\n  move <move>");
+        logRaw(CLASS_MODULE, Info, "Argument needed:\n  move <move>");
         return false;
       }
       log(CLASS_MODULE, Info, "-> Move %s", c);
@@ -154,7 +154,7 @@ public:
       const char *prop = strtok(NULL, " ");
       const char *v = strtok(NULL, " ");
       if (actor == NULL || prop == NULL || v == NULL) {
-        log(CLASS_MODULE, Info, "Arguments needed:\n  set <actor> <prop> <value>");
+        logRaw(CLASS_MODULE, Info, "Arguments needed:\n  set <actor> <prop> <value>");
         return false;
       }
       log(CLASS_MODULE, Info, "-> Set %s.%s = %s", actor, prop, v);
@@ -193,7 +193,7 @@ public:
     } else if (strcmp("logl", c) == 0) {
       c = strtok(NULL, " ");
       if (c == NULL) {
-        log(CLASS_MODULE, Info, "Argument needed:\n  logl <loglevel>");
+        logRaw(CLASS_MODULE, Info, "Argument needed:\n  logl <loglevel>");
         return false;
       }
       int ll = atoi(c);
@@ -203,7 +203,7 @@ public:
     } else if (strcmp("wifissid", c) == 0) {
       c = strtok(NULL, " ");
       if (c == NULL) {
-        log(CLASS_MODULE, Info, "Argument needed:\n  wifissid <ssid>");
+        logRaw(CLASS_MODULE, Info, "Argument needed:\n  wifissid <ssid>");
         return false;
       }
       setupSync->setSsid(c);
@@ -212,7 +212,7 @@ public:
     } else if (strcmp("wifipass", c) == 0) {
       c = strtok(NULL, " ");
       if (c == NULL) {
-        log(CLASS_MODULE, Info, "Argument needed:\n  wifipass <pass>");
+        logRaw(CLASS_MODULE, Info, "Argument needed:\n  wifipass <pass>");
         return false;
       }
       setupSync->setPass(c);
@@ -221,7 +221,7 @@ public:
     } else if (strcmp("ifttttoken", c) == 0) {
       c = strtok(NULL, " ");
       if (c == NULL) {
-        log(CLASS_MODULE, Info, "Argument needed:\n  ifttttoken <token>");
+        logRaw(CLASS_MODULE, Info, "Argument needed:\n  ifttttoken <token>");
         return false;
       }
       setupSync->setIfttt(c);
@@ -230,17 +230,17 @@ public:
     } else if (strcmp("timezonekey", c) == 0) {
       c = strtok(NULL, " ");
       if (c == NULL) {
-        log(CLASS_MODULE, Info, "Argument needed:\n  timezonekey <key>");
+        logRaw(CLASS_MODULE, Info, "Argument needed:\n  timezonekey <key>");
         return false;
       }
       clockSync->setDbKey(c);
       log(CLASS_MODULE, Info, "TimeZoneDb key: %s", clockSync->getDbKey());
       return false;
     } else if (strcmp("help", c) == 0) {
-      log(CLASS_MODULE, Warn, HELP_COMMAND_CLI);
+      logRaw(CLASS_MODULE, Warn, HELP_COMMAND_CLI);
       return false;
     } else {
-      log(CLASS_MODULE, Warn, "What? (try: 'help', log level is Info)");
+      logRaw(CLASS_MODULE, Warn, "What? (try: 'help', log level is Info)");
       return false;
     }
   }
