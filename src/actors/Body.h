@@ -24,6 +24,7 @@
 #include <actors/Messages.h>
 #include <actors/Predictions.h>
 #include <actors/Quotes.h>
+#include <actors/Ifttt.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Boolean.h>
@@ -116,11 +117,12 @@ private:
   Quotes *quotes;
   Images *images;
   Messages *messages;
+  Ifttt *ifttt;
   Routine *routines[NRO_ROUTINES];
 
   bool isInitialized() {
     bool init = arms != NULL && iosFunc != NULL && messageFunc != NULL && lcdImgFunc != NULL && quotes != NULL && images != NULL &&
-                messages != NULL;
+                messages != NULL && ifttt != NULL;
     return init;
   }
 
@@ -192,6 +194,11 @@ Codes:
 MESSAGE SHORT POSES: show a certain short message (a few letters)
 Codes:
   Sxx : show message 'xx' (can be replaced by any characters)
+
+
+IFTTT EVENTS: trigger an ifttt event (given the configuration of the ifttt module)
+Codes:
+  Ix. : trigger event 'x'
 
 
 COMPOSED POSES: dances and other predefined moves usable as poses
@@ -301,6 +308,13 @@ Codes:
         arms(l, r, ARM_SLOW_STEPS);
       } break;
 
+      // IFTTT
+      case 'I': {
+        int i = getInt(c2);
+        log(CLASS_BODY, Debug, "Ifttt %d", i);
+        ifttt->triggerEvent(i);
+      } break;
+
       // MESSAGES
       case 'M':
         switch (c2) {
@@ -345,14 +359,6 @@ Codes:
         }
         break;
 
-      // SHORT MESSAGES
-      case 'S': {
-        Buffer<3> s;
-        s.fill("%c%c", c2, c3);
-        log(CLASS_BODY, Debug, "Msg short '%s'", s.getBuffer());
-        messageFunc(0, s.getBuffer(), 6);
-      } break;
-
       // IO (LEDS / FAN)
       case 'L':
         switch (c2) {
@@ -391,6 +397,14 @@ Codes:
             break;
         }
         break;
+
+      // SHORT MESSAGES
+      case 'S': {
+        Buffer<3> s;
+        s.fill("%c%c", c2, c3);
+        log(CLASS_BODY, Debug, "Msg short '%s'", s.getBuffer());
+        messageFunc(0, s.getBuffer(), 6);
+      } break;
 
       default:
 
@@ -467,6 +481,7 @@ public:
     quotes = NULL;
     images = NULL;
     messages = NULL;
+    ifttt = NULL;
     md = new Metadata(n);
     md->getTiming()->setFrek(201010101);
     for (int i = 0; i < NRO_ROUTINES; i++) {
@@ -494,6 +509,10 @@ public:
 
   void setMessages(Messages *m) {
     messages = m;
+  }
+
+  void setIfttt(Ifttt *i) {
+    ifttt = i;
   }
 
   void setLcdImgFunc(void (*f)(char img, uint8_t bitmap[])) {

@@ -95,6 +95,7 @@ public:
     body->setQuotes(quotes);
     body->setImages(images);
     body->setMessages(messages);
+    body->setIfttt(ifttt);
 
     initWifiSteadyFunc = NULL;
     clearDeviceFunc = NULL;

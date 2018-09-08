@@ -65,7 +65,7 @@ void led(char led, bool v) {
   }
 }
 
-void initBody(Body *b, Quotes *q, Images *i, Messages *m) {
+void initBody(Body *b, Quotes *q, Images *i, Messages *m, Ifttt* it) {
   b->setLcdImgFunc(lcdImg);
   b->setArmsFunc(arms);
   b->setMessageFunc(messageOnLcd);
@@ -73,6 +73,7 @@ void initBody(Body *b, Quotes *q, Images *i, Messages *m) {
   b->setQuotes(q);
   b->setImages(i);
   b->setMessages(m);
+  b->setIfttt(it);
 }
 
 void test_body_shows_time() {
@@ -81,9 +82,10 @@ void test_body_shows_time() {
   Quotes q("q");
   Images i("i");
   Messages ms("m");
+  Ifttt it("m");
 
   Body b("b");
-  initBody(&b, &q, &i, &ms);
+  initBody(&b, &q, &i, &ms, &it);
 
   Long time0(201010101);      // every single second
   Buffer<10> move0("Mc.Fb."); // clock message (show current time) and face black
@@ -116,9 +118,10 @@ void test_body_performs_basic_moves() {
   Quotes q("q");
   Images i("i");
   Messages ms("m");
+  Ifttt it("m");
 
   Body b("b");
-  initBody(&b, &q, &i, &ms);
+  initBody(&b, &q, &i, &ms, &it);
 
   Long time0(201010101); // act every single second / act() method call
   b.setPropValue(BodyTime0Prop, &time0);
@@ -164,9 +167,10 @@ void test_body_creates_predictions() {
   Quotes q("q");
   Images i("i");
   Messages ms("m");
+  Ifttt it("m");
 
   Body b("b");
-  initBody(&b, &q, &i, &ms);
+  initBody(&b, &q, &i, &ms, &it);
 
   Long time0(201010101); // act every single second / act() method call
   b.setPropValue(BodyTime0Prop, &time0);
