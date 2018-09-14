@@ -72,10 +72,10 @@ enum BodyProps {
   BodyPropsDelimiter // delimiter of the configuration states
 };
 
-#define MOVE_DANCE0 "LwyFs.B09B90LwnFw.B09B90LwyFb.B55"
-#define MOVE_DANCE1 "FfyLyyLwyFs.A50A05Fb.LryLwnA00A99Fw.LrnLwyA90A09Fb.LwnLyyA90A09Fw.Fs."
+#define MOVE_DANCE0 "LwyB09B90LwnB09B90LwyB55"
+#define MOVE_DANCE1 "LfyLyyLwyA50A05LryLwnA00A99LrnLwyA90A09LwnLyyA90A09"
 #define MOVE_DANCE2 "A87A78L?.A87A78L?.A12A21L?.A12A21L?."
-#define MOVE_DANCE3 "Fa.Da/SooDa\\Fr.DauSppDanFn.Sxx"
+#define MOVE_DANCE3 "Da/oDa\\DauDan"
 #define MOVE_DANCE4 "S4?"
 #define MOVE_DANCE5 "S5?"
 #define MOVE_DANCE6 "S6?"
