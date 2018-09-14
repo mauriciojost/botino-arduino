@@ -165,6 +165,8 @@ Codes:
   FS. : Face Sad
   Fn. : Face Normal
   Fz. : Face Zleepy
+  F_. : Face dimmed
+  F-. : Face bright
   F0. : Face custom 0 (user provided)
   F1. : Face custom 1 (user provided)
   F2. : Face custom 2 (user provided)
@@ -251,6 +253,12 @@ Codes:
             break;
           case '3':
             lcdImgFunc('c', images->get(3)); // custom 3
+            break;
+          case '_':
+            lcdImgFunc('_', NULL); // dim
+            break;
+          case '-':
+            lcdImgFunc('-', NULL); // bright
             break;
           case 'w':
             lcdImgFunc('w', NULL); // white

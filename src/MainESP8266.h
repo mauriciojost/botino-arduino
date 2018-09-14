@@ -297,6 +297,14 @@ void clearDevice() {
 void lcdImg(char img, uint8_t bitmap[]) {
   log(CLASS_MAIN, Debug, "Img '%c'", img);
   switch (img) {
+    case '_': // dim
+      log(CLASS_MAIN, Debug, "Dim face");
+      lcd.dim(true);
+      break;
+    case '-': // bright
+      log(CLASS_MAIN, Debug, "Bright face");
+      lcd.dim(false);
+      break;
     case 'w': // white
       log(CLASS_MAIN, Debug, "White face");
       lcd.invertDisplay(true);
