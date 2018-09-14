@@ -5,6 +5,8 @@
 - Find better alternative to scripts and replace them (simulator, format, ...)
 - Make body be able to call ifttt event in a pose
 - Add smoke test that includes a whole architecture (to ensure it goes smootly for 100 cycles)
+- Improve memory use wrt JSON parsing (ParamStream is a memory hog, array + JsonBuffer, when actually
+JsonBuffer could be used right away as a sink for a stream in httpGet and httpPost)).
 
 
 # DONE
