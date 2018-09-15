@@ -6,7 +6,16 @@
 - Make body be able to call ifttt event in a pose
 - Add smoke test that includes a whole architecture (to ensure it goes smootly for 100 cycles)
 - Improve memory use wrt JSON parsing (ParamStream is a memory hog, array + JsonBuffer, when actually
-JsonBuffer could be used right away as a sink for a stream in httpGet and httpPost)).
+JsonBuffer could be used right away as a sink for a stream in httpGet and httpPost)). + prefer heap (big) over stack (4k), i.e. 
+switch from heap
+String json = readData(cocktailDataPath);
+StaticJsonBuffer<2000> jsonBuffer;
+JsonObject& root = jsonBuffer.parseObject(json);
+to stack
+
+DynamicJsonBuffer jsonBuffer(bufSize);  
+File myFile = SD.open(cocktailDataPath);
+JsonObject& root = jsonBuffer.parseObject(myFile);
 
 
 # DONE
