@@ -1,6 +1,7 @@
 #ifndef PARAM_STREAM_INC
 #define PARAM_STREAM_INC
 
+#include <ArduinoJson.h>
 #include <log4ino/Log.h>
 #include <main4ino/Buffer.h>
 #include <stdio.h>
@@ -13,14 +14,14 @@
 
 #define CLASS_PARAM_STREAM "PR"
 
-#ifndef MAX_STREAM_LENGTH
-#define MAX_STREAM_LENGTH 512
-#endif // MAX_STREAM_LENGTH
+#ifndef MAX_JSON_STR_LENGTH
+#define MAX_JSON_STR_LENGTH 512
+#endif // MAX_JSON_STR_LENGTH
 
 #ifndef UNIT_TEST
 
 /**
- * Stream implementation.
+ * One-use stream for JSON parsing.
  */
 class ParamStream : public Stream {
 
@@ -33,7 +34,8 @@ class ParamStream {
 #endif // UNIT_TEST
 
 private:
-  Buffer<MAX_STREAM_LENGTH> bytesReceived;
+  Buffer<MAX_JSON_STR_LENGTH> bytesReceived;
+  StaticJsonBuffer<MAX_JSON_STR_LENGTH> jsonBuffer;
 
 public:
   ParamStream() {
@@ -65,6 +67,12 @@ public:
   int peek() {
     // Not supported.
     return -1;
+  }
+
+  JsonObject &parse() {
+    log(CLASS_PARAM_STREAM, Debug, "Parsing: %s", bytesReceived.getBuffer());
+    JsonObject &root = jsonBuffer.parseObject(bytesReceived.getUnsafeBuffer());
+    return root;
   }
 
   const char *content() {

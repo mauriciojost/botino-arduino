@@ -101,7 +101,7 @@ public:
       return; // nothing to be syncd
     }
 
-    StaticJsonBuffer<MAX_JSON_STR_LENGTH> httpBodyResponse;
+    ParamStream httpBodyResponse;
     const char *actorName = actor->getName();
 
     log(CLASS_PROPSYNC, Info, "Sync: %s", actor->getName());
