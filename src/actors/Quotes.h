@@ -28,6 +28,7 @@ private:
   Metadata* md;
   Buffer<QUOTE_MAX_LENGTH> *quotes[NRO_QUOTES];
   int (*httpGet)(const char *url, ParamStream *response);
+  Buffer<MAX_JSON_STR_LENGTH> jsonAuxBuffer;
   bool (*initWifiFunc)();
 
   bool isInitialized() {
@@ -71,7 +72,7 @@ public:
   }
 
   void fillQuote(int i) {
-    ParamStream httpBodyResponse;
+    ParamStream httpBodyResponse(&jsonAuxBuffer);
     log(CLASS_QUOTES, Debug, "Filling %d", i);
     int errorCode = httpGet(URL_QUOTES, &httpBodyResponse);
     if (errorCode == HTTP_OK) {

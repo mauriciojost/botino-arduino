@@ -76,7 +76,7 @@ public:
       int toConsumeProps = getToConsumeProps();
       if (connected) {
         for (int i = 0; i < bot->getActors()->size(); i++) {
-        	updateProps(i, toConsumeProps);
+        	handleActor(i, toConsumeProps);
         }
       }
     }
@@ -94,70 +94,83 @@ public:
     httpPost = h;
   }
 
-  void updateProps(int actorIndex, int toConsumeProps) {
+  // Restore properties from previous status
+  void restoreActor(int actorIndex) {
     Actor *actor = bot->getActors()->get(actorIndex);
+    const char *actorName = actor->getName();
+    ParamStream httpBodyResponse(&jsonAuxBuffer);
 
+    log(CLASS_PROPSYNC, Debug, "RestTarg:%s", actorName);
+    urlAuxBuffer.fill(BOTINOBE_API_URL_RESTORE_CURRENT, actorName);
+    int errorCodeRes = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
+    if (errorCodeRes == HTTP_OK) { // data stored in the server and retrieved
+      log(CLASS_PROPSYNC, Debug, "OK: %d", errorCodeRes);
+      JsonObject &json = httpBodyResponse.parse();
+      bot->setPropsJson(json, actorIndex);
+      actor->getMetadata()->restored();
+    } else if (errorCodeRes == HTTP_EXPECTATION_FAILED) { // no data stored in the server
+      log(CLASS_PROPSYNC, Debug, "OK: %d", errorCodeRes);
+      actor->getMetadata()->restored();
+    } else { // failure, will retry after
+      log(CLASS_PROPSYNC, Warn, "KO: %d", errorCodeRes);
+    }
+  }
+
+
+  void syncActor(int toConsumeProps, int actorIndex) {
+    Actor *actor = bot->getActors()->get(actorIndex);
+    const char *actorName = actor->getName();
+
+    // Regular run
+    if (toConsumeProps == 0) {
+      log(CLASS_PROPSYNC, Debug, "Skip LoadTarg:%s(no remote changes)", actorName);
+    } else {
+      ParamStream httpBodyResponse(&jsonAuxBuffer);
+      log(CLASS_PROPSYNC, Debug, "LoadTarg:%s", actorName);
+      urlAuxBuffer.fill(BOTINOBE_API_URL_GET_TARGET, actorName);
+      int errorCodeGet = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
+      if (errorCodeGet == HTTP_OK) {
+        log(CLASS_PROPSYNC, Debug, "OK: %d", errorCodeGet);
+        JsonObject &json = httpBodyResponse.parse();
+        bot->setPropsJson(json, actorIndex);
+      } else {
+        log(CLASS_PROPSYNC, Warn, "KO: %d", errorCodeGet);
+      }
+    }
+
+    if (actor->getMetadata()->hasChanged()) {
+      bot->getPropsJson(&jsonAuxBuffer, actorIndex);
+      urlAuxBuffer.fill(BOTINOBE_API_URL_POST_CURRENT, actorName);
+      log(CLASS_PROPSYNC, Debug, "UpdCurr:%s", actorName);
+      int errorCodePo = httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL);
+      if (errorCodePo == HTTP_CREATED) {
+        log(CLASS_PROPSYNC, Debug, "OK: %d", errorCodePo);
+        actor->getMetadata()->clearChanged();
+      } else {
+        log(CLASS_PROPSYNC, Warn, "KO: %d", errorCodePo);
+      }
+    } else {
+      log(CLASS_PROPSYNC, Debug, "Skip UpdCurr:%s(no local changes)", actorName);
+    }
+  }
+
+  void handleActor(int actorIndex, int toConsumeProps) {
+
+    Actor *actor = bot->getActors()->get(actorIndex);
     if (actor->getNroProps() == 0) {
       return; // nothing to be syncd
     }
 
-    ParamStream httpBodyResponse;
-    const char *actorName = actor->getName();
-
     log(CLASS_PROPSYNC, Info, "Sync: %s", actor->getName());
-
     if (!actor->getMetadata()->isRestored()) { // actor data not restored yet
-    	// Restore from previous status
-      log(CLASS_PROPSYNC, Debug, "RestTarg:%s", actorName);
-      urlAuxBuffer.fill(BOTINOBE_API_URL_RESTORE_CURRENT, actorName);
-      int errorCodeRes = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
-      if (errorCodeRes == HTTP_OK) { // data stored in the server and retrieved
-        log(CLASS_PROPSYNC, Debug, "OK: %d", errorCodeRes);
-        JsonObject &json = httpBodyResponse.parse();
-        bot->setPropsJson(json, actorIndex);
-        actor->getMetadata()->restored();
-      } else if (errorCodeRes == HTTP_EXPECTATION_FAILED) { // no data stored in the server
-        log(CLASS_PROPSYNC, Debug, "OK: %d", errorCodeRes);
-        actor->getMetadata()->restored();
-      } else { // failure, will retry after
-        log(CLASS_PROPSYNC, Warn, "KO: %d", errorCodeRes);
-      }
-    } else { // actor data already restored from server
-    	// Regular run
-    	if (toConsumeProps == 0) {
-        log(CLASS_PROPSYNC, Debug, "Skip LoadTarg:%s(no remote changes)", actorName);
-    	} else {
-        log(CLASS_PROPSYNC, Debug, "LoadTarg:%s", actorName);
-        urlAuxBuffer.fill(BOTINOBE_API_URL_GET_TARGET, actorName);
-        int errorCodeGet = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
-        if (errorCodeGet == HTTP_OK) {
-          log(CLASS_PROPSYNC, Debug, "OK: %d", errorCodeGet);
-          JsonObject &json = httpBodyResponse.parse();
-          bot->setPropsJson(json, actorIndex);
-        } else {
-          log(CLASS_PROPSYNC, Warn, "KO: %d", errorCodeGet);
-        }
-    	}
-
-    	if (actor->getMetadata()->hasChanged()) {
-        bot->getPropsJson(&jsonAuxBuffer, actorIndex);
-        urlAuxBuffer.fill(BOTINOBE_API_URL_POST_CURRENT, actorName);
-        log(CLASS_PROPSYNC, Debug, "UpdCurr:%s", actorName);
-        int errorCodePo = httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL);
-        if (errorCodePo == HTTP_CREATED) {
-          log(CLASS_PROPSYNC, Debug, "OK: %d", errorCodePo);
-          actor->getMetadata()->clearChanged();
-        } else {
-          log(CLASS_PROPSYNC, Warn, "KO: %d", errorCodePo);
-        }
-    	} else {
-        log(CLASS_PROPSYNC, Debug, "Skip UpdCurr:%s(no local changes)", actorName);
-    	}
+    	restoreActor(actorIndex);
+    } else {
+    	syncActor(toConsumeProps, actorIndex);
     }
   }
 
   int getToConsumeProps() {
-    ParamStream httpBodyResponse;
+    ParamStream httpBodyResponse(&jsonAuxBuffer);
     log(CLASS_PROPSYNC, Info, "Props to consume?");
     urlAuxBuffer.fill(BOTINOBE_API_URL_GET_PROPS_TO_CONSUME_COUNT);
     int errorCodeGet = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);

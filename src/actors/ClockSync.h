@@ -37,6 +37,8 @@ private:
   Metadata* md;
   Buffer<32> dbZone;
   Buffer<32> dbKey;
+  Buffer<128> urlAuxBuffer;
+  Buffer<MAX_JSON_STR_LENGTH> jsonAuxBuffer;
   bool (*initWifiFunc)();
   int (*httpGet)(const char *url, ParamStream *response);
 
@@ -83,8 +85,7 @@ public:
 
   void updateClockProperties() {
     log(CLASS_CLOCKSYNC, Info, "Updating clock");
-    ParamStream s;
-    Buffer<128> urlAuxBuffer;
+    ParamStream s(&jsonAuxBuffer);
     urlAuxBuffer.fill(TIMEZONE_DB_API_URL_GET, dbKey.getBuffer(), dbZone.getBuffer());
     int errorCode = httpGet(urlAuxBuffer.getBuffer(), &s);
     if (errorCode == HTTP_OK) {

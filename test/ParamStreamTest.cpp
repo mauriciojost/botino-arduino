@@ -18,7 +18,8 @@ void feed(ParamStream *ps, const char *msg) {
 }
 
 void test_param_stream_behaviour() {
-  ParamStream ps;
+  Buffer<MAX_JSON_STR_LENGTH> bytesReceived;
+  ParamStream ps(&bytesReceived);
 
   feed(&ps, "{}");
 
@@ -26,7 +27,8 @@ void test_param_stream_behaviour() {
 }
 
 void test_param_stream_behaviour2() {
-  ParamStream ps;
+  Buffer<MAX_JSON_STR_LENGTH> bytesReceived;
+  ParamStream ps(&bytesReceived);
   feed(&ps, "{\"key\":{\"innerkey\":\"innervalue\"}}");
   JsonObject &json = ps.parse();
   TEST_ASSERT_EQUAL_STRING("innervalue", json["key"]["innerkey"]);

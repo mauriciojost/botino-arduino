@@ -34,12 +34,12 @@ class ParamStream {
 #endif // UNIT_TEST
 
 private:
-  Buffer<MAX_JSON_STR_LENGTH> bytesReceived;
+  Buffer<MAX_JSON_STR_LENGTH>* bytesReceived;
   StaticJsonBuffer<MAX_JSON_STR_LENGTH> jsonBuffer;
 
 public:
-  ParamStream() {
-    bytesReceived.clear();
+  ParamStream(Buffer<MAX_JSON_STR_LENGTH>* b) {
+    bytesReceived = b;
   }
 
   size_t write(uint8_t b) {
@@ -48,15 +48,15 @@ public:
   }
 
   void append(uint8_t b) {
-    bytesReceived.append(b);
+    bytesReceived->append(b);
   }
 
   void fill(const char *str) {
-    bytesReceived.fill("%s", str);
+    bytesReceived->fill("%s", str);
   }
 
   int available() {
-    return bytesReceived.getLength();
+    return bytesReceived->getLength();
   }
 
   int read() {
@@ -70,13 +70,13 @@ public:
   }
 
   JsonObject &parse() {
-    log(CLASS_PARAM_STREAM, Debug, "Parsing: %s", bytesReceived.getBuffer());
-    JsonObject &root = jsonBuffer.parseObject(bytesReceived.getUnsafeBuffer());
+    log(CLASS_PARAM_STREAM, Debug, "Parsing: %s", bytesReceived->getBuffer());
+    JsonObject &root = jsonBuffer.parseObject(bytesReceived->getUnsafeBuffer());
     return root;
   }
 
   const char *content() {
-    return bytesReceived.getBuffer();
+    return bytesReceived->getBuffer();
   }
 };
 
