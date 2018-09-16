@@ -40,6 +40,7 @@ private:
 public:
   ParamStream(Buffer<MAX_JSON_STR_LENGTH>* b) {
     bytesReceived = b;
+    bytesReceived->clear();
   }
 
   size_t write(uint8_t b) {
