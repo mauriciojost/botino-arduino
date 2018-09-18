@@ -122,7 +122,7 @@ public:
   }
 
   int getNroProps() {
-    return 0;
+    return ClockSyncPropsDelimiter;
   }
 
   const char *getPropName(int propIndex) {
