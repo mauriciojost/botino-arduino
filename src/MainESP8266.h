@@ -493,9 +493,9 @@ void configureModeArchitecture() {
 bool reactToButtonHeld(int cycles, bool onlyMsg) {
   switch (cycles) {
     case 0: {
-      messageFuncExt(0, 2, "Zzz routine?");
+      messageFuncExt(0, 2, "Clear?");
       if (!onlyMsg) {
-        m.command("move Zz.");
+        m.command("move Z.");
       }
     } break;
     case 1:

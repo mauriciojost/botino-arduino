@@ -1,7 +1,6 @@
 #ifndef MODULE_INC
 #define MODULE_INC
 
-#include "actors/Messages.h"
 #include "actors/Quotes.h"
 #include "actors/Settings.h"
 #include <Pinout.h>
@@ -56,7 +55,6 @@ private:
   Body *body;
   Quotes *quotes;
   Images *images;
-  Messages *messages;
   Ifttt *ifttt;
 
   bool (*initWifiSteadyFunc)();
@@ -73,10 +71,9 @@ public:
     quotes = new Quotes("quotes");
     body = new Body("body");
     images = new Images("images");
-    messages = new Messages("messages");
     ifttt = new Ifttt("ifttt");
 
-    actors = new Array<Actor *>(10);
+    actors = new Array<Actor *>(9);
     actors->set(0, (Actor *)setupSync);
     actors->set(1, (Actor *)propSync);
     actors->set(2, (Actor *)clockSync);
@@ -85,8 +82,7 @@ public:
     actors->set(5, (Actor *)quotes);
     actors->set(6, (Actor *)body);
     actors->set(7, (Actor *)images);
-    actors->set(8, (Actor *)messages);
-    actors->set(9, (Actor *)ifttt);
+    actors->set(8, (Actor *)ifttt);
 
     bot = new SerBot(clock, actors);
 
@@ -94,7 +90,6 @@ public:
     clockSync->setClock(bot->getClock());
     body->setQuotes(quotes);
     body->setImages(images);
-    body->setMessages(messages);
     body->setIfttt(ifttt);
 
     initWifiSteadyFunc = NULL;

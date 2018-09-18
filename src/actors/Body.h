@@ -22,7 +22,6 @@
 #include <string.h>
 #include <Hexer.h>
 #include <actors/Images.h>
-#include <actors/Messages.h>
 #include <actors/Predictions.h>
 #include <actors/Quotes.h>
 #include <actors/Ifttt.h>
@@ -35,8 +34,7 @@
 #include <main4ino/Value.h>
 
 #define CLASS_BODY "BO"
-#define MSG_MAX_LENGTH 32
-#define MOVE_STR_LENGTH 32
+#define MOVE_STR_LENGTH 40
 
 #define ON 1
 #define OFF 0
@@ -52,14 +50,14 @@
 #define IMG_SIZE_BYTES 16
 
 enum BodyProps {
-  BodyRoutine0Prop = 0, // string, move for the routine 0 as a list of consecutive 3 letter-code of poses (see the poses documentation)
-  BodyRoutine1Prop,     // string, move for the routine 1 (same as above)
-  BodyRoutine2Prop,     // string, move
-  BodyRoutine3Prop,     // string, move
-  BodyRoutine4Prop,     // string, move
-  BodyRoutine5Prop,     // string, move
-  BodyRoutine6Prop,     // string, move
-  BodyRoutine7Prop,     // string, move
+  BodyRoutine0Prop = 0, // string, routine for the routine 0
+  BodyRoutine1Prop,     // string, routine for the routine 1
+  BodyRoutine2Prop,     // string, routine
+  BodyRoutine3Prop,     // string, routine
+  BodyRoutine4Prop,     // string, routine
+  BodyRoutine5Prop,     // string, routine
+  BodyRoutine6Prop,     // string, routine
+  BodyRoutine7Prop,     // string, routine
   BodyPropsDelimiter // delimiter of the configuration states
 };
 
@@ -99,15 +97,24 @@ public:
   Routine(const char* n) {
   	timing = new Timing(n);
   }
+  void load(const Value* v) {
+    Buffer<MOVE_STR_LENGTH> aux;
+    aux.load(v);
+    load(aux.getBuffer());
+  }
   void load(const char* str) {
-  	if (str != NULL && strlen(str) > TIMING_STR_LEN) {
+  	if (str != NULL && strlen(str) > TIMING_AND_SEPARATOR_STR_LEN) {
   		timingMove.fill(str);
   		timingMove.getUnsafeBuffer()[TIMING_STR_LEN] = 0;
   		timing->setFrek(atol(timingMove.getBuffer()));
   		timingMove.fill(str);
+      log(CLASS_BODY, Debug, "Routine built: '%s'/'%ld'", getMove(), timing->getFrek());
   	} else {
       log(CLASS_BODY, Warn, "Invalid routine");
   	}
+  }
+  const char* getMove() {
+    return timingMove.getBuffer() + TIMING_AND_SEPARATOR_STR_LEN;
   }
 };
 
@@ -123,13 +130,11 @@ private:
 
   Quotes *quotes;
   Images *images;
-  Messages *messages;
   Ifttt *ifttt;
   Routine *routines[NRO_ROUTINES];
 
   bool isInitialized() {
-    bool init = arms != NULL && iosFunc != NULL && messageFunc != NULL && lcdImgFunc != NULL && quotes != NULL && images != NULL &&
-                messages != NULL && ifttt != NULL;
+    bool init = arms != NULL && iosFunc != NULL && messageFunc != NULL && lcdImgFunc != NULL && quotes != NULL && images != NULL && ifttt != NULL;
     return init;
   }
 
@@ -157,9 +162,9 @@ private:
   /**
    * Perform a given pose
    *
-   * Returns the amount of characters interpreted or -1 if a non recoverable problem.
+   * Returns the next pose in the string or NULL if no more poses to perform.
    */
-  int performPose(const char* pose) {
+  const char* performPose(const char* pose) {
 
     /*
 
@@ -253,10 +258,10 @@ Codes:
 
 */
 
-  	if (poseStrLen(pose) == 1) { // 1 chars poses
+  if (poseStrLen(pose) == 0) { // 0 chars poses
+  	return NULL;
+  } else if (poseStrLen(pose) == 1) { // 1 chars poses
       char c1 = pose[0];
-      log(CLASS_BODY, Warn, "Invalid %c", c1);
-
       if (c1 == 'Z') {
         lcdImgFunc('b', NULL);
         lcdImgFunc('l', NULL);
@@ -268,7 +273,7 @@ Codes:
       } else {
         log(CLASS_BODY, Debug, "Ignoring 1-letter-code pose %s", pose);
       }
-      return 1;
+      return pose + 1 + 1;
   	} else if (poseStrLen(pose) == 2) { // 2 chars poses
       char c1 = pose[0];
       char c2 = pose[1];
@@ -335,7 +340,7 @@ Codes:
       } else {
         log(CLASS_BODY, Debug, "Ignoring 2-letter-code pose %s", pose);
       }
-      return 2;
+      return pose + 2 + 1;
 
   	} else if (poseStrLen(pose) == 3) { // 3 chars poses
       char c1 = pose[0];
@@ -357,8 +362,44 @@ Codes:
         int r = getInt(c3);
         log(CLASS_BODY, Debug, "Armss %d&%d", l, r);
         arms(l, r, ARM_SLOW_STEPS);
-      } else if (c1 == 'D') { // DANCE
+      } else if (c1 == 'L') { // IO (LEDS / FAN)
+        switch (c2) {
+          case 'r': {
+            bool b = getBool(c3);
+            log(CLASS_BODY, Debug, "Led red: %d", b);
+            iosFunc('r', b);
+            break;
+          }
+          case 'w': {
+            bool b = getBool(c3);
+            log(CLASS_BODY, Debug, "Led white: %d", b);
+            iosFunc('w', b);
+            break;
+          }
+          case 'y': {
+            bool b = getBool(c3);
+            log(CLASS_BODY, Debug, "Led yellow: %d", b);
+            iosFunc('y', b);
+            break;
+          }
+          case '?': {
+            iosFunc('r', random(2) == 0);
+            iosFunc('w', random(2) == 0);
+            iosFunc('y', random(2) == 0);
+            break;
+          }
+          case 'f': {
+            bool b = getBool(c3);
+            log(CLASS_BODY, Debug, "Fan: %d", b);
+            iosFunc('f', b);
+            break;
+          }
+          default:
+            log(CLASS_BODY, Debug, "Inv.IO.pose:%c%c%c", c1, c2, c3);
+            break;
+        }
 
+      } else if (c1 == 'D') { // DANCE
         switch (c2) {
           case '0':
             performMove(MOVE_DANCE0);
@@ -399,34 +440,9 @@ Codes:
           default:
             log(CLASS_BODY, Debug, "Inv.S.pose:%c%c%c", c1, c2, c3);
         }
-      } else {
-        log(CLASS_BODY, Warn, "Ignoring 3-letter-code pose %s", pose);
-      }
-      return 3;
-  	} else if (poseStrLen(pose) > 3) { // N chars poses
 
-      char c1 = pose[0];
-      char c2 = pose[1];
-      char c3 = pose[2];
-
-      if (c1 == 'M') { // MESSAGES
+      } else if (c1 == 'M') { // MESSAGES
         switch (c2) {
-          case '0':
-            log(CLASS_BODY, Debug, "Msg 0");
-            messageFunc(0, messages->get(0), getInt(c3));
-            break;
-          case '1':
-            log(CLASS_BODY, Debug, "Msg 1");
-            messageFunc(0, messages->get(1), getInt(c3));
-            break;
-          case '2':
-            log(CLASS_BODY, Debug, "Msg 2");
-            messageFunc(0, messages->get(2), getInt(c3));
-            break;
-          case '3':
-            log(CLASS_BODY, Debug, "Msg 3");
-            messageFunc(0, messages->get(3), getInt(c3));
-            break;
           case 'c': {
             log(CLASS_BODY, Debug, "Msg clock");
             int h = GET_HOURS(getTiming()->getCurrentTime());
@@ -454,15 +470,32 @@ Codes:
             messageFunc(0, pr.getBuffer(), getInt(c3));
           } break;
           default:
-            log(CLASS_BODY, Debug, "Invalid face %s", pose);
+            log(CLASS_BODY, Debug, "Invalid message %s", pose);
             break;
         }
       } else {
+        log(CLASS_BODY, Warn, "Ignoring 3-letter-code pose %s", pose);
+      }
+      return pose + 3 + 1;
+  	} else if (poseStrLen(pose) > 3) { // N chars poses
+
+      char c1 = pose[0];
+      char c2 = pose[1];
+      char c3 = pose[2];
+
+      if (c1 == 'M') { // MESSAGES
+        int size = getInt(c2);
+        Buffer<MOVE_STR_LENGTH> msg(pose + 2);
+        msg.replace('.', 0);
+        log(CLASS_BODY, Debug, "Msg '%s'", msg.getBuffer());
+        messageFunc(0, msg.getBuffer(), size);
+      } else {
         log(CLASS_BODY, Warn, "Ignoring N-letter-code pose %s", pose);
       }
-      return poseStrLen(pose);
+      return pose + poseStrLen(pose) + 1;
+  	} else {
+      return NULL;
   	}
-  	return -1;
   }
 
 public:
@@ -474,7 +507,6 @@ public:
     lcdImgFunc = NULL;
     quotes = NULL;
     images = NULL;
-    messages = NULL;
     ifttt = NULL;
     md = new Metadata(n);
     md->getTiming()->setFrek(201010101);
@@ -497,10 +529,6 @@ public:
 
   void setImages(Images *i) {
     images = i;
-  }
-
-  void setMessages(Messages *m) {
-    messages = m;
   }
 
   void setIfttt(Ifttt *i) {
@@ -529,8 +557,7 @@ public:
       while (routines[i]->timing->catchesUp(getTiming()->getCurrentTime())) {
         if (routines[i]->timing->matches()) {
           const long timing = routines[i]->timing->getFrek();
-          const char *move = routines[i]->timingMove.getBuffer();
-          log(CLASS_BODY, Debug, "Rne %d: %ld %s", i, timing, move);
+          log(CLASS_BODY, Debug, "Rne %d: %ld %s", i, timing, getMove(i));
           performMove(i);
         }
       }
@@ -564,7 +591,7 @@ public:
     if (propIndex >= BodyRoutine0Prop && propIndex < (NRO_ROUTINES + BodyRoutine0Prop)) {
       int i = (int)propIndex - (int)BodyRoutine0Prop;
       if (m == SetCustomValue) {
-        routines[i]->timingMove.load(targetValue);
+        routines[i]->load(targetValue);
       }
       if (actualValue != NULL) {
         actualValue->load(&routines[i]->timingMove);
@@ -590,7 +617,7 @@ public:
   }
 
   const char *getMove(int moveIndex) {
-    return routines[POSIT(moveIndex % NRO_ROUTINES)]->timingMove.getBuffer() + TIMING_AND_SEPARATOR_STR_LEN;
+    return routines[POSIT(moveIndex % NRO_ROUTINES)]->getMove();
   }
 
   void performMove(int moveIndex) {
@@ -599,9 +626,8 @@ public:
 
   void performMove(const char *move) {
     int advance = 0;
-    for (size_t i = 0; i < strlen(move) && i != -1; i += (advance + 1)) {
-      advance = performPose(move);
-    }
+    const char* p = move;
+    while((p = performPose(p)) != NULL){ }
   }
 };
 

@@ -11,23 +11,16 @@
 // Being tested
 #include <actors/PropSync.h>
 
-#define JSON_PREFIX "{\"with\":[{\"content\":"
-#define JSON_SUFFIX "}]}"
-
 #define MV2 "Da2"
 
-const char *replyBody = JSON_PREFIX "{"
-                                    "\"mv0\":\"A99A55W5.W5.A99A55A00F2.W4.M02W5.Mc4W2.\","
-                                    "\"mv1\":\"A90A09W5.W5.A09A55A00F1.W4.M12W5.Mc4W2.\","
-                                    "\"mv2\":\"" MV2 "\","
-                                    "\"mv3\":\""
+const char *replyBody =             "{"
+                                    "\"r0\":\"201016060:A99A55W5.W5.A99A55A00F2.W4.M02W5.Mc4W2.\","
+                                    "\"r1\":\"201016060:A90A09W5.W5.A09A55A00F1.W4.M12W5.Mc4W2.\","
+                                    "\"r2\":\"201016060:" MV2 "\","
+                                    "\"r3\":\"201016060:"
                                     "W5.W5.W5.W5.W5.W5.Fw.Fb.M32W5.Mc4W2."
-                                    "\","
-                                    "\"t0\":\"201016060\","
-                                    "\"t1\":\"201016060\","
-                                    "\"t2\":\"201016060\","
-                                    "\"t3\":\"201016060\""
-                                    "}" JSON_SUFFIX;
+                                    "\""
+                                    "}";
 
 void setUp(void) {}
 
@@ -38,15 +31,23 @@ bool initWifi() {
 }
 
 int httpGet(const char *url, ParamStream *response) {
-  if (strcmp("http://dweet.io/get/latest/dweet/for/device1-body-target", url) == 0) {
+	printf("%s\n", url);
+  if (strcmp("http://localhost:8080/api/v1/devices/device1/actors/body/reports/last", url) == 0) {
+    response->fill("{}");
+    return HTTP_OK;
+  } else if (strcmp("http://localhost:8080/api/v1/devices/device1/targets/count?status=C", url) == 0) {
+    response->fill("{\"count\":1}");
+    return HTTP_OK;
+  } else if (strcmp("http://localhost:8080/api/v1/devices/device1/actors/body/targets/summary?consume=true&status=C", url) == 0) {
     response->fill(replyBody);
     return HTTP_OK;
+  } else {
+    return HTTP_BAD_REQUEST;
   }
-  return HTTP_BAD_REQUEST;
 }
 
 int httpPost(const char *url, const char *body, ParamStream *response) {
-  return HTTP_OK;
+  return HTTP_CREATED;
 }
 
 void test_propsync_syncs_several_body_properties() {
@@ -68,7 +69,8 @@ void test_propsync_syncs_several_body_properties() {
 
   p.getTiming()->setFrek(201010101); // every second
 
-  p.act();
+  p.act(); // restore
+  p.act(); // load target
 
   TEST_ASSERT_EQUAL_STRING(MV2, body.getMove(2));
 }

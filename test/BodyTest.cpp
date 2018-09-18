@@ -65,14 +65,13 @@ void led(char led, bool v) {
   }
 }
 
-void initBody(Body *b, Quotes *q, Images *i, Messages *m, Ifttt* it) {
+void initBody(Body *b, Quotes *q, Images *i, Ifttt* it) {
   b->setLcdImgFunc(lcdImg);
   b->setArmsFunc(arms);
   b->setMessageFunc(messageOnLcd);
   b->setIosFunc(led);
   b->setQuotes(q);
   b->setImages(i);
-  b->setMessages(m);
   b->setIfttt(it);
 }
 
@@ -81,17 +80,14 @@ void test_body_shows_time() {
   setLogLevel(Warn);
   Quotes q("q");
   Images i("i");
-  Messages ms("m");
   Ifttt it("m");
 
   Body b("b");
-  initBody(&b, &q, &i, &ms, &it);
+  initBody(&b, &q, &i, &it);
 
-  Long time0(201010101);      // every single second
-  Buffer<10> move0("Mc.Fb."); // clock message (show current time) and face black
+  Buffer<20> move0("201010101:Mc1.Fb."); // clock message (show current time) and face black
 
-  b.setPropValue(BodyTime0Prop, &time0);
-  b.setPropValue(BodyMove0Prop, &move0);
+  b.setPropValue(BodyRoutine0Prop, &move0);
 
   TEST_ASSERT_EQUAL(0, faceCleared);
   TEST_ASSERT_EQUAL_STRING("", lastMsg);
@@ -100,14 +96,14 @@ void test_body_shows_time() {
   t->setCurrentTime(3600 * 2 + 60 * 33 + 10);
   b.act();
 
-  TEST_ASSERT_EQUAL(t->getCurrentTime(), faceCleared);
   TEST_ASSERT_EQUAL_STRING("02:33", lastMsg);
+  TEST_ASSERT_EQUAL(t->getCurrentTime(), faceCleared);
 }
 
 void executeMove(Body *b, const char *move) {
   Buffer<20> mv0;
   mv0.fill(move);
-  b->setPropValue(BodyMove0Prop, &mv0);
+  b->setPropValue(BodyRoutine0Prop, &mv0);
   Timing *t = b->getTiming();
   t->setCurrentTime(t->getCurrentTime() + 1); // assumes configured to act every second
   b->act();
@@ -117,48 +113,42 @@ void test_body_performs_basic_moves() {
 
   Quotes q("q");
   Images i("i");
-  Messages ms("m");
   Ifttt it("m");
 
   Body b("b");
-  initBody(&b, &q, &i, &ms, &it);
-
-  Long time0(201010101); // act every single second / act() method call
-  b.setPropValue(BodyTime0Prop, &time0);
+  initBody(&b, &q, &i, &it);
 
   TEST_ASSERT_EQUAL_STRING("", lastArms);
 
-  executeMove(&b, "A91");
+  executeMove(&b, "201010101:A91");
   TEST_ASSERT_EQUAL_STRING("left:9,right:1,steps:20", lastArms);
 
-  executeMove(&b, "B56");
+  executeMove(&b, "201010101:B56");
   TEST_ASSERT_EQUAL_STRING("left:5,right:6,steps:40", lastArms);
 
-  executeMove(&b, "C13");
+  executeMove(&b, "201010101:C13");
   TEST_ASSERT_EQUAL_STRING("left:1,right:3,steps:100", lastArms);
 
-  executeMove(&b, "Lyn");
+  executeMove(&b, "201010101:Lyn");
   TEST_ASSERT_EQUAL(false, ledY);
 
-  executeMove(&b, "Lyy");
+  executeMove(&b, "201010101:Lyy");
   TEST_ASSERT_EQUAL(true, ledY);
 
-  executeMove(&b, "Lfn");
+  executeMove(&b, "201010101:Lfn");
   TEST_ASSERT_EQUAL(false, fan);
 
-  executeMove(&b, "Lfy");
+  executeMove(&b, "201010101:Lfy");
   TEST_ASSERT_EQUAL(true, fan);
 
-  executeMove(&b, "Zz.");
+  executeMove(&b, "201010101:Z.");
   TEST_ASSERT_EQUAL_STRING("left:0,right:0,steps:20", lastArms);
   TEST_ASSERT_EQUAL(false, ledY);
   TEST_ASSERT_EQUAL(false, ledR);
   TEST_ASSERT_EQUAL(false, ledW);
   TEST_ASSERT_EQUAL(false, fan);
 
-  Buffer<10> m0("HEY");
-  ms.setPropValue(MessagesMsg0Prop, &m0);
-  executeMove(&b, "M01");
+  executeMove(&b, "201010101:M1HEY");
   TEST_ASSERT_EQUAL_STRING("HEY", lastMsg);
 }
 
@@ -166,18 +156,12 @@ void test_body_creates_predictions() {
 
   Quotes q("q");
   Images i("i");
-  Messages ms("m");
   Ifttt it("m");
 
   Body b("b");
-  initBody(&b, &q, &i, &ms, &it);
+  initBody(&b, &q, &i, &it);
 
-  Long time0(201010101); // act every single second / act() method call
-  b.setPropValue(BodyTime0Prop, &time0);
-
-  Buffer<10> m0("HEY");
-  ms.setPropValue(MessagesMsg0Prop, &m0);
-  executeMove(&b, "Mp1");
+  executeMove(&b, "201010101:Mp1");
   TEST_ASSERT_EQUAL_STRING("your colleague will ride your colleague at work", lastMsg);
 }
 
