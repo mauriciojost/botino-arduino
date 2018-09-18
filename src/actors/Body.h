@@ -19,6 +19,7 @@
  *
  */
 
+#include <string.h>
 #include <Hexer.h>
 #include <actors/Images.h>
 #include <actors/Messages.h>
@@ -35,9 +36,7 @@
 
 #define CLASS_BODY "BO"
 #define MSG_MAX_LENGTH 32
-#define MAX_POSES_PER_MOVE 6 // maximum amount of positions per move
-#define POSE_STR_LENGTH 3    // characters that represent a position / state within a move
-#define MOVE_STR_LENGTH (POSE_STR_LENGTH * MAX_POSES_PER_MOVE)
+#define MOVE_STR_LENGTH 32
 
 #define ON 1
 #define OFF 0
@@ -53,29 +52,27 @@
 #define IMG_SIZE_BYTES 16
 
 enum BodyProps {
-  BodyMove0Prop = 0, // string, move for the routine 0 as a list of consecutive 3 letter-code of poses (see the poses documentation)
-  BodyMove1Prop,     // string, move for the routine 1 (same as above)
-  BodyMove2Prop,     // string, move
-  BodyMove3Prop,     // string, move
-  BodyMove4Prop,     // string, move
-  BodyMove5Prop,     // string, move
-  BodyMove6Prop,     // string, move
-  BodyMove7Prop,     // string, move
-  BodyTime0Prop,     // time/freq of acting for the routine 0
-  BodyTime1Prop,     // time/freq of acting for the routine 1
-  BodyTime2Prop,     // time/freq
-  BodyTime3Prop,     // time/freq
-  BodyTime4Prop,     // time/freq
-  BodyTime5Prop,     // time/freq
-  BodyTime6Prop,     // time/freq
-  BodyTime7Prop,     // time/freq
+  BodyRoutine0Prop = 0, // string, move for the routine 0 as a list of consecutive 3 letter-code of poses (see the poses documentation)
+  BodyRoutine1Prop,     // string, move for the routine 1 (same as above)
+  BodyRoutine2Prop,     // string, move
+  BodyRoutine3Prop,     // string, move
+  BodyRoutine4Prop,     // string, move
+  BodyRoutine5Prop,     // string, move
+  BodyRoutine6Prop,     // string, move
+  BodyRoutine7Prop,     // string, move
   BodyPropsDelimiter // delimiter of the configuration states
 };
+
+#define POSE_SEPARATOR '.'
+#define TIMING_SEPARATOR ':'
+#define TIMING_STR_LEN 9
+#define TIMING_AND_SEPARATOR_STR_LEN (TIMING_STR_LEN + 1)
+
 
 #define MOVE_DANCE0 "LwyB09B90LwnB09B90LwyB55"
 #define MOVE_DANCE1 "LfyLyyLwyA50A05LryLwnA00A99LrnLwyA90A09LwnLyyA90A09"
 #define MOVE_DANCE2 "A87A78L?.A87A78L?.A12A21L?.A12A21L?."
-#define MOVE_DANCE3 "Da/oDa\\DauDan"
+#define MOVE_DANCE3 "Da/Da\\DauDan"
 #define MOVE_DANCE4 "S4?"
 #define MOVE_DANCE5 "S5?"
 #define MOVE_DANCE6 "S6?"
@@ -97,10 +94,20 @@ uint8_t IMG_SLEEPY[] = {0x00, 0x00, 0x00, 0x00, 0x12, 0x48, 0x0C, 0x30, 0x01, 0x
 
 class Routine {
 public:
-  Buffer<MOVE_STR_LENGTH> move;
+  Buffer<MOVE_STR_LENGTH> timingMove;
   Timing* timing;
   Routine(const char* n) {
   	timing = new Timing(n);
+  }
+  void load(const char* str) {
+  	if (str != NULL && strlen(str) > TIMING_STR_LEN) {
+  		timingMove.fill(str);
+  		timingMove.getUnsafeBuffer()[TIMING_STR_LEN] = 0;
+  		timing->setFrek(atol(timingMove.getBuffer()));
+  		timingMove.fill(str);
+  	} else {
+      log(CLASS_BODY, Warn, "Invalid routine");
+  	}
   }
 };
 
@@ -127,32 +134,51 @@ private:
   }
 
   int getInt(char c) {
-    return ABSOL(c - '0') % 10;
+    return ABSOL(c - '0');
   }
 
   bool getBool(char c) {
     return c == 'y' || c == 'Y' || c == 't' || c == 'T' || c == '1';
   }
 
-  void performPose(char c1, char c2, char c3) {
+  int poseStrLen(const char* p) {
+  	if (p == NULL) { // no string
+  		return -1;
+  	} else {
+      const char* f = strchr((p), POSE_SEPARATOR);
+      if (f == NULL) { // no separator found
+        return strlen(p);
+      } else { // separator found
+        return (int)(f - p);
+      }
+    }
+  }
+
+  /**
+   * Perform a given pose
+   *
+   * Returns the amount of characters interpreted or -1 if a non recoverable problem.
+   */
+  int performPose(const char* pose) {
 
     /*
 
-POSES (3 char codes)
+POSES (X-char codes separated by separator)
 --------------------
 
-ARMS POSES: move both arms to a given position each (left, then right) (A=fast, B=normal, C=slow)
+###1 LETTER CODE POSES
+
 Codes:
-  A00 : Move left and right arms to respective position 0 and 0 (both down) at high speed
+  Z. : turn all power consuming components off
+
+
+### 2 LETTER CODE POSES
+
+WAIT POSES: wait a given number of seconds
+Codes:
+  W1. : wait 1 second
   ...
-  A90 : Move left and right arms to respective position 9 and 0 (left arm up) at high speed
-  ...
-  A99 : Move left and right arms to respective position 9 and 9 (both up) at high speed
-
-  B99 : Move left and right arms to respective position 9 and 9 (both up) at normal speed
-
-  C99 : Move left and right arms to respective position 9 and 9 (both up) at low speed
-
+  W9. : wait 9 seconds
 
 FACE POSES: show a given image in the LCD
 Codes:
@@ -172,16 +198,48 @@ Codes:
   F2. : Face custom 2 (user provided)
   F3. : Face custom 3 (user provided)
 
+IFTTT EVENTS: trigger an ifttt event (given the configuration of the ifttt module)
+Codes:
+  Ix. : trigger event 'x'
+
+
+### 3 LETTER CODE POSES
+
+ARMS POSES: move both arms to a given position each (left, then right) (A=fast, B=normal, C=slow)
+Codes:
+  A00. : Move left and right arms to respective position 0 and 0 (both down) at high speed
+  ...
+  A90. : Move left and right arms to respective position 9 and 0 (left arm up) at high speed
+  ...
+  A99. : Move left and right arms to respective position 9 and 9 (both up) at high speed
+
+  B99. : Move left and right arms to respective position 9 and 9 (both up) at normal speed
+
+  C99. : Move left and right arms to respective position 9 and 9 (both up) at low speed
 
 IO POSES: turn on/off a given IO device, such as LEDS or the FAN (on = y, off = n)
 Codes:
-  Lry : turn on (y) the Red led
-  Lrn : turn off (n) the Red led
-  Lwy : turn on (y) led White
-  Lyy : turn on (y) led Yellow
-  L?. : turn randomly all leds
-  Lfy : turn on (y) Fan
+  Lry. : turn on (y) the Red led
+  Lrn. : turn off (n) the Red led
+  Lwy. : turn on (y) led White
+  Lyy. : turn on (y) led Yellow
+  L?.. : turn randomly all leds
+  Lfy. : turn on (y) Fan
 
+COMPOSED POSES: dances and other predefined moves usable as poses
+Codes:
+  Dan. : dance n
+  Dau. : dance u
+  Da\. : dance \
+  Da/. : dance /
+
+  Da0. : dance 0
+  Da1. : dance 1
+  Da2. : dance 2
+  Da3. : dance 3
+
+
+### N LETTER CODE POSES
 
 MESSAGE POSES: show a certain message in the LCD with a given font size
 Codes:
@@ -193,54 +251,33 @@ Codes:
   Mp1 : show random future reading (with font size 1)
   Mq1 : show random quote (with font size 1)
 
-
-MESSAGE SHORT POSES: show a certain short message (a few letters)
-Codes:
-  Sxx : show message 'xx' (can be replaced by any characters)
-
-
-IFTTT EVENTS: trigger an ifttt event (given the configuration of the ifttt module)
-Codes:
-  Ix. : trigger event 'x'
-
-
-COMPOSED POSES: dances and other predefined moves usable as poses
-Codes:
-  Dan : dance n
-  Dau : dance u
-  Da\ : dance \
-  Da/ : dance /
-
-  Da0 : dance 0
-  Da1 : dance 1
-  Da2 : dance 2
-  Da3 : dance 3
-
-
-WAIT POSES: wait a given number of seconds
-Codes:
-  W1. : wait 1 second
-  ...
-  W9. : wait 9 seconds
-
-
-SPECIAL POSES
-Codes:
-  Zz. : turn all power consuming components off
-
 */
 
-    switch (c1) {
+  	if (poseStrLen(pose) == 1) { // 1 chars poses
+      char c1 = pose[0];
+      log(CLASS_BODY, Warn, "Invalid %c", c1);
 
-        // WAIT
-      case 'W': {
+      if (c1 == 'Z') {
+        lcdImgFunc('b', NULL);
+        lcdImgFunc('l', NULL);
+        iosFunc('r', false);
+        iosFunc('w', false);
+        iosFunc('y', false);
+        iosFunc('f', false);
+        arms(0, 0, ARM_FAST_STEPS);
+      } else {
+        log(CLASS_BODY, Debug, "Ignoring 1-letter-code pose %s", pose);
+      }
+      return 1;
+  	} else if (poseStrLen(pose) == 2) { // 2 chars poses
+      char c1 = pose[0];
+      char c2 = pose[1];
+
+      if (c1 == 'W') { // WAIT
         int v = getInt(c2);
         log(CLASS_BODY, Debug, "Wait %d s", v);
         delay(v * 1000);
-      } break;
-
-      // FACES
-      case 'F':
+      } else if (c1 == 'F') { // FACES
         switch (c2) {
           case '0':
             lcdImgFunc('c', images->get(0)); // custom 0
@@ -291,41 +328,88 @@ Codes:
             log(CLASS_BODY, Debug, "Face '%c'?", c2);
             break;
         }
-        break;
+      } else if (c1 == 'I') { // IFTTT
+        int i = getInt(c2);
+        log(CLASS_BODY, Debug, "Ifttt %d", i);
+        ifttt->triggerEvent(i);
+      } else {
+        log(CLASS_BODY, Debug, "Ignoring 2-letter-code pose %s", pose);
+      }
+      return 2;
 
-      // ARMS FAST
-      case 'A': {
+  	} else if (poseStrLen(pose) == 3) { // 3 chars poses
+      char c1 = pose[0];
+      char c2 = pose[1];
+      char c3 = pose[2];
+
+      if (c1 == 'A') { // ARMS FAST
         int l = getInt(c2);
         int r = getInt(c3);
         log(CLASS_BODY, Debug, "Armsf %d&%d", l, r);
         arms(l, r, ARM_FAST_STEPS);
-      } break;
-
-      // ARMS MEDIUM
-      case 'B': {
+      } else if (c1 == 'B') { // ARMS MEDIUM
         int l = getInt(c2);
         int r = getInt(c3);
         log(CLASS_BODY, Debug, "Armsn %d&%d", l, r);
         arms(l, r, ARM_NORMAL_STEPS);
-      } break;
-
-      // ARMS SLOW
-      case 'C': {
+      } else if (c1 == 'C') { // ARMS SLOW
         int l = getInt(c2);
         int r = getInt(c3);
         log(CLASS_BODY, Debug, "Armss %d&%d", l, r);
         arms(l, r, ARM_SLOW_STEPS);
-      } break;
+      } else if (c1 == 'D') { // DANCE
 
-      // IFTTT
-      case 'I': {
-        int i = getInt(c2);
-        log(CLASS_BODY, Debug, "Ifttt %d", i);
-        ifttt->triggerEvent(i);
-      } break;
+        switch (c2) {
+          case '0':
+            performMove(MOVE_DANCE0);
+            break;
+          case '1':
+            performMove(MOVE_DANCE1);
+            break;
+          case '2':
+            performMove(MOVE_DANCE2);
+            break;
+          case '3':
+            performMove(MOVE_DANCE3);
+            break;
+          case '4':
+            performMove(MOVE_DANCE4);
+            break;
+          case '5':
+            performMove(MOVE_DANCE5);
+            break;
+          case '6':
+            performMove(MOVE_DANCE6);
+            break;
+          case '7':
+            performMove(MOVE_DANCE7);
+            break;
+          case 'n':
+            performMove(MOVE_DANCE_n);
+            break;
+          case 'u':
+            performMove(MOVE_DANCE_U);
+            break;
+          case '\\':
+            performMove(MOVE_DANCE_BACK_SLASH);
+            break;
+          case '/':
+            performMove(MOVE_DANCE_FORW_SLASH);
+            break;
+          default:
+            log(CLASS_BODY, Debug, "Inv.S.pose:%c%c%c", c1, c2, c3);
+        }
+      } else {
+        log(CLASS_BODY, Warn, "Ignoring 3-letter-code pose %s", pose);
+      }
+      return 3;
+  	} else if (poseStrLen(pose) > 3) { // N chars poses
 
-      // MESSAGES
-      case 'M':
+      char c1 = pose[0];
+      char c2 = pose[1];
+      char c3 = pose[2];
+
+      if (c1 == 'M') { // MESSAGES
         switch (c2) {
           case '0':
             log(CLASS_BODY, Debug, "Msg 0");
@@ -354,13 +438,8 @@ Codes:
           case 'k': {
             log(CLASS_BODY, Debug, "Msg date");
             long t = getTiming()->getCurrentTime();
-            int h = GET_HOURS(t);
-            int m = GET_MINUTES(t);
-            int dd = GET_DAYS(t);
-            int mm = GET_MONTHS(t);
-            int yyyy = GET_YEARS(t);
             Buffer<18> b("");
-            b.fill("%4d-%02d-%02d\n%02d:%02d", yyyy, mm, dd, h, m);
+            b.fill("%4d-%02d-%02d\n%02d:%02d", GET_YEARS(t), GET_MONTHS(t), GET_DAYS(t), GET_HOURS(t), GET_MINUTES(t));
             messageFunc(0, b.getBuffer(), getInt(c3));
           } break;
           case 'q': {
@@ -375,121 +454,15 @@ Codes:
             messageFunc(0, pr.getBuffer(), getInt(c3));
           } break;
           default:
-            log(CLASS_BODY, Debug, "Inv.M.pose:%c%c%c", c1, c2, c3);
+            log(CLASS_BODY, Debug, "Invalid face %s", pose);
             break;
         }
-        break;
-
-      // IO (LEDS / FAN)
-      case 'L':
-        switch (c2) {
-          case 'r': {
-            bool b = getBool(c3);
-            log(CLASS_BODY, Debug, "Led red: %d", b);
-            iosFunc('r', b);
-            break;
-          }
-          case 'w': {
-            bool b = getBool(c3);
-            log(CLASS_BODY, Debug, "Led white: %d", b);
-            iosFunc('w', b);
-            break;
-          }
-          case 'y': {
-            bool b = getBool(c3);
-            log(CLASS_BODY, Debug, "Led yellow: %d", b);
-            iosFunc('y', b);
-            break;
-          }
-          case '?': {
-            iosFunc('r', random(2) == 0);
-            iosFunc('w', random(2) == 0);
-            iosFunc('y', random(2) == 0);
-            break;
-          }
-          case 'f': {
-            bool b = getBool(c3);
-            log(CLASS_BODY, Debug, "Fan: %d", b);
-            iosFunc('f', b);
-            break;
-          }
-          default:
-            log(CLASS_BODY, Debug, "Inv.IO.pose:%c%c%c", c1, c2, c3);
-            break;
-        }
-        break;
-
-      // SHORT MESSAGES
-      case 'S': {
-        Buffer<3> s;
-        s.fill("%c%c", c2, c3);
-        log(CLASS_BODY, Debug, "Msg short '%s'", s.getBuffer());
-        messageFunc(0, s.getBuffer(), 6);
-      } break;
-
-      default:
-
-        switch (GET_POSE(c1, c2)) {
-
-          case GET_POSE('D', 'a'):
-            switch (c3) {
-              case '0':
-                performMove(MOVE_DANCE0);
-                break;
-              case '1':
-                performMove(MOVE_DANCE1);
-                break;
-              case '2':
-                performMove(MOVE_DANCE2);
-                break;
-              case '3':
-                performMove(MOVE_DANCE3);
-                break;
-              case '4':
-                performMove(MOVE_DANCE4);
-                break;
-              case '5':
-                performMove(MOVE_DANCE5);
-                break;
-              case '6':
-                performMove(MOVE_DANCE6);
-                break;
-              case '7':
-                performMove(MOVE_DANCE7);
-                break;
-              case 'n':
-                performMove(MOVE_DANCE_n);
-                break;
-              case 'u':
-                performMove(MOVE_DANCE_U);
-                break;
-              case '\\':
-                performMove(MOVE_DANCE_BACK_SLASH);
-                break;
-              case '/':
-                performMove(MOVE_DANCE_FORW_SLASH);
-                break;
-              default:
-                log(CLASS_BODY, Debug, "Inv.S.pose:%c%c%c", c1, c2, c3);
-            }
-            break;
-
-          case GET_POSE('Z', 'z'):
-            lcdImgFunc('b', NULL);
-            lcdImgFunc('l', NULL);
-            iosFunc('r', false);
-            iosFunc('w', false);
-            iosFunc('y', false);
-            iosFunc('f', false);
-            arms(0, 0, ARM_FAST_STEPS);
-            break;
-
-          // DEFAULT
-          default:
-            log(CLASS_BODY, Debug, "Invalid pose: %c%c%c", c1, c2, c3);
-            break;
-        }
-    }
+      } else {
+        log(CLASS_BODY, Warn, "Ignoring N-letter-code pose %s", pose);
+      }
+      return poseStrLen(pose);
+  	}
+  	return -1;
   }
 
 public:
@@ -507,13 +480,11 @@ public:
     md->getTiming()->setFrek(201010101);
     for (int i = 0; i < NRO_ROUTINES; i++) {
       routines[i] = new Routine("mv");
-      routines[i]->timing->setFrek(0L); // never
-      routines[i]->move.fill("Da%d", i);
+      routines[i]->load("000000000:Z.");
     }
 
     // Overwrite last to setup clock
-    routines[NRO_ROUTINES - 1]->timing->setFrek(201010160); // once every 1 minutes
-    routines[NRO_ROUTINES - 1]->move.fill("Mc3");
+    routines[NRO_ROUTINES - 1]->load("201010160:Mc4"); // once every 1 minutes
   }
 
   const char *getName() {
@@ -558,7 +529,7 @@ public:
       while (routines[i]->timing->catchesUp(getTiming()->getCurrentTime())) {
         if (routines[i]->timing->matches()) {
           const long timing = routines[i]->timing->getFrek();
-          const char *move = routines[i]->move.getBuffer();
+          const char *move = routines[i]->timingMove.getBuffer();
           log(CLASS_BODY, Debug, "Rne %d: %ld %s", i, timing, move);
           performMove(i);
         }
@@ -568,56 +539,35 @@ public:
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
-      case (BodyMove0Prop):
-        return "mv0"; // move 0 (for routine 0)
-      case (BodyMove1Prop):
-        return "mv1";
-      case (BodyMove2Prop):
-        return "mv2";
-      case (BodyMove3Prop):
-        return "mv3";
-      case (BodyMove4Prop):
-        return "mv4";
-      case (BodyMove5Prop):
-        return "mv5";
-      case (BodyMove6Prop):
-        return "mv6";
-      case (BodyMove7Prop):
-        return "mv7";
-      case (BodyTime0Prop):
-        return "t0"; // timing 0 (for routine 0)
-      case (BodyTime1Prop):
-        return "t1";
-      case (BodyTime2Prop):
-        return "t2";
-      case (BodyTime3Prop):
-        return "t3";
-      case (BodyTime4Prop):
-        return "t4";
-      case (BodyTime5Prop):
-        return "t5";
-      case (BodyTime6Prop):
-        return "t6";
-      case (BodyTime7Prop):
-        return "t7";
+      case (BodyRoutine0Prop):
+        return "r0"; // routine 0
+      case (BodyRoutine1Prop):
+        return "r1";
+      case (BodyRoutine2Prop):
+        return "r2";
+      case (BodyRoutine3Prop):
+        return "r3";
+      case (BodyRoutine4Prop):
+        return "r4";
+      case (BodyRoutine5Prop):
+        return "r5";
+      case (BodyRoutine6Prop):
+        return "r6";
+      case (BodyRoutine7Prop):
+        return "r7";
       default:
         return "";
     }
   }
 
   void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {
-    if (propIndex >= BodyMove0Prop && propIndex < (NRO_ROUTINES + BodyMove0Prop)) {
-      int i = (int)propIndex - (int)BodyMove0Prop;
-      setPropValue(m, targetValue, actualValue, &routines[i]->move);
-    } else if (propIndex >= BodyTime0Prop && propIndex < (NRO_ROUTINES + BodyTime0Prop)) {
-      int i = (int)propIndex - (int)BodyTime0Prop;
+    if (propIndex >= BodyRoutine0Prop && propIndex < (NRO_ROUTINES + BodyRoutine0Prop)) {
+      int i = (int)propIndex - (int)BodyRoutine0Prop;
       if (m == SetCustomValue) {
-        Long b(targetValue);
-        routines[i]->timing->setFrek(b.get());
+        routines[i]->timingMove.load(targetValue);
       }
       if (actualValue != NULL) {
-        Long b(routines[i]->timing->getFrek());
-        actualValue->load(&b);
+        actualValue->load(&routines[i]->timingMove);
       }
     }
     if (m != GetValue) {
@@ -640,7 +590,7 @@ public:
   }
 
   const char *getMove(int moveIndex) {
-    return routines[POSIT(moveIndex % NRO_ROUTINES)]->move.getBuffer();
+    return routines[POSIT(moveIndex % NRO_ROUTINES)]->timingMove.getBuffer() + TIMING_AND_SEPARATOR_STR_LEN;
   }
 
   void performMove(int moveIndex) {
@@ -648,12 +598,9 @@ public:
   }
 
   void performMove(const char *move) {
-    if (strlen(move) % POSE_STR_LENGTH != 0) {
-      log(CLASS_BODY, Warn, "Invalid move: %s", move);
-      return;
-    }
-    for (size_t i = 0; i < strlen(move); i += POSE_STR_LENGTH) {
-      performPose(move[i + 0], move[i + 1], move[i + 2]);
+    int advance = 0;
+    for (size_t i = 0; i < strlen(move) && i != -1; i += (advance + 1)) {
+      advance = performPose(move);
     }
   }
 };
