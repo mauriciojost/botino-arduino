@@ -34,7 +34,6 @@
 #include <main4ino/Value.h>
 
 #define CLASS_BODY "BO"
-#define MOVE_STR_LENGTH 40
 
 #define ON 1
 #define OFF 0
@@ -66,6 +65,7 @@ enum BodyProps {
 #define TIMING_STR_LEN 9
 #define TIMING_AND_SEPARATOR_STR_LEN (TIMING_STR_LEN + 1)
 
+#define MOVE_STR_LENGTH (32 + TIMING_AND_SEPARATOR_STR_LEN)
 
 #define MOVE_DANCE0 "LwyB09B90LwnB09B90LwyB55"
 #define MOVE_DANCE1 "LfyLyyLwyA50A05LryLwnA00A99LrnLwyA90A09LwnLyyA90A09"
