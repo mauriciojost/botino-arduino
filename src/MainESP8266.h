@@ -139,7 +139,7 @@ void logLine(const char *str) {
 
 bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries) {
   wl_status_t status;
-  log(CLASS_MAIN, Info, "To '%s'/'%s'...", ssid, pass);
+  log(CLASS_MAIN, Info, "To '%s'...", ssid);
 
   if (skipIfConnected) {
     log(CLASS_MAIN, Info, "Conn.?");
@@ -606,10 +606,6 @@ void hwTest() {
   log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(USER_DELAY_MS);
   aux.fill("SSI: %s", WIFI_SSID_INIT);
-  messageFuncExt(0, 2, aux.getBuffer());
-  log(CLASS_MAIN, Debug, aux.getBuffer());
-  delay(USER_DELAY_MS);
-  aux.fill("PAS: %s", WIFI_PASSWORD_INIT);
   messageFuncExt(0, 2, aux.getBuffer());
   log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(USER_DELAY_MS);

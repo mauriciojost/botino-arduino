@@ -20,8 +20,6 @@ bool initWifiInit() {
   delay(USER_DELAY_MS);
   messageFuncExt(0, 2, WIFI_SSID_INIT);
   delay(USER_DELAY_MS);
-  messageFuncExt(0, 2, WIFI_PASSWORD_INIT);
-  delay(USER_DELAY_MS);
   bool connected = initWifi(WIFI_SSID_INIT, WIFI_PASSWORD_INIT, false, 20);
   if (connected) {
     messageFuncExt(0, 2, "HOTSPOT OK");
