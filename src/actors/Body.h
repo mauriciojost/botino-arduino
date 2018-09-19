@@ -246,10 +246,10 @@ Codes:
 
 MESSAGE POSES: show a certain message in the LCD with a given font size
 Codes:
-  Mc4 : show message containing current time (with font size 4)
-  Mk3 : show message containing current date-time (with font size 3)
-  Mp1 : show random future reading (with font size 1)
-  Mq1 : show random quote (with font size 1)
+  Mc4. : show message containing current time (with font size 4)
+  Mk3. : show message containing current date-time (with font size 3)
+  Mp1. : show random future reading (with font size 1)
+  Mq1. : show random quote (with font size 1)
 
 
 ### N>3 LETTER CODE POSES
@@ -258,6 +258,9 @@ MESSAGE POSES: show a certain message in the LCD with a given font size
 Codes:
   M1HELLO. : show message HELLO with font size 1 (user provided)
 
+IFTTT EVENTS: trigger an ifttt event (by its name)
+Codes:
+  Iname. : trigger event 'name'
 */
 
   if (poseStrLen(pose) == 0) { // 0 chars poses
@@ -491,6 +494,12 @@ Codes:
         msg.replace('.', 0);
         log(CLASS_BODY, Debug, "Msg '%s'", msg.getBuffer());
         messageFunc(0, msg.getBuffer(), size);
+      } else if (c1 == 'I') { // IFTTT
+        int size = getInt(c2);
+        Buffer<MOVE_STR_LENGTH> evt(pose + 1);
+        evt.replace('.', 0);
+        log(CLASS_BODY, Debug, "Event '%s'", evt.getBuffer());
+        ifttt->triggerEvent(evt.getBuffer());
       } else {
         log(CLASS_BODY, Warn, "Ignoring N-letter-code pose %s", pose);
       }

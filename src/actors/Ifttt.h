@@ -73,15 +73,13 @@ public:
     return eventNames[safeEvtNumber]->getBuffer();
   }
 
-  bool triggerEvent(int eventNumber) {
+  bool triggerEvent(const char* eventName) {
     if (initWifiFunc == NULL || httpPost == NULL) {
       log(CLASS_IFTTT, Error, "Init needed");
       return false;
     }
     bool connected = initWifiFunc();
     if (connected) {
-      int safeEvtNumber = POSIT(eventNumber % NRO_EVENTS);
-      const char *eventName = getEventName(safeEvtNumber);
       urlAuxBuffer.fill(IFTTT_API_URL_POS, eventName, iftttKey.getBuffer());
       int errorCodePost = httpPost(urlAuxBuffer.getBuffer(), "{}", NULL);
       if (errorCodePost == HTTP_OK) {
@@ -89,6 +87,12 @@ public:
       }
     }
     return false;
+  }
+
+  bool triggerEvent(int eventNumber) {
+    int safeEvtNumber = POSIT(eventNumber % NRO_EVENTS);
+    const char *eventName = getEventName(safeEvtNumber);
+    return triggerEvent(eventName);
   }
 
   void getSetPropValue(int propIndex, GetSetMode setMode, const Value *targetValue, Value *actualValue) {
