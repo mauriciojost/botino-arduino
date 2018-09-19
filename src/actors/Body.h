@@ -171,7 +171,7 @@ private:
 POSES (X-char codes separated by separator)
 --------------------
 
-###1 LETTER CODE POSES
+### 1 LETTER CODE POSES
 
 Codes:
   Z. : turn all power consuming components off
@@ -243,18 +243,19 @@ Codes:
   Da2. : dance 2
   Da3. : dance 3
 
-
-### N LETTER CODE POSES
-
 MESSAGE POSES: show a certain message in the LCD with a given font size
 Codes:
-  M01 : show message 0 with font size 1 (user provided)
-  ...
-  M32 : show message 3 with font size 2 (user provided)
   Mc4 : show message containing current time (with font size 4)
   Mk3 : show message containing current date-time (with font size 3)
   Mp1 : show random future reading (with font size 1)
   Mq1 : show random quote (with font size 1)
+
+
+### N>3 LETTER CODE POSES
+
+MESSAGE POSES: show a certain message in the LCD with a given font size
+Codes:
+  M1HELLO. : show message HELLO with font size 1 (user provided)
 
 */
 
