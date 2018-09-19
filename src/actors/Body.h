@@ -139,6 +139,7 @@ private:
   }
 
   int getInt(char c) {
+  	// '0' -> 0, ..., '9' -> 9
     return ABSOL(c - '0');
   }
 
@@ -512,7 +513,7 @@ public:
     md = new Metadata(n);
     md->getTiming()->setFrek(201010101);
     for (int i = 0; i < NRO_ROUTINES; i++) {
-      routines[i] = new Routine("mv");
+      routines[i] = new Routine("r");
       routines[i]->load("000000000:Z.");
     }
 
