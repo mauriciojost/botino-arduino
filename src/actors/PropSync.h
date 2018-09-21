@@ -108,7 +108,7 @@ public:
       JsonObject &json = httpBodyResponse.parse();
       bot->setPropsJson(json, actorIndex);
       actor->getMetadata()->restored();
-    } else if (errorCodeRes == HTTP_EXPECTATION_FAILED) { // no data stored in the server
+    } else if (errorCodeRes == HTTP_NO_CONTENT) { // no data stored in the server
       log(CLASS_PROPSYNC, Debug, "OK: %d", errorCodeRes);
       actor->getMetadata()->restored();
     } else { // failure, will retry after
