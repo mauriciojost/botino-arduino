@@ -56,10 +56,25 @@ Codes:
   F2. : Face custom 2 (user provided)
   F3. : Face custom 3 (user provided)
 
+COMPOSED POSES: dances and other predefined moves usable as poses
+Codes:
+  Dn. : dance n
+  Du. : dance u
+  D\. : dance \
+  D/. : dance /
+
+  D0. : dance 0
+  D1. : dance 1
+  D2. : dance 2
+  D3. : dance 3
+
 IFTTT EVENTS: trigger an ifttt event (given the configuration of the ifttt module)
 Codes:
   Ix. : trigger event 'x'
 
+IO POSES: turn on/off a given IO device, such as LEDS or the FAN (on = y, off = n)
+Codes:
+  L?.. : turn randomly all leds
 
 ### 3 LETTER CODE POSES
 
@@ -83,18 +98,6 @@ Codes:
   Lyy. : turn on (y) led Yellow
   L?.. : turn randomly all leds
   Lfy. : turn on (y) Fan
-
-COMPOSED POSES: dances and other predefined moves usable as poses
-Codes:
-  Dan. : dance n
-  Dau. : dance u
-  Da\. : dance \
-  Da/. : dance /
-
-  Da0. : dance 0
-  Da1. : dance 1
-  Da2. : dance 2
-  Da3. : dance 3
 
 MESSAGE POSES: show a certain message in the LCD with a given font size
 Codes:
@@ -168,7 +171,7 @@ enum BodyProps {
 #define MOVE_DANCE0 "LwyB09B90LwnB09B90LwyB55"
 #define MOVE_DANCE1 "LfyLyyLwyA50A05LryLwnA00A99LrnLwyA90A09LwnLyyA90A09"
 #define MOVE_DANCE2 "A87A78L?.A87A78L?.A12A21L?.A12A21L?."
-#define MOVE_DANCE3 "Da/Da\\DauDan"
+#define MOVE_DANCE3 "D/a\\DuDn"
 #define MOVE_DANCE4 "S4?"
 #define MOVE_DANCE5 "S5?"
 #define MOVE_DANCE6 "S6?"
@@ -344,6 +347,59 @@ private:
         int i = getInt(c2);
         log(CLASS_BODY, Debug, "Ifttt %d", i);
         ifttt->triggerEvent(i);
+      } else if (c1 == 'L') { // IO (LEDS / FAN)
+      	switch(c2) {
+          case '?': {
+            iosFunc('r', random(2) == 0);
+            iosFunc('w', random(2) == 0);
+            iosFunc('y', random(2) == 0);
+            break;
+          }
+          default:
+            log(CLASS_BODY, Debug, "Inv.IO.pose:%c%c", c1, c2);
+            break;
+      	}
+      } else if (c1 == 'D') { // DANCE
+        switch (c2) {
+          case '0':
+            performMove(MOVE_DANCE0);
+            break;
+          case '1':
+            performMove(MOVE_DANCE1);
+            break;
+          case '2':
+            performMove(MOVE_DANCE2);
+            break;
+          case '3':
+            performMove(MOVE_DANCE3);
+            break;
+          case '4':
+            performMove(MOVE_DANCE4);
+            break;
+          case '5':
+            performMove(MOVE_DANCE5);
+            break;
+          case '6':
+            performMove(MOVE_DANCE6);
+            break;
+          case '7':
+            performMove(MOVE_DANCE7);
+            break;
+          case 'n':
+            performMove(MOVE_DANCE_n);
+            break;
+          case 'u':
+            performMove(MOVE_DANCE_U);
+            break;
+          case '\\':
+            performMove(MOVE_DANCE_BACK_SLASH);
+            break;
+          case '/':
+            performMove(MOVE_DANCE_FORW_SLASH);
+            break;
+          default:
+            log(CLASS_BODY, Debug, "Inv. dance:%c%c", c1, c2);
+        }
       } else {
         log(CLASS_BODY, Debug, "Ignoring 2-letter-code pose %s", pose);
       }
@@ -389,12 +445,6 @@ private:
             iosFunc('y', b);
             break;
           }
-          case '?': {
-            iosFunc('r', random(2) == 0);
-            iosFunc('w', random(2) == 0);
-            iosFunc('y', random(2) == 0);
-            break;
-          }
           case 'f': {
             bool b = getBool(c3);
             log(CLASS_BODY, Debug, "Fan: %d", b);
@@ -405,49 +455,6 @@ private:
             log(CLASS_BODY, Debug, "Inv.IO.pose:%c%c%c", c1, c2, c3);
             break;
         }
-
-      } else if (c1 == 'D') { // DANCE
-        switch (c2) {
-          case '0':
-            performMove(MOVE_DANCE0);
-            break;
-          case '1':
-            performMove(MOVE_DANCE1);
-            break;
-          case '2':
-            performMove(MOVE_DANCE2);
-            break;
-          case '3':
-            performMove(MOVE_DANCE3);
-            break;
-          case '4':
-            performMove(MOVE_DANCE4);
-            break;
-          case '5':
-            performMove(MOVE_DANCE5);
-            break;
-          case '6':
-            performMove(MOVE_DANCE6);
-            break;
-          case '7':
-            performMove(MOVE_DANCE7);
-            break;
-          case 'n':
-            performMove(MOVE_DANCE_n);
-            break;
-          case 'u':
-            performMove(MOVE_DANCE_U);
-            break;
-          case '\\':
-            performMove(MOVE_DANCE_BACK_SLASH);
-            break;
-          case '/':
-            performMove(MOVE_DANCE_FORW_SLASH);
-            break;
-          default:
-            log(CLASS_BODY, Debug, "Inv.S.pose:%c%c%c", c1, c2, c3);
-        }
-
       } else if (c1 == 'M') { // MESSAGES
         switch (c2) {
           case 'c': {
