@@ -19,6 +19,104 @@
  *
  */
 
+/*
+
+POSES (X-char codes separated by separator)
+--------------------
+
+### 1 LETTER CODE POSES
+
+Codes:
+  Z. : turn all power consuming components off
+
+
+### 2 LETTER CODE POSES
+
+WAIT POSES: wait a given number of seconds
+Codes:
+  W1. : wait 1 second
+  ...
+  W9. : wait 9 seconds
+
+FACE POSES: show a given image in the LCD
+Codes:
+  Fw. : Face White
+  Fb. : Face Black
+  Fa. : Face Angry
+  Fr. : Face cRazy
+  Fl. : Face cLear
+  Fs. : Face Smily
+  FS. : Face Sad
+  Fn. : Face Normal
+  Fz. : Face Zleepy
+  F_. : Face dimmed
+  F-. : Face bright
+  F0. : Face custom 0 (user provided)
+  F1. : Face custom 1 (user provided)
+  F2. : Face custom 2 (user provided)
+  F3. : Face custom 3 (user provided)
+
+IFTTT EVENTS: trigger an ifttt event (given the configuration of the ifttt module)
+Codes:
+  Ix. : trigger event 'x'
+
+
+### 3 LETTER CODE POSES
+
+ARMS POSES: move both arms to a given position each (left, then right) (A=fast, B=normal, C=slow)
+Codes:
+  A00. : Move left and right arms to respective position 0 and 0 (both down) at high speed
+  ...
+  A90. : Move left and right arms to respective position 9 and 0 (left arm up) at high speed
+  ...
+  A99. : Move left and right arms to respective position 9 and 9 (both up) at high speed
+
+  B99. : Move left and right arms to respective position 9 and 9 (both up) at normal speed
+
+  C99. : Move left and right arms to respective position 9 and 9 (both up) at low speed
+
+IO POSES: turn on/off a given IO device, such as LEDS or the FAN (on = y, off = n)
+Codes:
+  Lry. : turn on (y) the Red led
+  Lrn. : turn off (n) the Red led
+  Lwy. : turn on (y) led White
+  Lyy. : turn on (y) led Yellow
+  L?.. : turn randomly all leds
+  Lfy. : turn on (y) Fan
+
+COMPOSED POSES: dances and other predefined moves usable as poses
+Codes:
+  Dan. : dance n
+  Dau. : dance u
+  Da\. : dance \
+  Da/. : dance /
+
+  Da0. : dance 0
+  Da1. : dance 1
+  Da2. : dance 2
+  Da3. : dance 3
+
+MESSAGE POSES: show a certain message in the LCD with a given font size
+Codes:
+  Mc4. : show message containing current time (with font size 4)
+  Mk3. : show message containing current date-time (with font size 3)
+  Mp1. : show random future reading (with font size 1)
+  Mq1. : show random quote (with font size 1)
+
+
+### N>3 LETTER CODE POSES
+
+MESSAGE POSES: show a certain message in the LCD with a given font size
+Codes:
+  M1HELLO. : show message HELLO with font size 1 (user provided)
+
+IFTTT EVENTS: trigger an ifttt event (by its name)
+Codes:
+  Iname. : trigger event 'name'
+
+
+*/
+
 #include <string.h>
 #include <Hexer.h>
 #include <actors/Images.h>
@@ -166,102 +264,6 @@ private:
    * Returns the next pose in the string or NULL if no more poses to perform.
    */
   const char* performPose(const char* pose) {
-
-    /*
-
-POSES (X-char codes separated by separator)
---------------------
-
-### 1 LETTER CODE POSES
-
-Codes:
-  Z. : turn all power consuming components off
-
-
-### 2 LETTER CODE POSES
-
-WAIT POSES: wait a given number of seconds
-Codes:
-  W1. : wait 1 second
-  ...
-  W9. : wait 9 seconds
-
-FACE POSES: show a given image in the LCD
-Codes:
-  Fw. : Face White
-  Fb. : Face Black
-  Fa. : Face Angry
-  Fr. : Face cRazy
-  Fl. : Face cLear
-  Fs. : Face Smily
-  FS. : Face Sad
-  Fn. : Face Normal
-  Fz. : Face Zleepy
-  F_. : Face dimmed
-  F-. : Face bright
-  F0. : Face custom 0 (user provided)
-  F1. : Face custom 1 (user provided)
-  F2. : Face custom 2 (user provided)
-  F3. : Face custom 3 (user provided)
-
-IFTTT EVENTS: trigger an ifttt event (given the configuration of the ifttt module)
-Codes:
-  Ix. : trigger event 'x'
-
-
-### 3 LETTER CODE POSES
-
-ARMS POSES: move both arms to a given position each (left, then right) (A=fast, B=normal, C=slow)
-Codes:
-  A00. : Move left and right arms to respective position 0 and 0 (both down) at high speed
-  ...
-  A90. : Move left and right arms to respective position 9 and 0 (left arm up) at high speed
-  ...
-  A99. : Move left and right arms to respective position 9 and 9 (both up) at high speed
-
-  B99. : Move left and right arms to respective position 9 and 9 (both up) at normal speed
-
-  C99. : Move left and right arms to respective position 9 and 9 (both up) at low speed
-
-IO POSES: turn on/off a given IO device, such as LEDS or the FAN (on = y, off = n)
-Codes:
-  Lry. : turn on (y) the Red led
-  Lrn. : turn off (n) the Red led
-  Lwy. : turn on (y) led White
-  Lyy. : turn on (y) led Yellow
-  L?.. : turn randomly all leds
-  Lfy. : turn on (y) Fan
-
-COMPOSED POSES: dances and other predefined moves usable as poses
-Codes:
-  Dan. : dance n
-  Dau. : dance u
-  Da\. : dance \
-  Da/. : dance /
-
-  Da0. : dance 0
-  Da1. : dance 1
-  Da2. : dance 2
-  Da3. : dance 3
-
-MESSAGE POSES: show a certain message in the LCD with a given font size
-Codes:
-  Mc4. : show message containing current time (with font size 4)
-  Mk3. : show message containing current date-time (with font size 3)
-  Mp1. : show random future reading (with font size 1)
-  Mq1. : show random quote (with font size 1)
-
-
-### N>3 LETTER CODE POSES
-
-MESSAGE POSES: show a certain message in the LCD with a given font size
-Codes:
-  M1HELLO. : show message HELLO with font size 1 (user provided)
-
-IFTTT EVENTS: trigger an ifttt event (by its name)
-Codes:
-  Iname. : trigger event 'name'
-*/
 
   if (poseStrLen(pose) == 0) { // 0 chars poses
   	return NULL;
