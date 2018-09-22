@@ -132,20 +132,23 @@ However this method is not recommended.
 To upload the firmware just do: 
 
 ```
-export VERSION=`cat library.json | jshon -e version -u`
-# or
-export VERSION=$(git rev-parse --short HEAD) 
+# upload via USB serial port:
 
-# then compile, upload, and display logs doing either:
+ ./upload dev7-custom
 
-export PLATFORMIO_BUILD_FLAGS="`cat profiles/demo.prof`" 
+# if you want to upload via OTA: 
 
-platformio run --target upload 
-# or:
-platformio run --target upload --upload-port <IP> # OTA
+ platformio run --target upload --upload-port <IP> # OTA
 
+```
+
+To see the logs:
+```
+# using minicom:
+ sudo minicom -D /dev/ttyUSB0 -b 128000 -z -L -l # + Ctrl+a u  (and Ctrl+a q to exit)
+
+# using platformio serial monitor:
  ./serial_monitor 0
-
 
 ```
 
