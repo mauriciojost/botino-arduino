@@ -503,7 +503,6 @@ private:
         log(CLASS_BODY, Debug, "Msg '%s'", msg.getBuffer());
         messageFunc(0, msg.getBuffer(), size);
       } else if (c1 == 'I') { // IFTTT
-        int size = getInt(c2);
         Buffer<MOVE_STR_LENGTH> evt(pose + 1);
         evt.replace('.', 0);
         log(CLASS_BODY, Debug, "Event '%s'", evt.getBuffer());
