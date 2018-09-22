@@ -40,30 +40,15 @@ You are the boss. You tell *Botino* what to do. There are several settings you c
 *Botino*'s internal components are called actors. Each actor has a precise role, and a set of properties
 you can tune to get the behaviour you want.
 
-#### Actor urls
-
-Any actor can be read or writen via the internet, performing HTTP verbs on defined URLS.
-
-Just replace `DEVICENAME` with your device name, and `ACTORNAME` with the name of the actor you want to read/write.
-
-| Purpose                       | HTTP VERB | URL                                                               |
-| ----------------------------- | --------- | ----------------------------------------------------------------- |
-| Get the information of an actor | GET       | http://dweet.io/get/latest/dweet/for/DEVICENAME-ACTORNAME-infos |
-| Get the status of an actor    | GET       | http://dweet.io/get/latest/dweet/for/DEVICENAME-ACTORNAME-current |
-| Change the status of an actor | POST      | http://dweet.io/dweet/for/DEVICENAME-ACTORNAME-target             |
-
-
-To change the current status of the actor follow the same schema as observed with GET status.
-
-#### Actors 
 
 | Actor name    | Actor description                                                                    | Properties                         |
 | ------------- | ------------------------------------------------------------------------------------ | ---------------------------------- |
 | settings      | Is in charge of gather general purpose settings, mostly for development purposes.    | [Settings.h](src/actors/Settings.h)|
 | body          | This is the core of the alarm, driven by routines triggered at specific moments.     | [Body.h](src/actors/Body.h)        |
 | images        | Holds custom images to be used.                                                      | [Images.h](src/actors/Images.h)    |
-| messages      | Holds custom messages to be used.                                                    | [Messages.h](src/actors/Messages.h)|
 | ...           |                                                                                      | [...](src/actors/)                 |
+
+Control your botino via the [Botino portal](http://martinenhome.com:6780).
 
 # 2. Extras
 
