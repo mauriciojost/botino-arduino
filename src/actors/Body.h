@@ -495,7 +495,6 @@ private:
 
       char c1 = pose[0];
       char c2 = pose[1];
-      char c3 = pose[2];
 
       if (c1 == 'M') { // MESSAGES
         int size = getInt(c2);
@@ -645,7 +644,6 @@ public:
   }
 
   void performMove(const char *move) {
-    int advance = 0;
     const char* p = move;
     while((p = performPose(p)) != NULL){ }
   }
