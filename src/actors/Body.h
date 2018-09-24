@@ -168,19 +168,19 @@ enum BodyProps {
 
 #define MOVE_STR_LENGTH (32 + TIMING_AND_SEPARATOR_STR_LEN)
 
-#define MOVE_DANCE0 "LwyB09B90LwnB09B90LwyB55"
-#define MOVE_DANCE1 "LfyLyyLwyA50A05LryLwnA00A99LrnLwyA90A09LwnLyyA90A09"
-#define MOVE_DANCE2 "A87A78L?.A87A78L?.A12A21L?.A12A21L?."
-#define MOVE_DANCE3 "D/a\\DuDn"
+#define MOVE_DANCE0 "Lwy.B09.B90.Lwn.B09.B90.Lwy.B55."
+#define MOVE_DANCE1 "Lfy.Lyy.Lwy.A50.A05.Lry.Lwn.A00.A99.Lrn.Lwy.A90.A09.Lwn.Lyy.A90.A09."
+#define MOVE_DANCE2 "A87.A78.L?.A87.A78.L?.A12.A21.L?.A12.A21.L?."
+#define MOVE_DANCE3 "Da.D\\.Du.Dn."
 #define MOVE_DANCE4 "S4?"
 #define MOVE_DANCE5 "S5?"
 #define MOVE_DANCE6 "S6?"
 #define MOVE_DANCE7 "S7?"
 
-#define MOVE_DANCE_U "A87A78L?.A87A78L?.A87A78L?.A87A78L?."
-#define MOVE_DANCE_n "A12A21L?.A12A21L?.A12A21L?.A12A21L?."
-#define MOVE_DANCE_BACK_SLASH "A71A82L?.A71A82L?.A71A82L?.A71A82"
-#define MOVE_DANCE_FORW_SLASH "A17A28L?.A17A28L?.A17A28L?.A17A28"
+#define MOVE_DANCE_U "A87.A78.L?.A87.A78.L?.A87.A78.L?.A87.A78.L?."
+#define MOVE_DANCE_n "A12.A21.L?.A12.A21.L?.A12.A21.L?.A12.A21.L?."
+#define MOVE_DANCE_BACK_SLASH "A71.A82.L?.A71.A82.L?.A71.A82.L?.A71.A82."
+#define MOVE_DANCE_FORW_SLASH "A17.A28.L?.A17.A28.L?.A17.A28.L?.A17.A28."
 
 // Create images with:
 // https://docs.google.com/spreadsheets/d/1jXa9mFxeiN_bUji_WiCPKO_gB6pxQUeQ5QxgoSINqdc/edit#gid=0
@@ -270,11 +270,13 @@ public:
    */
   const char* performPose(const char* pose) {
 
-  if (poseStrLen(pose) == -1) { // invalid number of chars poses
+  int poseLen = poseStrLen(pose);
+
+  if (poseLen == -1) { // invalid number of chars poses
   	return NULL;
-  } else if (poseStrLen(pose) == 0) { // 0 chars poses
+  } else if (poseLen == 0) { // 0 chars poses
   	return NULL;
-  } else if (poseStrLen(pose) == 1) { // 1 chars poses
+  } else if (poseLen == 1) { // 1 chars poses
       char c1 = pose[0];
       if (c1 == 'Z') {
         lcdImgFunc('b', NULL);
@@ -288,7 +290,7 @@ public:
         log(CLASS_BODY, Debug, "Ignoring 1-letter-code pose %s", pose);
       }
       return pose + 1 + 1;
-  	} else if (poseStrLen(pose) == 2) { // 2 chars poses
+  	} else if (poseLen == 2) { // 2 chars poses
       char c1 = pose[0];
       char c2 = pose[1];
 
@@ -409,7 +411,7 @@ public:
       }
       return pose + 2 + 1;
 
-  	} else if (poseStrLen(pose) == 3) { // 3 chars poses
+  	} else if (poseLen == 3) { // 3 chars poses
       char c1 = pose[0];
       char c2 = pose[1];
       char c3 = pose[2];
@@ -495,7 +497,7 @@ public:
         log(CLASS_BODY, Warn, "Ignoring 3-letter-code pose %s", pose);
       }
       return pose + 3 + 1;
-  	} else if (poseStrLen(pose) > 3) { // N chars poses
+  	} else if (poseLen > 3) { // N chars poses
 
       char c1 = pose[0];
       char c2 = pose[1];
@@ -514,7 +516,7 @@ public:
       } else {
         log(CLASS_BODY, Warn, "Ignoring N-letter-code pose %s", pose);
       }
-      return pose + poseStrLen(pose) + 1;
+      return pose + poseLen + 1;
   	} else {
       return NULL;
   	}
