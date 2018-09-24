@@ -120,25 +120,25 @@ void test_body_performs_basic_moves() {
 
   TEST_ASSERT_EQUAL_STRING("", lastArms);
 
-  executeMove(&b, "201010101:A91");
+  executeMove(&b, "201010101:A91.");
   TEST_ASSERT_EQUAL_STRING("left:9,right:1,steps:20", lastArms);
 
-  executeMove(&b, "201010101:B56");
+  executeMove(&b, "201010101:B56.");
   TEST_ASSERT_EQUAL_STRING("left:5,right:6,steps:40", lastArms);
 
-  executeMove(&b, "201010101:C13");
+  executeMove(&b, "201010101:C13.");
   TEST_ASSERT_EQUAL_STRING("left:1,right:3,steps:100", lastArms);
 
-  executeMove(&b, "201010101:Lyn");
+  executeMove(&b, "201010101:Lyn.");
   TEST_ASSERT_EQUAL(false, ledY);
 
-  executeMove(&b, "201010101:Lyy");
+  executeMove(&b, "201010101:Lyy.");
   TEST_ASSERT_EQUAL(true, ledY);
 
-  executeMove(&b, "201010101:Lfn");
+  executeMove(&b, "201010101:Lfn.");
   TEST_ASSERT_EQUAL(false, fan);
 
-  executeMove(&b, "201010101:Lfy");
+  executeMove(&b, "201010101:Lfy.");
   TEST_ASSERT_EQUAL(true, fan);
 
   executeMove(&b, "201010101:Z.");
@@ -148,7 +148,7 @@ void test_body_performs_basic_moves() {
   TEST_ASSERT_EQUAL(false, ledW);
   TEST_ASSERT_EQUAL(false, fan);
 
-  executeMove(&b, "201010101:M1HEY");
+  executeMove(&b, "201010101:M1HEY.");
   TEST_ASSERT_EQUAL_STRING("HEY", lastMsg);
 }
 
@@ -161,15 +161,39 @@ void test_body_creates_predictions() {
   Body b("b");
   initBody(&b, &q, &i, &it);
 
-  executeMove(&b, "201010101:Mp1");
+  executeMove(&b, "201010101:Mp1.");
   TEST_ASSERT_EQUAL_STRING("your colleague will ride your colleague at work", lastMsg);
 }
+
+void test_body_parses_moves() {
+
+  Quotes q("q");
+  Images i("i");
+  Ifttt it("m");
+
+  Body b("b");
+  initBody(&b, &q, &i, &it);
+
+  TEST_ASSERT_EQUAL_STRING("", lastArms);
+
+  // Move correctly formed
+  TEST_ASSERT_EQUAL_STRING("Z.", b.performPose("Mp1.Z.")); // consume 1 pose at a time
+  TEST_ASSERT_EQUAL_STRING("", b.performPose("Z."));
+  TEST_ASSERT_EQUAL(NULL, b.performPose(""));
+
+  // Move malformed (does not end in .)
+  TEST_ASSERT_EQUAL_STRING("Z", b.performPose("Mp1.Z")); // consume 1 pose at a time
+  TEST_ASSERT_EQUAL(NULL, b.performPose("Z"));
+
+}
+
 
 int main() {
   UNITY_BEGIN();
   RUN_TEST(test_body_shows_time);
   RUN_TEST(test_body_performs_basic_moves);
   RUN_TEST(test_body_creates_predictions);
+  RUN_TEST(test_body_parses_moves);
   return (UNITY_END());
 }
 

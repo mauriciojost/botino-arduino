@@ -254,12 +254,14 @@ private:
   	} else {
       const char* f = strchr((p), POSE_SEPARATOR);
       if (f == NULL) { // no separator found
-        return strlen(p);
+        return -1;
       } else { // separator found
         return (int)(f - p);
       }
     }
   }
+
+public:
 
   /**
    * Perform a given pose
@@ -268,7 +270,9 @@ private:
    */
   const char* performPose(const char* pose) {
 
-  if (poseStrLen(pose) == 0) { // 0 chars poses
+  if (poseStrLen(pose) == -1) { // invalid number of chars poses
+  	return NULL;
+  } else if (poseStrLen(pose) == 0) { // 0 chars poses
   	return NULL;
   } else if (poseStrLen(pose) == 1) { // 1 chars poses
       char c1 = pose[0];
@@ -516,7 +520,6 @@ private:
   	}
   }
 
-public:
   Body(const char *n) {
     name = n;
     arms = NULL;
