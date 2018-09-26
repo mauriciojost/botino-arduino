@@ -50,19 +50,19 @@ class SetupSync : public Actor {
 private:
   const char *name;
 
-  char ssid[CREDENTIAL_BUFFER_SIZE];
-  char pass[CREDENTIAL_BUFFER_SIZE];
-  char ifttt[CREDENTIAL_BUFFER_SIZE];
-  char timeKey[CREDENTIAL_BUFFER_SIZE];
+  Buffer<CREDENTIAL_BUFFER_SIZE> ssid;
+  Buffer<CREDENTIAL_BUFFER_SIZE> pass;
+  Buffer<CREDENTIAL_BUFFER_SIZE> ifttt;
+  Buffer<CREDENTIAL_BUFFER_SIZE> timeKey;
   Metadata* md;
 
 public:
   SetupSync(const char *n) {
     name = n;
-    strcpy(ssid, WIFI_SSID_STEADY);
-    strcpy(pass, WIFI_PASSWORD_STEADY);
-    strcpy(ifttt, IFTTT_KEY);
-    strcpy(timeKey, TIMEZONE_DB_KEY);
+    ssid.load(WIFI_SSID_STEADY);
+    pass.load(WIFI_PASSWORD_STEADY);
+    ifttt.load(IFTTT_KEY);
+    timeKey.load(TIMEZONE_DB_KEY);
     md = new Metadata(n);
   }
 
@@ -120,35 +120,35 @@ public:
   }
 
   const char *getSsid() {
-    return ssid;
+    return ssid.getBuffer();
   }
 
   void setSsid(const char *s) {
-    strcpy(ssid, s);
+    ssid.load(s);
   }
 
   const char *getPass() {
-    return pass;
+    return pass.getBuffer();
   }
 
   void setPass(const char *s) {
-    strcpy(pass, s);
+    pass.load(s);
   }
 
   const char *getIfttt() {
-    return ifttt;
+    return ifttt.getBuffer();
   }
 
   void setIfttt(const char *s) {
-    strcpy(ifttt, s);
+    ifttt.load(s);
   }
 
   const char *getTimeKey() {
-    return timeKey;
+    return timeKey.getBuffer();
   }
 
   void setTimeKey(const char *s) {
-    strcpy(timeKey, s);
+    timeKey.load(s);
   }
 
 
@@ -157,7 +157,7 @@ public:
   }
 
   bool isInitialized() {
-    return ssid[0] != '?' && pass[0] != '?' && ifttt[0] != '?';
+    return ssid.getBuffer()[0] != '?' && pass.getBuffer()[0] != '?' && ifttt.getBuffer()[0] != '?';
   }
 };
 
