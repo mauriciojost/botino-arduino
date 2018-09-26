@@ -12,15 +12,15 @@
 
 #define CLASS_PROPSYNC "PY"
 
-#ifndef BOTINOBE_API_HOST_BASE
-#error "Must define BOTINOBE_API_HOST_BASE"
+#ifndef MAIN4INOSERVER_API_HOST_BASE
+#error "Must define MAIN4INOSERVER_API_HOST_BASE"
 #endif
 
-#define BOTINOBE_API_URL_BASE BOTINOBE_API_HOST_BASE "/api/v1/devices/" DEVICE_NAME
-#define BOTINOBE_API_URL_POST_CURRENT BOTINOBE_API_URL_BASE "/actors/%s/reports"
-#define BOTINOBE_API_URL_GET_TARGET BOTINOBE_API_URL_BASE "/actors/%s/targets/summary?consume=true&status=C"
-#define BOTINOBE_API_URL_RESTORE_CURRENT BOTINOBE_API_URL_BASE "/actors/%s/reports/last"
-#define BOTINOBE_API_URL_GET_PROPS_TO_CONSUME_COUNT BOTINOBE_API_URL_BASE "/targets/count?status=C"
+#define MAIN4INOSERVER_API_URL_BASE MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/" DEVICE_NAME
+#define MAIN4INOSERVER_API_URL_POST_CURRENT MAIN4INOSERVER_API_URL_BASE "/actors/%s/reports"
+#define MAIN4INOSERVER_API_URL_GET_TARGET MAIN4INOSERVER_API_URL_BASE "/actors/%s/targets/summary?consume=true&status=C"
+#define MAIN4INOSERVER_API_URL_RESTORE_CURRENT MAIN4INOSERVER_API_URL_BASE "/actors/%s/reports/last"
+#define MAIN4INOSERVER_API_URL_GET_PROPS_TO_CONSUME_COUNT MAIN4INOSERVER_API_URL_BASE "/targets/count?status=C"
 
 enum PropSyncProps {
   PropSyncFreqProp = 0,
@@ -101,7 +101,7 @@ public:
     ParamStream httpBodyResponse(&jsonAuxBuffer);
 
     log(CLASS_PROPSYNC, Debug, "RestTarg:%s", actorName);
-    urlAuxBuffer.fill(BOTINOBE_API_URL_RESTORE_CURRENT, actorName);
+    urlAuxBuffer.fill(MAIN4INOSERVER_API_URL_RESTORE_CURRENT, actorName);
     int errorCodeRes = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
     if (errorCodeRes == HTTP_OK) { // data stored in the server and retrieved
       log(CLASS_PROPSYNC, Debug, "OK: %d", errorCodeRes);
@@ -127,7 +127,7 @@ public:
     } else {
       ParamStream httpBodyResponse(&jsonAuxBuffer);
       log(CLASS_PROPSYNC, Debug, "LoadTarg:%s", actorName);
-      urlAuxBuffer.fill(BOTINOBE_API_URL_GET_TARGET, actorName);
+      urlAuxBuffer.fill(MAIN4INOSERVER_API_URL_GET_TARGET, actorName);
       int errorCodeGet = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
       if (errorCodeGet == HTTP_OK) {
         log(CLASS_PROPSYNC, Debug, "OK: %d", errorCodeGet);
@@ -140,7 +140,7 @@ public:
 
     if (actor->getMetadata()->hasChanged()) {
       bot->getPropsJson(&jsonAuxBuffer, actorIndex);
-      urlAuxBuffer.fill(BOTINOBE_API_URL_POST_CURRENT, actorName);
+      urlAuxBuffer.fill(MAIN4INOSERVER_API_URL_POST_CURRENT, actorName);
       log(CLASS_PROPSYNC, Debug, "UpdCurr:%s", actorName);
       int errorCodePo = httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL);
       if (errorCodePo == HTTP_CREATED) {
@@ -172,7 +172,7 @@ public:
   int getToConsumeProps() {
     ParamStream httpBodyResponse(&jsonAuxBuffer);
     log(CLASS_PROPSYNC, Info, "Props to consume?");
-    urlAuxBuffer.fill(BOTINOBE_API_URL_GET_PROPS_TO_CONSUME_COUNT);
+    urlAuxBuffer.fill(MAIN4INOSERVER_API_URL_GET_PROPS_TO_CONSUME_COUNT);
     int errorCodeGet = httpGet(urlAuxBuffer.getBuffer(), &httpBodyResponse);
     if (errorCodeGet == HTTP_OK) {
       JsonObject &json = httpBodyResponse.parse();
