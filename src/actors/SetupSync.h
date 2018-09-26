@@ -3,9 +3,9 @@
 
 #include <log4ino/Log.h>
 #include <Hexer.h>
-#include <HttpCodes.h>
+#include <main4ino/HttpCodes.h>
 #include <main4ino/Actor.h>
-#include <actors/ParamStream.h>
+#include <main4ino/ParamStream.h>
 #include <main4ino/Boolean.h>
 #include <main4ino/Bot.h>
 #include <main4ino/Clock.h>

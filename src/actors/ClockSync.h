@@ -1,8 +1,8 @@
 #ifndef CLOCKSYNC_INC
 #define CLOCKSYNC_INC
 
-#include <HttpCodes.h>
-#include <actors/ParamStream.h>
+#include <main4ino/HttpCodes.h>
+#include <main4ino/ParamStream.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Boolean.h>
