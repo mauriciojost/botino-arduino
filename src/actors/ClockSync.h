@@ -11,9 +11,6 @@
 
 #define CLASS_CLOCKSYNC "CS"
 
-#ifndef TIMEZONE_DB_KEY
-#define TIMEZONE_DB_KEY "xxx"
-#endif
 #ifndef TIMEZONE_DB_ZONE
 #define TIMEZONE_DB_ZONE "xxx"
 #endif
@@ -50,8 +47,8 @@ public:
     httpGet = NULL;
     md = new Metadata(n);
     md->getTiming()->setFrek(201126060);
-    dbKey.fill(TIMEZONE_DB_KEY);
     dbZone.fill(TIMEZONE_DB_ZONE);
+    dbKey.fill("");
   }
 
   void setClock(Clock *c) {

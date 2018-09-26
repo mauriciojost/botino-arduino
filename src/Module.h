@@ -288,6 +288,11 @@ public:
   Ifttt *getIfttt() {
     return ifttt;
   }
+
+  ClockSync *getClockSync() {
+    return clockSync;
+  }
+
 };
 
 #endif // MODULE_INC

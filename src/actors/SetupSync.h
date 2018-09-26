@@ -26,7 +26,19 @@
 #define IFTTT_KEY "???"
 #endif // IFTTT_KEY
 
+#ifndef TIMEZONE_DB_KEY
+#define TIMEZONE_DB_KEY "???"
+#endif
+
 #define CREDENTIAL_BUFFER_SIZE 64
+
+enum SetupSyncProps {
+  SetupSyncWifiSsidProp = 0, // wifi ssid
+  SetupSyncWifiPassProp, // wifi pass
+  SetupSyncIftttKeyProp, // ifttt key (webhook)
+  SetupSyncITimeKeyProp, // time api key
+  SetupSyncPropsDelimiter // delimiter of the configuration states
+};
 
 /**
  * This actor holds the setup/credentials/sensitive information for the rest of the modules to use.
@@ -41,6 +53,7 @@ private:
   char ssid[CREDENTIAL_BUFFER_SIZE];
   char pass[CREDENTIAL_BUFFER_SIZE];
   char ifttt[CREDENTIAL_BUFFER_SIZE];
+  char timeKey[CREDENTIAL_BUFFER_SIZE];
   Metadata* md;
 
 public:
@@ -49,6 +62,7 @@ public:
     strcpy(ssid, WIFI_SSID_STEADY);
     strcpy(pass, WIFI_PASSWORD_STEADY);
     strcpy(ifttt, IFTTT_KEY);
+    strcpy(timeKey, TIMEZONE_DB_KEY);
     md = new Metadata(n);
   }
 
@@ -58,14 +72,45 @@ public:
 
   void act() {}
 
-  void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {}
+  void getSetPropValue(int propIndex, GetSetMode setMode, const Value *targetValue, Value *actualValue) {
+    switch (propIndex) {
+    	case (SetupSyncWifiSsidProp):
+        setPropValue(setMode, targetValue, actualValue, &ssid);
+        break;
+    	case (SetupSyncWifiPassProp):
+        setPropValue(setMode, targetValue, actualValue, &pass);
+        break;
+    	case (SetupSyncIftttKeyProp):
+        setPropValue(setMode, targetValue, actualValue, &ifttt);
+        break;
+    	case (SetupSyncITimeKeyProp):
+        setPropValue(setMode, targetValue, actualValue, &timeKey);
+        break;
+      default:
+        break;
+    }
+    if (setMode != GetValue) {
+    	getMetadata()->changed();
+    }
+  }
 
   int getNroProps() {
-    return 0;
+    return 4;
   }
 
   const char *getPropName(int propIndex) {
-    return "";
+    switch (propIndex) {
+    	case (SetupSyncWifiSsidProp):
+    			return "_wifissid";
+    	case (SetupSyncWifiPassProp):
+    			return "_wifipass";
+    	case (SetupSyncIftttKeyProp):
+        return "_iftttkey";
+    	case (SetupSyncITimeKeyProp):
+        return "_timekey";
+      default:
+        return "";
+    }
   }
 
   void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}
@@ -97,6 +142,15 @@ public:
   void setIfttt(const char *s) {
     strcpy(ifttt, s);
   }
+
+  const char *getTimeKey() {
+    return timeKey;
+  }
+
+  void setTimeKey(const char *s) {
+    strcpy(timeKey, s);
+  }
+
 
   Metadata *getMetadata() {
     return md;

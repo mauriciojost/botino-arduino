@@ -103,6 +103,7 @@ void runMode() {
   SetupSync *ss = m.getSetupSync();
   if (ss->isInitialized()) {
     m.getIfttt()->setKey(ss->getIfttt());
+    m.getClockSync()->setDbKey(ss->getTimeKey());
   }
 
   runModeArchitecture();
