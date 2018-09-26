@@ -22,6 +22,8 @@
 #define MAIN4INOSERVER_API_URL_RESTORE_CURRENT MAIN4INOSERVER_API_URL_BASE "/actors/%s/reports/last"
 #define MAIN4INOSERVER_API_URL_GET_PROPS_TO_CONSUME_COUNT MAIN4INOSERVER_API_URL_BASE "/targets/count?status=C"
 
+#define SENSITIVE_PROP_PREFIX '_'
+
 enum PropSyncProps {
   PropSyncFreqProp = 0,
   PropSyncPropsgDelimiter // count of properties
@@ -139,7 +141,7 @@ public:
     }
 
     if (actor->getMetadata()->hasChanged()) {
-      bot->getPropsJson(&jsonAuxBuffer, actorIndex);
+      bot->getPropsJson(&jsonAuxBuffer, actorIndex, SENSITIVE_PROP_PREFIX);
       urlAuxBuffer.fill(MAIN4INOSERVER_API_URL_POST_CURRENT, actorName);
       log(CLASS_PROPSYNC, Debug, "UpdCurr:%s", actorName);
       int errorCodePo = httpPost(urlAuxBuffer.getBuffer(), jsonAuxBuffer.getBuffer(), NULL);
