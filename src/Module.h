@@ -7,7 +7,7 @@
 #include <actors/Body.h>
 #include <actors/ClockSync.h>
 #include <actors/Images.h>
-#include <actors/PropSync.h>
+#include <main4ino/PropSync.h>
 #include <actors/SetupSync.h>
 #include <actors/Ifttt.h>
 #include <log4ino/Log.h>

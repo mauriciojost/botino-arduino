@@ -10,8 +10,8 @@
 #define CLASS_MAIN "MA"
 
 #include "Images.h"
-#include "main4ino/Misc.h"
-#include <HttpCodes.h>
+#include <main4ino/Misc.h>
+#include <main4ino/HttpCodes.h>
 #include <Module.h>
 
 #ifndef PROJ_VERSION
