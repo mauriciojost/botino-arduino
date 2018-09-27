@@ -119,7 +119,7 @@ To upload the firmware just do:
 ```
 # upload via USB serial port:
 
- ./upload dev7-custom
+ ./upload profiles/dev7-custom.prof
 
 # if you want to upload via OTA: 
 

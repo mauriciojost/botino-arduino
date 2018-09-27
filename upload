@@ -10,7 +10,7 @@ echo "### Checking if no changes to be committed..."
 git diff --exit-code
 
 echo "### Using profile $PROFILE..."
-export PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=$COMMIT_ID `cat profiles/$PROFILE.prof`" 
+export PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=$COMMIT_ID `cat $PROFILE`" 
 
 echo "### Uploading..."
 platformio run --target upload
