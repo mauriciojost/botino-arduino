@@ -52,8 +52,8 @@ private:
 
   Buffer<CREDENTIAL_BUFFER_SIZE> ssid;
   Buffer<CREDENTIAL_BUFFER_SIZE> pass;
-  Buffer<CREDENTIAL_BUFFER_SIZE> ifttt;
-  Buffer<CREDENTIAL_BUFFER_SIZE> timeKey;
+  Buffer<CREDENTIAL_BUFFER_SIZE> iftt;
+  Buffer<CREDENTIAL_BUFFER_SIZE> time;
   Metadata* md;
 
 public:
@@ -61,8 +61,8 @@ public:
     name = n;
     ssid.load(WIFI_SSID_STEADY);
     pass.load(WIFI_PASSWORD_STEADY);
-    ifttt.load(IFTTT_KEY);
-    timeKey.load(TIMEZONE_DB_KEY);
+    iftt.load(IFTTT_KEY);
+    time.load(TIMEZONE_DB_KEY);
     md = new Metadata(n);
   }
 
@@ -75,16 +75,16 @@ public:
   void getSetPropValue(int propIndex, GetSetMode setMode, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
     	case (SetupSyncWifiSsidProp):
-        setPropValue(setMode, targetValue, actualValue, &ssid);
+        setPropValue(setMode, targetValue, NULL, &ssid); // write only
         break;
     	case (SetupSyncWifiPassProp):
-        setPropValue(setMode, targetValue, actualValue, &pass);
+        setPropValue(setMode, targetValue, NULL, &pass); // write only
         break;
     	case (SetupSyncIftttKeyProp):
-        setPropValue(setMode, targetValue, actualValue, &ifttt);
+        setPropValue(setMode, targetValue, NULL, &iftt); // write only
         break;
     	case (SetupSyncITimeKeyProp):
-        setPropValue(setMode, targetValue, actualValue, &timeKey);
+        setPropValue(setMode, targetValue, NULL, &time); // write only
         break;
       default:
         break;
@@ -136,28 +136,31 @@ public:
   }
 
   const char *getIfttt() {
-    return ifttt.getBuffer();
+    return iftt.getBuffer();
   }
 
   void setIfttt(const char *s) {
-    ifttt.load(s);
+    iftt.load(s);
   }
 
   const char *getTimeKey() {
-    return timeKey.getBuffer();
+    return time.getBuffer();
   }
 
   void setTimeKey(const char *s) {
-    timeKey.load(s);
+    time.load(s);
   }
-
 
   Metadata *getMetadata() {
     return md;
   }
 
   bool isInitialized() {
-    return ssid.getBuffer()[0] != '?' && pass.getBuffer()[0] != '?' && ifttt.getBuffer()[0] != '? ' && timeKey.getBuffer()[0] != '?';
+    return
+    		ssid.getBuffer()[0] != '?' &&
+				pass.getBuffer()[0] != '?' &&
+				iftt.getBuffer()[0] != '?' &&
+				time.getBuffer()[0] != '?';
   }
 };
 
