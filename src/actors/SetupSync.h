@@ -28,7 +28,7 @@
 
 #ifndef TIMEZONE_DB_KEY
 #define TIMEZONE_DB_KEY "???"
-#endif
+#endif // TIMEZONE_DB_KEY
 
 #define CREDENTIAL_BUFFER_SIZE 64
 
@@ -95,7 +95,7 @@ public:
   }
 
   int getNroProps() {
-    return 4;
+    return SetupSyncPropsDelimiter;
   }
 
   const char *getPropName(int propIndex) {
@@ -157,7 +157,7 @@ public:
   }
 
   bool isInitialized() {
-    return ssid.getBuffer()[0] != '?' && pass.getBuffer()[0] != '?' && ifttt.getBuffer()[0] != '?';
+    return ssid.getBuffer()[0] != '?' && pass.getBuffer()[0] != '?' && ifttt.getBuffer()[0] != '? ' && timeKey.getBuffer()[0] != '?';
   }
 };
 
