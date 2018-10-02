@@ -26,9 +26,9 @@ class Quotes : public Actor {
 private:
   const char *name;
   Metadata* md;
-  Buffer<QUOTE_MAX_LENGTH> *quotes[NRO_QUOTES];
+  Buffer *quotes[NRO_QUOTES];
   int (*httpGet)(const char *url, ParamStream *response);
-  Buffer<MAX_JSON_STR_LENGTH> jsonAuxBuffer;
+  Buffer* jsonAuxBuffer;
   bool (*initWifiFunc)();
 
   bool isInitialized() {
@@ -41,9 +41,11 @@ public:
     httpGet = NULL;
     initWifiFunc = NULL;
     md = new Metadata(n);
+
+    jsonAuxBuffer = new Buffer(MAX_JSON_STR_LENGTH);
     md->getTiming()->setFrek(201126060);
     for (int i = 0; i < NRO_QUOTES; i++) {
-      quotes[i] = new Buffer<QUOTE_MAX_LENGTH>("Damn! No quote yet! :(");
+      quotes[i] = new Buffer(QUOTE_MAX_LENGTH, "Damn! No quote yet! :(");
     }
   }
 
@@ -72,7 +74,7 @@ public:
   }
 
   void fillQuote(int i) {
-    ParamStream httpBodyResponse(&jsonAuxBuffer);
+    ParamStream httpBodyResponse(jsonAuxBuffer);
     log(CLASS_QUOTES, Debug, "Filling %d", i);
     int errorCode = httpGet(URL_QUOTES, &httpBodyResponse);
     if (errorCode == HTTP_OK) {
@@ -95,7 +97,7 @@ public:
     return 0;
   }
 
-  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}
+  void getInfo(int infoIndex, Buffer *info) {}
 
   int getNroInfos() {
     return 0;

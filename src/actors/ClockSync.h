@@ -32,23 +32,29 @@ private:
   const char *name;
   Clock *clock;
   Metadata* md;
-  Buffer<32> dbZone;
-  Buffer<32> dbKey;
-  Buffer<128> urlAuxBuffer;
-  Buffer<MAX_JSON_STR_LENGTH> jsonAuxBuffer;
+  Buffer* dbZone;
+  Buffer* dbKey;
+  Buffer* urlAuxBuffer;
+  Buffer* jsonAuxBuffer;
   bool (*initWifiFunc)();
   int (*httpGet)(const char *url, ParamStream *response);
 
 public:
   ClockSync(const char *n) {
     name = n;
+
+    dbZone = new Buffer(32);
+    dbKey = new Buffer(32);
+    urlAuxBuffer = new Buffer(128);
+    jsonAuxBuffer = new Buffer(MAX_JSON_STR_LENGTH);
+
     clock = NULL;
     initWifiFunc = NULL;
     httpGet = NULL;
     md = new Metadata(n);
     md->getTiming()->setFrek(201126060);
-    dbZone.fill(TIMEZONE_DB_ZONE);
-    dbKey.fill("");
+    dbZone->fill(TIMEZONE_DB_ZONE);
+    dbKey->fill("");
   }
 
   void setClock(Clock *c) {
@@ -82,9 +88,9 @@ public:
 
   void updateClockProperties() {
     log(CLASS_CLOCKSYNC, Info, "Updating clock");
-    ParamStream s(&jsonAuxBuffer);
-    urlAuxBuffer.fill(TIMEZONE_DB_API_URL_GET, dbKey.getBuffer(), dbZone.getBuffer());
-    int errorCode = httpGet(urlAuxBuffer.getBuffer(), &s);
+    ParamStream s(jsonAuxBuffer);
+    urlAuxBuffer->fill(TIMEZONE_DB_API_URL_GET, dbKey->getBuffer(), dbZone->getBuffer());
+    int errorCode = httpGet(urlAuxBuffer->getBuffer(), &s);
     if (errorCode == HTTP_OK) {
       JsonObject &json = s.parse();
       if (json.containsKey("formatted")) {
@@ -108,7 +114,7 @@ public:
   void getSetPropValue(int propIndex, GetSetMode setMode, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
       case (ClockSyncZone0Prop):
-        setPropValue(setMode, targetValue, actualValue, &dbZone);
+        setPropValue(setMode, targetValue, actualValue, dbZone);
         break;
       default:
         break;
@@ -131,14 +137,14 @@ public:
     }
   }
 
-  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}
+  void getInfo(int infoIndex, Buffer *info) {}
 
   void setDbKey(const char *k) {
-    dbKey.fill(k);
+    dbKey->fill(k);
   }
 
   const char *getDbKey() {
-    return dbKey.getBuffer();
+    return dbKey->getBuffer();
   }
 
   int getNroInfos() {

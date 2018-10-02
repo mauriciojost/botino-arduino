@@ -366,7 +366,7 @@ void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {
 bool haveToInterrupt() {
   if (Serial.available()) {
     // Handle serial commands
-    Buffer<COMMAND_MAX_LENGTH> cmdBuffer;
+    Buffer cmdBuffer(COMMAND_MAX_LENGTH);
     log(CLASS_MAIN, Info, "Listening...");
     cmdBuffer.clear();
     Serial.readBytesUntil('\n', cmdBuffer.getUnsafeBuffer(), COMMAND_MAX_LENGTH);
@@ -466,7 +466,7 @@ void runModeArchitecture() {
   }
 
   // Report interesting information about the device
-  Buffer<INFO_BUFFER_LENGTH> infoBuffer;
+  Buffer infoBuffer(INFO_BUFFER_LENGTH);
   infoBuffer.fill("crs %d / ver %s / upt %lu h", SaveCrash.count(), STRINGIFY(PROJ_VERSION), (millis() / 1000) / 3600);
   s->setInfo(infoBuffer.getBuffer());
 
@@ -591,7 +591,7 @@ void reactCommandCustom() { // for the use via telnet
 
 void hwTest() {
 
-  Buffer<32> aux;
+  Buffer aux(32);
   log(CLASS_MAIN, Debug, "USER INFO");
   aux.fill("VER: %s", STRINGIFY(PROJ_VERSION));
   messageFuncExt(0, 2, aux.getBuffer());

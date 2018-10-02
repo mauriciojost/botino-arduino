@@ -85,7 +85,7 @@ void test_body_shows_time() {
   Body b("b");
   initBody(&b, &q, &i, &it);
 
-  Buffer<20> move0("201010101:Mc1.Fb."); // clock message (show current time) and face black
+  Buffer move0(20, "201010101:Mc1.Fb."); // clock message (show current time) and face black
 
   b.setPropValue(BodyRoutine0Prop, &move0);
 
@@ -101,7 +101,7 @@ void test_body_shows_time() {
 }
 
 void executeMove(Body *b, const char *move) {
-  Buffer<20> mv0;
+  Buffer mv0(20);
   mv0.fill(move);
   b->setPropValue(BodyRoutine0Prop, &mv0);
   Timing *t = b->getTiming();

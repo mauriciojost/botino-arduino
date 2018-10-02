@@ -156,7 +156,7 @@ public:
         return false;
       }
       log(CLASS_MODULE, Info, "-> Set %s.%s = %s", actor, prop, v);
-      Buffer<64> value(v);
+      Buffer value(64, v);
       bot->setProp(actor, prop, &value);
       return false;
     } else if (strcmp("get", c) == 0) {
@@ -166,7 +166,7 @@ public:
         Actor *actor = actors->get(i);
         log(CLASS_MODULE, Info, " '%s'", actor->getName());
         for (int j = 0; j < actor->getNroProps(); j++) {
-          Buffer<COMMAND_MAX_LENGTH> value;
+          Buffer value(COMMAND_MAX_LENGTH);
           actor->getPropValue(j, &value);
           log(CLASS_MODULE, Info, "   '%s': '%s'", actor->getPropName(j), value.getBuffer());
         }

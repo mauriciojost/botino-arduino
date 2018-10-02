@@ -34,18 +34,21 @@ private:
   bool (*initWifiFunc)();
   int (*httpPost)(const char *url, const char *body, ParamStream *response);
 
-  Buffer<64> iftttKey;
-  Buffer<128> urlAuxBuffer;
-  Buffer<EVENT_NAME_MAX_LENGTH> *eventNames[NRO_EVENTS];
+  Buffer* iftttKey;
+  Buffer* urlAuxBuffer;
+  Buffer *eventNames[NRO_EVENTS];
 
 public:
   Ifttt(const char *n) {
     name = n;
+
+    iftttKey = new Buffer(64);
+    urlAuxBuffer = new Buffer(128);
     initWifiFunc = NULL;
     httpPost = NULL;
     md = new Metadata(n);
     for (int i = 0; i < NRO_EVENTS; i++) {
-      eventNames[i] = new Buffer<EVENT_NAME_MAX_LENGTH>();
+      eventNames[i] = new Buffer(EVENT_NAME_MAX_LENGTH);
       eventNames[i]->fill("event_%d", i);
     }
   }
@@ -57,7 +60,7 @@ public:
   void act() {}
 
   void setKey(const char *k) {
-    iftttKey.fill("%s", k);
+    iftttKey->fill("%s", k);
   }
 
   void setInitWifi(bool (*f)()) {
@@ -80,8 +83,8 @@ public:
     }
     bool connected = initWifiFunc();
     if (connected) {
-      urlAuxBuffer.fill(IFTTT_API_URL_POS, eventName, iftttKey.getBuffer());
-      int errorCodePost = httpPost(urlAuxBuffer.getBuffer(), "{}", NULL);
+      urlAuxBuffer->fill(IFTTT_API_URL_POS, eventName, iftttKey->getBuffer());
+      int errorCodePost = httpPost(urlAuxBuffer->getBuffer(), "{}", NULL);
       if (errorCodePost == HTTP_OK) {
         return true;
       }
@@ -124,7 +127,7 @@ public:
     }
   }
 
-  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}
+  void getInfo(int infoIndex, Buffer *info) {}
 
   int getNroInfos() {
     return 0;

@@ -50,19 +50,25 @@ class SetupSync : public Actor {
 private:
   const char *name;
 
-  Buffer<CREDENTIAL_BUFFER_SIZE> ssid;
-  Buffer<CREDENTIAL_BUFFER_SIZE> pass;
-  Buffer<CREDENTIAL_BUFFER_SIZE> iftt;
-  Buffer<CREDENTIAL_BUFFER_SIZE> time;
+  Buffer* ssid;
+  Buffer* pass;
+  Buffer* iftt;
+  Buffer* time;
   Metadata* md;
 
 public:
   SetupSync(const char *n) {
     name = n;
-    ssid.load(WIFI_SSID_STEADY);
-    pass.load(WIFI_PASSWORD_STEADY);
-    iftt.load(IFTTT_KEY);
-    time.load(TIMEZONE_DB_KEY);
+
+    ssid = new Buffer(CREDENTIAL_BUFFER_SIZE);
+    pass = new Buffer(CREDENTIAL_BUFFER_SIZE);
+    iftt = new Buffer(CREDENTIAL_BUFFER_SIZE);
+    time = new Buffer(CREDENTIAL_BUFFER_SIZE);
+
+    ssid->load(WIFI_SSID_STEADY);
+    pass->load(WIFI_PASSWORD_STEADY);
+    iftt->load(IFTTT_KEY);
+    time->load(TIMEZONE_DB_KEY);
     md = new Metadata(n);
   }
 
@@ -75,16 +81,16 @@ public:
   void getSetPropValue(int propIndex, GetSetMode setMode, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
     	case (SetupSyncWifiSsidProp):
-        setPropValue(setMode, targetValue, NULL, &ssid); // write only
+        setPropValue(setMode, targetValue, NULL, ssid); // write only
         break;
     	case (SetupSyncWifiPassProp):
-        setPropValue(setMode, targetValue, NULL, &pass); // write only
+        setPropValue(setMode, targetValue, NULL, pass); // write only
         break;
     	case (SetupSyncIftttKeyProp):
-        setPropValue(setMode, targetValue, NULL, &iftt); // write only
+        setPropValue(setMode, targetValue, NULL, iftt); // write only
         break;
     	case (SetupSyncITimeKeyProp):
-        setPropValue(setMode, targetValue, NULL, &time); // write only
+        setPropValue(setMode, targetValue, NULL, time); // write only
         break;
       default:
         break;
@@ -113,42 +119,42 @@ public:
     }
   }
 
-  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}
+  void getInfo(int infoIndex, Buffer *info) {}
 
   int getNroInfos() {
     return 0;
   }
 
   const char *getSsid() {
-    return ssid.getBuffer();
+    return ssid->getBuffer();
   }
 
   void setSsid(const char *s) {
-    ssid.load(s);
+    ssid->load(s);
   }
 
   const char *getPass() {
-    return pass.getBuffer();
+    return pass->getBuffer();
   }
 
   void setPass(const char *s) {
-    pass.load(s);
+    pass->load(s);
   }
 
   const char *getIfttt() {
-    return iftt.getBuffer();
+    return iftt->getBuffer();
   }
 
   void setIfttt(const char *s) {
-    iftt.load(s);
+    iftt->load(s);
   }
 
   const char *getTimeKey() {
-    return time.getBuffer();
+    return time->getBuffer();
   }
 
   void setTimeKey(const char *s) {
-    time.load(s);
+    time->load(s);
   }
 
   Metadata *getMetadata() {
@@ -157,10 +163,10 @@ public:
 
   bool isInitialized() {
     return
-    		ssid.getBuffer()[0] != '?' &&
-				pass.getBuffer()[0] != '?' &&
-				iftt.getBuffer()[0] != '?' &&
-				time.getBuffer()[0] != '?';
+    		ssid->getBuffer()[0] != '?' &&
+				pass->getBuffer()[0] != '?' &&
+				iftt->getBuffer()[0] != '?' &&
+				time->getBuffer()[0] != '?';
   }
 };
 

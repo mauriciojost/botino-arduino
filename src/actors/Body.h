@@ -193,29 +193,30 @@ uint8_t IMG_SLEEPY[] = {0x00, 0x00, 0x00, 0x00, 0x12, 0x48, 0x0C, 0x30, 0x01, 0x
 
 class Routine {
 public:
-  Buffer<MOVE_STR_LENGTH> timingMove;
+  Buffer* timingMove;
   Timing* timing;
   Routine(const char* n) {
+    timingMove = new Buffer(MOVE_STR_LENGTH);
   	timing = new Timing(n);
   }
   void load(const Value* v) {
-    Buffer<MOVE_STR_LENGTH> aux;
+    Buffer aux(MOVE_STR_LENGTH);
     aux.load(v);
     load(aux.getBuffer());
   }
   void load(const char* str) {
   	if (str != NULL && strlen(str) > TIMING_AND_SEPARATOR_STR_LEN) {
-  		timingMove.fill(str);
-  		timingMove.getUnsafeBuffer()[TIMING_STR_LEN] = 0;
-  		timing->setFrek(atol(timingMove.getBuffer()));
-  		timingMove.fill(str);
+  		timingMove->fill(str);
+  		timingMove->getUnsafeBuffer()[TIMING_STR_LEN] = 0;
+  		timing->setFrek(atol(timingMove->getBuffer()));
+  		timingMove->fill(str);
       log(CLASS_BODY, Debug, "Routine built: '%s'/'%ld'", getMove(), timing->getFrek());
   	} else {
       log(CLASS_BODY, Warn, "Invalid routine");
   	}
   }
   const char* getMove() {
-    return timingMove.getBuffer() + TIMING_AND_SEPARATOR_STR_LEN;
+    return timingMove->getBuffer() + TIMING_AND_SEPARATOR_STR_LEN;
   }
 };
 
@@ -467,14 +468,14 @@ public:
             log(CLASS_BODY, Debug, "Msg clock");
             int h = GET_HOURS(getTiming()->getCurrentTime());
             int m = GET_MINUTES(getTiming()->getCurrentTime());
-            Buffer<6> t("");
+            Buffer t(6, "");
             t.fill("%02d:%02d", h, m);
             messageFunc(0, t.getBuffer(), getInt(c3));
           } break;
           case 'k': {
             log(CLASS_BODY, Debug, "Msg date");
             long t = getTiming()->getCurrentTime();
-            Buffer<18> b("");
+            Buffer b(18, "");
             b.fill("%4d-%02d-%02d\n%02d:%02d", GET_YEARS(t), GET_MONTHS(t), GET_DAYS(t), GET_HOURS(t), GET_MINUTES(t));
             messageFunc(0, b.getBuffer(), getInt(c3));
           } break;
@@ -485,7 +486,7 @@ public:
           } break;
           case 'p': {
             log(CLASS_BODY, Debug, "Msg prediction");
-            Buffer<200> pr("");
+            Buffer pr(200, "");
             Predictions::getPrediction(&pr);
             messageFunc(0, pr.getBuffer(), getInt(c3));
           } break;
@@ -504,12 +505,12 @@ public:
 
       if (c1 == 'M') { // MESSAGES
         int size = getInt(c2);
-        Buffer<MOVE_STR_LENGTH> msg(pose + 2);
+        Buffer msg(MOVE_STR_LENGTH, pose + 2);
         msg.replace('.', 0);
         log(CLASS_BODY, Debug, "Msg '%s'", msg.getBuffer());
         messageFunc(0, msg.getBuffer(), size);
       } else if (c1 == 'I') { // IFTTT
-        Buffer<MOVE_STR_LENGTH> evt(pose + 1);
+        Buffer evt(MOVE_STR_LENGTH, pose + 1);
         evt.replace('.', 0);
         log(CLASS_BODY, Debug, "Event '%s'", evt.getBuffer());
         ifttt->triggerEvent(evt.getBuffer());
@@ -617,7 +618,7 @@ public:
         routines[i]->load(targetValue);
       }
       if (actualValue != NULL) {
-        actualValue->load(&routines[i]->timingMove);
+        actualValue->load(routines[i]->timingMove);
       }
     }
     if (m != GetValue) {
@@ -629,7 +630,7 @@ public:
     return BodyPropsDelimiter;
   }
 
-  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}
+  void getInfo(int infoIndex, Buffer *info) {}
 
   int getNroInfos() {
     return 0;

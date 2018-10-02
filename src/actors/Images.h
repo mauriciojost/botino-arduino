@@ -81,7 +81,7 @@ public:
     if (propIndex >= ImagesConfigImg0 && propIndex < (NRO_IMGS + ImagesConfigImg0)) {
       int i = (int)propIndex - (int)ImagesConfigImg0;
       if (m == SetCustomValue) {
-        Buffer<IMG_SIZE_BYTES * 2> target(targetValue); // 2 chars per actual bitmap byte
+        Buffer target(IMG_SIZE_BYTES * 2, targetValue); // 2 chars per actual bitmap byte
         Hexer::hexToByte((uint8_t *)images[i], target.getBuffer(), MINIM((strlen(target.getBuffer())), (IMG_SIZE_BYTES * 2)));
       }
       if (actualValue != NULL) {
@@ -97,7 +97,7 @@ public:
     return ImagesConfigStateDelimiter;
   }
 
-  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {}
+  void getInfo(int infoIndex, Buffer *info) {}
 
   int getNroInfos() {
     return 0;

@@ -20,7 +20,7 @@ class Predictions {
 
 private:
 public:
-  static void getPrediction(Buffer<200> *msg) {
+  static void getPrediction(Buffer *msg) {
     msg->fill("%s will %s %s %s", getObject(), getTransitiveVerb(), getObject(), getWhere());
   }
 

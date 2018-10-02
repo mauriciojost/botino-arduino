@@ -32,7 +32,7 @@ void loopArchitecture() {
 }
 
 int httpGet(const char *url, ParamStream *response) {
-  Buffer<CL_MAX_LENGTH> aux;
+  Buffer aux(CL_MAX_LENGTH);
   aux.fill(CURL_COMMAND_GET, url);
   log(CLASS_MAIN, Debug, "GET: '%s'", aux.getBuffer());
   FILE *fp = popen(aux.getBuffer(), "r");
@@ -50,7 +50,7 @@ int httpGet(const char *url, ParamStream *response) {
 }
 
 int httpPost(const char *url, const char *body, ParamStream *response) {
-  Buffer<CL_MAX_LENGTH> aux;
+  Buffer aux(CL_MAX_LENGTH);
   aux.fill(CURL_COMMAND_POST, url, body);
   log(CLASS_MAIN, Debug, "POST: '%s'", aux.getBuffer());
   FILE *fp = popen(aux.getBuffer(), "r");

@@ -60,7 +60,7 @@ bool initWifiSteady() {
 }
 
 void messageFuncExt(int line, int size, const char *format, ...) {
-  Buffer<MAX_LOG_MSG_LENGTH - 1> buffer;
+  Buffer buffer(MAX_LOG_MSG_LENGTH - 1);
   va_list args;
   va_start(args, format);
   vsnprintf(buffer.getUnsafeBuffer(), MAX_LOG_MSG_LENGTH, format, args);

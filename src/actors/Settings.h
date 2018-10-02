@@ -30,15 +30,16 @@ private:
   const char *name;
   bool devDebug;
   int buttonRoutineUntil;
-  Buffer<INFO_BUFFER_LENGTH> infoBuffer;
+  Buffer* infoBuffer;
   Metadata* md;
 
 public:
   Settings(const char *n) {
     name = n;
+    infoBuffer = new Buffer(INFO_BUFFER_LENGTH);
     devDebug = false;
     buttonRoutineUntil = 4;
-    infoBuffer.clear();
+    infoBuffer->clear();
     md = new Metadata(n);
   }
 
@@ -79,8 +80,8 @@ public:
     return SettingsPropsDelimiter;
   }
 
-  void getInfo(int infoIndex, Buffer<MAX_EFF_STR_LENGTH> *info) {
-    info->load(&infoBuffer);
+  void getInfo(int infoIndex, Buffer *info) {
+    info->load(infoBuffer);
   }
 
   int getNroInfos() {
@@ -107,7 +108,7 @@ public:
   }
 
   void setInfo(const char *s) {
-    infoBuffer.fill(s);
+    infoBuffer->fill(s);
   }
 };
 
