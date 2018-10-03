@@ -29,7 +29,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
   return true;
 }
 
-int httpGet(const char *url, ParamStream *response) {
+int httpGet(const char *url, ParamStream *response, Table* headers) {
   Buffer aux(CL_MAX_LENGTH);
   aux.fill(CURL_COMMAND_GET, url);
   log(CLASS_MAIN, Debug, "GET: '%s'", aux.getBuffer());
@@ -47,7 +47,7 @@ int httpGet(const char *url, ParamStream *response) {
   return HTTP_OK; // not quite true, but will work for simple purposes
 }
 
-int httpPost(const char *url, const char *body, ParamStream *response) {
+int httpPost(const char *url, const char *body, ParamStream *response, Table* headers) {
   Buffer aux(CL_MAX_LENGTH);
   aux.fill(CURL_COMMAND_POST, url, body);
   log(CLASS_MAIN, Debug, "POST: '%s'", aux.getBuffer());
@@ -119,9 +119,10 @@ void configureModeArchitecture() {
 ////////////////////////////////////////
 
 int main(int argc, const char *argv[]) {
-  setup();
   appMode = (AppMode)atoi(argv[1]);
   int simulationSteps = atoi(argv[2]);
+
+  setup();
   for (int i = 0; i < simulationSteps; i++) {
     log(CLASS_MAIN, Debug, "### Step %d/%d", i, simulationSteps);
     loop();

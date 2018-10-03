@@ -37,7 +37,8 @@ private:
   Buffer* urlAuxBuffer;
   Buffer* jsonAuxBuffer;
   bool (*initWifiFunc)();
-  int (*httpGet)(const char *url, ParamStream *response);
+  int (*httpGet)(const char *url, ParamStream *response, Table* headers);
+  Table* headers;
 
 public:
   ClockSync(const char *n) {
@@ -55,6 +56,7 @@ public:
     md->getTiming()->setFrek(201126060);
     dbZone->fill(TIMEZONE_DB_ZONE);
     dbKey->fill("");
+    headers = new Table(0, 0, 0);
   }
 
   void setClock(Clock *c) {
@@ -82,7 +84,7 @@ public:
     initWifiFunc = f;
   }
 
-  void setHttpGet(int (*h)(const char *url, ParamStream *response)) {
+  void setHttpGet(int (*h)(const char *url, ParamStream *response, Table* headers)) {
     httpGet = h;
   }
 
@@ -90,7 +92,7 @@ public:
     log(CLASS_CLOCKSYNC, Info, "Updating clock");
     ParamStream s(jsonAuxBuffer);
     urlAuxBuffer->fill(TIMEZONE_DB_API_URL_GET, dbKey->getBuffer(), dbZone->getBuffer());
-    int errorCode = httpGet(urlAuxBuffer->getBuffer(), &s);
+    int errorCode = httpGet(urlAuxBuffer->getBuffer(), &s, headers);
     if (errorCode == HTTP_OK) {
       JsonObject &json = s.parse();
       if (json.containsKey("formatted")) {

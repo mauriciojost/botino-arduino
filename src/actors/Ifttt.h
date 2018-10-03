@@ -32,11 +32,12 @@ private:
   const char *name;
   Metadata* md;
   bool (*initWifiFunc)();
-  int (*httpPost)(const char *url, const char *body, ParamStream *response);
+  int (*httpPost)(const char *url, const char *body, ParamStream *response, Table* headers);
 
   Buffer* iftttKey;
   Buffer* urlAuxBuffer;
   Buffer *eventNames[NRO_EVENTS];
+  Table* headers;
 
 public:
   Ifttt(const char *n) {
@@ -51,6 +52,7 @@ public:
       eventNames[i] = new Buffer(EVENT_NAME_MAX_LENGTH);
       eventNames[i]->fill("event_%d", i);
     }
+    headers = new Table(0, 0, 0);
   }
 
   const char *getName() {
@@ -67,7 +69,7 @@ public:
     initWifiFunc = f;
   }
 
-  void setHttpPost(int (*h)(const char *url, const char *body, ParamStream *response)) {
+  void setHttpPost(int (*h)(const char *url, const char *body, ParamStream *response, Table* headers)) {
     httpPost = h;
   }
 
@@ -84,7 +86,7 @@ public:
     bool connected = initWifiFunc();
     if (connected) {
       urlAuxBuffer->fill(IFTTT_API_URL_POS, eventName, iftttKey->getBuffer());
-      int errorCodePost = httpPost(urlAuxBuffer->getBuffer(), "{}", NULL);
+      int errorCodePost = httpPost(urlAuxBuffer->getBuffer(), "{}", NULL, headers);
       if (errorCodePost == HTTP_OK) {
         return true;
       }

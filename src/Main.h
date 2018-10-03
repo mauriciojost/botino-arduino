@@ -11,6 +11,7 @@
 
 #include "Images.h"
 #include <main4ino/Misc.h>
+#include <main4ino/Table.h>
 #include <main4ino/HttpCodes.h>
 #include <Module.h>
 
@@ -43,6 +44,10 @@
 #ifndef WIFI_DELAY_MS
 #define WIFI_DELAY_MS 3000
 #endif // WIFI_DELAY_MS
+
+#define HEADERS_MAX 3
+#define HEADERS_KEY_LENGTH 16
+#define HEADERS_VAL_LENGTH 32
 
 //////////////////////////////////////////////////////////////
 // Provided by generic Main
@@ -78,10 +83,19 @@ void logLine(const char *str);
 bool initWifi(const char *ssid, const char *pass, bool skipIfAlreadyConnected, int retries);
 
 // HTTP GET function.
-int httpGet(const char *url, ParamStream *response);
+int httpGet(
+		const char *url,
+		ParamStream *response,
+		Table* headers
+		);
 
 // HTTP POST function.
-int httpPost(const char *url, const char *body, ParamStream *response);
+int httpPost(
+		const char *url,
+		const char *body,
+		ParamStream *response,
+		Table* headers
+		);
 
 // Message function. Directly connected with user.
 void messageFunc(int line, const char *str, int size);

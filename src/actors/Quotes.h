@@ -26,9 +26,10 @@ private:
   const char *name;
   Metadata* md;
   Buffer *quotes[NRO_QUOTES];
-  int (*httpGet)(const char *url, ParamStream *response);
+  int (*httpGet)(const char *url, ParamStream *response, Table* headers);
   Buffer* jsonAuxBuffer;
   bool (*initWifiFunc)();
+  Table* headers;
 
   bool isInitialized() {
     return (httpGet != NULL && initWifiFunc != NULL);
@@ -46,13 +47,14 @@ public:
     for (int i = 0; i < NRO_QUOTES; i++) {
       quotes[i] = new Buffer(QUOTE_MAX_LENGTH, "Damn! No quote yet! :(");
     }
+    headers = new Table(0, 0, 0);
   }
 
   const char *getName() {
     return name;
   }
 
-  void setHttpGet(int (*h)(const char *url, ParamStream *response)) {
+  void setHttpGet(int (*h)(const char *url, ParamStream *response, Table* headers)) {
     httpGet = h;
   }
 
@@ -75,7 +77,7 @@ public:
   void fillQuote(int i) {
     ParamStream httpBodyResponse(jsonAuxBuffer);
     log(CLASS_QUOTES, Debug, "Filling %d", i);
-    int errorCode = httpGet(URL_QUOTES, &httpBodyResponse);
+    int errorCode = httpGet(URL_QUOTES, &httpBodyResponse, headers);
     if (errorCode == HTTP_OK) {
       quotes[i]->fill("%s", httpBodyResponse.content());
     } else {

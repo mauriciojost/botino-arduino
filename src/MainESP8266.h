@@ -51,10 +51,6 @@
 #define SERVO1_RANGE_DEGREES 140
 #endif // SERVO1_RANGE_DEGREES
 
-#ifndef API_TOKEN
-#error "Must define API_TOKEN"
-#endif // API_TOKEN
-
 #define DEV_USER_DELAY_MS 1000
 
 #define LOG_LINE 7
@@ -177,14 +173,14 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
   }
 }
 
-// TODO: add headers support
 // TODO: add https support, which requires fingerprint of server that can be obtained as follows:
 //  openssl s_client -connect dweet.io:443 < /dev/null 2>/dev/null | openssl x509 -fingerprint -noout -in /dev/stdin
-int httpGet(const char *url, ParamStream *response) { // TODO: allow to pass at least one header
+int httpGet(const char *url, ParamStream *response, Table* headers) {
   httpClient.begin(url);
-  httpClient.addHeader("Content-Type", "application/json");
-  httpClient.addHeader("Authorization", "token " API_TOKEN);
-
+  int i = 0;
+  while ((i = headers->next(i)) != -1) {
+    httpClient.addHeader(headers->getKey(i), headers->getValue(i));
+  }
   log(CLASS_MAIN, Debug, "> GET:..%s", tailStr(url, URL_PRINT_MAX_LENGTH));
   int errorCode = httpClient.GET();
   log(CLASS_MAIN, Debug, "> GET:%d", errorCode);
@@ -204,10 +200,12 @@ int httpGet(const char *url, ParamStream *response) { // TODO: allow to pass at 
   return errorCode;
 }
 
-int httpPost(const char *url, const char *body, ParamStream *response) {
+int httpPost(const char *url, const char *body, ParamStream *response, Table<HEADERS_MAX, HEADERS_KEY_LENGTH, HEADERS_VAL_LENGTH>* headers) {
   httpClient.begin(url);
-  httpClient.addHeader("Content-Type", "application/json");
-  httpClient.addHeader("Authorization", "token " API_TOKEN);
+  int i = 0;
+  while ((i = headers->next(i)) != -1) {
+    httpClient.addHeader(headers->getKey(i), headers->getValue(i));
+  }
 
   log(CLASS_MAIN, Debug, "> POST:..%s", tailStr(url, URL_PRINT_MAX_LENGTH));
   log(CLASS_MAIN, Debug, "> POST:'%s'", body);

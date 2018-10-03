@@ -13,6 +13,7 @@
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Array.h>
+#include <main4ino/Table.h>
 #include <main4ino/Clock.h>
 #include <main4ino/SerBot.h>
 
@@ -102,8 +103,17 @@ public:
              void (*ios)(char led, bool v),
              bool (*initWifiInit)(),
              bool (*initWifiSteady)(),
-             int (*httpPost)(const char *url, const char *body, ParamStream *response),
-             int (*httpGet)(const char *url, ParamStream *response),
+             int (*httpPost)(
+            		 const char *url,
+								 const char *body,
+								 ParamStream *response,
+                 Table* headers
+								 ),
+             int (*httpGet)(
+            		 const char *url,
+								 ParamStream *response,
+                 Table* headers
+								 ),
              void (*clearDevice)()) {
 
     body->setLcdImgFunc(lcdImg);
