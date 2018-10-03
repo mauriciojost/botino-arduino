@@ -22,7 +22,6 @@
 #include <main4ino/Buffer.h>
 #include <main4ino/Integer.h>
 #include <main4ino/Misc.h>
-#include <main4ino/Value.h>
 
 #define CLASS_IMAGE "IM"
 
