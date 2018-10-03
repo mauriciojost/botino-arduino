@@ -115,7 +115,9 @@ void configureModeArchitecture() {
 
 int main(int argc, const char *argv[]) {
   setup();
-  while (true) {
+  int steps = atoi(argv[1]);
+  for (int i = 0; i < steps; i++) {
+    log(CLASS_MAIN, Debug, "### Step %d/%d", i, steps);
     loop();
   }
 }
