@@ -27,7 +27,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
 
 void loopArchitecture() {
   char str[100];
-  gets(str);
+  fgets(str, 100, stdin);
   printf("Parsing: '%s'\n", str);
   if (strlen(str) != 0) {
     m.command(str);
