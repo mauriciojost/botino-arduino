@@ -200,7 +200,7 @@ int httpGet(const char *url, ParamStream *response, Table* headers) {
   return errorCode;
 }
 
-int httpPost(const char *url, const char *body, ParamStream *response, Table<HEADERS_MAX, HEADERS_KEY_LENGTH, HEADERS_VAL_LENGTH>* headers) {
+int httpPost(const char *url, const char *body, ParamStream *response, Table* headers) {
   httpClient.begin(url);
   int i = 0;
   while ((i = headers->next(i)) != -1) {
