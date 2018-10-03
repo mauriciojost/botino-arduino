@@ -26,6 +26,13 @@ pipeline {
         }
       }
     }
+    stage('Simulate') {
+      steps {
+        wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
+          sh './simulate '-D PROJ_VERSION=test' `cat profiles/simulate.prof`'
+        }
+      }
+    }
   }
   post {  
     failure {  
