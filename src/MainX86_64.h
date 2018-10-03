@@ -10,6 +10,10 @@
 #define CURL_COMMAND_GET "curl --silent -XGET '%s'"
 #define CURL_COMMAND_POST "curl --silent -H 'Content-Type: application/json' -XPOST '%s' -d '%s'"
 
+
+enum AppMode { Interactive = 0, NonInteractive = 1};
+AppMode appMode = Interactive;
+
 unsigned long millis();
 
 ////////////////////////////////////////
@@ -96,11 +100,13 @@ void setupArchitecture() {
 }
 
 void runModeArchitecture() {
-  char str[100];
-  fgets(str, 100, stdin);
-  printf("Parsing: '%s'\n", str);
-  if (strlen(str) != 0) {
-    m.command(str);
+  if (appMode == Interactive) {
+    char str[100];
+    fgets(str, 100, stdin);
+    printf("Parsing: '%s'\n", str);
+    if (strlen(str) != 0) {
+      m.command(str);
+    }
   }
 }
 
@@ -114,9 +120,10 @@ void configureModeArchitecture() {
 
 int main(int argc, const char *argv[]) {
   setup();
-  int steps = atoi(argv[1]);
-  for (int i = 0; i < steps; i++) {
-    log(CLASS_MAIN, Debug, "### Step %d/%d", i, steps);
+  appMode = (AppMode)atoi(argv[1]);
+  int simulationSteps = atoi(argv[2]);
+  for (int i = 0; i < simulationSteps; i++) {
+    log(CLASS_MAIN, Debug, "### Step %d/%d", i, simulationSteps);
     loop();
   }
 }

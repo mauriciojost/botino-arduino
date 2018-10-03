@@ -147,6 +147,6 @@ PLATFORMIO_BUILD_FLAGS="`cat profiles/demo.prof`" platformio run --target upload
 ## 3.4. Simulate
 
 ```
-./simulate '-D PROJ_VERSION="1master"' `cat profiles/simulate.prof`
+./simulate 0 100 # mode interactive, 100 steps
 ```
 
