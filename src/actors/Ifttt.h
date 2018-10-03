@@ -6,6 +6,7 @@
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Boolean.h>
+#include <main4ino/Table.h>
 #include <main4ino/Clock.h>
 #include <main4ino/Misc.h>
 
