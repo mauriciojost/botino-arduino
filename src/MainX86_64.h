@@ -25,15 +25,6 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
   return true;
 }
 
-void loopArchitecture() {
-  char str[100];
-  fgets(str, 100, stdin);
-  printf("Parsing: '%s'\n", str);
-  if (strlen(str) != 0) {
-    m.command(str);
-  }
-}
-
 int httpGet(const char *url, ParamStream *response) {
   Buffer aux(CL_MAX_LENGTH);
   aux.fill(CURL_COMMAND_GET, url);
@@ -105,7 +96,12 @@ void setupArchitecture() {
 }
 
 void runModeArchitecture() {
-  // nothing to be done here
+  char str[100];
+  fgets(str, 100, stdin);
+  printf("Parsing: '%s'\n", str);
+  if (strlen(str) != 0) {
+    m.command(str);
+  }
 }
 
 void configureModeArchitecture() {
