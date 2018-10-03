@@ -233,7 +233,7 @@ public:
       }
       return false;
     } else if (strcmp("rnd", c) == 0) {
-      int routine = (int)random(0, getSettings()->getNroRoutinesForButton());
+      int routine = (int)random(getSettings()->getNroRoutinesForButton());
       log(CLASS_MODULE, Debug, "Routine %d...", routine);
       getBody()->performMove(routine);
       return false;
