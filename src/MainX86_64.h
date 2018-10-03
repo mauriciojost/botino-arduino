@@ -2,6 +2,7 @@
 
 #include <time.h>
 #include <unistd.h>
+#include <stdio.h>
 
 #define CL_MAX_LENGTH 1000
 #define CURL_COMMAND_GET "curl --silent -XGET '%s'"
