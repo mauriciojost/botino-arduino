@@ -5,6 +5,7 @@ set -x
 
 PROFILE="$1"
 COMMIT_ID=`git rev-parse --short HEAD`
+LOG_DIR=images
 
 echo "### Checking if no changes to be committed..."
 git diff --exit-code
@@ -16,8 +17,10 @@ echo "### Uploading..."
 platformio run --target upload
 
 echo "### Backing up image..."
-mkdir -p images/$COMMIT_ID/
-find . -name *.elf | xargs -I% cp -f % images/$COMMIT_ID/
+mkdir -p $LOG_DIR/$COMMIT_ID/
+find . -name *.elf | xargs -I% cp -f % $LOG_DIR/$COMMIT_ID/
 
 echo "### Monitoring..."
-./serial_monitor 0
+
+
+{ ./serial_monitor 0 > >(tee $LOG_DIR/$COMMIT_ID/stdout.txt ); } 2> >(tee $LOG_DIR/$COMMIT_ID/stderr.txt )
