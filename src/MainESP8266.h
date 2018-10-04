@@ -180,6 +180,7 @@ int httpGet(const char *url, ParamStream *response, Table* headers) {
   int i = 0;
   while ((i = headers->next(i)) != -1) {
     httpClient.addHeader(headers->getKey(i), headers->getValue(i));
+    i++;
   }
   log(CLASS_MAIN, Debug, "> GET:..%s", tailStr(url, URL_PRINT_MAX_LENGTH));
   int errorCode = httpClient.GET();
@@ -205,6 +206,7 @@ int httpPost(const char *url, const char *body, ParamStream *response, Table* he
   int i = 0;
   while ((i = headers->next(i)) != -1) {
     httpClient.addHeader(headers->getKey(i), headers->getValue(i));
+    i++;
   }
 
   log(CLASS_MAIN, Debug, "> POST:..%s", tailStr(url, URL_PRINT_MAX_LENGTH));
