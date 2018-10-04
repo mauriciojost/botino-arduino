@@ -44,7 +44,7 @@ public:
     md = new Metadata(n);
 
     jsonAuxBuffer = new Buffer(MAX_JSON_STR_LENGTH);
-    md->getTiming()->setFrek(201126060);
+    md->getTiming()->setFreq("201126060");
     for (int i = 0; i < NRO_QUOTES; i++) {
       quotes[i] = new Buffer(QUOTE_MAX_LENGTH, "Damn! No quote yet! :(");
     }

@@ -162,7 +162,6 @@ enum BodyProps {
 
 #define POSE_SEPARATOR '.'
 #define TIMING_SEPARATOR ':'
-#define TIMING_STR_LEN 9
 #define TIMING_AND_SEPARATOR_STR_LEN (TIMING_STR_LEN + 1)
 
 #define MOVE_STR_LENGTH (32 + TIMING_AND_SEPARATOR_STR_LEN)
@@ -207,9 +206,9 @@ public:
   	if (str != NULL && strlen(str) > TIMING_AND_SEPARATOR_STR_LEN) {
   		timingMove->fill(str);
   		timingMove->getUnsafeBuffer()[TIMING_STR_LEN] = 0;
-  		timing->setFrek(atol(timingMove->getBuffer()));
+  		timing->setFreq(timingMove->getBuffer());
   		timingMove->fill(str);
-      log(CLASS_BODY, Debug, "Routine built: '%s'/'%ld'", getMove(), timing->getFrek());
+      log(CLASS_BODY, Debug, "Routine built: '%s'/'%s'", getMove(), timing->getFreq());
   	} else {
       log(CLASS_BODY, Warn, "Invalid routine");
   	}
@@ -532,7 +531,7 @@ public:
     images = NULL;
     ifttt = NULL;
     md = new Metadata(n);
-    md->getTiming()->setFrek(201010101);
+    md->getTiming()->setFreq("201010101");
     for (int i = 0; i < NRO_ROUTINES; i++) {
       routines[i] = new Routine("r");
       routines[i]->load("000000000:Z.");
@@ -579,8 +578,8 @@ public:
     for (int i = 0; i < NRO_ROUTINES; i++) {
       while (routines[i]->timing->catchesUp(getTiming()->getCurrentTime())) {
         if (routines[i]->timing->matches()) {
-          const long timing = routines[i]->timing->getFrek();
-          log(CLASS_BODY, Debug, "Rne %d: %ld %s", i, timing, getMove(i));
+          const char* timing = routines[i]->timing->getFreq();
+          log(CLASS_BODY, Debug, "Rne %d: %s %s", i, timing, getMove(i));
           performMove(i);
         }
       }

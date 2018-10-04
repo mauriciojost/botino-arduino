@@ -53,7 +53,7 @@ public:
     initWifiFunc = NULL;
     httpGet = NULL;
     md = new Metadata(n);
-    md->getTiming()->setFrek(201126060);
+    md->getTiming()->setFreq("201126060");
     dbZone->fill(TIMEZONE_DB_ZONE);
     dbKey->fill("");
     headers = new Table(0, 0, 0);
