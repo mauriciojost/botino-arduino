@@ -132,6 +132,7 @@ Codes:
 #include <main4ino/Buffer.h>
 #include <main4ino/Integer.h>
 #include <main4ino/Misc.h>
+#include <main4ino/Timing.h>
 
 #define CLASS_BODY "BO"
 
@@ -203,18 +204,22 @@ public:
     load(aux.getBuffer());
   }
   void load(const char* str) {
-  	if (str != NULL && strlen(str) > TIMING_AND_SEPARATOR_STR_LEN) {
-  		timingMove->fill(str);
-  		timingMove->getUnsafeBuffer()[TIMING_STR_LEN] = 0;
-  		timing->setFreq(timingMove->getBuffer());
-  		timingMove->fill(str);
-      log(CLASS_BODY, Debug, "Routine built: '%s'/'%s'", getMove(), timing->getFreq());
-  	} else {
-      log(CLASS_BODY, Warn, "Invalid routine");
-  	}
+    if (str == NULL) {
+    	return;
+    }
+    timingMove->fill(str);
+    timingMove->getUnsafeBuffer()[TIMING_STR_LEN] = 0;
+    timing->setFreq(timingMove->getBuffer());
+    timingMove->fill(str);
+    log(CLASS_BODY, Debug, "Routine built: '%s'/'%s'", getMove(), timing->getFreq());
   }
   const char* getMove() {
-    return timingMove->getBuffer() + TIMING_AND_SEPARATOR_STR_LEN;
+  	const char* m = timingMove->since(':');
+  	if (m != NULL) {
+  		return m;
+  	} else {
+  		return "?";
+  	}
   }
 };
 

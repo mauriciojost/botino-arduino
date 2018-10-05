@@ -102,8 +102,8 @@ void setupArchitecture() {
 void runModeArchitecture() {
   if (appMode == Interactive) {
     char str[100];
+    printf("Waiting for input: \n   ");
     fgets(str, 100, stdin);
-    printf("Parsing: '%s'\n", str);
     if (strlen(str) != 0) {
       m.command(str);
     }
@@ -119,14 +119,28 @@ void configureModeArchitecture() {
 ////////////////////////////////////////
 
 int main(int argc, const char *argv[]) {
-  appMode = (AppMode)atoi(argv[1]);
-  int simulationSteps = atoi(argv[2]);
-
   setup();
+
+  int simulationSteps = 10;
+
+  if (argc == 1) {
+    appMode = NonInteractive;
+  } else if (argc == 1 + 1) {
+    appMode = (AppMode)atoi(argv[1]);
+  } else if (argc == 1 + 2) {
+    appMode = (AppMode)atoi(argv[1]);
+    simulationSteps = atoi(argv[2]);
+  } else if (argc != 1 + 2) {
+    log(CLASS_MAIN, Error, "2 args max: <starter> [appMode [steps]]");
+    return -1;
+  }
+
   for (int i = 0; i < simulationSteps; i++) {
     log(CLASS_MAIN, Debug, "### Step %d/%d", i, simulationSteps);
     loop();
   }
+  log(CLASS_MAIN, Debug, "### DONE");
+  return 0;
 }
 
 unsigned long millis() {

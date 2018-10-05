@@ -138,15 +138,17 @@ public:
 
   bool command(const char *cmd) {
 
-    char buf[COMMAND_MAX_LENGTH];
-    strncpy(buf, cmd, COMMAND_MAX_LENGTH);
-    log(CLASS_MODULE, Info, "Command: '%s'", buf);
+  	Buffer* b = new Buffer(COMMAND_MAX_LENGTH);
 
-    if (strlen(buf) == 0) {
+    b->load(cmd);
+    b->replace('\n', 0);
+    log(CLASS_MODULE, Info, "Command: '%s'", b->getBuffer());
+
+    if (b->getLength() == 0) {
       return false;
     }
 
-    char *c = strtok(buf, " ");
+    char *c = strtok(b->getUnsafeBuffer(), " ");
 
     if (strcmp("move", c) == 0) {
       c = strtok(NULL, " ");
