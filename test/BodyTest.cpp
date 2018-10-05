@@ -109,6 +109,12 @@ void executeMove(Body *b, const char *move) {
   b->act();
 }
 
+void setMove(Body *b, int i, const char *move) {
+  Buffer mv(30);
+  mv.fill(move);
+  b->setPropValue(BodyRoutine0Prop + i, &mv);
+}
+
 void test_body_performs_basic_moves() {
 
   Quotes q("q");
@@ -188,12 +194,37 @@ void test_body_parses_moves() {
 }
 
 
+void test_body_parses_move_timing_alias() {
+
+  Quotes q("q");
+  Images im("i");
+  Ifttt it("m");
+
+  Body b("b");
+  initBody(&b, &q, &im, &it);
+
+  for (int i = 0; i < NRO_ROUTINES; i++) {
+    setMove(&b, i, "201010101:B56.");
+    TEST_ASSERT_EQUAL(201010101L, b.getMoveTiming(i)->getFreqCode());
+    TEST_ASSERT_EQUAL_STRING("B56.", b.getMove(i));
+
+    setMove(&b, i, "hourly:B22.");
+    TEST_ASSERT_EQUAL(300003600L, b.getMoveTiming(i)->getFreqCode());
+    TEST_ASSERT_EQUAL_STRING("B22.", b.getMove(i));
+
+  }
+
+}
+
+
+
 int main() {
   UNITY_BEGIN();
   RUN_TEST(test_body_shows_time);
   RUN_TEST(test_body_performs_basic_moves);
   RUN_TEST(test_body_creates_predictions);
   RUN_TEST(test_body_parses_moves);
+  RUN_TEST(test_body_parses_move_timing_alias);
   return (UNITY_END());
 }
 

@@ -208,8 +208,9 @@ public:
     	return;
     }
     timingMove->fill(str);
-    timingMove->getUnsafeBuffer()[TIMING_STR_LEN] = 0;
+    timingMove->replace(':', 0);
     timing->setFreq(timingMove->getBuffer());
+
     timingMove->fill(str);
     log(CLASS_BODY, Debug, "Routine built: '%s'/'%s'", getMove(), timing->getFreq());
   }
@@ -220,6 +221,9 @@ public:
   	} else {
   		return "?";
   	}
+  }
+  Timing* getTiming() {
+    return timing;
   }
 };
 
@@ -641,6 +645,10 @@ public:
 
   Metadata *getMetadata() {
     return md;
+  }
+
+  Timing *getMoveTiming(int moveIndex) {
+    return routines[POSIT(moveIndex % NRO_ROUTINES)]->getTiming();
   }
 
   const char *getMove(int moveIndex) {
