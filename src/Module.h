@@ -10,6 +10,7 @@
 #include <main4ino/PropSync.h>
 #include <actors/SetupSync.h>
 #include <actors/Ifttt.h>
+#include <actors/Notifier.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Array.h>
@@ -36,6 +37,7 @@
   "\n  wifipass   : set wifi pass"                                                                                                         \
   "\n  ifttttoken : set ifttt token"                                                                                                       \
   "\n  timezonekey: set timezonedb.com/v2 api key"                                                                                         \
+  "\n  ack        : notification read"                                                                                                     \
   "\n  help       : show this help"                                                                                                        \
   "\n  (all messages are shown as info log level)"                                                                                         \
   "\n"
@@ -57,6 +59,7 @@ private:
   Quotes *quotes;
   Images *images;
   Ifttt *ifttt;
+  Notifier *notifier;
 
   bool (*initWifiSteadyFunc)();
   void (*clearDeviceFunc)();
@@ -73,8 +76,9 @@ public:
     body = new Body("body");
     images = new Images("images");
     ifttt = new Ifttt("ifttt");
+    notifier = new Notifier("notifier");
 
-    actors = new Array<Actor *>(9);
+    actors = new Array<Actor *>(10);
     actors->set(0, (Actor *)setupSync);
     actors->set(1, (Actor *)propSync);
     actors->set(2, (Actor *)clockSync);
@@ -84,6 +88,7 @@ public:
     actors->set(6, (Actor *)body);
     actors->set(7, (Actor *)images);
     actors->set(8, (Actor *)ifttt);
+    actors->set(9, (Actor *)notifier);
 
     bot = new SerBot(clock, actors);
 
@@ -92,6 +97,7 @@ public:
     body->setQuotes(quotes);
     body->setImages(images);
     body->setIfttt(ifttt);
+    body->setNotifier(notifier);
 
     initWifiSteadyFunc = NULL;
     clearDeviceFunc = NULL;
@@ -118,7 +124,6 @@ public:
 
     body->setLcdImgFunc(lcdImg);
     body->setArmsFunc(arms);
-    body->setMessageFunc(messageFunc);
     body->setIosFunc(ios);
     propSync->setInitWifi(initWifiSteady);
     propSync->setHttpPost(httpPost);
@@ -129,6 +134,7 @@ public:
     quotes->setInitWifi(initWifiSteady);
     ifttt->setInitWifi(initWifiSteady);
     ifttt->setHttpPost(httpPost);
+    notifier->setMessageFunc(messageFunc);
 
     initWifiSteadyFunc = initWifiSteady;
     clearDeviceFunc = clearDevice;
@@ -258,6 +264,11 @@ public:
       clockSync->setDbKey(c);
       log(CLASS_MODULE, Info, "TimeZoneDb key: %s", clockSync->getDbKey());
       return false;
+    } else if (strcmp("ack", c) == 0) {
+      c = strtok(NULL, " ");
+      notifier->notificationRead();
+      log(CLASS_MODULE, Info, "Notification read");
+      return false;
     } else if (strcmp("help", c) == 0) {
       logRaw(CLASS_MODULE, Warn, HELP_COMMAND_CLI);
       return false;
@@ -303,6 +314,10 @@ public:
 
   ClockSync *getClockSync() {
     return clockSync;
+  }
+
+  Notifier *getNotifier() {
+    return notifier;
   }
 
 };

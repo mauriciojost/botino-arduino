@@ -65,9 +65,6 @@ bool initWifiInit();
 // Initialize steady wifi
 bool initWifiSteady();
 
-// Extended "message to user" function (printf way)
-void messageFuncExt(int line, int size, const char *format, ...);
-
 //////////////////////////////////////////////////////////////
 // To be provided by the Main of a specific architecture
 //////////////////////////////////////////////////////////////

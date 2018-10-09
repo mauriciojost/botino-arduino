@@ -65,10 +65,10 @@ void led(char led, bool v) {
   }
 }
 
-void initBody(Body *b, Quotes *q, Images *i, Ifttt* it) {
+void initBody(Body *b, Quotes *q, Images *i, Ifttt* it, Notifier* n) {
   b->setLcdImgFunc(lcdImg);
   b->setArmsFunc(arms);
-  b->setMessageFunc(messageOnLcd);
+  b->setNotifier(n);
   b->setIosFunc(led);
   b->setQuotes(q);
   b->setImages(i);
@@ -79,11 +79,13 @@ void test_body_shows_time() {
 
   setLogLevel(Warn);
   Quotes q("q");
+  Notifier n("n");
+  n.setMessageFunc(messageOnLcd);
   Images i("i");
   Ifttt it("m");
 
   Body b("b");
-  initBody(&b, &q, &i, &it);
+  initBody(&b, &q, &i, &it, &n);
 
   Buffer move0(20, "201010101:Mc1.Fb."); // clock message (show current time) and face black
 
@@ -118,11 +120,13 @@ void setMove(Body *b, int i, const char *move) {
 void test_body_performs_basic_moves() {
 
   Quotes q("q");
+  Notifier n("n");
+  n.setMessageFunc(messageOnLcd);
   Images i("i");
   Ifttt it("m");
 
   Body b("b");
-  initBody(&b, &q, &i, &it);
+  initBody(&b, &q, &i, &it, &n);
 
   TEST_ASSERT_EQUAL_STRING("", lastArms);
 
@@ -161,11 +165,13 @@ void test_body_performs_basic_moves() {
 void test_body_creates_predictions() {
 
   Quotes q("q");
+  Notifier n("n");
+  n.setMessageFunc(messageOnLcd);
   Images i("i");
   Ifttt it("m");
 
   Body b("b");
-  initBody(&b, &q, &i, &it);
+  initBody(&b, &q, &i, &it, &n);
 
   executeMove(&b, "201010101:Mp1.");
   TEST_ASSERT_EQUAL_STRING("your colleague will ride your colleague at work", lastMsg);
@@ -174,11 +180,13 @@ void test_body_creates_predictions() {
 void test_body_parses_moves() {
 
   Quotes q("q");
+  Notifier n("n");
+  n.setMessageFunc(messageOnLcd);
   Images i("i");
   Ifttt it("m");
 
   Body b("b");
-  initBody(&b, &q, &i, &it);
+  initBody(&b, &q, &i, &it, &n);
 
   TEST_ASSERT_EQUAL_STRING("", lastArms);
 
@@ -197,11 +205,13 @@ void test_body_parses_moves() {
 void test_body_parses_move_timing_alias() {
 
   Quotes q("q");
+  Notifier n("n");
+  n.setMessageFunc(messageOnLcd);
   Images im("i");
   Ifttt it("m");
 
   Body b("b");
-  initBody(&b, &q, &im, &it);
+  initBody(&b, &q, &im, &it, &n);
 
   for (int i = 0; i < NRO_ROUTINES; i++) {
     setMove(&b, i, "201010101:B56.");

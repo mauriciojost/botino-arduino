@@ -126,6 +126,7 @@ Codes:
 #include <actors/Predictions.h>
 #include <actors/Quotes.h>
 #include <actors/Ifttt.h>
+#include <actors/Notifier.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Boolean.h>
@@ -233,17 +234,16 @@ private:
   const char *name;
   Metadata* md;
   void (*arms)(int left, int right, int steps);
-  void (*messageFunc)(int line, const char *msg, int size);
+  Notifier* notifier;
   void (*iosFunc)(char led, bool v);
   void((*lcdImgFunc)(char img, uint8_t bitmap[]));
-
   Quotes *quotes;
   Images *images;
   Ifttt *ifttt;
   Routine *routines[NRO_ROUTINES];
 
   bool isInitialized() {
-    bool init = arms != NULL && iosFunc != NULL && messageFunc != NULL && lcdImgFunc != NULL && quotes != NULL && images != NULL && ifttt != NULL;
+    bool init = arms != NULL && iosFunc != NULL && notifier != NULL && lcdImgFunc != NULL && quotes != NULL && images != NULL && ifttt != NULL;
     return init;
   }
 
@@ -482,7 +482,7 @@ private:
 					int m = GET_MINUTES(getTiming()->getCurrentTime());
 					Buffer t(6, "");
 					t.fill("%02d:%02d", h, m);
-					messageFunc(0, t.getBuffer(), getInt(c3));
+					notifier->message(0, getInt(c3), t.getBuffer());
 				}
 				break;
 				case 'k':
@@ -491,14 +491,14 @@ private:
 					long t = getTiming()->getCurrentTime();
 					Buffer b(18, "");
 					b.fill("%4d-%02d-%02d\n%02d:%02d", GET_YEARS(t), GET_MONTHS(t), GET_DAYS(t), GET_HOURS(t), GET_MINUTES(t));
-					messageFunc(0, b.getBuffer(), getInt(c3));
+					notifier->message(0, getInt(c3), b.getBuffer());
 				}
 				break;
 				case 'q':
 				{
 					log(CLASS_BODY, Debug, "Msg quote");
 					int i = random(NRO_QUOTES);
-					messageFunc(0, quotes->getQuote(i), getInt(c3));
+					notifier->message(0, getInt(c3), quotes->getQuote(i));
 				}
 				break;
 				case 'p':
@@ -506,7 +506,7 @@ private:
 					log(CLASS_BODY, Debug, "Msg prediction");
 					Buffer pr(200, "");
 					Predictions::getPrediction(&pr);
-					messageFunc(0, pr.getBuffer(), getInt(c3));
+					notifier->message(0, getInt(c3), pr.getBuffer());
 				}
 				break;
 				default:
@@ -526,7 +526,14 @@ private:
 			Buffer msg(MOVE_STR_LENGTH, pose + 2);
 			msg.replace('.', 0);
 			log(CLASS_BODY, Debug, "Msg '%s'", msg.getBuffer());
-			messageFunc(0, msg.getBuffer(), size);
+			notifier->message(0, size, msg.getBuffer());
+		} else
+		if (c1 == 'N') {
+			// NOTIFICATION
+			Buffer msg(MOVE_STR_LENGTH, pose + 1);
+			msg.replace('.', 0);
+			log(CLASS_BODY, Debug, "Not '%s'", msg.getBuffer());
+			notifier->notification(msg.getBuffer());
 		} else
 		if (c1 == 'I') {
 			// IFTTT
@@ -582,12 +589,12 @@ public:
   Body(const char *n) {
     name = n;
     arms = NULL;
-    messageFunc = NULL;
     iosFunc = NULL;
     lcdImgFunc = NULL;
     quotes = NULL;
     images = NULL;
     ifttt = NULL;
+    notifier = NULL;
     md = new Metadata(n);
     md->getTiming()->setFreq("201010101");
     for (int i = 0; i < NRO_ROUTINES; i++) {
@@ -611,6 +618,10 @@ public:
     images = i;
   }
 
+  void setNotifier(Notifier *n) {
+    notifier = n;
+  }
+
   void setIfttt(Ifttt *i) {
     ifttt = i;
   }
@@ -618,12 +629,11 @@ public:
   void setLcdImgFunc(void (*f)(char img, uint8_t bitmap[])) {
     lcdImgFunc = f;
   }
+
   void setArmsFunc(void (*f)(int left, int right, int steps)) {
     arms = f;
   }
-  void setMessageFunc(void (*f)(int line, const char *str, int size)) {
-    messageFunc = f;
-  }
+
   void setIosFunc(void (*f)(char led, bool v)) {
     iosFunc = f;
   }

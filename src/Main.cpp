@@ -16,16 +16,16 @@ Module m;
 
 bool initWifiInit() {
   log(CLASS_MAIN, Info, "W.init");
-  messageFuncExt(0, 2, "HOTSPOT?");
+  m.getNotifier()->message(0, 2, "HOTSPOT?");
   delay(USER_DELAY_MS);
-  messageFuncExt(0, 2, WIFI_SSID_INIT);
+  m.getNotifier()->message(0, 2, WIFI_SSID_INIT);
   delay(USER_DELAY_MS);
   bool connected = initWifi(WIFI_SSID_INIT, WIFI_PASSWORD_INIT, false, 20);
   if (connected) {
-    messageFuncExt(0, 2, "HOTSPOT OK");
+    m.getNotifier()->message(0, 2, "HOTSPOT OK");
     delay(USER_DELAY_MS);
   } else {
-    messageFuncExt(0, 2, "HOTSPOT KO");
+    m.getNotifier()->message(0, 2, "HOTSPOT KO");
     delay(USER_DELAY_MS);
   }
   return connected;
@@ -40,15 +40,15 @@ bool initWifiSteady() {
     log(CLASS_MAIN, Info, "W.steady");
     bool connected = initWifi(wifiSsid, wifiPass, connectedOnce, 10);
     if (!connectedOnce) {
-      messageFuncExt(0, 2, "WIFI?");
+      m.getNotifier()->message(0, 2, "WIFI?");
       delay(USER_DELAY_MS);
-      messageFuncExt(0, 2, wifiSsid);
+      m.getNotifier()->message(0, 2, wifiSsid);
       delay(USER_DELAY_MS);
       if (connected) { // first time
-        messageFuncExt(0, 2, "WIFI OK");
+        m.getNotifier()->message(0, 2, "WIFI OK");
         delay(USER_DELAY_MS * 2);
       } else {
-        messageFuncExt(0, 2, "WIFI KO");
+        m.getNotifier()->message(0, 2, "WIFI KO");
       }
     }
     connectedOnce = connectedOnce || connected;
@@ -58,19 +58,6 @@ bool initWifiSteady() {
     return false;
   }
 }
-
-void messageFuncExt(int line, int size, const char *format, ...) {
-  Buffer buffer(MAX_LOG_MSG_LENGTH - 1);
-  va_list args;
-  va_start(args, format);
-  vsnprintf(buffer.getUnsafeBuffer(), MAX_LOG_MSG_LENGTH, format, args);
-  buffer.getUnsafeBuffer()[MAX_LOG_MSG_LENGTH - 1] = 0;
-  log(CLASS_MAIN, Debug, "MSG: %s", buffer.getBuffer());
-  messageFunc(0, buffer.getBuffer(), size);
-  va_end(args);
-}
-
-
 
 void setup() {
 

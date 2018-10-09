@@ -481,7 +481,7 @@ void configureModeArchitecture() {
     ArduinoOTA.begin();              // Intialize OTA
   }
 
-  messageFuncExt(0, 1, "telnet %s", WiFi.localIP().toString().c_str());
+  m.getNotifier()->message(0, 1, "telnet %s", WiFi.localIP().toString().c_str());
   Telnet.handle();     // Handle telnet log server and commands
   ArduinoOTA.handle(); // Handle on the air firmware load
 }
@@ -493,59 +493,59 @@ void configureModeArchitecture() {
 bool reactToButtonHeld(int cycles, bool onlyMsg) {
   switch (cycles) {
     case 0: {
-      messageFuncExt(0, 2, "Clear?");
+      m.getNotifier()->message(0, 2, "Read?");
       if (!onlyMsg) {
-        m.command("move Z.");
+        m.command("ack");
       }
     } break;
-    case 1:
+    case 1: {
+      m.getNotifier()->message(0, 2, "Random routine?");
+      if (!onlyMsg) {
+      	m.command("rnd");
+      	m.getNotifier()->message(0, 1, "Random routine...");
+      }
+    } break;
     case 2:
     case 3:
-    case 4: {
+    case 4:
+    case 5: {
       int event = cycles - 1;
       const char *evtName = m.getIfttt()->getEventName(event);
-      messageFuncExt(0, 2, "Push event %s?", evtName);
+      m.getNotifier()->message(0, 2, "Push event %s?", evtName);
       if (!onlyMsg) {
         bool suc = m.getIfttt()->triggerEvent(event);
         if (suc) {
-          messageFuncExt(0, 1, "Event %s pushed!", evtName);
+          m.getNotifier()->message(0, 1, "Event %s pushed!", evtName);
         } else {
-          messageFuncExt(0, 1, "Failed: event not pushed");
+          m.getNotifier()->message(0, 1, "Failed: event not pushed");
         }
       }
     } break;
-    case 5: {
-      messageFuncExt(0, 2, "Random routine?");
-      if (!onlyMsg) {
-      	m.command("rnd");
-      	messageFuncExt(0, 1, "Random routine...");
-      }
-    } break;
     case 6: {
-      messageFuncExt(0, 2, "All act?");
+      m.getNotifier()->message(0, 2, "All act?");
       if (!onlyMsg) {
         m.command("actall");
-        messageFuncExt(0, 1, "All act one-off");
+        m.getNotifier()->message(0, 1, "All act one-off");
       }
     } break;
     case 7: {
-      messageFuncExt(0, 2, "Config mode?");
+      m.getNotifier()->message(0, 2, "Config mode?");
       if (!onlyMsg) {
         m.command("conf");
-        messageFuncExt(0, 1, "In config mode");
+        m.getNotifier()->message(0, 1, "In config mode");
       }
     } break;
     case 8: {
-      messageFuncExt(0, 2, "Run mode?");
+      m.getNotifier()->message(0, 2, "Run mode?");
       if (!onlyMsg) {
         m.command("run");
-        messageFuncExt(0, 1, "In run mode");
+        m.getNotifier()->message(0, 1, "In run mode");
       }
     } break;
     case 9: {
-      messageFuncExt(0, 2, "Show info?");
+      m.getNotifier()->message(0, 2, "Show info?");
       if (!onlyMsg) {
-        messageFuncExt(0,
+        m.getNotifier()->message(0,
                        1,
                        "Name..:%s\nVersio:%s\nCrashe:%d\nUptime:%luh",
                        DEVICE_NAME,
@@ -555,9 +555,9 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
       }
     } break;
     default: {
-      messageFuncExt(0, 2, "Abort?");
+      m.getNotifier()->message(0, 2, "Abort?");
       if (!onlyMsg) {
-        messageFuncExt(0, 1, "");
+        m.getNotifier()->message(0, 1, "");
       }
     } break;
   }
@@ -594,19 +594,19 @@ void hwTest() {
   Buffer aux(32);
   log(CLASS_MAIN, Debug, "USER INFO");
   aux.fill("VER: %s", STRINGIFY(PROJ_VERSION));
-  messageFuncExt(0, 2, aux.getBuffer());
+  m.getNotifier()->message(0, 2, aux.getBuffer());
   log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(USER_DELAY_MS);
   aux.fill("NAM: %s", DEVICE_NAME);
-  messageFuncExt(0, 2, aux.getBuffer());
+  m.getNotifier()->message(0, 2, aux.getBuffer());
   log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(USER_DELAY_MS);
   aux.fill("ID : %d", ESP.getChipId());
-  messageFuncExt(0, 2, aux.getBuffer());
+  m.getNotifier()->message(0, 2, aux.getBuffer());
   log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(USER_DELAY_MS);
   aux.fill("SSI: %s", WIFI_SSID_INIT);
-  messageFuncExt(0, 2, aux.getBuffer());
+  m.getNotifier()->message(0, 2, aux.getBuffer());
   log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(USER_DELAY_MS);
   log(CLASS_MAIN, Debug, "HW test");
