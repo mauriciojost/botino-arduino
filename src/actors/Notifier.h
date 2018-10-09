@@ -10,7 +10,7 @@
 
 #define CLASS_NOTIFIER "NF"
 #define MAX_NOTIF_LENGTH 64
-#define NOTIF_LINE 6
+#define NOTIF_LINE 4
 #define NOTIF_SIZE 2
 
 #include <main4ino/Actor.h>
@@ -35,6 +35,7 @@ public:
     name = n;
     messageFunc = NULL;
     md = new Metadata(n);
+    md->getTiming()->setFreq("300000060");
   }
 
   const char *getName() {
@@ -78,7 +79,7 @@ public:
     }
     const char* currentNotif = getNotification();
     if (currentNotif != NULL) {
-    	message(NOTIF_LINE, NOTIF_SIZE, "%s");
+    	message(NOTIF_LINE, NOTIF_SIZE, "* %s *");
     }
   }
 
