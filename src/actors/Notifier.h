@@ -36,6 +36,7 @@ public:
     messageFunc = NULL;
     md = new Metadata(n);
     md->getTiming()->setFreq("300000060");
+    notification("Welcome!");
   }
 
   const char *getName() {
