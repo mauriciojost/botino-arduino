@@ -7,11 +7,14 @@ PROFILE="$1"
 COMMIT_ID=`git rev-parse --short HEAD`
 LOG_DIR=images
 
-echo "### Checking if no changes to be committed..."
-git diff --exit-code
-
 echo "### Using profile $PROFILE..."
 export PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=$COMMIT_ID `cat $PROFILE`" 
+
+echo "### Compiling..."
+platformio run
+
+echo "### Checking if no changes to be committed..."
+git diff --exit-code
 
 echo "### Uploading..."
 platformio run --target upload
