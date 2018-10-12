@@ -18,6 +18,7 @@ platformio run --target upload
 
 echo "### Backing up image..."
 mkdir -p $LOG_DIR/$COMMIT_ID/
+rm -f $LOG_DIR/$COMMIT_ID/*
 find . -name *.elf | xargs -I% cp -f % $LOG_DIR/$COMMIT_ID/
 
 echo "### Monitoring..."
