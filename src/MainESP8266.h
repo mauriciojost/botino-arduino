@@ -510,7 +510,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
     case 3:
     case 4:
     case 5: {
-      int event = cycles - 1;
+      int event = cycles - 2;
       const char *evtName = m.getIfttt()->getEventName(event);
       m.getNotifier()->message(0, 2, "Push event %s?", evtName);
       if (!onlyMsg) {
