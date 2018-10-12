@@ -81,6 +81,8 @@ public:
     const char* currentNotif = getNotification();
     if (currentNotif != NULL) {
     	message(NOTIF_LINE, NOTIF_SIZE, "* %s *");
+    } else {
+    	log(CLASS_NOTIFIER, Debug, "No notifs");
     }
   }
 
