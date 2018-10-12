@@ -10,11 +10,17 @@
 
 #define CLASS_NOTIFIER "NF"
 #define MAX_NOTIF_LENGTH 64
-#define NOTIF_LINE 0
+#define NOTIF_LINE 4
 #define NOTIF_SIZE 1
 
 #include <main4ino/Actor.h>
 #include <main4ino/Queue.h>
+
+enum NotifierProps {
+  NotifierFreqProp = 0,
+  NotifierPropsDelimiter // count of properties
+};
+
 
 class Notifier : public Actor {
 
@@ -35,7 +41,7 @@ public:
     name = n;
     messageFunc = NULL;
     md = new Metadata(n);
-    md->getTiming()->setFreq("300000005");
+    md->getTiming()->setFreq("300000060");
     notification("Welcome!");
   }
 
@@ -90,18 +96,33 @@ public:
     }
   }
 
+
   const char *getPropName(int propIndex) {
     switch (propIndex) {
+      case (NotifierFreqProp):
+        return "freq";
       default:
         return "";
     }
   }
 
-  void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) { }
+  void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {
+    switch (propIndex) {
+      case (NotifierFreqProp): {
+        setPropTiming(m, targetValue, actualValue, md->getTiming());
+      } break;
+      default:
+        break;
+    }
+    if (m != GetValue) {
+   	getMetadata()->changed();
+    }
+  }
 
   int getNroProps() {
-    return 0;
+    return NotifierPropsDelimiter;
   }
+
 
   void getInfo(int infoIndex, Buffer *info) {}
 
