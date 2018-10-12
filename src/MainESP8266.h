@@ -493,9 +493,10 @@ void configureModeArchitecture() {
 bool reactToButtonHeld(int cycles, bool onlyMsg) {
   switch (cycles) {
     case 0: {
-      m.getNotifier()->message(0, 2, "Read?");
+      m.getNotifier()->message(0, 2, "Ack?");
       if (!onlyMsg) {
         m.command("ack");
+        m.command("move Z.");
       }
     } break;
     case 1: {
