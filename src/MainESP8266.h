@@ -186,7 +186,7 @@ int httpGet(const char *url, ParamStream *response, Table *headers) {
   int errorCode = httpClient.GET();
   log(CLASS_MAIN, Debug, "> GET:%d", errorCode);
 
-  if (errorCode == HTTP_OK) {
+  if (errorCode == HTTP_OK || errorCode == HTTP_NO_CONTENT) {
     if (response != NULL) {
       httpClient.writeToStream(response);
     }
@@ -234,8 +234,8 @@ void messageFunc(int x, int y, int color, bool wrap, bool clear, int size, const
   if (clear) {
     lcd.clearDisplay();
   }
-  lcd.setTextWrap(false); // forced
-  lcd.fillRect(0, y * 8 * size, l*8, 8 * size, (color == 0? 1: 0));
+  lcd.setTextWrap(wrap);
+  lcd.fillRect(0, y * 8 * size, l*8, 8 * size, (color == 0? 1: 0)); // not ideal if wrap = true
   lcd.setTextSize(size);
   lcd.setTextColor(color);
   lcd.setCursor(x, y);
