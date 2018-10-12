@@ -33,6 +33,7 @@
   "\n  clear      : clear crashes stacktrace"                                                                                              \
   "\n  actall     : all act"                                                                                                               \
   "\n  rnd        : execute random routine"                                                                                                \
+  "\n  lcd        : write on display <x> <y> <color> <wrap> <clear> <size> <str>"                                                          \
   "\n  wifissid   : set wifi ssid"                                                                                                         \
   "\n  wifipass   : set wifi pass"                                                                                                         \
   "\n  ifttttoken : set ifttt token"                                                                                                       \
@@ -63,6 +64,7 @@ private:
 
   bool (*initWifiSteadyFunc)();
   void (*clearDeviceFunc)();
+  void (*messageFunct)(int x, int y, int color, bool wrap, bool clear, int size, const char *str);
 
 public:
   Module() {
@@ -101,6 +103,7 @@ public:
 
     initWifiSteadyFunc = NULL;
     clearDeviceFunc = NULL;
+    messageFunct = NULL;
   }
 
   void setup(void (*lcdImg)(char img, uint8_t bitmap[]),
@@ -129,6 +132,7 @@ public:
 
     initWifiSteadyFunc = initWifiSteady;
     clearDeviceFunc = clearDevice;
+    messageFunct = messageFunc;
 
     bot->setMode(RunMode);
   }
@@ -155,6 +159,23 @@ public:
       }
       log(CLASS_MODULE, Info, "-> Move %s", c);
       body->performMove(c);
+      return false;
+    } else if (strcmp("lcd", c) == 0) {
+
+	  // int x, int y, int color, bool wrap, bool clear, int size, const char *str);
+      const char *x = strtok(NULL, " ");
+      const char *y = strtok(NULL, " ");
+      const char *color = strtok(NULL, " ");
+      const char *wrap = strtok(NULL, " ");
+      const char *clear = strtok(NULL, " ");
+      const char *size = strtok(NULL, " ");
+      const char *str = strtok(NULL, " ");
+      if (x == NULL || y == NULL || color == NULL || wrap == NULL || clear == NULL || size == NULL || str == NULL) {
+        logRaw(CLASS_MODULE, Info, "Arguments needed:\n  lcd <x> <y> <color> <wrap> <clear> <size> <str>");
+        return false;
+      }
+      log(CLASS_MODULE, Info, "-> Lcd %s", str);
+      messageFunct(atoi(x), atoi(y), atoi(color), atoi(wrap), atoi(clear), atoi(size), str);
       return false;
     } else if (strcmp("set", c) == 0) {
       const char *actor = strtok(NULL, " ");

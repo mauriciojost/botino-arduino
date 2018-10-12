@@ -12,7 +12,8 @@
 #define MAX_NOTIF_LENGTH 64
 #define NOTIF_LINE 0
 #define NOTIF_SIZE 1
-#define WHITE 0
+#define BLACK 0
+#define WHITE 1
 #define DO_WRAP true
 #define DO_CLEAR true
 
@@ -63,7 +64,7 @@ public:
     va_start(args, format);
     vsnprintf(buffer.getUnsafeBuffer(), MAX_NOTIF_LENGTH, format, args);
     buffer.getUnsafeBuffer()[MAX_NOTIF_LENGTH - 1] = 0;
-	messageFunc(0, line * 8, WHITE, DO_WRAP, DO_CLEAR, size, buffer.getBuffer());
+	messageFunc(0, line * 8 * size, WHITE, DO_WRAP, DO_CLEAR, size, buffer.getBuffer());
     va_end(args);
   }
 
