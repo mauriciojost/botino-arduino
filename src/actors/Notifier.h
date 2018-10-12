@@ -10,8 +10,8 @@
 
 #define CLASS_NOTIFIER "NF"
 #define MAX_NOTIF_LENGTH 64
-#define NOTIF_LINE 4
-#define NOTIF_SIZE 2
+#define NOTIF_LINE 0
+#define NOTIF_SIZE 1
 
 #include <main4ino/Actor.h>
 #include <main4ino/Queue.h>
@@ -62,6 +62,7 @@ public:
   }
 
   int notification(const char* msg) {
+	log(CLASS_NOTIFIER, Debug, "New notif: %s", msg);
   	return queue.push(msg);
   }
 
@@ -70,7 +71,8 @@ public:
   }
 
   int notificationRead() {
-  	return queue.pop();
+	log(CLASS_NOTIFIER, Debug, "Remove notif");
+	return queue.pop();
   }
 
   void act() {
