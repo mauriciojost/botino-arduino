@@ -8,5 +8,5 @@
 # provided clang configuration file.
 #
 
-find src/ test/  -type f | xargs -I% clang-format-5.0 -style=file -i -fallback-style=none %
+find src/ test/  -type f | xargs -I% clang-format -style=file -i -fallback-style=none %
 
