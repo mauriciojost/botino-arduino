@@ -35,7 +35,7 @@ public:
     name = n;
     messageFunc = NULL;
     md = new Metadata(n);
-    md->getTiming()->setFreq("300000060");
+    md->getTiming()->setFreq("300000005");
     notification("Welcome!");
   }
 
@@ -80,11 +80,13 @@ public:
       log(CLASS_NOTIFIER, Warn, "No init!");
       return;
     }
-    const char* currentNotif = getNotification();
-    if (currentNotif != NULL) {
+    if (getTiming()->matches()) {
+      const char* currentNotif = getNotification();
+      if (currentNotif != NULL) {
     	message(NOTIF_LINE, NOTIF_SIZE, "* %s *");
-    } else {
+      } else {
     	log(CLASS_NOTIFIER, Debug, "No notifs");
+      }
     }
   }
 
