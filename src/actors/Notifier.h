@@ -10,12 +10,13 @@
 
 #define CLASS_NOTIFIER "NF"
 #define MAX_NOTIF_LENGTH 64
-#define NOTIF_LINE 0
+#define NOTIF_LINE 7
 #define NOTIF_SIZE 1
 #define BLACK 0
 #define WHITE 1
 #define DO_WRAP true
 #define DO_CLEAR true
+#define DO_NOT_CLEAR false
 
 #include <main4ino/Actor.h>
 #include <main4ino/Queue.h>
@@ -64,7 +65,7 @@ public:
     va_start(args, format);
     vsnprintf(buffer.getUnsafeBuffer(), MAX_NOTIF_LENGTH, format, args);
     buffer.getUnsafeBuffer()[MAX_NOTIF_LENGTH - 1] = 0;
-	messageFunc(0, line * 8 * size, WHITE, DO_WRAP, DO_CLEAR, size, buffer.getBuffer());
+	messageFunc(0, line * 8 * size, WHITE, DO_WRAP, DO_NOT_CLEAR, size, buffer.getBuffer());
     va_end(args);
   }
 
@@ -91,7 +92,8 @@ public:
       const char *currentNotif = getNotification();
       if (currentNotif != NULL) {
     	  log(CLASS_NOTIFIER, Debug, "Notif: %s", currentNotif);
-    	  message(NOTIF_LINE, NOTIF_SIZE, "* %s *", currentNotif);
+    	  message(NOTIF_LINE - 1, NOTIF_SIZE, "+-----", currentNotif);
+    	  message(NOTIF_LINE, NOTIF_SIZE, "|%s", currentNotif);
       } else {
         log(CLASS_NOTIFIER, Debug, "No notifs");
       }

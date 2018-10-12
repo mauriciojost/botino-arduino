@@ -230,14 +230,16 @@ int httpPost(const char *url, const char *body, ParamStream *response, Table *he
 }
 
 void messageFunc(int x, int y, int color, bool wrap, bool clear, int size, const char *str) {
+  int l = strlen(str);
   if (clear) {
     lcd.clearDisplay();
   }
-  lcd.setTextWrap(wrap);
+  lcd.setTextWrap(false); // forced
+  lcd.fillRect(0, y * 8 * size, l*8, 8 * size, (color == 0? 1: 0));
   lcd.setTextSize(size);
   lcd.setTextColor(color);
   lcd.setCursor(x, y);
-  lcd.println(str);
+  lcd.print(str);
   lcd.display();
   delay(DELAY_MS_SPI);
 }
