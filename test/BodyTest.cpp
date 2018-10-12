@@ -65,7 +65,7 @@ void led(char led, bool v) {
   }
 }
 
-void initBody(Body *b, Quotes *q, Images *i, Ifttt* it, Notifier* n) {
+void initBody(Body *b, Quotes *q, Images *i, Ifttt *it, Notifier *n) {
   b->setLcdImgFunc(lcdImg);
   b->setArmsFunc(arms);
   b->setNotifier(n);
@@ -198,9 +198,7 @@ void test_body_parses_moves() {
   // Move malformed (does not end in .)
   TEST_ASSERT_EQUAL_STRING("Z", b.performPose("Mp1.Z")); // consume 1 pose at a time
   TEST_ASSERT_EQUAL(NULL, b.performPose("Z"));
-
 }
-
 
 void test_body_parses_move_timing_alias() {
 
@@ -221,12 +219,8 @@ void test_body_parses_move_timing_alias() {
     setMove(&b, i, "hourly:B22.");
     TEST_ASSERT_EQUAL(300003600L, b.getMoveTiming(i)->getFreqCode());
     TEST_ASSERT_EQUAL_STRING("B22.", b.getMove(i));
-
   }
-
 }
-
-
 
 int main() {
   UNITY_BEGIN();

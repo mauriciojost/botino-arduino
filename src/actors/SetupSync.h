@@ -1,16 +1,16 @@
 #ifndef SETUPSYNC_INC
 #define SETUPSYNC_INC
 
-#include <log4ino/Log.h>
 #include <Hexer.h>
-#include <main4ino/HttpCodes.h>
+#include <log4ino/Log.h>
 #include <main4ino/Actor.h>
-#include <main4ino/ParamStream.h>
 #include <main4ino/Boolean.h>
 #include <main4ino/Bot.h>
 #include <main4ino/Clock.h>
-#include <main4ino/Misc.h>
+#include <main4ino/HttpCodes.h>
 #include <main4ino/Metadata.h>
+#include <main4ino/Misc.h>
+#include <main4ino/ParamStream.h>
 
 #define CLASS_SETUPSYNC "SS"
 
@@ -34,10 +34,10 @@
 
 enum SetupSyncProps {
   SetupSyncWifiSsidProp = 0, // wifi ssid
-  SetupSyncWifiPassProp, // wifi pass
-  SetupSyncIftttKeyProp, // ifttt key (webhook)
-  SetupSyncITimeKeyProp, // time api key
-  SetupSyncPropsDelimiter // delimiter of the configuration states
+  SetupSyncWifiPassProp,     // wifi pass
+  SetupSyncIftttKeyProp,     // ifttt key (webhook)
+  SetupSyncITimeKeyProp,     // time api key
+  SetupSyncPropsDelimiter    // delimiter of the configuration states
 };
 
 /**
@@ -50,11 +50,11 @@ class SetupSync : public Actor {
 private:
   const char *name;
 
-  Buffer* ssid;
-  Buffer* pass;
-  Buffer* iftt;
-  Buffer* time;
-  Metadata* md;
+  Buffer *ssid;
+  Buffer *pass;
+  Buffer *iftt;
+  Buffer *time;
+  Metadata *md;
 
 public:
   SetupSync(const char *n) {
@@ -80,23 +80,23 @@ public:
 
   void getSetPropValue(int propIndex, GetSetMode setMode, const Value *targetValue, Value *actualValue) {
     switch (propIndex) {
-    	case (SetupSyncWifiSsidProp):
+      case (SetupSyncWifiSsidProp):
         setPropValue(setMode, targetValue, NULL, ssid); // write only
         break;
-    	case (SetupSyncWifiPassProp):
+      case (SetupSyncWifiPassProp):
         setPropValue(setMode, targetValue, NULL, pass); // write only
         break;
-    	case (SetupSyncIftttKeyProp):
+      case (SetupSyncIftttKeyProp):
         setPropValue(setMode, targetValue, NULL, iftt); // write only
         break;
-    	case (SetupSyncITimeKeyProp):
+      case (SetupSyncITimeKeyProp):
         setPropValue(setMode, targetValue, NULL, time); // write only
         break;
       default:
         break;
     }
     if (setMode != GetValue) {
-    	getMetadata()->changed();
+      getMetadata()->changed();
     }
   }
 
@@ -106,13 +106,13 @@ public:
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
-    	case (SetupSyncWifiSsidProp):
-    			return "_wifissid";
-    	case (SetupSyncWifiPassProp):
-    			return "_wifipass";
-    	case (SetupSyncIftttKeyProp):
+      case (SetupSyncWifiSsidProp):
+        return "_wifissid";
+      case (SetupSyncWifiPassProp):
+        return "_wifipass";
+      case (SetupSyncIftttKeyProp):
         return "_iftttkey";
-    	case (SetupSyncITimeKeyProp):
+      case (SetupSyncITimeKeyProp):
         return "_timekey";
       default:
         return "";
@@ -162,11 +162,7 @@ public:
   }
 
   bool isInitialized() {
-    return
-    		ssid->getBuffer()[0] != '?' &&
-				pass->getBuffer()[0] != '?' &&
-				iftt->getBuffer()[0] != '?' &&
-				time->getBuffer()[0] != '?';
+    return ssid->getBuffer()[0] != '?' && pass->getBuffer()[0] != '?' && iftt->getBuffer()[0] != '?' && time->getBuffer()[0] != '?';
   }
 };
 

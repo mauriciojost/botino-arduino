@@ -9,11 +9,11 @@
 #include <ArduinoOTA.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WiFi.h>
+#include <FS.h>
 #include <Pinout.h>
 #include <SPI.h>
 #include <Servo.h>
 #include <Wire.h>
-#include <FS.h>
 
 #define DELAY_MS_SPI 3
 
@@ -175,7 +175,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
 
 // TODO: add https support, which requires fingerprint of server that can be obtained as follows:
 //  openssl s_client -connect dweet.io:443 < /dev/null 2>/dev/null | openssl x509 -fingerprint -noout -in /dev/stdin
-int httpGet(const char *url, ParamStream *response, Table* headers) {
+int httpGet(const char *url, ParamStream *response, Table *headers) {
   httpClient.begin(url);
   int i = 0;
   while ((i = headers->next(i)) != -1) {
@@ -201,7 +201,7 @@ int httpGet(const char *url, ParamStream *response, Table* headers) {
   return errorCode;
 }
 
-int httpPost(const char *url, const char *body, ParamStream *response, Table* headers) {
+int httpPost(const char *url, const char *body, ParamStream *response, Table *headers) {
   httpClient.begin(url);
   int i = 0;
   while ((i = headers->next(i)) != -1) {
@@ -502,8 +502,8 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
     case 1: {
       m.getNotifier()->message(0, 2, "Random routine?");
       if (!onlyMsg) {
-      	m.command("rnd");
-      	m.getNotifier()->message(0, 1, "Random routine...");
+        m.command("rnd");
+        m.getNotifier()->message(0, 1, "Random routine...");
       }
     } break;
     case 2:
@@ -547,12 +547,12 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
       m.getNotifier()->message(0, 2, "Show info?");
       if (!onlyMsg) {
         m.getNotifier()->message(0,
-                       1,
-                       "Name..:%s\nVersio:%s\nCrashe:%d\nUptime:%luh",
-                       DEVICE_NAME,
-                       STRINGIFY(PROJ_VERSION),
-                       SaveCrash.count(),
-                       (millis() / 1000) / 3600);
+                                 1,
+                                 "Name..:%s\nVersio:%s\nCrashe:%d\nUptime:%luh",
+                                 DEVICE_NAME,
+                                 STRINGIFY(PROJ_VERSION),
+                                 SaveCrash.count(),
+                                 (millis() / 1000) / 3600);
       }
     } break;
     default: {

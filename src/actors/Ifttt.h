@@ -1,14 +1,14 @@
 #ifndef IFTTT_INC
 #define IFTTT_INC
 
-#include <main4ino/HttpCodes.h>
-#include <main4ino/ParamStream.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Boolean.h>
-#include <main4ino/Table.h>
 #include <main4ino/Clock.h>
+#include <main4ino/HttpCodes.h>
 #include <main4ino/Misc.h>
+#include <main4ino/ParamStream.h>
+#include <main4ino/Table.h>
 
 #define CLASS_IFTTT "IF"
 
@@ -31,14 +31,14 @@ class Ifttt : public Actor {
 
 private:
   const char *name;
-  Metadata* md;
+  Metadata *md;
   bool (*initWifiFunc)();
-  int (*httpPost)(const char *url, const char *body, ParamStream *response, Table* headers);
+  int (*httpPost)(const char *url, const char *body, ParamStream *response, Table *headers);
 
-  Buffer* iftttKey;
-  Buffer* urlAuxBuffer;
+  Buffer *iftttKey;
+  Buffer *urlAuxBuffer;
   Buffer *eventNames[NRO_EVENTS];
-  Table* headers;
+  Table *headers;
 
 public:
   Ifttt(const char *n) {
@@ -70,7 +70,7 @@ public:
     initWifiFunc = f;
   }
 
-  void setHttpPost(int (*h)(const char *url, const char *body, ParamStream *response, Table* headers)) {
+  void setHttpPost(int (*h)(const char *url, const char *body, ParamStream *response, Table *headers)) {
     httpPost = h;
   }
 
@@ -79,7 +79,7 @@ public:
     return eventNames[safeEvtNumber]->getBuffer();
   }
 
-  bool triggerEvent(const char* eventName) {
+  bool triggerEvent(const char *eventName) {
     if (initWifiFunc == NULL || httpPost == NULL) {
       log(CLASS_IFTTT, Error, "Init needed");
       return false;
@@ -107,7 +107,7 @@ public:
       setPropValue(setMode, targetValue, actualValue, eventNames[i]);
     }
     if (setMode != GetValue) {
-    	getMetadata()->changed();
+      getMetadata()->changed();
     }
   }
 
@@ -139,7 +139,6 @@ public:
   Metadata *getMetadata() {
     return md;
   }
-
 };
 
 #endif // IFTTT_INC

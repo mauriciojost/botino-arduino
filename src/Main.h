@@ -10,10 +10,10 @@
 #define CLASS_MAIN "MA"
 
 #include "Images.h"
+#include <Module.h>
+#include <main4ino/HttpCodes.h>
 #include <main4ino/Misc.h>
 #include <main4ino/Table.h>
-#include <main4ino/HttpCodes.h>
-#include <Module.h>
 
 #ifndef PROJ_VERSION
 #error "No PROJ_VERSION defined"
@@ -80,19 +80,10 @@ void logLine(const char *str);
 bool initWifi(const char *ssid, const char *pass, bool skipIfAlreadyConnected, int retries);
 
 // HTTP GET function.
-int httpGet(
-		const char *url,
-		ParamStream *response,
-		Table* headers
-		);
+int httpGet(const char *url, ParamStream *response, Table *headers);
 
 // HTTP POST function.
-int httpPost(
-		const char *url,
-		const char *body,
-		ParamStream *response,
-		Table* headers
-		);
+int httpPost(const char *url, const char *body, ParamStream *response, Table *headers);
 
 // Message function. Directly connected with user.
 void messageFunc(int line, const char *str, int size);

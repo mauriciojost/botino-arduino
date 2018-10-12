@@ -29,8 +29,8 @@ private:
   const char *name;
   bool devDebug;
   int buttonRoutineUntil;
-  Buffer* infoBuffer;
-  Metadata* md;
+  Buffer *infoBuffer;
+  Metadata *md;
 
 public:
   Settings(const char *n) {
@@ -71,7 +71,7 @@ public:
         break;
     }
     if (m != GetValue) {
-    	getMetadata()->changed();
+      getMetadata()->changed();
     }
   }
 
@@ -100,9 +100,9 @@ public:
   }
 
   void setDebug(bool b) {
-  	if (b != devDebug) {
+    if (b != devDebug) {
       getMetadata()->changed();
-  	}
+    }
     devDebug = b;
   }
 

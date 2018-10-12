@@ -1,15 +1,15 @@
 #ifndef QUOTES_INC
 #define QUOTES_INC
 
-#include <main4ino/HttpCodes.h>
-#include <main4ino/ParamStream.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Boolean.h>
-#include <main4ino/Table.h>
 #include <main4ino/Buffer.h>
+#include <main4ino/HttpCodes.h>
 #include <main4ino/Integer.h>
 #include <main4ino/Misc.h>
+#include <main4ino/ParamStream.h>
+#include <main4ino/Table.h>
 
 #define CLASS_QUOTES "QU"
 
@@ -25,12 +25,12 @@ class Quotes : public Actor {
 
 private:
   const char *name;
-  Metadata* md;
+  Metadata *md;
   Buffer *quotes[NRO_QUOTES];
-  int (*httpGet)(const char *url, ParamStream *response, Table* headers);
-  Buffer* jsonAuxBuffer;
+  int (*httpGet)(const char *url, ParamStream *response, Table *headers);
+  Buffer *jsonAuxBuffer;
   bool (*initWifiFunc)();
-  Table* headers;
+  Table *headers;
 
   bool isInitialized() {
     return (httpGet != NULL && initWifiFunc != NULL);
@@ -55,7 +55,7 @@ public:
     return name;
   }
 
-  void setHttpGet(int (*h)(const char *url, ParamStream *response, Table* headers)) {
+  void setHttpGet(int (*h)(const char *url, ParamStream *response, Table *headers)) {
     httpGet = h;
   }
 

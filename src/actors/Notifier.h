@@ -21,13 +21,11 @@ enum NotifierProps {
   NotifierPropsDelimiter // count of properties
 };
 
-
 class Notifier : public Actor {
 
 private:
-
   const char *name;
-  Metadata* md;
+  Metadata *md;
   Queue<8, MAX_NOTIF_LENGTH> queue;
   void (*messageFunc)(int line, const char *str, int size);
 
@@ -36,8 +34,7 @@ private:
   }
 
 public:
-
-  Notifier(const char* n) {
+  Notifier(const char *n) {
     name = n;
     messageFunc = NULL;
     md = new Metadata(n);
@@ -54,10 +51,10 @@ public:
   }
 
   void message(int line, int size, const char *format, ...) {
-  	if (!isInitialized()) {
+    if (!isInitialized()) {
       log(CLASS_NOTIFIER, Warn, "No init!");
-  		return;
-  	}
+      return;
+    }
     Buffer buffer(MAX_NOTIF_LENGTH - 1);
     va_list args;
     va_start(args, format);
@@ -67,18 +64,18 @@ public:
     va_end(args);
   }
 
-  int notification(const char* msg) {
-	log(CLASS_NOTIFIER, Debug, "New notif: %s", msg);
-  	return queue.push(msg);
+  int notification(const char *msg) {
+    log(CLASS_NOTIFIER, Debug, "New notif: %s", msg);
+    return queue.push(msg);
   }
 
-  const char* getNotification() {
-  	return queue.get();
+  const char *getNotification() {
+    return queue.get();
   }
 
   int notificationRead() {
-	log(CLASS_NOTIFIER, Debug, "Remove notif");
-	return queue.pop();
+    log(CLASS_NOTIFIER, Debug, "Remove notif");
+    return queue.pop();
   }
 
   void act() {
@@ -87,15 +84,14 @@ public:
       return;
     }
     if (getTiming()->matches()) {
-      const char* currentNotif = getNotification();
+      const char *currentNotif = getNotification();
       if (currentNotif != NULL) {
-    	message(NOTIF_LINE, NOTIF_SIZE, "* %s *", currentNotif);
+        message(NOTIF_LINE, NOTIF_SIZE, "* %s *", currentNotif);
       } else {
-    	log(CLASS_NOTIFIER, Debug, "No notifs");
+        log(CLASS_NOTIFIER, Debug, "No notifs");
       }
     }
   }
-
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
@@ -115,14 +111,13 @@ public:
         break;
     }
     if (m != GetValue) {
-   	getMetadata()->changed();
+      getMetadata()->changed();
     }
   }
 
   int getNroProps() {
     return NotifierPropsDelimiter;
   }
-
 
   void getInfo(int infoIndex, Buffer *info) {}
 
@@ -133,7 +128,6 @@ public:
   Metadata *getMetadata() {
     return md;
   }
-
 };
 
 #endif // NOTIFIER_INC

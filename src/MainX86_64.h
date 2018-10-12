@@ -1,17 +1,16 @@
 #include <Main.h>
 
+#include <cstdio>
+#include <iostream>
+#include <stdio.h>
 #include <time.h>
 #include <unistd.h>
-#include <stdio.h>
-#include <iostream>
-#include <cstdio>
 
 #define CL_MAX_LENGTH 1000
 #define CURL_COMMAND_GET "curl --silent -XGET '%s'"
 #define CURL_COMMAND_POST "curl --silent -H 'Content-Type: application/json' -XPOST '%s' -d '%s'"
 
-
-enum AppMode { Interactive = 0, NonInteractive = 1};
+enum AppMode { Interactive = 0, NonInteractive = 1 };
 AppMode appMode = Interactive;
 
 unsigned long millis();
@@ -29,7 +28,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
   return true;
 }
 
-int httpGet(const char *url, ParamStream *response, Table* headers) {
+int httpGet(const char *url, ParamStream *response, Table *headers) {
   Buffer aux(CL_MAX_LENGTH);
   aux.fill(CURL_COMMAND_GET, url);
   log(CLASS_MAIN, Debug, "GET: '%s'", aux.getBuffer());
@@ -47,7 +46,7 @@ int httpGet(const char *url, ParamStream *response, Table* headers) {
   return HTTP_OK; // not quite true, but will work for simple purposes
 }
 
-int httpPost(const char *url, const char *body, ParamStream *response, Table* headers) {
+int httpPost(const char *url, const char *body, ParamStream *response, Table *headers) {
   Buffer aux(CL_MAX_LENGTH);
   aux.fill(CURL_COMMAND_POST, url, body);
   log(CLASS_MAIN, Debug, "POST: '%s'", aux.getBuffer());

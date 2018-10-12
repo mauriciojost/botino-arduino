@@ -1,13 +1,13 @@
 #ifndef CLOCKSYNC_INC
 #define CLOCKSYNC_INC
 
-#include <main4ino/HttpCodes.h>
-#include <main4ino/ParamStream.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Boolean.h>
 #include <main4ino/Clock.h>
+#include <main4ino/HttpCodes.h>
 #include <main4ino/Misc.h>
+#include <main4ino/ParamStream.h>
 
 #define CLASS_CLOCKSYNC "CS"
 
@@ -31,14 +31,14 @@ class ClockSync : public Actor {
 private:
   const char *name;
   Clock *clock;
-  Metadata* md;
-  Buffer* dbZone;
-  Buffer* dbKey;
-  Buffer* urlAuxBuffer;
-  Buffer* jsonAuxBuffer;
+  Metadata *md;
+  Buffer *dbZone;
+  Buffer *dbKey;
+  Buffer *urlAuxBuffer;
+  Buffer *jsonAuxBuffer;
   bool (*initWifiFunc)();
-  int (*httpGet)(const char *url, ParamStream *response, Table* headers);
-  Table* headers;
+  int (*httpGet)(const char *url, ParamStream *response, Table *headers);
+  Table *headers;
 
 public:
   ClockSync(const char *n) {
@@ -84,7 +84,7 @@ public:
     initWifiFunc = f;
   }
 
-  void setHttpGet(int (*h)(const char *url, ParamStream *response, Table* headers)) {
+  void setHttpGet(int (*h)(const char *url, ParamStream *response, Table *headers)) {
     httpGet = h;
   }
 
@@ -122,7 +122,7 @@ public:
         break;
     }
     if (setMode != GetValue) {
-    	getMetadata()->changed();
+      getMetadata()->changed();
     }
   }
 
@@ -156,7 +156,6 @@ public:
   Metadata *getMetadata() {
     return md;
   }
-
 };
 
 #endif // CLOCKSYNC_INC

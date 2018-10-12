@@ -6,17 +6,17 @@
 #include <Pinout.h>
 #include <actors/Body.h>
 #include <actors/ClockSync.h>
-#include <actors/Images.h>
-#include <main4ino/PropSync.h>
-#include <actors/SetupSync.h>
 #include <actors/Ifttt.h>
+#include <actors/Images.h>
 #include <actors/Notifier.h>
+#include <actors/SetupSync.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Array.h>
-#include <main4ino/Table.h>
 #include <main4ino/Clock.h>
+#include <main4ino/PropSync.h>
 #include <main4ino/SerBot.h>
+#include <main4ino/Table.h>
 
 #define CLASS_MODULE "MD"
 
@@ -109,21 +109,12 @@ public:
              void (*ios)(char led, bool v),
              bool (*initWifiInit)(),
              bool (*initWifiSteady)(),
-             int (*httpPost)(
-            		 const char *url,
-								 const char *body,
-								 ParamStream *response,
-                 Table* headers
-								 ),
-             int (*httpGet)(
-            		 const char *url,
-								 ParamStream *response,
-                 Table* headers
-								 ),
+             int (*httpPost)(const char *url, const char *body, ParamStream *response, Table *headers),
+             int (*httpGet)(const char *url, ParamStream *response, Table *headers),
              void (*clearDevice)()) {
 
-	  notifier->setMessageFunc(messageFunc);
-	  body->setLcdImgFunc(lcdImg);
+    notifier->setMessageFunc(messageFunc);
+    body->setLcdImgFunc(lcdImg);
     body->setArmsFunc(arms);
     body->setIosFunc(ios);
     propSync->setInitWifi(initWifiSteady);
@@ -136,7 +127,6 @@ public:
     ifttt->setInitWifi(initWifiSteady);
     ifttt->setHttpPost(httpPost);
 
-
     initWifiSteadyFunc = initWifiSteady;
     clearDeviceFunc = clearDevice;
 
@@ -145,7 +135,7 @@ public:
 
   bool command(const char *cmd) {
 
-  	Buffer* b = new Buffer(COMMAND_MAX_LENGTH);
+    Buffer *b = new Buffer(COMMAND_MAX_LENGTH);
 
     b->load(cmd);
     b->replace('\n', 0);
@@ -320,7 +310,6 @@ public:
   Notifier *getNotifier() {
     return notifier;
   }
-
 };
 
 #endif // MODULE_INC

@@ -40,7 +40,7 @@ class Images : public Actor {
 
 private:
   const char *name;
-  Metadata* md;
+  Metadata *md;
   uint8_t *images[NRO_IMGS];
 
 public:
@@ -88,7 +88,7 @@ public:
       }
     }
     if (m != GetValue) {
-    	getMetadata()->changed();
+      getMetadata()->changed();
     }
   }
 
