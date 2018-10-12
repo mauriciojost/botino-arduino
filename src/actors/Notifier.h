@@ -38,7 +38,7 @@ public:
     name = n;
     messageFunc = NULL;
     md = new Metadata(n);
-    md->getTiming()->setFreq("300000060");
+    md->getTiming()->setFreq("300000005");
     notification("Welcome!");
   }
 
