@@ -83,7 +83,7 @@ public:
     if (getTiming()->matches()) {
       const char* currentNotif = getNotification();
       if (currentNotif != NULL) {
-    	message(NOTIF_LINE, NOTIF_SIZE, "* %s *");
+    	message(NOTIF_LINE, NOTIF_SIZE, "* %s *", currentNotif);
       } else {
     	log(CLASS_NOTIFIER, Debug, "No notifs");
       }

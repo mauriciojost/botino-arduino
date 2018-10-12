@@ -122,7 +122,8 @@ public:
 								 ),
              void (*clearDevice)()) {
 
-    body->setLcdImgFunc(lcdImg);
+	  notifier->setMessageFunc(messageFunc);
+	  body->setLcdImgFunc(lcdImg);
     body->setArmsFunc(arms);
     body->setIosFunc(ios);
     propSync->setInitWifi(initWifiSteady);
@@ -134,7 +135,7 @@ public:
     quotes->setInitWifi(initWifiSteady);
     ifttt->setInitWifi(initWifiSteady);
     ifttt->setHttpPost(httpPost);
-    notifier->setMessageFunc(messageFunc);
+
 
     initWifiSteadyFunc = initWifiSteady;
     clearDeviceFunc = clearDevice;
