@@ -113,6 +113,10 @@ MESSAGE POSES: show a certain message in the LCD with a given font size
 Codes:
   M1HELLO. : show message HELLO with font size 1 (user provided)
 
+NOTIFICATION POSES: show a certain notification in the LCD (requires user's ACK before removal)
+Codes:
+  NHELLO. : show notification HELLO
+
 IFTTT EVENTS: trigger an ifttt event (by its name)
 Codes:
   Iname. : trigger event 'name'
