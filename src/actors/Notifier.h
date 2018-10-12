@@ -10,7 +10,7 @@
 
 #define CLASS_NOTIFIER "NF"
 #define MAX_NOTIF_LENGTH 64
-#define NOTIF_LINE 4
+#define NOTIF_LINE 0
 #define NOTIF_SIZE 1
 
 #include <main4ino/Actor.h>
