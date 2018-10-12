@@ -64,7 +64,7 @@ int httpPost(const char *url, const char *body, ParamStream *response, Table *he
   return HTTP_OK; // not quite true, but will work for simple purposes
 }
 
-void messageFunc(int line, const char *str, int size) {
+void messageFunc(int x, int y, int color, bool wrap, bool clear, int size, const char *str) {
   printf("\n\n***** LCD (size %d)\n  %s\n*****\n\n", size, str);
 }
 

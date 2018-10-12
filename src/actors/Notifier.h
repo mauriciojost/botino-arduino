@@ -12,6 +12,9 @@
 #define MAX_NOTIF_LENGTH 64
 #define NOTIF_LINE 0
 #define NOTIF_SIZE 1
+#define WHITE 0
+#define DO_WRAP true
+#define DO_CLEAR true
 
 #include <main4ino/Actor.h>
 #include <main4ino/Queue.h>
@@ -27,7 +30,7 @@ private:
   const char *name;
   Metadata *md;
   Queue<8, MAX_NOTIF_LENGTH> queue;
-  void (*messageFunc)(int line, const char *str, int size);
+  void (*messageFunc)(int x, int y, int color, bool wrap, bool clear, int size, const char *str);
 
   bool isInitialized() {
     return messageFunc != NULL;
@@ -46,7 +49,7 @@ public:
     return name;
   }
 
-  void setMessageFunc(void (*f)(int line, const char *str, int size)) {
+  void setMessageFunc(void (*f)(int x, int y, int color, bool wrap, bool clear, int size, const char *str)) {
     messageFunc = f;
   }
 
@@ -60,7 +63,7 @@ public:
     va_start(args, format);
     vsnprintf(buffer.getUnsafeBuffer(), MAX_NOTIF_LENGTH, format, args);
     buffer.getUnsafeBuffer()[MAX_NOTIF_LENGTH - 1] = 0;
-    messageFunc(line, buffer.getBuffer(), size);
+	messageFunc(0, line * 8, WHITE, DO_WRAP, DO_CLEAR, size, buffer.getBuffer());
     va_end(args);
   }
 

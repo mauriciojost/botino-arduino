@@ -38,7 +38,7 @@ void lcdImg(char img, uint8_t bitmap[]) {
   }
 }
 
-void messageOnLcd(int line, const char *str, int s) {
+void messageOnLcd(int x, int y, int color, bool wrap, bool clear, int size, const char *str) {
   strcpy(lastMsg, str);
 }
 

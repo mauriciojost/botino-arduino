@@ -229,12 +229,14 @@ int httpPost(const char *url, const char *body, ParamStream *response, Table *he
   return errorCode;
 }
 
-void messageFunc(int line, const char *str, int size) {
-  lcd.clearDisplay();
-  lcd.setTextWrap(true);
+void messageFunc(int x, int y, int color, bool wrap, bool clear, int size, const char *str) {
+  if (clear) {
+    lcd.clearDisplay();
+  }
+  lcd.setTextWrap(wrap);
   lcd.setTextSize(size);
-  lcd.setTextColor(WHITE);
-  lcd.setCursor(0, line * 2 * 8);
+  lcd.setTextColor(color);
+  lcd.setCursor(x, y);
   lcd.println(str);
   lcd.display();
   delay(DELAY_MS_SPI);
