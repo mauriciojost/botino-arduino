@@ -15,6 +15,7 @@
 #define BLACK 0
 #define WHITE 1
 #define DO_WRAP true
+#define DO_NOT_WRAP false
 #define DO_CLEAR true
 #define DO_NOT_CLEAR false
 
@@ -65,7 +66,7 @@ public:
     va_start(args, format);
     vsnprintf(buffer.getUnsafeBuffer(), MAX_NOTIF_LENGTH, format, args);
     buffer.getUnsafeBuffer()[MAX_NOTIF_LENGTH - 1] = 0;
-	messageFunc(0, line * 8 * size, WHITE, DO_WRAP, DO_NOT_CLEAR, size, buffer.getBuffer());
+	messageFunc(0, line * 8 * size, WHITE, DO_NOT_WRAP, DO_CLEAR, size, buffer.getBuffer());
     va_end(args);
   }
 
@@ -91,9 +92,9 @@ public:
     if (getTiming()->matches()) {
       const char *currentNotif = getNotification();
       if (currentNotif != NULL) {
-    	  log(CLASS_NOTIFIER, Debug, "Notif: %s", currentNotif);
-    	  message(NOTIF_LINE - 1, NOTIF_SIZE, "+-----", currentNotif);
-    	  message(NOTIF_LINE, NOTIF_SIZE, "|%s", currentNotif);
+    	  log(CLASS_NOTIFIER, Debug, "Notif(%d): %s", queue.size(), currentNotif);
+          messageFunc(0, (NOTIF_LINE - 1) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, DO_NOT_CLEAR, NOTIF_SIZE, "________________");
+          messageFunc(0, (NOTIF_LINE) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, DO_NOT_CLEAR, NOTIF_SIZE, currentNotif);
       } else {
         log(CLASS_NOTIFIER, Debug, "No notifs");
       }
