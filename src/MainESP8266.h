@@ -235,8 +235,17 @@ void messageFunc(int x, int y, int color, bool wrap, bool clear, int size, const
     lcd.clearDisplay();
   }
   lcd.setTextWrap(wrap);
-  lcd.fillRect(0, y * 8 * size, l*8, 8 * size, (color == 0? 1: 0)); // not ideal if wrap = true
   lcd.setTextSize(size);
+  lcd.setTextColor(!color);
+  int i;
+  lcd.setCursor(x, y);
+  for (i = 0; i < l; i++) {
+  	lcd.print("\x07");
+  }
+  lcd.setCursor(x, y);
+  for (i = 0; i < l; i++) {
+  	lcd.print("\x08");
+  }
   lcd.setTextColor(color);
   lcd.setCursor(x, y);
   lcd.print(str);
