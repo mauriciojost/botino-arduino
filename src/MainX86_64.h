@@ -31,6 +31,15 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
 int httpGet(const char *url, ParamStream *response, Table *headers) {
   Buffer aux(CL_MAX_LENGTH);
   aux.fill(CURL_COMMAND_GET, url);
+  int i = 0;
+  while ((i = headers->next(i)) != -1) {
+    aux.append(" -H '");
+    aux.append(headers->getKey(i));
+    aux.append(": ");
+    aux.append(headers->getValue(i));
+    aux.append("'");
+    i++;
+  }
   log(CLASS_MAIN, Debug, "GET: '%s'", aux.getBuffer());
   FILE *fp = popen(aux.getBuffer(), "r");
   if (fp == NULL) {
@@ -42,13 +51,25 @@ int httpGet(const char *url, ParamStream *response, Table *headers) {
       log(CLASS_MAIN, Debug, "-> %s", response->content());
     }
   }
-  pclose(fp);
-  return HTTP_OK; // not quite true, but will work for simple purposes
+  if ((pclose(fp) / 256) == 0) { // not quite true, but will work for simple purposes
+    return HTTP_OK;
+  } else {
+    return HTTP_BAD_REQUEST;
+  }
 }
 
 int httpPost(const char *url, const char *body, ParamStream *response, Table *headers) {
   Buffer aux(CL_MAX_LENGTH);
   aux.fill(CURL_COMMAND_POST, url, body);
+  int i = 0;
+  while ((i = headers->next(i)) != -1) {
+    aux.append(" -H '");
+    aux.append(headers->getKey(i));
+    aux.append(": ");
+    aux.append(headers->getValue(i));
+    aux.append("'");
+    i++;
+  }
   log(CLASS_MAIN, Debug, "POST: '%s'", aux.getBuffer());
   FILE *fp = popen(aux.getBuffer(), "r");
   if (fp == NULL) {
