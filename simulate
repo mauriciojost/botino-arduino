@@ -5,7 +5,9 @@ set -e
 
 rm -f .simulator.bin
 
-PARAM_FLAGS="-D PROJ_VERSION=simulation `cat profiles/simulate.prof`"
+PROFILE="$1"
+
+PARAM_FLAGS="-D PROJ_VERSION=simulation `cat $PROFILE`"
 
 FLAGS="-D SIMULATE $PARAM_FLAGS"
 
@@ -27,6 +29,7 @@ HEADERS="
 LIBS=""
 
 g++ -Wno-deprecated-declarations -g -ggdb -o .simulator.bin $FLAGS $SRC $HEADERS $LIBS
+shift
 ./.simulator.bin $@
 #gdbtui ./.simulator.bin
 rm -f .simulator.bin

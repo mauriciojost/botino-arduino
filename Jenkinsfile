@@ -29,7 +29,7 @@ pipeline {
     stage('Simulate') {
       steps {
         wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
-          sh './simulate 1 10' 
+          sh './simulate profiles/simulate.prof 1 10' 
         }
       }
     }
