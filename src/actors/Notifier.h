@@ -66,7 +66,7 @@ public:
     va_start(args, format);
     vsnprintf(buffer.getUnsafeBuffer(), MAX_NOTIF_LENGTH, format, args);
     buffer.getUnsafeBuffer()[MAX_NOTIF_LENGTH - 1] = 0;
-	messageFunc(0, line * 8 * size, WHITE, DO_NOT_WRAP, DO_CLEAR, size, buffer.getBuffer());
+	  messageFunc(0, line * 8 * size, WHITE, DO_WRAP, DO_CLEAR, size, buffer.getBuffer());
     va_end(args);
   }
 
