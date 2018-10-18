@@ -71,7 +71,7 @@ public:
   }
 
   int notification(const char *msg) {
-    log(CLASS_NOTIFIER, Debug, "New notif: %s", msg);
+    log(CLASS_NOTIFIER, Debug, "New notif: %s (%d + 1)", msg, queue.size());
     return queue.push(msg);
   }
 
@@ -80,7 +80,7 @@ public:
   }
 
   int notificationRead() {
-    log(CLASS_NOTIFIER, Debug, "Remove notif");
+    log(CLASS_NOTIFIER, Debug, "Remove notif: %d -1", queue.size());
     return queue.pop();
   }
 
