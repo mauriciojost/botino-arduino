@@ -580,7 +580,7 @@ public:
     }
 
     // Overwrite last to setup clock
-    routines[NRO_ROUTINES - 1]->load("201010160:Mc4"); // once every 1 minutes
+    routines[NRO_ROUTINES - 1]->load("every2m:Mc3."); // once every 1 minutes
   }
 
   const char *getName() {
