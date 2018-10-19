@@ -42,12 +42,14 @@ private:
   const char *name;
   Metadata *md;
   uint8_t *images[NRO_IMGS];
+  Buffer* imagesb[NRO_IMGS];
 
 public:
   Images(const char *n) {
     name = n;
     for (int i = 0; i < NRO_IMGS; i++) {
       images[i] = new uint8_t[IMG_SIZE_BYTES];
+      imagesb[i] = new Buffer(IMG_SIZE_BYTES * 2);
       for (int j = 0; j < IMG_SIZE_BYTES; j++) {
         images[i][j] = 0;
       }
@@ -79,12 +81,9 @@ public:
   void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {
     if (propIndex >= ImagesConfigImg0 && propIndex < (NRO_IMGS + ImagesConfigImg0)) {
       int i = (int)propIndex - (int)ImagesConfigImg0;
+      setPropValue(m, targetValue, actualValue, imagesb[i]);
       if (m == SetCustomValue) {
-        Buffer target(IMG_SIZE_BYTES * 2, targetValue); // 2 chars per actual bitmap byte
-        Hexer::hexToByte((uint8_t *)images[i], target.getBuffer(), MINIM((strlen(target.getBuffer())), (IMG_SIZE_BYTES * 2)));
-      }
-      if (actualValue != NULL) {
-        actualValue->load("<*>");
+        Hexer::hexToByte((uint8_t *)images[i], imagesb[i]->getBuffer(), MINIM((strlen(imagesb[i]->getBuffer())), (IMG_SIZE_BYTES * 2)));
       }
     }
     if (m != GetValue) {
