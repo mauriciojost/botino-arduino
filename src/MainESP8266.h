@@ -284,7 +284,6 @@ void arms(int left, int right, int steps) {
 }
 
 void ios(char led, bool v) {
-  log(CLASS_MAIN, Debug, "Led'%c'->%d", led, (int)v);
 #ifdef INVERT_IOS_LEDS
   int ld = !v;
 #else
