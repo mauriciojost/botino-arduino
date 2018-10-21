@@ -96,12 +96,12 @@ Servo servoRight;
 Adafruit_SSD1306 lcd(-1);
 
 #define LED_INT_PIN LEDY_PIN // led showing interruptions
-#define LED_INT_ON digitalWrite(LED_INT_PIN, LOW)
-#define LED_INT_OFF digitalWrite(LED_INT_PIN, HIGH)
+#define LED_INT_ON ios('y', true);
+#define LED_INT_OFF ios('y', false);
 
 #define LED_ALIVE_PIN LEDR_PIN // led showing device alive
-#define LED_ALIVE_ON digitalWrite(LED_ALIVE_PIN, LOW);
-#define LED_ALIVE_OFF digitalWrite(LED_ALIVE_PIN, HIGH);
+#define LED_ALIVE_ON ios('r', true);
+#define LED_ALIVE_OFF ios('r', false);
 
 void bitmapToLcd(uint8_t bitmap[]);
 void reactCommandCustom();
