@@ -285,15 +285,20 @@ void arms(int left, int right, int steps) {
 
 void ios(char led, bool v) {
   log(CLASS_MAIN, Debug, "Led'%c'->%d", led, (int)v);
+#ifdef INVERT_IOS_LEDS
+  int ld = !v;
+#else
+  int ld = v;
+#endif
   switch (led) {
     case 'r':
-      digitalWrite(LEDR_PIN, !v); // VCC hard-wired
+      digitalWrite(LEDR_PIN, ld);
       break;
     case 'w':
-      digitalWrite(LEDW_PIN, !v); // VCC hard-wired
+      digitalWrite(LEDW_PIN, ld);
       break;
     case 'y':
-      digitalWrite(LEDY_PIN, !v); // VCC hard-wired
+      digitalWrite(LEDY_PIN, ld);
       break;
     case 'f':
       digitalWrite(FAN_PIN, v);
