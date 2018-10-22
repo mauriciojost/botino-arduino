@@ -41,17 +41,17 @@ class Images : public Actor {
 private:
   const char *name;
   Metadata *md;
-  uint8_t *images[NRO_IMGS];
-  Buffer* imagesb[NRO_IMGS];
+  uint8_t *imagesBin[NRO_IMGS];
+  Buffer* imagesHex[NRO_IMGS];
 
 public:
   Images(const char *n) {
     name = n;
     for (int i = 0; i < NRO_IMGS; i++) {
-      images[i] = new uint8_t[IMG_SIZE_BYTES];
-      imagesb[i] = new Buffer(IMG_SIZE_BYTES * 2);
+      imagesBin[i] = new uint8_t[IMG_SIZE_BYTES];
+      imagesHex[i] = new Buffer(IMG_SIZE_BYTES * 2);
       for (int j = 0; j < IMG_SIZE_BYTES; j++) {
-        images[i][j] = 0;
+        imagesBin[i][j] = 0;
       }
     }
     md = new Metadata(n);
@@ -81,9 +81,9 @@ public:
   void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {
     if (propIndex >= ImagesConfigImg0 && propIndex < (NRO_IMGS + ImagesConfigImg0)) {
       int i = (int)propIndex - (int)ImagesConfigImg0;
-      setPropValue(m, targetValue, actualValue, imagesb[i]);
+      setPropValue(m, targetValue, actualValue, imagesHex[i]);
       if (m == SetCustomValue) {
-        Hexer::hexToByte((uint8_t *)images[i], imagesb[i]->getBuffer(), MINIM((strlen(imagesb[i]->getBuffer())), (IMG_SIZE_BYTES * 2)));
+        Hexer::hexToByte((uint8_t *)imagesBin[i], imagesHex[i]->getBuffer(), IMG_SIZE_BYTES * 2));
       }
     }
     if (m != GetValue) {
@@ -106,7 +106,7 @@ public:
   }
 
   uint8_t *get(int i) {
-    return images[POSIT(i) % NRO_IMGS];
+    return imagesBin[POSIT(i) % NRO_IMGS];
   }
 };
 
