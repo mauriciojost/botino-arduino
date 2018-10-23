@@ -150,3 +150,8 @@ PLATFORMIO_BUILD_FLAGS="`cat profiles/demo.prof`" platformio run --target upload
 ./simulate 0 100 # mode interactive, 100 steps
 ```
 
+## 3.5. Test
+
+```
+PLATFORMIO_BUILD_FLAGS="`cat profiles/test.prof`" ./launch_tests
+```
