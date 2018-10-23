@@ -83,7 +83,7 @@ public:
       int i = (int)propIndex - (int)ImagesConfigImg0;
       setPropValue(m, targetValue, actualValue, imagesHex[i]);
       if (m == SetCustomValue) {
-        Hexer::hexToByte((uint8_t *)imagesBin[i], imagesHex[i]->getBuffer(), IMG_SIZE_BYTES * 2));
+        Hexer::hexToByte((uint8_t *)imagesBin[i], imagesHex[i]->getBuffer(), IMG_SIZE_BYTES * 2);
       }
     }
     if (m != GetValue) {
