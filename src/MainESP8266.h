@@ -284,10 +284,10 @@ void arms(int left, int right, int steps) {
 }
 
 void ios(char led, bool v) {
-#ifdef INVERT_IOS_LEDS
-  int ld = !v;
-#else
+#ifdef IOS_LEDS_TO_ANODE // to be avoided
   int ld = v;
+#else
+  int ld = !v;
 #endif
   switch (led) {
     case 'r':
