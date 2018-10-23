@@ -9,7 +9,7 @@
  */
 
 #define CLASS_NOTIFIER "NF"
-#define MAX_NOTIF_LENGTH 64
+#define MAX_NOTIF_LENGTH 32
 #define NOTIF_LINE 7
 #define NOTIF_SIZE 1
 #define BLACK 0
@@ -18,6 +18,10 @@
 #define DO_NOT_WRAP false
 #define DO_CLEAR true
 #define DO_NOT_CLEAR false
+
+#ifndef LCD_WIDTH
+#define LCD_WIDTH 16
+#endif // LCD_WIDTH
 
 #include <main4ino/Actor.h>
 #include <main4ino/Queue.h>
@@ -66,7 +70,7 @@ public:
     va_start(args, format);
     vsnprintf(buffer.getUnsafeBuffer(), MAX_NOTIF_LENGTH, format, args);
     buffer.getUnsafeBuffer()[MAX_NOTIF_LENGTH - 1] = 0;
-	  messageFunc(0, line * 8 * size, WHITE, DO_WRAP, DO_CLEAR, size, buffer.getBuffer());
+	messageFunc(0, line * 8 * size, WHITE, DO_WRAP, DO_CLEAR, size, buffer.getBuffer());
     va_end(args);
   }
 
@@ -93,8 +97,11 @@ public:
       const char *currentNotif = getNotification();
       if (currentNotif != NULL) {
     	  log(CLASS_NOTIFIER, Debug, "Notif(%d): %s", queue.size(), currentNotif);
-          messageFunc(0, (NOTIF_LINE - 1) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, DO_NOT_CLEAR, NOTIF_SIZE, "________________");
-          messageFunc(0, (NOTIF_LINE) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, DO_NOT_CLEAR, NOTIF_SIZE, currentNotif);
+    	  Buffer aux(LCD_WIDTH);
+          aux.load("---");
+          messageFunc(0, (NOTIF_LINE - 1) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, DO_NOT_CLEAR, NOTIF_SIZE, aux.center(' ', LCD_WIDTH));
+          aux.load(currentNotif);
+          messageFunc(0, (NOTIF_LINE) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, DO_NOT_CLEAR, NOTIF_SIZE, aux.center(' ', LCD_WIDTH));
       } else {
         log(CLASS_NOTIFIER, Debug, "No notifs");
       }
