@@ -64,6 +64,8 @@ void setup() {
   m.setup(lcdImg, arms, messageFunc, ios, initWifiInit, initWifiSteady, httpPost, httpGet, clearDevice);
 
   setupArchitecture();
+
+  m.actall();
 }
 
 void configureMode() {

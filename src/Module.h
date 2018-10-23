@@ -256,11 +256,7 @@ public:
       log(CLASS_MODULE, Info, "Ifttt token: %s", setupSync->getIfttt());
       return false;
     } else if (strcmp("actall", c) == 0) {
-      for (int i = 0; i < getBot()->getActors()->size(); i++) {
-        Actor *a = getBot()->getActors()->get(i);
-        log(CLASS_MODULE, Info, "One off: %s", a->getName());
-        a->oneOff();
-      }
+      actall();
       return false;
     } else if (strcmp("rnd", c) == 0) {
       int routine = (int)random(getSettings()->getNroRoutinesForButton());
@@ -330,6 +326,14 @@ public:
 
   Notifier *getNotifier() {
     return notifier;
+  }
+
+  void actall() {
+    for (int i = 0; i < getBot()->getActors()->size(); i++) {
+      Actor *a = getBot()->getActors()->get(i);
+      log(CLASS_MODULE, Info, "One off: %s", a->getName());
+      a->oneOff();
+    }
   }
 };
 
