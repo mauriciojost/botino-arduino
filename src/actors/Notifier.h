@@ -9,7 +9,7 @@
  */
 
 #define CLASS_NOTIFIER "NF"
-#define MAX_NOTIF_LENGTH 32
+#define MAX_NOTIF_LENGTH 64
 #define NOTIF_LINE 7
 #define NOTIF_SIZE 1
 #define BLACK 0
