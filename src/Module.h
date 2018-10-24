@@ -27,11 +27,13 @@
   "\n  conf       : go to conf mode"                                                                                                       \
   "\n  wifi       : init steady wifi"                                                                                                      \
   "\n  get        : display actors properties"                                                                                             \
+  "\n  get        : display actor <actor> properties"                                                                                             \
   "\n  set        : set an actor property (example: 'set body msg0 HELLO')"                                                                \
   "\n  move       : execute a move (example: 'move A00C55')"                                                                               \
   "\n  logl       : change log level"                                                                                                      \
   "\n  clear      : clear crashes stacktrace"                                                                                              \
   "\n  actall     : all act"                                                                                                               \
+  "\n  actone     : make actor <x> act"                                                                                                               \
   "\n  rnd        : execute random routine"                                                                                                \
   "\n  lcd        : write on display <x> <y> <color> <wrap> <clear> <size> <str>"                                                          \
   "\n  wifissid   : set wifi ssid"                                                                                                         \
@@ -191,18 +193,8 @@ public:
       return false;
     } else if (strcmp("get", c) == 0) {
       log(CLASS_MODULE, Info, "-> Get");
-      Array<Actor *> *actors = bot->getActors();
-      for (int i = 0; i < actors->size(); i++) {
-        Actor *actor = actors->get(i);
-        log(CLASS_MODULE, Info, " '%s'", actor->getName());
-        for (int j = 0; j < actor->getNroProps(); j++) {
-          Buffer value(COMMAND_MAX_LENGTH);
-          actor->getPropValue(j, &value);
-          log(CLASS_MODULE, Info, "   '%s': '%s'", actor->getPropName(j), value.getBuffer());
-        }
-        log(CLASS_MODULE, Info, " ");
-      }
-      log(CLASS_MODULE, Info, " ");
+      const char *actor = strtok(NULL, " ");
+      getProps(actor);
       return false;
     } else if (strcmp("run", c) == 0) {
       log(CLASS_MODULE, Info, "-> Run mode");
@@ -257,6 +249,14 @@ public:
       return false;
     } else if (strcmp("actall", c) == 0) {
       actall();
+      return false;
+    } else if (strcmp("actone", c) == 0) {
+      c = strtok(NULL, " ");
+      if (c == NULL) {
+        logRaw(CLASS_MODULE, Info, "Argument needed:\n  actone <actorname>");
+        return false;
+      }
+      actone(c);
       return false;
     } else if (strcmp("rnd", c) == 0) {
       int routine = (int)random(getSettings()->getNroRoutinesForButton());
@@ -335,6 +335,34 @@ public:
       a->oneOff();
     }
   }
+
+  void actone(const char* actorName) {
+    for (int i = 0; i < getBot()->getActors()->size(); i++) {
+      Actor *a = getBot()->getActors()->get(i);
+      if (strcmp(a->getName(), actorName) == 0) {
+        log(CLASS_MODULE, Info, "One off: %s", a->getName());
+        a->oneOff();
+      }
+    }
+  }
+
+  void getProps(const char* actorN) {
+      Array<Actor *> *actors = bot->getActors();
+      for (int i = 0; i < actors->size(); i++) {
+        Actor *actor = actors->get(i);
+        if (actorN == NULL || strcmp(actor->getName(), actorN) == 0) {
+          log(CLASS_MODULE, Info, " '%s'", actor->getName());
+          for (int j = 0; j < actor->getNroProps(); j++) {
+            Buffer value(COMMAND_MAX_LENGTH);
+            actor->getPropValue(j, &value);
+            log(CLASS_MODULE, Info, "   '%s': '%s'", actor->getPropName(j), value.getBuffer());
+          }
+          log(CLASS_MODULE, Info, " ");
+        }
+      }
+  }
+
 };
+
 
 #endif // MODULE_INC
