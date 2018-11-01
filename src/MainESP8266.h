@@ -284,7 +284,7 @@ void arms(int left, int right, int steps) {
 }
 
 void ios(char led, bool v) {
-#ifdef IOS_LEDS_TO_ANODE // to be avoided
+#ifdef IOS_LEDS_TO_ANODE // to be avoided as would turn on built-in leds when off
   int ld = v;
 #else
   int ld = !v;
