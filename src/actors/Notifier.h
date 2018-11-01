@@ -20,7 +20,7 @@
 #define DO_NOT_CLEAR false
 
 #ifndef LCD_WIDTH
-#define LCD_WIDTH 16
+#define LCD_WIDTH 21
 #endif // LCD_WIDTH
 
 #include <main4ino/Actor.h>
