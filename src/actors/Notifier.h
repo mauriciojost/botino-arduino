@@ -84,7 +84,7 @@ public:
   }
 
   int notificationRead() {
-    log(CLASS_NOTIFIER, Debug, "Remove notif: %d -1", queue.size());
+    log(CLASS_NOTIFIER, Debug, "Remove notif: %d", queue.size() - 1);
     return queue.pop();
   }
 
@@ -98,7 +98,7 @@ public:
       if (currentNotif != NULL) {
     	  log(CLASS_NOTIFIER, Debug, "Notif(%d): %s", queue.size(), currentNotif);
     	  Buffer aux(LCD_WIDTH);
-          aux.load("---");
+          aux.fill("--(%d)--", queue.size());
           messageFunc(0, (NOTIF_LINE - 1) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, DO_NOT_CLEAR, NOTIF_SIZE, aux.center(' ', LCD_WIDTH));
           aux.load(currentNotif);
           messageFunc(0, (NOTIF_LINE) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, DO_NOT_CLEAR, NOTIF_SIZE, aux.center(' ', LCD_WIDTH));
