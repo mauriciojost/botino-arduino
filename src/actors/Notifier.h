@@ -70,13 +70,14 @@ public:
     va_start(args, format);
     vsnprintf(buffer.getUnsafeBuffer(), MAX_NOTIF_LENGTH, format, args);
     buffer.getUnsafeBuffer()[MAX_NOTIF_LENGTH - 1] = 0;
-	messageFunc(0, line * 8 * size, WHITE, DO_WRAP, DO_CLEAR, size, buffer.getBuffer());
+    messageFunc(0, line * 8 * size, WHITE, DO_WRAP, DO_CLEAR, size, buffer.getBuffer());
     va_end(args);
   }
 
   int notification(const char *msg) {
-    log(CLASS_NOTIFIER, Debug, "New notif: %s (%d + 1)", msg, queue.size());
-    return queue.push(msg);
+    int i = queue.pushUnique(msg);
+    log(CLASS_NOTIFIER, Debug, "New notif: %s (%d)", msg, i);
+    return i;
   }
 
   const char *getNotification() {
@@ -84,8 +85,9 @@ public:
   }
 
   int notificationRead() {
-    log(CLASS_NOTIFIER, Debug, "Remove notif: %d", queue.size() - 1);
-    return queue.pop();
+  	int i = queue.pop();
+    log(CLASS_NOTIFIER, Debug, "Remove notif: %d", i);
+    return i;
   }
 
   void act() {
