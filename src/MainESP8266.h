@@ -55,16 +55,6 @@
 
 #define LOG_LINE 7
 
-#ifndef WIFI_SSID_INIT
-#error "Must provide WIFI_SSID_INIT"
-#define WIFI_SSID_INIT ""
-#endif
-
-#ifndef WIFI_PASSWORD_INIT
-#error "Must provide WIFI_PASSWORD_INIT"
-#define WIFI_PASSWORD_INIT ""
-#endif
-
 #define ONLY_SHOW_MSG true
 #define SHOW_MSG_AND_REACT false
 
@@ -620,10 +610,6 @@ void hwTest() {
   log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(USER_DELAY_MS);
   aux.fill("ID : %d", ESP.getChipId());
-  m.getNotifier()->message(0, 2, aux.getBuffer());
-  log(CLASS_MAIN, Debug, aux.getBuffer());
-  delay(USER_DELAY_MS);
-  aux.fill("SSI: %s", WIFI_SSID_INIT);
   m.getNotifier()->message(0, 2, aux.getBuffer());
   log(CLASS_MAIN, Debug, aux.getBuffer());
   delay(USER_DELAY_MS);
