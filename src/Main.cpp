@@ -16,25 +16,11 @@ Module m;
 
 bool initWifiSteady() {
   SetupSync *s = m.getSetupSync();
-  static bool connectedOnce = false;
   if (s->isInitialized()) {
     const char *wifiSsid = s->getSsid();
     const char *wifiPass = s->getPass();
     log(CLASS_MAIN, Info, "W.steady");
-    bool connected = initWifi(wifiSsid, wifiPass, connectedOnce, 10);
-    if (!connectedOnce) {
-      m.getNotifier()->message(0, 2, "WIFI?");
-      delay(USER_DELAY_MS);
-      m.getNotifier()->message(0, 2, wifiSsid);
-      delay(USER_DELAY_MS);
-      if (connected) { // first time
-        m.getNotifier()->message(0, 2, "WIFI OK");
-        delay(USER_DELAY_MS * 2);
-      } else {
-        m.getNotifier()->message(0, 2, "WIFI KO");
-      }
-    }
-    connectedOnce = connectedOnce || connected;
+    bool connected = initWifi(wifiSsid, wifiPass, true, 10);
     return connected;
   } else {
     log(CLASS_MAIN, Info, "W.steady null");
