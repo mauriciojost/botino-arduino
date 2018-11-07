@@ -59,9 +59,6 @@ void setup();
 // Standard arduino loop
 void loop();
 
-// Initialize init  wifi
-bool initWifiInit();
-
 // Initialize steady wifi
 bool initWifiSteady();
 

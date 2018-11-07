@@ -14,23 +14,6 @@ Module m;
 #include <MainX86_64.h>
 #endif // SIMULATE
 
-bool initWifiInit() {
-  log(CLASS_MAIN, Info, "W.init");
-  m.getNotifier()->message(0, 2, "HOTSPOT?");
-  delay(USER_DELAY_MS);
-  m.getNotifier()->message(0, 2, WIFI_SSID_INIT);
-  delay(USER_DELAY_MS);
-  bool connected = initWifi(WIFI_SSID_INIT, WIFI_PASSWORD_INIT, false, 20);
-  if (connected) {
-    m.getNotifier()->message(0, 2, "HOTSPOT OK");
-    delay(USER_DELAY_MS);
-  } else {
-    m.getNotifier()->message(0, 2, "HOTSPOT KO");
-    delay(USER_DELAY_MS);
-  }
-  return connected;
-}
-
 bool initWifiSteady() {
   SetupSync *s = m.getSetupSync();
   static bool connectedOnce = false;
@@ -61,7 +44,7 @@ bool initWifiSteady() {
 
 void setup() {
 
-  m.setup(lcdImg, arms, messageFunc, ios, initWifiInit, initWifiSteady, httpPost, httpGet, clearDevice);
+  m.setup(lcdImg, arms, messageFunc, ios, initWifiSteady, httpPost, httpGet, clearDevice);
 
   setupArchitecture();
 
