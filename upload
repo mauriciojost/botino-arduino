@@ -7,6 +7,12 @@ PROFILE="$1"
 COMMIT_ID=`git rev-parse --short HEAD`
 LOG_DIR=images
 
+if [ -z "$PROFILE" ]
+then
+  echo "Profile missing"
+  exit 1
+fi
+
 echo "### Using profile $PROFILE..."
 export PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=$COMMIT_ID `cat $PROFILE`" 
 
