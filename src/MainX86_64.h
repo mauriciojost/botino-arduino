@@ -19,6 +19,9 @@ unsigned long millis();
 // Functions requested for architecture
 ////////////////////////////////////////
 
+// Callbacks
+///////////////////
+
 void logLine(const char *str) {
   printf("LOG: %s", str);
 }
@@ -104,6 +107,11 @@ void clearDevice() {
 void lcdImg(char img, uint8_t bitmap[]) {
   log(CLASS_MAIN, Debug, "Img '%c'", img);
 }
+
+}
+
+// Execution
+///////////////////
 
 void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMsec) {
   log(CLASS_MAIN, Info, "L.Sleep(%lums)...", periodMsec);

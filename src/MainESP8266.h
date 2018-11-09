@@ -103,6 +103,9 @@ bool reactToButtonHeld(int cycles, bool onlyMsg);
 // Functions requested for architecture
 ////////////////////////////////////////
 
+// Callbacks
+///////////////////
+
 void logLine(const char *str) {
   // serial print
   Serial.print(str);
@@ -338,6 +341,10 @@ void lcdImg(char img, uint8_t bitmap[]) {
   lcd.display();
   delay(DELAY_MS_SPI);
 }
+
+
+// Execution
+///////////////////
 
 // TODO: buggy (what happens on overrun?), and can be simplified using the clock and time_t
 void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {
