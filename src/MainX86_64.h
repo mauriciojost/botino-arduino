@@ -108,6 +108,27 @@ void lcdImg(char img, uint8_t bitmap[]) {
   log(CLASS_MAIN, Debug, "Img '%c'", img);
 }
 
+void readFile(const char* fname, Buffer* content) {
+	char c;
+	int i = 0;
+	FILE *fp = fopen(fname, "r");
+	content->clear();
+	if(fp != NULL) {
+    while((c = getc(fp)) != EOF){
+        content->append(c);
+        i++;
+    }
+    fclose(fp);
+	}
+}
+
+void writeFile(const char* fname, const char* content) {
+	FILE *file = fopen(fname, "w");
+	int results = fputs(content, file);
+	if (results == EOF) {
+    log(CLASS_MAIN, Warn, "Failed to write %s ", fname);
+	}
+	fclose(file);
 }
 
 // Execution

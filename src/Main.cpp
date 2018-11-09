@@ -30,7 +30,7 @@ bool initWifiSteady() {
 
 void setup() {
 
-  m.setup(lcdImg, arms, messageFunc, ios, initWifiSteady, httpPost, httpGet, clearDevice);
+  m.setup(lcdImg, arms, messageFunc, ios, initWifiSteady, httpPost, httpGet, clearDevice, readFile, writeFile);
 
   setupArchitecture();
 

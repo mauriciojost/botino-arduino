@@ -96,7 +96,6 @@ public:
 
     bot = new SerBot(clock, actors);
 
-    propSync->setBot(bot);
     clockSync->setClock(bot->getClock());
     body->setQuotes(quotes);
     body->setImages(images);
@@ -115,15 +114,18 @@ public:
              bool (*initWifiSteady)(),
              int (*httpPost)(const char *url, const char *body, ParamStream *response, Table *headers),
              int (*httpGet)(const char *url, ParamStream *response, Table *headers),
-             void (*clearDevice)()) {
+             void (*clearDevice)(),
+             void (*fr)(const char *fname, Buffer* content),
+             void (*fw)(const char *fname, const char* content)
+						 ) {
 
     notifier->setMessageFunc(messageFunc);
     body->setLcdImgFunc(lcdImg);
     body->setArmsFunc(arms);
     body->setIosFunc(ios);
-    propSync->setInitWifi(initWifiSteady);
-    propSync->setHttpPost(httpPost);
-    propSync->setHttpGet(httpGet);
+
+    propSync->setup(bot, initWifiSteady, httpGet, httpPost, fr, fw);
+
     clockSync->setInitWifi(initWifiSteady);
     clockSync->setHttpGet(httpGet);
     quotes->setHttpGet(httpGet);

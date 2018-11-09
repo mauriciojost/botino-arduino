@@ -108,6 +108,9 @@ bool reactToButtonHeld(int cycles, bool onlyMsg);
 
 void logLine(const char *str) {
   // serial print
+  Serial.print("HEAP ");
+  Serial.print(ESP.getFreeHeap());
+  Serial.print("|");
   Serial.print(str);
   // telnet print
   if (Telnet.isActive()) {
@@ -342,6 +345,31 @@ void lcdImg(char img, uint8_t bitmap[]) {
   delay(DELAY_MS_SPI);
 }
 
+void readFile(const char* fname, Buffer* content) {
+  SPIFFS.begin();
+  File f = SPIFFS.open(fname, "r");
+  if (!f) {
+    log(CLASS_MAIN, Warn, "File reading failed: %s", fname);
+    content->clear();
+  } else {
+    String s = f.readString();
+    content->load(s.c_str());
+    log(CLASS_MAIN, Info, "File read: %s", fname);
+  }
+  SPIFFS.end();
+}
+
+void writeFile(const char* fname, String content) {
+  SPIFFS.begin();
+  File f = SPIFFS.open(fname, "w");
+  if (!f) {
+    log(CLASS_MAIN, Warn, "File writing failed: %s", fname);
+  } else {
+    f.write((const uint8_t*)content.c_str(), content.length());
+    log(CLASS_MAIN, Info, "File written: %s", fname);
+  }
+  SPIFFS.end();
+}
 
 // Execution
 ///////////////////

@@ -97,6 +97,12 @@ void clearDevice();
 // Show an image (either a catalog image or a custom bitmap)
 void lcdImg(char img, uint8_t bitmap[]);
 
+// Read a file from the filesystem
+void readFile(const char* fname, Buffer* content);
+
+// Write a file to the filesystem
+void writeFile(const char* fname, const char* content);
+
 // Execution
 ///////////////////
 
