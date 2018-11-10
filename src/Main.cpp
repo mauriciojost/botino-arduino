@@ -58,7 +58,7 @@ void runMode() {
 
 #ifdef DEEP_SLEEP_MODE
   log(CLASS_MAIN, Info, "Syncing actors with server...");
-  m.getPropSync()->serverSyncActors(); // sync properties from the server
+  m.getPropSync()->serverSyncActors(); // sync properties from the server (with new props and new clock blocked timing)
 #endif
   sleepInterruptable(cycleBegin, PERIOD_MSEC);
   log(CLASS_MAIN, Info, "END RUN MODE (ver: %s)\n\n", STRINGIFY(PROJ_VERSION));
