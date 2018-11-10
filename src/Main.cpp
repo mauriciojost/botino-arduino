@@ -51,9 +51,7 @@ void runMode() {
   runModeArchitecture();
 
   m.loop(false, false, true);
-  m.getPropSync()->fsStoreActors();
   sleepInterruptable(cycleBegin, PERIOD_MSEC);
-  m.getPropSync()->fsLoadActors();
   log(CLASS_MAIN, Info, "END RUN MODE (ver: %s)\n\n", STRINGIFY(PROJ_VERSION));
 }
 
