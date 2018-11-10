@@ -33,8 +33,6 @@ void setup() {
   m.getBot()->setActorsTime(lastTime);
   log(CLASS_MAIN, Info, "Syncing clock...");
   m.getClockSync()->syncClock(); // sync real date / time on clock
-  log(CLASS_MAIN, Info, "Requesting all actors act...");
-  m.actall(); // force act the rest of the actors in next run cycle
   log(CLASS_MAIN, Info, "Setup done.");
 }
 
