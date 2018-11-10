@@ -48,7 +48,7 @@ public:
     name = n;
     messageFunc = NULL;
     md = new Metadata(n);
-    md->getTiming()->setFreq("300000005");
+    md->getTiming()->setFreq("0");
     notification("Welcome!");
   }
 
@@ -72,6 +72,8 @@ public:
     buffer.getUnsafeBuffer()[MAX_NOTIF_LENGTH - 1] = 0;
     messageFunc(0, line * 8 * size, WHITE, DO_WRAP, DO_CLEAR, size, buffer.getBuffer());
     va_end(args);
+
+    notify(); // apart from the message, also notify if notifications are available
   }
 
   int notification(const char *msg) {
