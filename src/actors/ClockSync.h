@@ -82,14 +82,14 @@ public:
       return;
     }
     if (getTiming()->matches()) {
-    	syncClock();
+    	syncClock(false);
     }
   }
 
-  void syncClock() {
+  void syncClock(bool block) {
     bool connected = initWifiFunc();
     if (connected) {
-      updateClockProperties();
+      updateClockProperties(block);
     }
   }
 
@@ -101,7 +101,7 @@ public:
     httpGet = h;
   }
 
-  void updateClockProperties() {
+  void updateClockProperties(bool block) {
     log(CLASS_CLOCKSYNC, Info, "Updating clock");
     ParamStream s(jsonAuxBuffer);
     urlAuxBuffer->fill(TIMEZONE_DB_API_URL_GET, dbKey->getBuffer(), dbZone->getBuffer());
@@ -114,7 +114,7 @@ public:
         log(CLASS_CLOCKSYNC, Debug, "Retrieved: '%s'", formatted);
         int parsed = sscanf(formatted, "%04d-%02d-%02d %02d:%02d:%02d", &y, &mo, &d, &h, &m, &s);
         if (parsed > 0) {
-          clock->set(h, m, s, d, mo, y);
+          clock->set(h, m, s, d, mo, y, block);
         } else {
           log(CLASS_CLOCKSYNC, Info, "Invalid time");
         }

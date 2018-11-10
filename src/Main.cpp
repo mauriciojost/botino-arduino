@@ -32,7 +32,13 @@ void setup() {
   time_t lastTime = m.getBot()->getClock()->currentTime();
   m.getBot()->setActorsTime(lastTime);
   log(CLASS_MAIN, Info, "Syncing clock...");
-  m.getClockSync()->syncClock(); // sync real date / time on clock
+
+#ifdef DEEP_SLEEP_MODE
+  bool block = true; // block clock afterwards, as its time must be saved and device restarted
+#else
+  bool block = false;
+#endif
+  m.getClockSync()->syncClock(block); // sync real date / time on clock
   log(CLASS_MAIN, Info, "Setup done.");
 }
 
@@ -49,6 +55,11 @@ void runMode() {
   runModeArchitecture();
 
   m.loop(false, false, true);
+
+#ifdef DEEP_SLEEP_MODE
+  log(CLASS_MAIN, Info, "Syncing actors with server...");
+  m.getPropSync()->serverSyncActors(); // sync properties from the server
+#endif
   sleepInterruptable(cycleBegin, PERIOD_MSEC);
   log(CLASS_MAIN, Info, "END RUN MODE (ver: %s)\n\n", STRINGIFY(PROJ_VERSION));
 }

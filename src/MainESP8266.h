@@ -403,7 +403,9 @@ void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {
     delay(fragToSleepMs / 500 * 499);
     spentMs = millis() - cycleBegin;
   }
-  ESP.reset();
+#ifdef DEEP_SLEEP_MODE
+  ESP.restart();
+#endif
 }
 
 bool haveToInterrupt() {
