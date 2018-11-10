@@ -12,13 +12,20 @@
 #define CLASS_CLOCKSYNC "CS"
 
 #ifndef TIMEZONE_DB_ZONE
-#define TIMEZONE_DB_ZONE "xxx"
+#define TIMEZONE_DB_ZONE "no-zone"
 #endif
 
+#ifndef TIMEZONE_DB_KEY
+#define TIMEZONE_DB_KEY "no-key"
+#endif
+
+
 #define TIMEZONE_DB_API_URL_GET "http://api.timezonedb.com/v2/get-time-zone?key=%s&format=json&by=zone&zone=%s"
+#define CREDENTIAL_BUFFER_SIZE 64
 
 enum ClockSyncProps {
   ClockSyncZone0Prop = 0, // zone to take the time from (as per api.timezonedb.com/v2)
+  ClockSyncITimeKeyProp,  // time api key
   ClockSyncPropsDelimiter // delimiter of the configuration states
 };
 
@@ -45,7 +52,11 @@ public:
     name = n;
 
     dbZone = new Buffer(32);
-    dbKey = new Buffer(32);
+    dbZone->fill(TIMEZONE_DB_ZONE);
+
+    dbKey = new Buffer(CREDENTIAL_BUFFER_SIZE);
+    dbKey->load(TIMEZONE_DB_KEY);
+
     urlAuxBuffer = new Buffer(128);
     jsonAuxBuffer = new Buffer(MAX_JSON_STR_LENGTH);
 
@@ -54,8 +65,6 @@ public:
     httpGet = NULL;
     md = new Metadata(n);
     md->getTiming()->setFreq("201126060");
-    dbZone->fill(TIMEZONE_DB_ZONE);
-    dbKey->fill("");
     headers = new Table(0, 0, 0);
   }
 
@@ -73,10 +82,14 @@ public:
       return;
     }
     if (getTiming()->matches()) {
-      bool connected = initWifiFunc();
-      if (connected) {
-        updateClockProperties();
-      }
+    	syncClock();
+    }
+  }
+
+  void syncClock() {
+    bool connected = initWifiFunc();
+    if (connected) {
+      updateClockProperties();
     }
   }
 
@@ -118,6 +131,9 @@ public:
       case (ClockSyncZone0Prop):
         setPropValue(setMode, targetValue, actualValue, dbZone);
         break;
+      case (ClockSyncITimeKeyProp):
+        setPropValue(setMode, targetValue, actualValue, dbKey);
+        break;
       default:
         break;
     }
@@ -134,6 +150,8 @@ public:
     switch (propIndex) {
       case (ClockSyncZone0Prop):
         return "zone";
+      case (ClockSyncITimeKeyProp):
+        return "_timekey"; // with obfuscation (starts with _)
       default:
         return "";
     }

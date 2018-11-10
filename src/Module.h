@@ -9,7 +9,6 @@
 #include <actors/Ifttt.h>
 #include <actors/Images.h>
 #include <actors/Notifier.h>
-#include <actors/SetupSync.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Array.h>
@@ -40,6 +39,7 @@
   "\n  wifipass   : set wifi pass"                                                                                                         \
   "\n  ifttttoken : set ifttt token"                                                                                                       \
   "\n  timezonekey: set timezonedb.com/v2 api key"                                                                                         \
+  "\n  storecreds : save credentials in eeprom"                                                                                            \
   "\n  ack        : notification read"                                                                                                     \
   "\n  help       : show this help"                                                                                                        \
   "\n  (all messages are shown as info log level)"                                                                                         \
@@ -51,7 +51,6 @@
 class Module {
 
 private:
-  SetupSync *setupSync;
   PropSync *propSync;
   ClockSync *clockSync;
   Array<Actor *> *actors;
@@ -71,7 +70,6 @@ private:
 public:
   Module() {
 
-    setupSync = new SetupSync("setupsync");
     propSync = new PropSync("propsync");
     clockSync = new ClockSync("clocksync");
     clock = new Clock("clock");
@@ -82,17 +80,16 @@ public:
     ifttt = new Ifttt("ifttt");
     notifier = new Notifier("notifier");
 
-    actors = new Array<Actor *>(10);
-    actors->set(0, (Actor *)setupSync);
-    actors->set(1, (Actor *)propSync);
-    actors->set(2, (Actor *)clockSync);
-    actors->set(3, (Actor *)clock);
-    actors->set(4, (Actor *)settings);
-    actors->set(5, (Actor *)quotes);
-    actors->set(6, (Actor *)body);
-    actors->set(7, (Actor *)images);
-    actors->set(8, (Actor *)ifttt);
-    actors->set(9, (Actor *)notifier);
+    actors = new Array<Actor *>(9);
+    actors->set(0, (Actor *)propSync);
+    actors->set(1, (Actor *)clockSync);
+    actors->set(2, (Actor *)clock);
+    actors->set(3, (Actor *)settings);
+    actors->set(4, (Actor *)quotes);
+    actors->set(5, (Actor *)body);
+    actors->set(6, (Actor *)images);
+    actors->set(7, (Actor *)ifttt);
+    actors->set(8, (Actor *)notifier);
 
     bot = new SerBot(clock, actors);
 
@@ -164,8 +161,6 @@ public:
       body->performMove(c);
       return false;
     } else if (strcmp("lcd", c) == 0) {
-
-	  // int x, int y, int color, bool wrap, bool clear, int size, const char *str);
       const char *x = strtok(NULL, " ");
       const char *y = strtok(NULL, " ");
       const char *color = strtok(NULL, " ");
@@ -227,8 +222,8 @@ public:
         logRaw(CLASS_MODULE, Info, "Argument needed:\n  wifissid <ssid>");
         return false;
       }
-      setupSync->setSsid(c);
-      log(CLASS_MODULE, Info, "Wifi ssid: %s", setupSync->getSsid());
+      settings->setSsid(c);
+      log(CLASS_MODULE, Info, "Wifi ssid: %s", settings->getSsid());
       return false;
     } else if (strcmp("wifipass", c) == 0) {
       c = strtok(NULL, " ");
@@ -236,8 +231,8 @@ public:
         logRaw(CLASS_MODULE, Info, "Argument needed:\n  wifipass <pass>");
         return false;
       }
-      setupSync->setPass(c);
-      log(CLASS_MODULE, Info, "Wifi pass: %s", setupSync->getPass());
+      settings->setPass(c);
+      log(CLASS_MODULE, Info, "Wifi pass: %s", settings->getPass());
       return false;
     } else if (strcmp("ifttttoken", c) == 0) {
       c = strtok(NULL, " ");
@@ -245,8 +240,8 @@ public:
         logRaw(CLASS_MODULE, Info, "Argument needed:\n  ifttttoken <token>");
         return false;
       }
-      setupSync->setIfttt(c);
-      log(CLASS_MODULE, Info, "Ifttt token: %s", setupSync->getIfttt());
+      ifttt->setKey(c);
+      log(CLASS_MODULE, Info, "Ifttt token: %s", ifttt->getKey());
       return false;
     } else if (strcmp("actall", c) == 0) {
       actall();
@@ -272,6 +267,10 @@ public:
       }
       clockSync->setDbKey(c);
       log(CLASS_MODULE, Info, "TimeZoneDb key: %s", clockSync->getDbKey());
+      return false;
+    } else if (strcmp("storecreds", c) == 0) {
+      propSync->fsStoreActorsProps(); // load mainly credentials already set
+      log(CLASS_MODULE, Info, "Credentials stored");
       return false;
     } else if (strcmp("ack", c) == 0) {
       c = strtok(NULL, " ");
@@ -313,16 +312,16 @@ public:
     return body;
   }
 
-  SetupSync *getSetupSync() {
-    return setupSync;
-  }
-
   Ifttt *getIfttt() {
     return ifttt;
   }
 
   ClockSync *getClockSync() {
     return clockSync;
+  }
+
+  PropSync *getPropSync() {
+    return propSync;
   }
 
   Notifier *getNotifier() {

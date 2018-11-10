@@ -361,7 +361,7 @@ void readFile(const char* fname, Buffer* content) {
 
 void writeFile(const char* fname, String content) {
   SPIFFS.begin();
-  File f = SPIFFS.open(fname, "w");
+  File f = SPIFFS.open(fname, "w+");
   if (!f) {
     log(CLASS_MAIN, Warn, "File writing failed: %s", fname);
   } else {

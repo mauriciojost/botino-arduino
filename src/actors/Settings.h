@@ -15,11 +15,25 @@
 
 #define CLASS_SETTINGS "ST"
 
+
 #define INFO_BUFFER_LENGTH 256
 
+#ifndef WIFI_SSID_STEADY
+#define WIFI_SSID_STEADY "???"
+#endif // WIFI_SSID_STEADY
+
+#ifndef WIFI_PASSWORD_STEADY
+#define WIFI_PASSWORD_STEADY "???"
+#endif // WIFI_PASSWORD_STEADY
+
+#define CREDENTIAL_BUFFER_SIZE 64
+
+
 enum SettingsProps {
-  SettingsDebugProp,              // boolean, define if the device is in debug mode
+  SettingsDebugProp = 0,          // boolean, define if the device is in debug mode
   SettingsButtonRoutineLimitProp, // integer, define the first X routines that are randomly executed when the button is pressed
+  SettingsWifiSsidProp,           // wifi ssid
+  SettingsWifiPassProp,           // wifi pass
   SettingsPropsDelimiter          // amount of properties
 };
 
@@ -30,11 +44,19 @@ private:
   bool devDebug;
   int buttonRoutineUntil;
   Buffer *infoBuffer;
+  Buffer *ssid;
+  Buffer *pass;
   Metadata *md;
 
 public:
   Settings(const char *n) {
     name = n;
+    ssid = new Buffer(CREDENTIAL_BUFFER_SIZE);
+    ssid->load(WIFI_SSID_STEADY);
+
+    pass = new Buffer(CREDENTIAL_BUFFER_SIZE);
+    pass->load(WIFI_PASSWORD_STEADY);
+
     infoBuffer = new Buffer(INFO_BUFFER_LENGTH);
     devDebug = false;
     buttonRoutineUntil = 4;
@@ -50,6 +72,10 @@ public:
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
+      case (SettingsWifiSsidProp):
+        return "_wifissid"; // with obfuscation (starts with _)
+      case (SettingsWifiPassProp):
+        return "_wifipass"; // with obfuscation (starts with _)
       case (SettingsDebugProp):
         return "debug";
       case (SettingsButtonRoutineLimitProp):
@@ -66,6 +92,12 @@ public:
         break;
       case (SettingsButtonRoutineLimitProp):
         setPropInteger(m, targetValue, actualValue, &buttonRoutineUntil);
+        break;
+      case (SettingsWifiSsidProp):
+        setPropValue(m, targetValue, actualValue, ssid);
+        break;
+      case (SettingsWifiPassProp):
+        setPropValue(m, targetValue, actualValue, pass);
         break;
       default:
         break;
@@ -109,6 +141,23 @@ public:
   void setInfo(const char *s) {
     infoBuffer->fill(s);
   }
+
+  const char *getSsid() {
+    return ssid->getBuffer();
+  }
+
+  void setSsid(const char *s) {
+    ssid->load(s);
+  }
+
+  const char *getPass() {
+    return pass->getBuffer();
+  }
+
+  void setPass(const char *s) {
+    pass->load(s);
+  }
+
 };
 
 #endif // GLOBAL_INC

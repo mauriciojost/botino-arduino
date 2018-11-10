@@ -119,11 +119,13 @@ void readFile(const char* fname, Buffer* content) {
         i++;
     }
     fclose(fp);
+	} else {
+    log(CLASS_MAIN, Warn, "Could not load file: %s", fname);
 	}
 }
 
 void writeFile(const char* fname, const char* content) {
-	FILE *file = fopen(fname, "w");
+	FILE *file = fopen(fname, "w+");
 	int results = fputs(content, file);
 	if (results == EOF) {
     log(CLASS_MAIN, Warn, "Failed to write %s ", fname);

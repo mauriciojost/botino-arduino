@@ -15,26 +15,24 @@ Module m;
 #endif // SIMULATE
 
 bool initWifiSteady() {
-  SetupSync *s = m.getSetupSync();
-  if (s->isInitialized()) {
-    const char *wifiSsid = s->getSsid();
-    const char *wifiPass = s->getPass();
-    log(CLASS_MAIN, Info, "W.steady");
-    bool connected = initWifi(wifiSsid, wifiPass, true, 10);
-    return connected;
-  } else {
-    log(CLASS_MAIN, Info, "W.steady null");
-    return false;
-  }
+  Settings *s = m.getSettings();
+  log(CLASS_MAIN, Info, "W.steady");
+  bool connected = initWifi(s->getSsid(), s->getPass(), true, 10);
+  return connected;
 }
 
 void setup() {
-
   m.setup(lcdImg, arms, messageFunc, ios, initWifiSteady, httpPost, httpGet, clearDevice, readFile, writeFile);
-
   setupArchitecture();
-
-  m.actall();
+  log(CLASS_MAIN, Info, "Loading credentials stored in FS...");
+  m.getPropSync()->fsLoadActorsProps(); // load mainly credentials already set
+  log(CLASS_MAIN, Info, "Syncing clock...");
+  m.getClockSync()->syncClock(); // sync date / time
+  log(CLASS_MAIN, Info, "Syncing actors with server...");
+  m.getPropSync()->serverSyncActors(); // sync properties from the server
+  log(CLASS_MAIN, Info, "Requesting all actors act...");
+  m.actall(); // force act the rest of the actors in next run cycle
+  log(CLASS_MAIN, Info, "Setup done.");
 }
 
 void configureMode() {
@@ -45,19 +43,15 @@ void configureMode() {
 
 void runMode() {
   unsigned long cycleBegin = millis();
-  log(CLASS_MAIN, Info, "Version: %s", STRINGIFY(PROJ_VERSION));
-
-  // Handle keys
-  SetupSync *ss = m.getSetupSync();
-  if (ss->isInitialized()) {
-    m.getIfttt()->setKey(ss->getIfttt());
-    m.getClockSync()->setDbKey(ss->getTimeKey());
-  }
+  log(CLASS_MAIN, Info, "BEGIN RUN MODE (ver: %s)\n\n", STRINGIFY(PROJ_VERSION));
 
   runModeArchitecture();
 
   m.loop(false, false, true);
+  m.getPropSync()->fsStoreActors();
   sleepInterruptable(cycleBegin, PERIOD_MSEC);
+  m.getPropSync()->fsLoadActors();
+  log(CLASS_MAIN, Info, "END RUN MODE (ver: %s)\n\n", STRINGIFY(PROJ_VERSION));
 }
 
 void loop() {

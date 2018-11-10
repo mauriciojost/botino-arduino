@@ -16,11 +16,19 @@
 #define NRO_EVENTS 4
 #define EVENT_NAME_MAX_LENGTH 32
 
+#define CREDENTIAL_BUFFER_SIZE 64
+
+#ifndef IFTTT_KEY
+#define IFTTT_KEY "???"
+#endif // IFTTT_KEY
+
+
 enum IftttProps {
   IftttEvtName0Prop = 0,
   IftttEvtName1Prop,
   IftttEvtName2Prop,
   IftttEvtName3Prop,
+  IftttKeyProp,       // ifttt key credential (for webhook, sensitive)
   IftttPropsDelimiter // delimiter of the configuration states
 };
 
@@ -44,7 +52,8 @@ public:
   Ifttt(const char *n) {
     name = n;
 
-    iftttKey = new Buffer(64);
+    iftttKey = new Buffer(CREDENTIAL_BUFFER_SIZE);
+    iftttKey->load(IFTTT_KEY);
     urlAuxBuffer = new Buffer(128);
     initWifiFunc = NULL;
     httpPost = NULL;
@@ -64,6 +73,10 @@ public:
 
   void setKey(const char *k) {
     iftttKey->fill("%s", k);
+  }
+
+  const char* getKey() {
+    return iftttKey->getBuffer();
   }
 
   void setInitWifi(bool (*f)()) {
@@ -105,6 +118,8 @@ public:
     if (propIndex >= IftttEvtName0Prop && propIndex < (NRO_EVENTS + IftttEvtName0Prop)) {
       int i = (int)propIndex - (int)IftttEvtName0Prop;
       setPropValue(setMode, targetValue, actualValue, eventNames[i]);
+    } else if (propIndex == IftttKeyProp) {
+      setPropValue(setMode, targetValue, actualValue, iftttKey);
     }
     if (setMode != GetValue) {
       getMetadata()->changed();
@@ -125,6 +140,8 @@ public:
         return "evt2";
       case (IftttEvtName3Prop):
         return "evt3";
+      case (IftttKeyProp):
+        return "_iftttkey"; // with obfuscation (starts with _)
       default:
         return "";
     }
