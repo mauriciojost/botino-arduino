@@ -96,17 +96,21 @@ public:
       return;
     }
     if (getTiming()->matches()) {
-      const char *currentNotif = getNotification();
-      if (currentNotif != NULL) {
-    	  log(CLASS_NOTIFIER, Debug, "Notif(%d): %s", queue.size(), currentNotif);
-    	  Buffer aux(LCD_WIDTH);
-          aux.fill("--(%d)--", queue.size());
-          messageFunc(0, (NOTIF_LINE - 1) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, DO_NOT_CLEAR, NOTIF_SIZE, aux.center(' ', LCD_WIDTH));
-          aux.load(currentNotif);
-          messageFunc(0, (NOTIF_LINE) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, DO_NOT_CLEAR, NOTIF_SIZE, aux.center(' ', LCD_WIDTH));
-      } else {
-        log(CLASS_NOTIFIER, Debug, "No notifs");
-      }
+    	notify();
+    }
+  }
+
+  void notify() {
+    const char *currentNotif = getNotification();
+    if (currentNotif != NULL) {
+      log(CLASS_NOTIFIER, Debug, "Notif(%d): %s", queue.size(), currentNotif);
+      Buffer aux(LCD_WIDTH);
+        aux.fill("--(%d)--", queue.size());
+        messageFunc(0, (NOTIF_LINE - 1) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, DO_NOT_CLEAR, NOTIF_SIZE, aux.center(' ', LCD_WIDTH));
+        aux.load(currentNotif);
+        messageFunc(0, (NOTIF_LINE) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, DO_NOT_CLEAR, NOTIF_SIZE, aux.center(' ', LCD_WIDTH));
+    } else {
+      log(CLASS_NOTIFIER, Debug, "No notifs");
     }
   }
 

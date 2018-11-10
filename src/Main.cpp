@@ -26,10 +26,13 @@ void setup() {
   setupArchitecture();
   log(CLASS_MAIN, Info, "Loading credentials stored in FS...");
   m.getPropSync()->fsLoadActorsProps(); // load mainly credentials already set
-  log(CLASS_MAIN, Info, "Syncing clock...");
-  m.getClockSync()->syncClock(); // sync date / time
   log(CLASS_MAIN, Info, "Syncing actors with server...");
   m.getPropSync()->serverSyncActors(); // sync properties from the server
+  log(CLASS_MAIN, Info, "Setting actors' times...");
+  time_t lastTime = m.getBot()->getClock()->currentTime();
+  m.getBot()->setActorsTime(lastTime);
+  log(CLASS_MAIN, Info, "Syncing clock...");
+  m.getClockSync()->syncClock(); // sync real date / time on clock
   log(CLASS_MAIN, Info, "Requesting all actors act...");
   m.actall(); // force act the rest of the actors in next run cycle
   log(CLASS_MAIN, Info, "Setup done.");
