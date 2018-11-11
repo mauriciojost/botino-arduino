@@ -621,12 +621,11 @@ public:
       return;
     }
     for (int i = 0; i < NRO_ROUTINES; i++) {
-      while (routines[i]->timing->catchesUp(getTiming()->getCurrentTime())) {
-        if (routines[i]->timing->matches()) {
-          const char *timing = routines[i]->timing->getFreq();
-          log(CLASS_BODY, Debug, "Rne %d: %s %s", i, timing, getMove(i));
-          performMove(i);
-        }
+      routines[i]->timing->setCurrentTime(getTiming()->getCurrentTime()); // align with Body's time
+      if (routines[i]->timing->matches()) {
+        const char *timing = routines[i]->timing->getFreq();
+        log(CLASS_BODY, Debug, "Rne %d: %s %s", i, timing, getMove(i));
+        performMove(i);
       }
     }
   }
