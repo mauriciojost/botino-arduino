@@ -39,7 +39,9 @@ void lcdImg(char img, uint8_t bitmap[]) {
 }
 
 void messageOnLcd(int x, int y, int color, bool wrap, bool clear, int size, const char *str) {
-  strcpy(lastMsg, str);
+	if (y == 0) { // ignore messages that do not belong to body
+    strcpy(lastMsg, str);
+	}
 }
 
 void arms(int left, int right, int steps) {
@@ -99,7 +101,11 @@ void test_body_shows_time() {
   b.act();
 
   TEST_ASSERT_EQUAL_STRING("02:33", lastMsg);
-  TEST_ASSERT_EQUAL(t->getCurrentTime(), faceCleared);
+  TEST_ASSERT_EQUAL(1, faceCleared); // 1 act
+
+  b.act();
+
+  TEST_ASSERT_EQUAL(2, faceCleared); // 2 acts
 }
 
 void executeMove(Body *b, const char *move) {
