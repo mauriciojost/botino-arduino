@@ -38,6 +38,7 @@ void setup() {
   log(CLASS_MAIN, Info, "# Syncing clock...");
 
 #ifdef DEEP_SLEEP_MODE
+  log(CLASS_MAIN, Info, "Deep sleep...");
   bool block = true; // block clock afterwards, as its time must be saved and device restarted
 #else
   bool block = false;
@@ -62,7 +63,7 @@ void runMode() {
   m.loop(false, false, true);
 
 #ifdef DEEP_SLEEP_MODE
-  log(CLASS_MAIN, Info, "Syncing actors with server...");
+  log(CLASS_MAIN, Warn, "Syncing actors with server (run)...");
   m.getPropSync()->serverSyncActors(); // sync properties from the server (with new props and new clock blocked timing)
 #endif
   sleepInterruptable(cycleBegin, PERIOD_MSEC);
