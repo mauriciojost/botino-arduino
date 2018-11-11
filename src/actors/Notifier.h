@@ -26,8 +26,15 @@
 #include <main4ino/Actor.h>
 #include <main4ino/Queue.h>
 
+#define EMPTY_NOTIF_REPRESENTATION ""
+#define MAX_NRO_NOTIFS 4 // must be aligned with enum below
+
 enum NotifierProps {
   NotifierFreqProp = 0,
+  NotifierNotif0Prop,
+  NotifierNotif1Prop,
+  NotifierNotif2Prop,
+  NotifierNotif3Prop,
   NotifierPropsDelimiter // count of properties
 };
 
@@ -36,7 +43,7 @@ class Notifier : public Actor {
 private:
   const char *name;
   Metadata *md;
-  Queue<8, MAX_NOTIF_LENGTH> queue;
+  Queue<MAX_NRO_NOTIFS, MAX_NOTIF_LENGTH> queue;
   void (*messageFunc)(int x, int y, int color, bool wrap, bool clear, int size, const char *str);
 
   bool isInitialized() {
@@ -49,7 +56,6 @@ public:
     messageFunc = NULL;
     md = new Metadata(n);
     md->getTiming()->setFreq("0");
-    notification("Welcome!");
   }
 
   const char *getName() {
@@ -120,22 +126,39 @@ public:
     switch (propIndex) {
       case (NotifierFreqProp):
         return "freq";
+      case (NotifierNotif0Prop):
+        return "n0";
+      case (NotifierNotif1Prop):
+        return "n1";
+      case (NotifierNotif2Prop):
+        return "n2";
+      case (NotifierNotif3Prop):
+        return "n3";
       default:
         return "";
     }
   }
 
   void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {
-    switch (propIndex) {
-      case (NotifierFreqProp): {
-        setPropTiming(m, targetValue, actualValue, md->getTiming());
-      } break;
-      default:
-        break;
+    if (propIndex >= NotifierNotif0Prop && propIndex < (MAX_NRO_NOTIFS + NotifierNotif0Prop)) {
+      int i = (int)propIndex - (int)NotifierNotif0Prop;
+      if (m == SetCustomValue) {
+        Buffer a = Buffer(MAX_NOTIF_LENGTH, targetValue);
+        if (!a.isEmpty()) {
+          queue.pushUnique(a.getBuffer());
+        }
+      }
+      if (actualValue != NULL) {
+        actualValue->load(queue.getAt(i, EMPTY_NOTIF_REPRESENTATION));
+      }
+    } else if (propIndex == NotifierFreqProp) {
+      setPropTiming(m, targetValue, actualValue, md->getTiming());
     }
     if (m != GetValue) {
       getMetadata()->changed();
     }
+
+
   }
 
   int getNroProps() {
