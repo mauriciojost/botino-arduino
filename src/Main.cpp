@@ -22,16 +22,20 @@ bool initWifiSteady() {
 }
 
 void setup() {
+  Buffer timeAux(19);
+  log(CLASS_MAIN, Info, "# Setup module...");
   m.setup(lcdImg, arms, messageFunc, ios, initWifiSteady, httpPost, httpGet, clearDevice, readFile, writeFile);
+  log(CLASS_MAIN, Info, "# Setup architecture...");
   setupArchitecture();
-  log(CLASS_MAIN, Info, "Loading credentials stored in FS...");
+  log(CLASS_MAIN, Info, "# Loading credentials stored in FS...");
   m.getPropSync()->fsLoadActorsProps(); // load mainly credentials already set
-  log(CLASS_MAIN, Info, "Syncing actors with server...");
+  log(CLASS_MAIN, Info, "# Syncing actors with server...");
   m.getPropSync()->serverSyncActors(); // sync properties from the server
-  log(CLASS_MAIN, Info, "Setting actors' times...");
-  time_t lastTime = m.getBot()->getClock()->currentTime();
-  m.getBot()->setActorsTime(lastTime);
-  log(CLASS_MAIN, Info, "Syncing clock...");
+  time_t leftTime = m.getBot()->getClock()->currentTime();
+
+  log(CLASS_MAIN, Info, "# Previous actors' times: %s...", Timing::humanize(leftTime, &timeAux));
+  m.getBot()->setActorsTime(leftTime);
+  log(CLASS_MAIN, Info, "# Syncing clock...");
 
 #ifdef DEEP_SLEEP_MODE
   bool block = true; // block clock afterwards, as its time must be saved and device restarted
@@ -39,7 +43,8 @@ void setup() {
   bool block = false;
 #endif
   m.getClockSync()->syncClock(block); // sync real date / time on clock
-  log(CLASS_MAIN, Info, "Setup done.");
+  log(CLASS_MAIN, Info, "# Current time: %s", Timing::humanize(m.getBot()->getClock()->currentTime(), &timeAux));
+  log(CLASS_MAIN, Info, "# Setup done.");
 }
 
 void configureMode() {

@@ -157,8 +157,6 @@ public:
     if (m != GetValue) {
       getMetadata()->changed();
     }
-
-
   }
 
   int getNroProps() {
