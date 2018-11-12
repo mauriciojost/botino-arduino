@@ -345,30 +345,38 @@ void lcdImg(char img, uint8_t bitmap[]) {
   delay(DELAY_MS_SPI);
 }
 
-void readFile(const char* fname, Buffer* content) {
+bool readFile(const char* fname, Buffer* content) {
+	bool success = false;
   SPIFFS.begin();
   File f = SPIFFS.open(fname, "r");
   if (!f) {
     log(CLASS_MAIN, Warn, "File reading failed: %s", fname);
     content->clear();
+    success = false;
   } else {
     String s = f.readString();
     content->load(s.c_str());
     log(CLASS_MAIN, Info, "File read: %s", fname);
+    success = true;
   }
   SPIFFS.end();
+  return success;
 }
 
-void writeFile(const char* fname, const char* content) {
+bool writeFile(const char* fname, const char* content) {
+	bool success = false;
   SPIFFS.begin();
   File f = SPIFFS.open(fname, "w+");
   if (!f) {
     log(CLASS_MAIN, Warn, "File writing failed: %s", fname);
+    success = false;
   } else {
     f.write((const uint8_t*)content, strlen(content));
     log(CLASS_MAIN, Info, "File written: %s", fname);
+    success = true;
   }
   SPIFFS.end();
+  return success;
 }
 
 // Execution

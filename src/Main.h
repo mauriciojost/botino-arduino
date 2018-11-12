@@ -97,11 +97,11 @@ void clearDevice();
 // Show an image (either a catalog image or a custom bitmap)
 void lcdImg(char img, uint8_t bitmap[]);
 
-// Read a file from the filesystem
-void readFile(const char* fname, Buffer* content);
+// Read a file from the filesystem (returns true if success)
+bool readFile(const char* fname, Buffer* content);
 
-// Write a file to the filesystem
-void writeFile(const char* fname, const char* content);
+// Write a file to the filesystem (returns true if success)
+bool writeFile(const char* fname, const char* content);
 
 // Execution
 ///////////////////

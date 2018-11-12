@@ -108,7 +108,8 @@ void lcdImg(char img, uint8_t bitmap[]) {
   log(CLASS_MAIN, Debug, "Img '%c'", img);
 }
 
-void readFile(const char* fname, Buffer* content) {
+bool readFile(const char* fname, Buffer* content) {
+	bool success = false;
 	char c;
 	int i = 0;
 	FILE *fp = fopen(fname, "r");
@@ -119,18 +120,26 @@ void readFile(const char* fname, Buffer* content) {
         i++;
     }
     fclose(fp);
+    success = true;
 	} else {
     log(CLASS_MAIN, Warn, "Could not load file: %s", fname);
+    success = false;
 	}
+	return success;
 }
 
-void writeFile(const char* fname, const char* content) {
+bool writeFile(const char* fname, const char* content) {
+	bool success = false;
 	FILE *file = fopen(fname, "w+");
 	int results = fputs(content, file);
 	if (results == EOF) {
     log(CLASS_MAIN, Warn, "Failed to write %s ", fname);
+    success = false;
+	} else {
+		success = true;
 	}
 	fclose(file);
+	return success;
 }
 
 // Execution

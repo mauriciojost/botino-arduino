@@ -28,7 +28,7 @@ void setup() {
   log(CLASS_MAIN, Info, "# Setup architecture...");
   setupArchitecture();
   log(CLASS_MAIN, Info, "# Loading credentials stored in FS...");
-  m.getPropSync()->fsLoadActorsProps(); // load mainly credentials already set
+  m.getPropSync()->fsLoadActorsProps(); // load stored properties (most importantly credentials)
   log(CLASS_MAIN, Info, "# Syncing actors with server...");
   m.getPropSync()->serverSyncActors(); // sync properties from the server
   time_t leftTime = m.getBot()->getClock()->currentTime();
