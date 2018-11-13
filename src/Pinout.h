@@ -40,7 +40,7 @@
 
 // LEDS
 #ifndef LEDY_PIN
-#define LEDY_PIN PIN_D0 // YELLOW LED
+#define LEDY_PIN PIN_D3 // YELLOW LED
 #endif // LEDY_PIN
 
 // I2C OLED 128x64
