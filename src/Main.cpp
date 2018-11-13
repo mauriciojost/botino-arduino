@@ -29,7 +29,7 @@ void setup() {
   log(CLASS_MAIN, Info, "# Setup architecture...");
   setupArchitecture();
   log(CLASS_MAIN, Info, "# Loading credentials stored in FS...");
-  bool fsLoaded = m.getPropSync()->fsLoadActorsProps(); // load stored properties (most importantly credentials)
+  m.getPropSync()->fsLoadActorsProps(); // load stored properties (most importantly credentials)
   log(CLASS_MAIN, Info, "# Syncing actors with server...");
   bool serSyncd = m.getPropSync()->serverSyncActors(); // sync properties from the server
   time_t leftTime = m.getBot()->getClock()->currentTime();
@@ -40,12 +40,12 @@ void setup() {
   bool clockSyncd = m.getClockSync()->syncClock(m.getSettings()->inDeepSleepMode()); // sync real date / time on clock, block if in deep sleep
   log(CLASS_MAIN, Info, "# Current time: %s", Timing::humanize(m.getBot()->getClock()->currentTime(), &timeAux));
 
-  log(CLASS_MAIN, Info, "# Setup done");
-
-  if (fsLoaded && serSyncd && clockSyncd) {
-    m.getBot()->setMode(RunMode); // ready to run
+  if (serSyncd && clockSyncd) {
+    log(CLASS_MAIN, Info, "Setup done correctly");
+    m.getBot()->setMode(RunMode);
   } else {
-    m.getBot()->setMode(WelcomeMode); // failed to initialize
+    log(CLASS_MAIN, Info, "Setup failed");
+    m.getBot()->setMode(WelcomeMode);
   }
 }
 
