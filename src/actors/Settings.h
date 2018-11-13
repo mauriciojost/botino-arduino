@@ -158,6 +158,14 @@ public:
     pass->load(s);
   }
 
+  bool inDeepSleepMode() {
+#ifdef DEEP_SLEEP_MODE
+  	return true;
+#else
+  	return false;
+#endif
+  }
+
 };
 
 #endif // GLOBAL_INC

@@ -145,8 +145,8 @@ bool writeFile(const char* fname, const char* content) {
 // Execution
 ///////////////////
 
-void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMsec) {
-  log(CLASS_MAIN, Info, "L.Sleep(%lums)...", periodMsec);
+void sleepInterruptable(time_t cycleBegin, unsigned long periodSecs) {
+  log(CLASS_MAIN, Info, "Sleep(%lus)...", periodSecs);
   sleep(1);
 }
 

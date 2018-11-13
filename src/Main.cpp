@@ -23,54 +23,52 @@ bool initWifiSteady() {
 
 void setup() {
   Buffer timeAux(19);
-  log(CLASS_MAIN, Info, "# Setup module...");
+
+  log(CLASS_MAIN, Info, "\n\n# Setup module...");
   m.setup(lcdImg, arms, messageFunc, ios, initWifiSteady, httpPost, httpGet, clearDevice, readFile, writeFile);
   log(CLASS_MAIN, Info, "# Setup architecture...");
   setupArchitecture();
   log(CLASS_MAIN, Info, "# Loading credentials stored in FS...");
-  m.getPropSync()->fsLoadActorsProps(); // load stored properties (most importantly credentials)
+  bool fsLoaded = m.getPropSync()->fsLoadActorsProps(); // load stored properties (most importantly credentials)
   log(CLASS_MAIN, Info, "# Syncing actors with server...");
-  m.getPropSync()->serverSyncActors(); // sync properties from the server
+  bool serSyncd = m.getPropSync()->serverSyncActors(); // sync properties from the server
   time_t leftTime = m.getBot()->getClock()->currentTime();
 
   log(CLASS_MAIN, Info, "# Previous actors' times: %s...", Timing::humanize(leftTime, &timeAux));
   m.getBot()->setActorsTime(leftTime);
   log(CLASS_MAIN, Info, "# Syncing clock...");
-
-#ifdef DEEP_SLEEP_MODE
-  log(CLASS_MAIN, Info, "Deep sleep...");
-  bool block = true; // block clock afterwards, as its time must be saved and device restarted
-#else
-  bool block = false;
-#endif
-  m.getClockSync()->syncClock(block); // sync real date / time on clock
+  bool clockSyncd = m.getClockSync()->syncClock(m.getSettings()->inDeepSleepMode()); // sync real date / time on clock, block if in deep sleep
   log(CLASS_MAIN, Info, "# Current time: %s", Timing::humanize(m.getBot()->getClock()->currentTime(), &timeAux));
-  log(CLASS_MAIN, Info, "# Setup done.");
+
+  log(CLASS_MAIN, Info, "# Setup done");
+
+  if (fsLoaded && serSyncd && clockSyncd) {
+    m.getBot()->setMode(RunMode); // ready to run
+  } else {
+    m.getBot()->setMode(WelcomeMode); // failed to initialize
+  }
 }
 
 void configureMode() {
-  unsigned long cycleBegin = millis();
+  time_t cycleBegin = now();
   configureModeArchitecture();
-  sleepInterruptable(cycleBegin, PERIOD_CONFIGURE_MSEC);
+  sleepInterruptable(cycleBegin, PERIOD_CONFIGURE_MSEC / 1000);
 }
 
 void runMode() {
-  unsigned long cycleBegin = millis();
-  log(CLASS_MAIN, Info, "BEGIN RUN MODE (ver: %s)\n\n", STRINGIFY(PROJ_VERSION));
-
+  time_t cycleBegin = now();
   runModeArchitecture();
-
   m.loop(false, false, true);
-
-#ifdef DEEP_SLEEP_MODE
-  log(CLASS_MAIN, Warn, "Syncing actors with server (run)...");
-  m.getPropSync()->serverSyncActors(); // sync properties from the server (with new props and new clock blocked timing)
-#endif
-  sleepInterruptable(cycleBegin, PERIOD_MSEC);
-  log(CLASS_MAIN, Info, "END RUN MODE (ver: %s)\n\n", STRINGIFY(PROJ_VERSION));
+  if (m.getSettings()->inDeepSleepMode()) {
+  	// before going to deep sleep store in the server the last status of all actors
+    log(CLASS_MAIN, Info, "Syncing actors with server (run)...");
+    m.getPropSync()->serverSyncActors(); // sync properties from the server (with new props and new clock blocked timing)
+  }
+  sleepInterruptable(cycleBegin, PERIOD_MSEC / 1000);
 }
 
 void loop() {
+  log(CLASS_MAIN, Info, "BEGIN LOOP (ver: %s)\n\n", STRINGIFY(PROJ_VERSION));
   switch (m.getBot()->getMode()) {
     case (RunMode):
       runMode();
@@ -78,7 +76,11 @@ void loop() {
     case (ConfigureMode):
       configureMode();
       break;
+    case (WelcomeMode):
+      sleepInterruptable(now(), PERIOD_MSEC / 1000);
+      break;
     default:
       break;
   }
+  log(CLASS_MAIN, Info, "END LOOP\n\n");
 }

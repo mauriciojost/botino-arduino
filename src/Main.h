@@ -107,7 +107,7 @@ bool writeFile(const char* fname, const char* content);
 ///////////////////
 
 // Interruptable sleep function (haveToInterrupt called within).
-void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs);
+void sleepInterruptable(time_t cycleBegin, unsigned long periodSec);
 
 // Function to execute whenever a button is pressed (interrupt handling)
 bool haveToInterrupt();

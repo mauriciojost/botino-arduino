@@ -130,8 +130,6 @@ public:
     initWifiSteadyFunc = initWifiSteady;
     clearDeviceFunc = clearDevice;
     messageFunct = messageFunc;
-
-    bot->setMode(RunMode);
   }
 
   bool command(const char *cmd) {

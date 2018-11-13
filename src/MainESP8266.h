@@ -18,7 +18,6 @@
 #define DELAY_MS_SPI 3
 
 #define HARDWARE_TEST_STEP_DELAY_MS 2000
-#define DUTY_CYCLE_THRESHOLD_PERC 50
 
 #define SERVO0_STEP_DEGREES (SERVO0_RANGE_DEGREES / MAX_SERVO_STEPS)
 #define SERVO1_STEP_DEGREES (SERVO1_RANGE_DEGREES / MAX_SERVO_STEPS)
@@ -382,38 +381,23 @@ bool writeFile(const char* fname, const char* content) {
 // Execution
 ///////////////////
 
-// TODO: buggy (what happens on overrun?), and can be simplified using the clock and time_t
-void sleepInterruptable(unsigned long cycleBegin, unsigned long periodMs) {
-  unsigned long spentMs = millis() - cycleBegin;
-  int dc = (spentMs * 100) / periodMs;
-
-  log(CLASS_MAIN, Debug, "D.C.:%d%%", dc);
-  if (dc > DUTY_CYCLE_THRESHOLD_PERC) {
-    log(CLASS_MAIN, Debug, "Cycle: %lums", spentMs);
-  }
-  log(CLASS_MAIN, Debug, "L.Sleep(%lums)...", periodMs);
-  while (spentMs < periodMs) {
-    if (haveToInterrupt()) {
-      break;
+void sleepInterruptable(time_t cycleBegin, unsigned long periodSecs) {
+	if (m.getSettings()->inDeepSleepMode()) {
+    log(CLASS_MAIN, Debug, "Deep Sleep(%lus)...", periodSecs);
+    int spentSecs = now() - cycleBegin;
+    int leftSecs = periodSecs - spentSecs;
+    if (leftSecs > 0) {
+      ESP.deepSleep(leftSecs * 1000000L);
     }
-    unsigned long fragToSleepMs = MINIM(periodMs - spentMs, FRAG_TO_SLEEP_MS_MAX);
-    if (SaveCrash.count() > 0) {
-      LED_ALIVE_OFF;
-    } else {
-      LED_ALIVE_ON;
+	} else {
+    log(CLASS_MAIN, Debug, "Light Sleep(%lus)...", periodSecs);
+    while (now() < cycleBegin + periodSecs) {
+      if (haveToInterrupt()) {
+        break;
+      }
+      delay(FRAG_TO_SLEEP_MS_MAX);
     }
-    delay(fragToSleepMs / 500 * 1);
-    if (SaveCrash.count() > 0) {
-      LED_ALIVE_ON;
-    } else {
-      LED_ALIVE_OFF;
-    }
-    delay(fragToSleepMs / 500 * 499);
-    spentMs = millis() - cycleBegin;
-  }
-#ifdef DEEP_SLEEP_MODE
-  ESP.restart();
-#endif
+	}
 }
 
 bool haveToInterrupt() {
