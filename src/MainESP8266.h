@@ -84,11 +84,9 @@ Servo servoLeft;
 Servo servoRight;
 Adafruit_SSD1306 lcd(-1);
 
-#define LED_INT_PIN LEDY_PIN // led showing interruptions
 #define LED_INT_ON ios('y', true);
 #define LED_INT_OFF ios('y', false);
 
-#define LED_ALIVE_PIN LEDR_PIN // led showing device alive
 #define LED_ALIVE_ON ios('r', true);
 #define LED_ALIVE_OFF ios('r', false);
 
@@ -438,6 +436,16 @@ bool haveToInterrupt() {
   }
 }
 
+void signal() {
+  digitalWrite(LEDR_PIN, HIGH);
+  delay(1000);
+  digitalWrite(LEDR_PIN, LOW);
+  delay(1000);
+  digitalWrite(LEDR_PIN, HIGH);
+  delay(1000);
+  digitalWrite(LEDR_PIN, LOW);
+}
+
 void setupArchitecture() {
 
   // Let HW startup
@@ -483,11 +491,15 @@ void setupArchitecture() {
   String helpCli(HELP_COMMAND_CLI);
   Telnet.setHelpProjectsCmds(helpCli);
 
+  signal();
+
   hwTest();
 }
 
 void runModeArchitecture() {
   Settings *s = m.getSettings();
+
+  signal();
 
   // Logs
   log(CLASS_MAIN, Info, "DEV NAME: %s", DEVICE_NAME);
