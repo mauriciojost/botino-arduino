@@ -58,7 +58,7 @@ public:
     pass->load(WIFI_PASSWORD_STEADY);
 
     infoBuffer = new Buffer(INFO_BUFFER_LENGTH);
-    devDebug = false;
+    devDebug = true;
     buttonRoutineUntil = 4;
     infoBuffer->clear();
     md = new Metadata(n);
