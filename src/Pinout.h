@@ -43,7 +43,9 @@
 #ifdef DEEP_SLEEP_MODE_ENABLED // cant use D0 in DEEP SLEEP as it is wired to RESET
 #define LEDY_PIN PIN_D3 // YELLOW LED
 #else // DEEP_SLEEP_MODE_ENABLED
+#ifndef LEDY_PIN
 #define LEDY_PIN PIN_D0 // YELLOW LED
+#endif // LEDY_PIN
 #endif // DEEP_SLEEP_MODE_ENABLED
 
 // I2C OLED 128x64
