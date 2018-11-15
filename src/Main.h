@@ -121,4 +121,7 @@ void runModeArchitecture();
 // Loop in configure mode specific to the architecture
 void configureModeArchitecture();
 
+// Abort execution (non-recoverable-error)
+void abort(const char* msg);
+
 #endif // MAIN_INC

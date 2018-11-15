@@ -174,6 +174,11 @@ void configureModeArchitecture() {
   // nothing to be done here
 }
 
+void abort(const char* msg) {
+  log(CLASS_MAIN, Error, "Abort: %s", msg);
+  exit(1);
+}
+
 ////////////////////////////////////////
 // Architecture specific functions
 ////////////////////////////////////////

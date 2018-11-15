@@ -41,11 +41,9 @@ void setup() {
   log(CLASS_MAIN, Info, "# Current time: %s", Timing::humanize(m.getBot()->getClock()->currentTime(), &timeAux));
 
   if (serSyncd && clockSyncd) {
-    log(CLASS_MAIN, Info, "Setup done correctly");
     m.getBot()->setMode(RunMode);
   } else {
-    log(CLASS_MAIN, Info, "Setup failed");
-    m.getBot()->setMode(WelcomeMode);
+    abort("Setup failed");
   }
 }
 
@@ -75,9 +73,6 @@ void loop() {
       break;
     case (ConfigureMode):
       configureMode();
-      break;
-    case (WelcomeMode):
-      sleepInterruptable(now(), PERIOD_MSEC / 1000);
       break;
     default:
       break;
