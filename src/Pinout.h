@@ -39,9 +39,12 @@
 #define PIN_D12 GPIO10_PIN // SDD3 / SD3 // can be used as input only
 
 // LEDS
-#ifndef LEDY_PIN
+
+#ifdef DEEP_SLEEP_MODE_ENABLED // cant use D0 in DEEP SLEEP as it is wired to RESET
 #define LEDY_PIN PIN_D3 // YELLOW LED
-#endif // LEDY_PIN
+#else // DEEP_SLEEP_MODE_ENABLED
+#define LEDY_PIN PIN_D0 // YELLOW LED
+#endif // DEEP_SLEEP_MODE_ENABLED
 
 // I2C OLED 128x64
 // (Kuman 0.96inches I2C OLED 128x64 LCD screen)

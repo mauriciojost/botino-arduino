@@ -61,12 +61,11 @@ public:
 
     infoBuffer = new Buffer(INFO_BUFFER_LENGTH);
     devDebug = true;
-
-#ifdef DEEP_SLEEP_MODE
+#ifdef DEEP_SLEEP_MODE_ENABLED
     deepSleep = true;
-#else
+#else // DEEP_SLEEP_MODE_ENABLED
     deepSleep = false;
-#endif
+#endif // DEEP_SLEEP_MODE_ENABLED
     buttonRoutineUntil = 4;
     infoBuffer->clear();
     md = new Metadata(n);
@@ -101,7 +100,15 @@ public:
         setPropBoolean(m, targetValue, actualValue, &devDebug);
         break;
       case (SettingsDeepSleepProp):
+#ifdef DEEP_SLEEP_MODE_ENABLED
         setPropBoolean(m, targetValue, actualValue, &deepSleep);
+#else // DEEP_SLEEP_MODE_ENABLED
+        deepSleep = false;
+        if (actualValue != NULL) {
+          Boolean b(false);
+          actualValue->load(&b);
+        }
+#endif // DEEP_SLEEP_MODE_ENABLED
         break;
       case (SettingsButtonRoutineLimitProp):
         setPropInteger(m, targetValue, actualValue, &buttonRoutineUntil);
