@@ -176,7 +176,6 @@ void configureModeArchitecture() {
 
 void abort(const char* msg) {
   log(CLASS_MAIN, Error, "Abort: %s", msg);
-  exit(1);
 }
 
 ////////////////////////////////////////
