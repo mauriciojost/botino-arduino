@@ -89,7 +89,7 @@ void messageFunc(int x, int y, int color, bool wrap, bool clear, int size, const
 void arms(int left, int right, int steps);
 
 // IO control function.
-void ios(char led, bool v);
+void ios(char led, int v);
 
 // Clear device (for development purposes, to clear logs, stacktraces, etc)
 void clearDevice();

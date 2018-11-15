@@ -11,19 +11,19 @@
 int faceCleared = 0;
 char lastMsg[100];
 char lastArms[100];
-bool ledY;
-bool ledR;
-bool ledW;
-bool fan;
+int ledY;
+int ledR;
+int ledW;
+int fan;
 
 void setUp() {
   faceCleared = 0;
   lastMsg[0] = 0;
   lastArms[0] = 0;
-  ledY = false;
-  ledR = false;
-  ledW = false;
-  fan = false;
+  ledY = 0;
+  ledR = 0;
+  ledW = 0;
+  fan = 0;
 }
 
 void tearDown() {}
@@ -48,7 +48,7 @@ void arms(int left, int right, int steps) {
   sprintf(lastArms, "left:%d,right:%d,steps:%d", left, right, steps);
 }
 
-void led(char led, bool v) {
+void led(char led, int v) {
   switch (led) {
     case 'y':
       ledY = v;
@@ -146,23 +146,23 @@ void test_body_performs_basic_moves() {
   TEST_ASSERT_EQUAL_STRING("left:1,right:3,steps:100", lastArms);
 
   executeMove(&b, "201010101:Lyn.");
-  TEST_ASSERT_EQUAL(false, ledY);
+  TEST_ASSERT_EQUAL(0, ledY);
 
   executeMove(&b, "201010101:Lyy.");
-  TEST_ASSERT_EQUAL(true, ledY);
+  TEST_ASSERT_EQUAL(1, ledY);
 
   executeMove(&b, "201010101:Lfn.");
-  TEST_ASSERT_EQUAL(false, fan);
+  TEST_ASSERT_EQUAL(0, fan);
 
   executeMove(&b, "201010101:Lfy.");
-  TEST_ASSERT_EQUAL(true, fan);
+  TEST_ASSERT_EQUAL(1, fan);
 
   executeMove(&b, "201010101:Z.");
   TEST_ASSERT_EQUAL_STRING("left:0,right:0,steps:20", lastArms);
-  TEST_ASSERT_EQUAL(false, ledY);
-  TEST_ASSERT_EQUAL(false, ledR);
-  TEST_ASSERT_EQUAL(false, ledW);
-  TEST_ASSERT_EQUAL(false, fan);
+  TEST_ASSERT_EQUAL(0, ledY);
+  TEST_ASSERT_EQUAL(0, ledR);
+  TEST_ASSERT_EQUAL(0, ledW);
+  TEST_ASSERT_EQUAL(0, fan);
 
   executeMove(&b, "201010101:M1HEY.");
   TEST_ASSERT_EQUAL_STRING("HEY", lastMsg);

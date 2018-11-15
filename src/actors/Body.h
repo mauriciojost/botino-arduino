@@ -242,7 +242,7 @@ private:
   Metadata *md;
   void (*arms)(int left, int right, int steps);
   Notifier *notifier;
-  void (*iosFunc)(char led, bool v);
+  void (*iosFunc)(char led, int v);
   void((*lcdImgFunc)(char img, uint8_t bitmap[]));
   Quotes *quotes;
   Images *images;
@@ -289,10 +289,10 @@ private:
     if (c1 == 'Z') {
       lcdImgFunc('b', NULL);
       lcdImgFunc('l', NULL);
-      iosFunc('r', false);
-      iosFunc('w', false);
-      iosFunc('y', false);
-      iosFunc('f', false);
+      iosFunc('r', IO_OFF);
+      iosFunc('w', IO_OFF);
+      iosFunc('y', IO_OFF);
+      iosFunc('f', IO_OFF);
       arms(0, 0, ARM_FAST_STEPS);
     } else {
       log(CLASS_BODY, Debug, "Ignoring 1-letter-code pose %s", pose);
@@ -366,9 +366,9 @@ private:
       // IO (LEDS / FAN)
       switch (c2) {
         case '?': {
-          iosFunc('r', random(2) == 0);
-          iosFunc('w', random(2) == 0);
-          iosFunc('y', random(2) == 0);
+          iosFunc('r', random(2));
+          iosFunc('w', random(2));
+          iosFunc('y', random(2));
           break;
         }
         default:
@@ -622,7 +622,7 @@ public:
     arms = f;
   }
 
-  void setIosFunc(void (*f)(char led, bool v)) {
+  void setIosFunc(void (*f)(char led, int v)) {
     iosFunc = f;
   }
 

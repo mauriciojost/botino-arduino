@@ -96,8 +96,8 @@ void arms(int left, int right, int steps) {
   printf("\n\nARMS: %d %d %d\n\n", left, right, steps);
 }
 
-void ios(char led, bool v) {
-  log(CLASS_MAIN, Debug, "Led'%c'->%d", led, (int)v);
+void ios(char led, int v) {
+  log(CLASS_MAIN, Debug, "Led'%c'->%d", led, v);
 }
 
 void clearDevice() {

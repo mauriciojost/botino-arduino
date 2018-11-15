@@ -106,7 +106,7 @@ public:
   void setup(void (*lcdImg)(char img, uint8_t bitmap[]),
              void (*arms)(int left, int right, int steps),
              void (*messageFunc)(int x, int y, int color, bool wrap, bool clear, int size, const char *str),
-             void (*ios)(char led, bool v),
+             void (*ios)(char led, int v),
              bool (*initWifiSteady)(),
              int (*httpPost)(const char *url, const char *body, ParamStream *response, Table *headers),
              int (*httpGet)(const char *url, ParamStream *response, Table *headers),
