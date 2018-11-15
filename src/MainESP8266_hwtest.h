@@ -18,10 +18,10 @@ void hwTest() {
 
 #ifdef HARDWARE_TEST
   delay(HARDWARE_TEST_STEP_DELAY_MS);
-  ios('r', false);
-  ios('y', false);
-  ios('w', false);
-  ios('f', false);
+  ios('r', IO_OFF);
+  ios('y', IO_OFF);
+  ios('w', IO_OFF);
+  ios('f', IO_OFF);
   lcdImg('l', NULL);
 
   log(CLASS_MAIN, Debug, "..Arms down");
@@ -38,28 +38,28 @@ void hwTest() {
   arms(0, 0, 100);
   log(CLASS_MAIN, Debug, "..Red led on");
   delay(HARDWARE_TEST_STEP_DELAY_MS);
-  ios('r', true);
+  ios('r', IO_ON);
   log(CLASS_MAIN, Debug, "..Red led off");
   delay(HARDWARE_TEST_STEP_DELAY_MS);
-  ios('r', false);
+  ios('r', IO_OFF);
   log(CLASS_MAIN, Debug, "..Y. led on");
   delay(HARDWARE_TEST_STEP_DELAY_MS);
-  ios('y', true);
+  ios('y', IO_ON);
   log(CLASS_MAIN, Debug, "..Y. led off");
   delay(HARDWARE_TEST_STEP_DELAY_MS);
-  ios('y', false);
+  ios('y', IO_OFF);
   log(CLASS_MAIN, Debug, "..W. led on");
   delay(HARDWARE_TEST_STEP_DELAY_MS);
-  ios('w', true);
+  ios('w', IO_ON);
   log(CLASS_MAIN, Debug, "..W. led off");
   delay(HARDWARE_TEST_STEP_DELAY_MS);
-  ios('w', false);
+  ios('w', IO_OFF);
   log(CLASS_MAIN, Debug, "..Fan on");
   delay(HARDWARE_TEST_STEP_DELAY_MS);
-  ios('f', true);
+  ios('f', IO_ON);
   log(CLASS_MAIN, Debug, "..Fan off");
   delay(HARDWARE_TEST_STEP_DELAY_MS);
-  ios('f', false);
+  ios('f', IO_OFF);
   log(CLASS_MAIN, Debug, "..Random %lu %lu %lu", random(10000), random(10000), random(10000));
   delay(HARDWARE_TEST_STEP_DELAY_MS);
 
@@ -77,9 +77,9 @@ void hwTest() {
 
 #endif
 
-  ios('r', false);
-  ios('y', false);
-  ios('w', false);
-  ios('f', false);
+  ios('r', IO_OFF);
+  ios('y', IO_OFF);
+  ios('w', IO_OFF);
+  ios('f', IO_OFF);
   lcdImg('l', NULL);
 }
