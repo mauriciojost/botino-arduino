@@ -31,6 +31,7 @@
 
 enum SettingsProps {
   SettingsDebugProp = 0,          // boolean, define if the device is in debug mode
+  SettingsDeepSleepProp,          // boolean, define if the device is in deep sleep mode
   SettingsButtonRoutineLimitProp, // integer, define the first X routines that are randomly executed when the button is pressed
   SettingsWifiSsidProp,           // wifi ssid
   SettingsWifiPassProp,           // wifi pass
@@ -42,6 +43,7 @@ class Settings : public Actor {
 private:
   const char *name;
   bool devDebug;
+  bool deepSleep;
   int buttonRoutineUntil;
   Buffer *infoBuffer;
   Buffer *ssid;
@@ -59,6 +61,12 @@ public:
 
     infoBuffer = new Buffer(INFO_BUFFER_LENGTH);
     devDebug = true;
+
+#ifdef DEEP_SLEEP_MODE
+    deepSleep = true;
+#else
+    deepSleep = false;
+#endif
     buttonRoutineUntil = 4;
     infoBuffer->clear();
     md = new Metadata(n);
@@ -78,6 +86,8 @@ public:
         return "_wifipass"; // with obfuscation (starts with _)
       case (SettingsDebugProp):
         return "debug";
+      case (SettingsDeepSleepProp):
+        return "deepsleep";
       case (SettingsButtonRoutineLimitProp):
         return "btnrout";
       default:
@@ -89,6 +99,9 @@ public:
     switch (propIndex) {
       case (SettingsDebugProp):
         setPropBoolean(m, targetValue, actualValue, &devDebug);
+        break;
+      case (SettingsDeepSleepProp):
+        setPropBoolean(m, targetValue, actualValue, &deepSleep);
         break;
       case (SettingsButtonRoutineLimitProp):
         setPropInteger(m, targetValue, actualValue, &buttonRoutineUntil);
@@ -159,11 +172,7 @@ public:
   }
 
   bool inDeepSleepMode() {
-#ifdef DEEP_SLEEP_MODE
-  	return true;
-#else
-  	return false;
-#endif
+  	return deepSleep;
   }
 
 };
