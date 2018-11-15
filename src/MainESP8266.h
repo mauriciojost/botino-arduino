@@ -516,7 +516,10 @@ void runModeArchitecture() {
   log(CLASS_MAIN, Info, "HTTP size: %d", httpClient.getSize());
 
   // Handle stack-traces stored in memory
-  if (SaveCrash.count() > 0) {
+  if (SaveCrash.count() > 5) {
+    log(CLASS_MAIN, Warn, "Too many Stack-trcs (!!!)");
+    clearDevice();
+  } else if (SaveCrash.count() > 0) {
     log(CLASS_MAIN, Warn, "Stack-trcs (!!!)");
     SaveCrash.print();
   }
