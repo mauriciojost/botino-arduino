@@ -399,16 +399,16 @@ bool writeFile(const char* fname, const char* content) {
 // Execution
 ///////////////////
 
-void sleepInterruptable(time_t cycleBegin, unsigned long periodSecs) {
+void sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
 	if (m.getSettings()->inDeepSleepMode()) {
-    log(CLASS_MAIN, Debug, "Deep Sleep(%lus)...", periodSecs);
-    int spentSecs = now() - cycleBegin;
-    int leftSecs = periodSecs - spentSecs;
+    log(CLASS_MAIN, Debug, "Deep Sleep(%ds)...", (int)periodSecs);
+    time_t spentSecs = now() - cycleBegin;
+    time_t leftSecs = periodSecs - spentSecs;
     if (leftSecs > 0) {
       ESP.deepSleep(leftSecs * 1000000L);
     }
 	} else {
-    log(CLASS_MAIN, Debug, "Light Sleep(%lus)...", periodSecs);
+    log(CLASS_MAIN, Debug, "Light Sleep(%ds)...", (int)periodSecs);
     while (now() < cycleBegin + periodSecs) {
       if (haveToInterrupt()) {
         break;
