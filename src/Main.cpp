@@ -31,7 +31,7 @@ void setup() {
   log(CLASS_MAIN, Info, "# Loading credentials stored in FS...");
   m.getPropSync()->fsLoadActorsProps(); // load stored properties (most importantly credentials)
   log(CLASS_MAIN, Info, "# Syncing actors with server...");
-  bool serSyncd = m.getPropSync()->serverSyncActors(); // sync properties from the server
+  bool serSyncd = m.getPropSync()->serverSyncRetry(); // sync properties from the server
   time_t leftTime = m.getBot()->getClock()->currentTime();
 
   log(CLASS_MAIN, Info, "# Previous actors' times: %s...", Timing::humanize(leftTime, &timeAux));
@@ -60,7 +60,7 @@ void runMode() {
   if (m.getSettings()->inDeepSleepMode()) {
   	// before going to deep sleep store in the server the last status of all actors
     log(CLASS_MAIN, Info, "Syncing actors with server (run)...");
-    m.getPropSync()->serverSyncActors(); // sync properties from the server (with new props and new clock blocked timing)
+    m.getPropSync()->serverSyncRetry(); // sync properties from the server (with new props and new clock blocked timing)
   }
   sleepInterruptable(cycleBegin, PERIOD_MSEC / 1000);
 }
