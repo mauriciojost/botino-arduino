@@ -26,6 +26,13 @@
 #define WIFI_PASSWORD_STEADY "???"
 #endif // WIFI_PASSWORD_STEADY
 
+#ifndef PERIOD_SEC
+#define PERIOD_SEC 60
+#endif // PERIOD_SEC
+
+#define PERIOD_MSEC (PERIOD_SEC * 1000)
+
+
 #define CREDENTIAL_BUFFER_SIZE 64
 
 
@@ -33,6 +40,7 @@ enum SettingsProps {
   SettingsDebugProp = 0,          // boolean, define if the device is in debug mode
   SettingsDeepSleepProp,          // boolean, define if the device is in deep sleep mode
   SettingsButtonRoutineLimitProp, // integer, define the first X routines that are randomly executed when the button is pressed
+  SettingsPeriodMsProp,           // period in msec for the device to sleep
   SettingsWifiSsidProp,           // wifi ssid
   SettingsWifiPassProp,           // wifi pass
   SettingsPropsDelimiter          // amount of properties
@@ -44,6 +52,7 @@ private:
   const char *name;
   bool devDebug;
   bool deepSleep;
+  int periodms;
   int buttonRoutineUntil;
   Buffer *infoBuffer;
   Buffer *ssid;
@@ -68,6 +77,7 @@ public:
 #endif // DEEP_SLEEP_MODE_ENABLED
     buttonRoutineUntil = 4;
     infoBuffer->clear();
+    periodms = PERIOD_MSEC;
     md = new Metadata(n);
   }
 
@@ -87,6 +97,8 @@ public:
         return "debug";
       case (SettingsDeepSleepProp):
         return "deepsleep";
+      case (SettingsPeriodMsProp):
+        return "periodms";
       case (SettingsButtonRoutineLimitProp):
         return "btnrout";
       default:
@@ -109,6 +121,9 @@ public:
           actualValue->load(&b);
         }
 #endif // DEEP_SLEEP_MODE_ENABLED
+        break;
+      case (SettingsPeriodMsProp):
+        setPropInteger(m, targetValue, actualValue, &periodms);
         break;
       case (SettingsButtonRoutineLimitProp):
         setPropInteger(m, targetValue, actualValue, &buttonRoutineUntil);
@@ -180,6 +195,10 @@ public:
 
   bool inDeepSleepMode() {
   	return deepSleep;
+  }
+
+  int periodMsec() {
+  	return periodms;
   }
 
 };

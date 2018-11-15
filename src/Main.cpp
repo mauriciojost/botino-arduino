@@ -62,7 +62,7 @@ void runMode() {
     log(CLASS_MAIN, Info, "Syncing actors with server (run)...");
     m.getPropSync()->serverSyncRetry(); // sync properties from the server (with new props and new clock blocked timing)
   }
-  sleepInterruptable(cycleBegin, PERIOD_MSEC / 1000);
+  sleepInterruptable(cycleBegin, m.getSettings()->periodMsec() / 1000);
 }
 
 void loop() {

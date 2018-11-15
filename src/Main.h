@@ -23,12 +23,6 @@
 #define FRAG_TO_SLEEP_MS_MAX 1000 // maximum sleeping time for which the module can be unresponsive
 #endif                            // FRAG_TO_SLEEP_MS_MAX
 
-#ifndef PERIOD_SEC
-#define PERIOD_SEC 60
-#endif // PERIOD_SEC
-
-#define PERIOD_MSEC (PERIOD_SEC * 1000)
-
 #define PERIOD_CONFIGURE_MSEC 4000
 
 #define WAIT_BEFORE_HTTP_MS 100
