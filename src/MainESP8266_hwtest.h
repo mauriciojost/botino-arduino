@@ -24,9 +24,6 @@ void hwTest() {
   ios('f', false);
   lcdImg('l', NULL);
 
-  log(CLASS_MAIN, Debug, "..Face test");
-  delay(HARDWARE_TEST_STEP_DELAY_MS);
-  lcdImg('c', initImage);
   log(CLASS_MAIN, Debug, "..Arms down");
   delay(HARDWARE_TEST_STEP_DELAY_MS);
   arms(0, 0, 100);
