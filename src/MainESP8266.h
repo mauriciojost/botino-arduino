@@ -95,6 +95,7 @@ void reactCommandCustom();
 #include "MainESP8266_hwtest.h" // defines hwTest()
 void buttonPressed();
 bool reactToButtonHeld(int cycles, bool onlyMsg);
+void heartbeat();
 
 ////////////////////////////////////////
 // Functions requested for architecture
@@ -399,6 +400,7 @@ void sleepInterruptable(time_t cycleBegin, unsigned long periodSecs) {
 }
 
 bool haveToInterrupt() {
+  heartbeat();
   if (Serial.available()) {
     // Handle serial commands
     Buffer cmdBuffer(COMMAND_MAX_LENGTH);
@@ -632,4 +634,10 @@ void bitmapToLcd(uint8_t bitmap[]) {
 
 void reactCommandCustom() { // for the use via telnet
   m.command(Telnet.getLastCommand().c_str());
+}
+
+void heartbeat() {
+  LED_ALIVE_ON
+  delay(1);
+  LED_ALIVE_OFF
 }
