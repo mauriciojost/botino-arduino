@@ -94,8 +94,10 @@ IO POSES: turn on/off a given IO device, such as LEDS or the FAN (on = y, off = 
 Codes:
   Lry. : turn on (y) the Red led
   Lrn. : turn off (n) the Red led
+  Lrt. : toggle (t) the Red led
   Lwy. : turn on (y) led White
   Lyy. : turn on (y) led Yellow
+  Lyt. : toggle (t) led Yellow
   L?.. : turn randomly all leds
   Lfy. : turn on (y) Fan
 
@@ -138,6 +140,7 @@ Codes:
 #include <main4ino/Misc.h>
 #include <main4ino/Timing.h>
 #include <string.h>
+#include <Io.h>
 
 #define CLASS_BODY "BO"
 
@@ -257,8 +260,16 @@ private:
     return ABSOL(c - '0');
   }
 
-  bool getBool(char c) {
-    return c == 'y' || c == 'Y' || c == 't' || c == 'T' || c == '1';
+  int getIosState(char c) {
+  	if (c == 'n' || c == 'N' || c == '0') {
+  		return IO_OFF;
+  	} else if (c == 'y' || c == 'Y' || c == '1') {
+  		return IO_ON;
+  	} else if (c == 't' || c == 'T') {
+  		return IO_TOGGLE;
+  	} else {
+  		return IO_OFF;
+  	}
   }
 
   int poseStrLen(const char *p) {
@@ -434,25 +445,25 @@ private:
       // IO (LEDS / FAN)
       switch (c2) {
         case 'r': {
-          bool b = getBool(c3);
+          int b = getIosState(c3);
           log(CLASS_BODY, Debug, "Led red: %d", b);
           iosFunc('r', b);
           break;
         }
         case 'w': {
-          bool b = getBool(c3);
+          int b = getIosState(c3);
           log(CLASS_BODY, Debug, "Led white: %d", b);
           iosFunc('w', b);
           break;
         }
         case 'y': {
-          bool b = getBool(c3);
+          int b = getIosState(c3);
           log(CLASS_BODY, Debug, "Led yellow: %d", b);
           iosFunc('y', b);
           break;
         }
         case 'f': {
-          bool b = getBool(c3);
+          int b = getIosState(c3);
           log(CLASS_BODY, Debug, "Fan: %d", b);
           iosFunc('f', b);
           break;

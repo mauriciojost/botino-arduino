@@ -84,11 +84,11 @@ Servo servoLeft;
 Servo servoRight;
 Adafruit_SSD1306 lcd(-1);
 
-#define LED_INT_ON ios('y', true);
-#define LED_INT_OFF ios('y', false);
+#define LED_INT_ON ios('y', IO_ON);
+#define LED_INT_OFF ios('y', IO_OFF);
 
-#define LED_ALIVE_ON ios('r', true);
-#define LED_ALIVE_OFF ios('r', false);
+#define LED_ALIVE_ON ios('r', IO_ON);
+#define LED_ALIVE_OFF ios('r', IO_OFF);
 
 void bitmapToLcd(uint8_t bitmap[]);
 void reactCommandCustom();
@@ -277,28 +277,47 @@ void arms(int left, int right, int steps) {
   servoRight.detach();
 }
 
-void ios(char led, bool v) {
-#ifdef IOS_LEDS_TO_ANODE // to be avoided as would turn on built-in leds when off
-  int ld = v;
-#else
-  int ld = !v;
-#endif
+void ios(char led, int value) {
+	uint8_t pin = -1;
   switch (led) {
     case 'r':
-      digitalWrite(LEDR_PIN, ld);
+      pin = LEDR_PIN;
       break;
     case 'w':
-      digitalWrite(LEDW_PIN, ld);
+      pin = LEDW_PIN;
       break;
     case 'y':
-      digitalWrite(LEDY_PIN, ld);
+      pin = LEDY_PIN;
       break;
     case 'f':
-      digitalWrite(FAN_PIN, v);
+      pin = FAN_PIN;
       break;
     default:
+    	pin = -1;
       break;
   }
+  if (pin == -1) {
+    log(CLASS_MAIN, Warn, "Unknown pin: %c", pin);
+  	return;
+  }
+  if (value == IO_ON) {
+#ifdef IOS_LEDS_TO_ANODE // flag to be avoided, as would turn on built-in leds when off
+  	digitalWrite(pin, HIGH);
+#else
+  	digitalWrite(pin, LOW);
+#endif
+  } else if (value == IO_OFF) {
+#ifdef IOS_LEDS_TO_ANODE
+  	digitalWrite(pin, LOW);
+#else
+  	digitalWrite(pin, HIGH);
+#endif
+  } else if (value == IO_TOGGLE){
+  	digitalWrite(pin, digitalRead(pin));
+  } else {
+    log(CLASS_MAIN, Warn, "Unknown IO request: %c<-%d", pin, value);
+  }
+
 }
 
 void clearDevice() {
