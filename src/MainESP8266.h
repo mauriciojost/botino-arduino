@@ -436,16 +436,6 @@ bool haveToInterrupt() {
   }
 }
 
-void signal() {
-  digitalWrite(LEDR_PIN, HIGH);
-  delay(1000);
-  digitalWrite(LEDR_PIN, LOW);
-  delay(1000);
-  digitalWrite(LEDR_PIN, HIGH);
-  delay(1000);
-  digitalWrite(LEDR_PIN, LOW);
-}
-
 void setupArchitecture() {
 
   // Let HW startup
@@ -491,15 +481,11 @@ void setupArchitecture() {
   String helpCli(HELP_COMMAND_CLI);
   Telnet.setHelpProjectsCmds(helpCli);
 
-  signal();
-
   hwTest();
 }
 
 void runModeArchitecture() {
   Settings *s = m.getSettings();
-
-  signal();
 
   // Logs
   log(CLASS_MAIN, Info, "DEV NAME: %s", DEVICE_NAME);
