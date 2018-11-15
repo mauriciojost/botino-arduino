@@ -5,11 +5,11 @@
 #include "actors/Settings.h"
 #include <Pinout.h>
 #include <actors/Body.h>
-#include <actors/ClockSync.h>
 #include <actors/Ifttt.h>
 #include <actors/Images.h>
 #include <actors/Notifier.h>
 #include <log4ino/Log.h>
+#include <main4ino/ClockSync.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Array.h>
 #include <main4ino/Clock.h>
