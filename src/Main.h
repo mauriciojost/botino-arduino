@@ -9,7 +9,6 @@
 
 #define CLASS_MAIN "MA"
 
-#include "Images.h"
 #include <Module.h>
 #include <main4ino/HttpCodes.h>
 #include <main4ino/Misc.h>
