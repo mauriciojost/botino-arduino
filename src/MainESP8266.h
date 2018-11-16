@@ -19,6 +19,8 @@
 
 #define HARDWARE_TEST_STEP_DELAY_MS 2000
 
+#define PRE_DEEP_SLEEP_WINDOW_SECS 10
+
 #define SERVO0_STEP_DEGREES (SERVO0_RANGE_DEGREES / MAX_SERVO_STEPS)
 #define SERVO1_STEP_DEGREES (SERVO1_RANGE_DEGREES / MAX_SERVO_STEPS)
 
@@ -96,6 +98,8 @@ void reactCommandCustom();
 void buttonPressed();
 bool reactToButtonHeld(int cycles, bool onlyMsg);
 void heartbeat();
+void lightSleepInterruptable(time_t cycleBegin, time_t periodSecs);
+void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs);
 
 ////////////////////////////////////////
 // Functions requested for architecture
@@ -401,20 +405,10 @@ bool writeFile(const char* fname, const char* content) {
 
 void sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
 	if (m.getSettings()->inDeepSleepMode()) {
-    log(CLASS_MAIN, Debug, "Deep Sleep(%ds)...", (int)periodSecs);
-    time_t spentSecs = now() - cycleBegin;
-    time_t leftSecs = periodSecs - spentSecs;
-    if (leftSecs > 0) {
-      ESP.deepSleep(leftSecs * 1000000L);
-    }
+		lightSleepInterruptable(cycleBegin, PRE_DEEP_SLEEP_WINDOW_SECS);
+		deepSleepNotInterruptable(cycleBegin, periodSecs);
 	} else {
-    log(CLASS_MAIN, Debug, "Light Sleep(%ds)...", (int)periodSecs);
-    while (now() < cycleBegin + periodSecs) {
-      if (haveToInterrupt()) {
-        break;
-      }
-      delay(FRAG_TO_SLEEP_MS_MAX);
-    }
+		lightSleepInterruptable(cycleBegin, periodSecs);
 	}
 }
 
@@ -517,7 +511,7 @@ void runModeArchitecture() {
 
   // Handle stack-traces stored in memory
   if (SaveCrash.count() > 5) {
-    log(CLASS_MAIN, Warn, "Too many Stack-trcs (!!!)");
+    log(CLASS_MAIN, Warn, "Too many Stack-trcs / clearing (!!!)");
     clearDevice();
   } else if (SaveCrash.count() > 0) {
     log(CLASS_MAIN, Warn, "Stack-trcs (!!!)");
@@ -662,4 +656,23 @@ void heartbeat() {
   LED_ALIVE_ON
   delay(1);
   LED_ALIVE_OFF
+}
+
+void lightSleepInterruptable(time_t cycleBegin, time_t periodSecs) {
+  log(CLASS_MAIN, Debug, "Light Sleep(%ds)...", (int)periodSecs);
+  while (now() < cycleBegin + periodSecs) {
+    if (haveToInterrupt()) {
+      break;
+    }
+    delay(FRAG_TO_SLEEP_MS_MAX);
+  }
+}
+
+void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs) {
+  log(CLASS_MAIN, Debug, "Deep Sleep(%ds)...", (int)periodSecs);
+  time_t spentSecs = now() - cycleBegin;
+  time_t leftSecs = periodSecs - spentSecs;
+  if (leftSecs > 0) {
+    ESP.deepSleep(leftSecs * 1000000L);
+  }
 }
