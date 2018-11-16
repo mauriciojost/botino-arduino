@@ -19,7 +19,7 @@
 
 #define HARDWARE_TEST_STEP_DELAY_MS 2000
 
-#define PRE_DEEP_SLEEP_WINDOW_SECS 10
+#define PRE_DEEP_SLEEP_WINDOW_FACTOR 10
 
 #define SERVO0_STEP_DEGREES (SERVO0_RANGE_DEGREES / MAX_SERVO_STEPS)
 #define SERVO1_STEP_DEGREES (SERVO1_RANGE_DEGREES / MAX_SERVO_STEPS)
@@ -405,7 +405,7 @@ bool writeFile(const char* fname, const char* content) {
 
 void sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
 	if (m.getSettings()->inDeepSleepMode()) {
-		lightSleepInterruptable(cycleBegin, PRE_DEEP_SLEEP_WINDOW_SECS);
+		lightSleepInterruptable(cycleBegin, periodSecs / PRE_DEEP_SLEEP_WINDOW_FACTOR);
 		deepSleepNotInterruptable(cycleBegin, periodSecs);
 	} else {
 		lightSleepInterruptable(cycleBegin, periodSecs);
