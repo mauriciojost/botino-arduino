@@ -405,7 +405,7 @@ bool writeFile(const char* fname, const char* content) {
 
 void sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
 	if (m.getSettings()->inDeepSleepMode()) {
-		lightSleepInterruptable(cycleBegin, periodSecs / PRE_DEEP_SLEEP_WINDOW_FACTOR);
+		lightSleepInterruptable(now() /* always do it */, periodSecs / PRE_DEEP_SLEEP_WINDOW_FACTOR);
 		deepSleepNotInterruptable(cycleBegin, periodSecs);
 	} else {
 		lightSleepInterruptable(cycleBegin, periodSecs);
