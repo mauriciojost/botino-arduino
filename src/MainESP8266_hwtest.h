@@ -1,5 +1,6 @@
 void hwTest() {
 
+#ifdef HARDWARE_TEST
   Buffer aux(32);
   log(CLASS_MAIN, Debug, "USER INFO");
   aux.fill("VER: %s", STRINGIFY(PROJ_VERSION));
@@ -16,7 +17,6 @@ void hwTest() {
   delay(USER_DELAY_MS);
   log(CLASS_MAIN, Debug, "HW test");
 
-#ifdef HARDWARE_TEST
   delay(HARDWARE_TEST_STEP_DELAY_MS);
   ios('r', IO_OFF);
   ios('y', IO_OFF);
