@@ -6,9 +6,10 @@
 #include <time.h>
 #include <unistd.h>
 
-#define CL_MAX_LENGTH 1000
-#define CURL_COMMAND_GET "curl --silent -XGET '%s'"
-#define CURL_COMMAND_POST "curl --silent -H 'Content-Type: application/json' -XPOST '%s' -d '%s'"
+#define CL_MAX_LENGTH 5000
+#define HTTP_CODE_KEY "HTTP_CODE:"
+#define CURL_COMMAND_GET  "/usr/bin/curl --silent -w '" HTTP_CODE_KEY "%%{http_code}' -XGET '%s'"
+#define CURL_COMMAND_POST "/usr/bin/curl --silent -w '" HTTP_CODE_KEY "%%{http_code}' -XPOST '%s' -d '%s'"
 
 enum AppMode { Interactive = 0, NonInteractive = 1 };
 AppMode appMode = Interactive;
@@ -33,6 +34,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
 
 int httpGet(const char *url, ParamStream *response, Table *headers) {
   Buffer aux(CL_MAX_LENGTH);
+  int httpCode = HTTP_BAD_REQUEST;
   aux.fill(CURL_COMMAND_GET, url);
   int i = 0;
   while ((i = headers->next(i)) != -1) {
@@ -49,20 +51,20 @@ int httpGet(const char *url, ParamStream *response, Table *headers) {
     return HTTP_BAD_REQUEST;
   }
   while (fgets(aux.getUnsafeBuffer(), CL_MAX_LENGTH - 1, fp) != NULL) {
+    const char* codeStr = aux.since(HTTP_CODE_KEY);
+    httpCode = (codeStr!=NULL?atoi(codeStr + strlen(HTTP_CODE_KEY)):HTTP_BAD_REQUEST);
     if (response != NULL) {
-      response->fill(aux.getBuffer());
+      response->fillUntil(aux.getBuffer(), HTTP_CODE_KEY);
       log(CLASS_MAIN, Debug, "-> %s", response->content());
     }
   }
-  if ((pclose(fp) / 256) == 0) { // not quite true, but will work for simple purposes
-    return HTTP_OK;
-  } else {
-    return HTTP_BAD_REQUEST;
-  }
+  pclose(fp);
+  return httpCode;
 }
 
 int httpPost(const char *url, const char *body, ParamStream *response, Table *headers) {
   Buffer aux(CL_MAX_LENGTH);
+  int httpCode = HTTP_BAD_REQUEST;
   aux.fill(CURL_COMMAND_POST, url, body);
   int i = 0;
   while ((i = headers->next(i)) != -1) {
@@ -76,16 +78,19 @@ int httpPost(const char *url, const char *body, ParamStream *response, Table *he
   log(CLASS_MAIN, Debug, "POST: '%s'", aux.getBuffer());
   FILE *fp = popen(aux.getBuffer(), "r");
   if (fp == NULL) {
+    log(CLASS_MAIN, Warn, "POST failed");
     return HTTP_BAD_REQUEST;
   }
   while (fgets(aux.getUnsafeBuffer(), CL_MAX_LENGTH - 1, fp) != NULL) {
+    const char* codeStr = aux.since(HTTP_CODE_KEY);
+    httpCode = (codeStr!=NULL?atoi(codeStr + strlen(HTTP_CODE_KEY)):HTTP_BAD_REQUEST);
     if (response != NULL) {
-      response->fill(aux.getBuffer());
+      response->fillUntil(aux.getBuffer(), HTTP_CODE_KEY);
       log(CLASS_MAIN, Debug, "-> %s", response->content());
     }
   }
   pclose(fp);
-  return HTTP_OK; // not quite true, but will work for simple purposes
+  return httpCode;
 }
 
 void messageFunc(int x, int y, int color, bool wrap, bool clear, int size, const char *str) {
