@@ -17,7 +17,7 @@ echo "### Using profile $PROFILE..."
 export PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=$COMMIT_ID `cat $PROFILE`" 
 
 echo "### Compiling..."
-platformio run
+platformio run -v
 
 echo "### Checking if no changes to be committed..."
 git diff --exit-code

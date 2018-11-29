@@ -8,11 +8,11 @@
 
 Module m;
 
-#ifndef SIMULATE // on ESP8266
+#ifdef ARDUINO // on ESP8266
 #include <MainESP8266.h>
-#else // on PC
+#else   // on PC
 #include <MainX86_64.h>
-#endif // SIMULATE
+#endif // ARDUINO
 
 bool initWifiSteady() {
   Settings *s = m.getSettings();
