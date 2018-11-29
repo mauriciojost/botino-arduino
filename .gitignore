@@ -141,3 +141,6 @@
 /profiles/dev7-work.prof
 /profiles/dev2-simulate.prof
 /profiles/.gitignore
+/libs/arduino-base64/
+/src/Base64.cpp
+/src/Base64.h

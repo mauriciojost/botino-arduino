@@ -14,6 +14,7 @@ FLAGS="-U ARDUINO $PARAM_FLAGS"
 SRC="
 src/Main.cpp
 src/Time.cpp
+src/Base64.cpp
 src/DateStrings.cpp
 src/main4ino/*.cpp
 src/log4ino/*.cpp
