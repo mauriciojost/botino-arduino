@@ -281,20 +281,42 @@ void arms(int left, int right, int steps) {
   servoRight.detach();
 }
 
+int invert(int v) {
+	if (v == IO_ON) {
+		return IO_OFF;
+	} else if (v == IO_OFF) {
+		return IO_ON;
+	} else {
+		return v;
+	}
+}
+
 void ios(char led, int value) {
 	uint8_t pin = -1;
   switch (led) {
     case 'r':
       pin = LEDR_PIN;
+#ifdef LEDR_0V_IS_OFF
+      value = invert(value);
+#endif
       break;
     case 'w':
       pin = LEDW_PIN;
+#ifdef LEDW_0V_IS_OFF
+      value = invert(value);
+#endif
       break;
     case 'y':
       pin = LEDY_PIN;
+#ifdef LEDY_0V_IS_OFF
+      value = invert(value);
+#endif
       break;
     case 'f':
       pin = FAN_PIN;
+#ifdef FAN_0V_IS_OFF
+      value = invert(value);
+#endif
       break;
     default:
     	pin = -1;
@@ -305,17 +327,9 @@ void ios(char led, int value) {
   	return;
   }
   if (value == IO_ON) {
-#ifdef IOS_LEDS_TO_ANODE // flag to be avoided, as would turn on built-in leds when off
-  	digitalWrite(pin, HIGH);
-#else
   	digitalWrite(pin, LOW);
-#endif
   } else if (value == IO_OFF) {
-#ifdef IOS_LEDS_TO_ANODE
-  	digitalWrite(pin, LOW);
-#else
   	digitalWrite(pin, HIGH);
-#endif
   } else if (value == IO_TOGGLE){
   	digitalWrite(pin, digitalRead(pin));
   } else {
