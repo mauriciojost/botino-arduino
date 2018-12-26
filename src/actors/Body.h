@@ -243,7 +243,6 @@ private:
   void (*arms)(int left, int right, int steps);
   Notifier *notifier;
   void (*iosFunc)(char led, int v);
-  void((*lcdImgFunc)(char img, uint8_t bitmap[]));
   Quotes *quotes;
   Images *images;
   Ifttt *ifttt;
@@ -251,7 +250,7 @@ private:
 
   bool isInitialized() {
     bool init =
-        arms != NULL && iosFunc != NULL && notifier != NULL && lcdImgFunc != NULL && quotes != NULL && images != NULL && ifttt != NULL;
+        arms != NULL && iosFunc != NULL && notifier != NULL && quotes != NULL && images != NULL && ifttt != NULL;
     return init;
   }
 
@@ -287,8 +286,8 @@ private:
 
   void handle1CharPoses(char c1, const char *pose) {
     if (c1 == 'Z') {
-      lcdImgFunc('b', NULL);
-      lcdImgFunc('l', NULL);
+      notifier->lcdImg('b', NULL);
+      notifier->lcdImg('l', NULL);
       iosFunc('r', IO_OFF);
       iosFunc('w', IO_OFF);
       iosFunc('y', IO_OFF);
@@ -309,49 +308,49 @@ private:
       // FACES
       switch (c2) {
         case '0':
-          lcdImgFunc('c', images->get(0)); // custom 0
+          notifier->lcdImg('c', images->get(0)); // custom 0
           break;
         case '1':
-          lcdImgFunc('c', images->get(1)); // custom 1
+          notifier->lcdImg('c', images->get(1)); // custom 1
           break;
         case '2':
-          lcdImgFunc('c', images->get(2)); // custom 2
+          notifier->lcdImg('c', images->get(2)); // custom 2
           break;
         case '3':
-          lcdImgFunc('c', images->get(3)); // custom 3
+          notifier->lcdImg('c', images->get(3)); // custom 3
           break;
         case '_':
-          lcdImgFunc('_', NULL); // dim
+          notifier->lcdImg('_', NULL); // dim
           break;
         case '-':
-          lcdImgFunc('-', NULL); // bright
+          notifier->lcdImg('-', NULL); // bright
           break;
         case 'w':
-          lcdImgFunc('w', NULL); // white
+          notifier->lcdImg('w', NULL); // white
           break;
         case 'b':
-          lcdImgFunc('b', NULL); // black
+          notifier->lcdImg('b', NULL); // black
           break;
         case 'l':
-          lcdImgFunc('l', NULL); // clear
+          notifier->lcdImg('l', NULL); // clear
           break;
         case 'r':
-          lcdImgFunc('c', IMG_CRAZY); // crazy
+          notifier->lcdImg('c', IMG_CRAZY); // crazy
           break;
         case 's':
-          lcdImgFunc('c', IMG_SMILY); // smile
+          notifier->lcdImg('c', IMG_SMILY); // smile
           break;
         case 'S':
-          lcdImgFunc('c', IMG_SAD); // sad
+          notifier->lcdImg('c', IMG_SAD); // sad
           break;
         case 'n':
-          lcdImgFunc('c', IMG_NORMAL); // normal
+          notifier->lcdImg('c', IMG_NORMAL); // normal
           break;
         case 'a':
-          lcdImgFunc('c', IMG_ANGRY); // angry
+          notifier->lcdImg('c', IMG_ANGRY); // angry
           break;
         case 'z':
-          lcdImgFunc('c', IMG_SLEEPY); // sleepy
+          notifier->lcdImg('c', IMG_SLEEPY); // sleepy
           break;
         default:
           log(CLASS_BODY, Debug, "Face '%c'?", c2);
@@ -578,7 +577,6 @@ public:
     name = n;
     arms = NULL;
     iosFunc = NULL;
-    lcdImgFunc = NULL;
     quotes = NULL;
     images = NULL;
     ifttt = NULL;
@@ -612,10 +610,6 @@ public:
 
   void setIfttt(Ifttt *i) {
     ifttt = i;
-  }
-
-  void setLcdImgFunc(void (*f)(char img, uint8_t bitmap[])) {
-    lcdImgFunc = f;
   }
 
   void setArmsFunc(void (*f)(int left, int right, int steps)) {

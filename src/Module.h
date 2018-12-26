@@ -116,7 +116,7 @@ public:
 						 ) {
 
     notifier->setMessageFunc(messageFunc);
-    body->setLcdImgFunc(lcdImg);
+    notifier->setLcdImgFunc(lcdImg);
     body->setArmsFunc(arms);
     body->setIosFunc(ios);
 

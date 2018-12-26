@@ -45,9 +45,10 @@ private:
   Metadata *md;
   Queue<MAX_NRO_NOTIFS, MAX_NOTIF_LENGTH> queue;
   void (*messageFunc)(int x, int y, int color, bool wrap, bool clear, int size, const char *str);
+  void((*lcdImgFunc)(char img, uint8_t bitmap[]));
 
   bool isInitialized() {
-    return messageFunc != NULL;
+    return lcdImgFunc != NULL && messageFunc != NULL;
   }
 
 public:
@@ -55,11 +56,21 @@ public:
     name = n;
     messageFunc = NULL;
     md = new Metadata(n);
+    lcdImgFunc = NULL;
     md->getTiming()->setFreq("0");
   }
 
   const char *getName() {
     return name;
+  }
+
+  void setLcdImgFunc(void (*f)(char img, uint8_t bitmap[])) {
+    lcdImgFunc = f;
+  }
+
+  void lcdImg(char img, uint8_t bitmap[]) {
+    lcdImgFunc(img, bitmap);
+    notify(); // apart from the message, also notify if notifications are available
   }
 
   void setMessageFunc(void (*f)(int x, int y, int color, bool wrap, bool clear, int size, const char *str)) {
