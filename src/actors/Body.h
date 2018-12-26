@@ -582,10 +582,10 @@ public:
     ifttt = NULL;
     notifier = NULL;
     md = new Metadata(n);
-    md->getTiming()->setFreq("201010101");
+    md->getTiming()->setFreq("every1m");
     for (int i = 0; i < NRO_ROUTINES; i++) {
       routines[i] = new Routine("r");
-      routines[i]->load("000000000:Z.");
+      routines[i]->load("never:Z.");
     }
 
     // Overwrite last to setup clock
