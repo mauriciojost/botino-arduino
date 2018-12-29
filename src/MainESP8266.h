@@ -100,6 +100,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg);
 void heartbeat();
 void lightSleepInterruptable(time_t cycleBegin, time_t periodSecs);
 void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs);
+void debugHandle();
 
 ////////////////////////////////////////
 // Functions requested for architecture
@@ -539,18 +540,15 @@ void runModeArchitecture() {
 
   // Handle log level as per settings
   Serial.setDebugOutput(s->getDebug()); // deep HW logs
+
+  if (s->getDebug()) {
+    debugHandle();
+  }
 }
 
 void configureModeArchitecture() {
-  static bool firstTime = true;
-  if (firstTime) {
-    Telnet.begin("ESP" DEVICE_NAME); // Intialize the remote logging framework
-    ArduinoOTA.begin();              // Intialize OTA
-  }
-
+	debugHandle();
   m.getNotifier()->message(0, 1, "telnet %s", WiFi.localIP().toString().c_str());
-  Telnet.handle();     // Handle telnet log server and commands
-  ArduinoOTA.handle(); // Handle on the air firmware load
 }
 
 void abort(const char* msg) {
@@ -565,6 +563,17 @@ void abort(const char* msg) {
 ////////////////////////////////////////
 // Architecture specific functions
 ////////////////////////////////////////
+
+void debugHandle() {
+  static bool firstTime = true;
+  if (firstTime) {
+    Telnet.begin("ESP" DEVICE_NAME); // Intialize the remote logging framework
+    ArduinoOTA.begin();              // Intialize OTA
+  }
+  Telnet.handle();     // Handle telnet log server and commands
+  ArduinoOTA.handle(); // Handle on the air firmware load
+}
+
 
 bool reactToButtonHeld(int cycles, bool onlyMsg) {
   switch (cycles) {
