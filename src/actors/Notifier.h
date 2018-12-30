@@ -57,7 +57,7 @@ public:
     messageFunc = NULL;
     md = new Metadata(n);
     lcdImgFunc = NULL;
-    md->getTiming()->setFreq("0");
+    md->getTiming()->setFreq("never");
   }
 
   const char *getName() {

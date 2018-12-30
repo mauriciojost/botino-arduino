@@ -89,7 +89,7 @@ void test_body_shows_time() {
   Body b("b");
   initBody(&b, &q, &i, &it, &n);
 
-  Buffer move0(20, "every1s:Mc1.Fb."); // clock message (show current time) and face black
+  Buffer move0(20, "~1s:Mc1.Fb."); // clock message (show current time) and face black
 
   b.setPropValue(BodyRoutine0Prop, &move0);
 
@@ -137,35 +137,35 @@ void test_body_performs_basic_moves() {
 
   TEST_ASSERT_EQUAL_STRING("", lastArms);
 
-  executeMove(&b, "every1s:A91.");
+  executeMove(&b, "~1s:A91.");
   TEST_ASSERT_EQUAL_STRING("left:9,right:1,steps:20", lastArms);
 
-  executeMove(&b, "every1s:B56.");
+  executeMove(&b, "~1s:B56.");
   TEST_ASSERT_EQUAL_STRING("left:5,right:6,steps:40", lastArms);
 
-  executeMove(&b, "every1s:C13.");
+  executeMove(&b, "~1s:C13.");
   TEST_ASSERT_EQUAL_STRING("left:1,right:3,steps:100", lastArms);
 
-  executeMove(&b, "every1s:Lyn.");
+  executeMove(&b, "~1s:Lyn.");
   TEST_ASSERT_EQUAL(0, ledY);
 
-  executeMove(&b, "every1s:Lyy.");
+  executeMove(&b, "~1s:Lyy.");
   TEST_ASSERT_EQUAL(1, ledY);
 
-  executeMove(&b, "every1s:Lfn.");
+  executeMove(&b, "~1s:Lfn.");
   TEST_ASSERT_EQUAL(0, fan);
 
-  executeMove(&b, "every1s:Lfy.");
+  executeMove(&b, "~1s:Lfy.");
   TEST_ASSERT_EQUAL(1, fan);
 
-  executeMove(&b, "every1s:Z.");
+  executeMove(&b, "~1s:Z.");
   TEST_ASSERT_EQUAL_STRING("left:0,right:0,steps:20", lastArms);
   TEST_ASSERT_EQUAL(0, ledY);
   TEST_ASSERT_EQUAL(0, ledR);
   TEST_ASSERT_EQUAL(0, ledW);
   TEST_ASSERT_EQUAL(0, fan);
 
-  executeMove(&b, "every1s:M1HEY.");
+  executeMove(&b, "~1s:M1HEY.");
   TEST_ASSERT_EQUAL_STRING("HEY", lastMsg);
 }
 
@@ -181,7 +181,7 @@ void test_body_creates_predictions() {
   Body b("b");
   initBody(&b, &q, &i, &it, &n);
 
-  executeMove(&b, "every1s:Mp1.");
+  executeMove(&b, "~1s:Mp1.");
   TEST_ASSERT_EQUAL_STRING("your colleague will ride your colleague at work", lastMsg);
 }
 
@@ -222,7 +222,7 @@ void test_body_parses_move_timing_alias() {
   initBody(&b, &q, &im, &it, &n);
 
   for (int i = 0; i < NRO_ROUTINES; i++) {
-    setMove(&b, i, "every1s:B56.");
+    setMove(&b, i, "~1s:B56.");
     TEST_ASSERT_EQUAL_STRING("B56.", b.getMove(i));
 
     setMove(&b, i, "hourly:B22.");
