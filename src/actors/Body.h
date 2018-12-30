@@ -206,21 +206,21 @@ public:
     timingMove = new Buffer(MOVE_STR_LENGTH);
     timing = new Timing(n);
   }
-  void load(const Value *v) {
+  void set(const Value *v) {
     Buffer aux(MOVE_STR_LENGTH);
     aux.load(v);
-    load(aux.getBuffer());
+    const char* mv = aux.since(':');
+    aux.replace(':', 0);
+    const char* tm = aux.getBuffer();
+    set(tm, mv);
   }
-  void load(const char *str) {
-    if (str == NULL) {
-      return;
+  void set(const char *tmg, const char *mov) {
+    if (tmg == NULL || strlen(tmg) == 0) {
+      timingMove->fill("error:%s", mov);
+    } else {
+      timing->setFreq(tmg);
+      timingMove->fill("%s:%s", timing->getFreq(), mov);
     }
-    timingMove->fill(str);
-    timingMove->replace(':', 0);
-    timing->setFreq(timingMove->getBuffer());
-
-    timingMove->fill(str);
-    log(CLASS_BODY, Debug, "Routine built: '%s'/'%s'", getMove(), timing->getFreq());
   }
   const char *getMove() {
     const char *m = timingMove->since(':');
@@ -585,11 +585,11 @@ public:
     md->getTiming()->setFreq("every1m");
     for (int i = 0; i < NRO_ROUTINES; i++) {
       routines[i] = new Routine("r");
-      routines[i]->load("never:Z.");
+      routines[i]->set("never", "Z.");
     }
 
     // Overwrite last to setup clock
-    routines[NRO_ROUTINES - 1]->load("every2m:Mc3."); // once every 1 minutes
+    routines[NRO_ROUTINES - 1]->set("every2m", "Mc3."); // show time
   }
 
   const char *getName() {
@@ -662,7 +662,7 @@ public:
     if (propIndex >= BodyRoutine0Prop && propIndex < (NRO_ROUTINES + BodyRoutine0Prop)) {
       int i = (int)propIndex - (int)BodyRoutine0Prop;
       if (m == SetCustomValue) {
-        routines[i]->load(targetValue);
+        routines[i]->set(targetValue);
       }
       if (actualValue != NULL) {
         actualValue->load(routines[i]->timingMove);
