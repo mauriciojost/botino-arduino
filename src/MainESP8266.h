@@ -633,11 +633,14 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
       if (!onlyMsg) {
         m.getNotifier()->message(0,
                                  1,
-                                 "Name..:%s\nVersio:%s\nCrashe:%d\nUptime:%luh",
+                                 "Name..:%s\nVersio:%s\nCrashe:%d\nIP: %s\nMemory: %lu\nUptime:%luh",
                                  DEVICE_NAME,
                                  STRINGIFY(PROJ_VERSION),
                                  SaveCrash.count(),
+                                 WiFi.localIP().toString().c_str(),
+                                 ESP.getFreeHeap(),
                                  (millis() / 1000) / 3600);
+
       }
     } break;
     default: {
