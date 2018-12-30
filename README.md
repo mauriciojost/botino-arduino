@@ -21,19 +21,15 @@ What it does:
 
 ### 1.1. Plug It
 
-To get started first connect the module to any standard USB plug. Enjoy the HW test dancing.
+To get started first connect the module to any standard USB plug.
 
-### 1.2. Connect It to WIFI
+### 1.2. Set up you WIFI connection
 
-Set up your smartphone's hotspot with the SSID and passwords provided by the LCD at startup. 
-*Botino* will access it, and access the internet for the first time. This way you can set it up. 
-This hotspot setup has to be done only once (per boot).
-
-Then, using the provided [setup_device](setup_device) script, set up the wifi ssid/password you want your *botino* to use regularly (from your router / ISP). *Botino* will let you know if the WIFI set up went correctly. 
+Connect to it via serial port (TODO explain why) and set up your wifi settings via commands (use `help` to get started).
 
 ### 1.3. Play with It
 
-Interaction with *Botino* is done via the Internet. You send the setup to the internet via HTTP queries, and *botino* regularly picks them up. 
+Interaction with *Botino* is done via the Internet. You send the setup to the internet via HTTP queries, and *Botino* regularly picks them up. 
 
 You are the boss. You tell *Botino* what to do. There are several settings you can tune. 
 
@@ -48,13 +44,13 @@ you can tune to get the behaviour you want.
 | images        | Holds custom images to be used.                                                      | [Images.h](src/actors/Images.h)    |
 | ...           |                                                                                      | [...](src/actors/)                 |
 
-Control your botino via the [Botino portal](http://martinenhome.com:6780).
+Control your botino via the [Main4ino portal](http://martinenhome.com:6780).
 
 # 2. Extras
 
 ## Telnet
 
-You can telnet the device for debugging purposes. You will get the logs via Wifi. 
+You can telnet the device for debugging purposes. You will get the logs via Wifi. Debug mode must be enabled.
 
 You can also control the device. To do so you need to enter in configuration mode, by sending via telnet the command `conf` (and wait
 for the device to pick it up). Then send the command `help` for help.
@@ -146,8 +142,10 @@ PLATFORMIO_BUILD_FLAGS="`cat profiles/demo.prof`" platformio run --target upload
 
 ## 3.4. Simulate
 
+Even if the current main implementation uses ESP8266, *Botino* is meant to be multi platform. You can launch it even in your PC:
+
 ```
-./simulate 0 100 # mode interactive, 100 steps
+./simulate 0 100 # mode interactive, 100 steps and quit
 ```
 
 ## 3.5. Test
