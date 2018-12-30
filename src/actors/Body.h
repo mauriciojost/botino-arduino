@@ -582,14 +582,14 @@ public:
     ifttt = NULL;
     notifier = NULL;
     md = new Metadata(n);
-    md->getTiming()->setFreq("every1m");
+    md->getTiming()->setFreq("~1m");
     for (int i = 0; i < NRO_ROUTINES; i++) {
       routines[i] = new Routine("r");
       routines[i]->set("never", "Z.");
     }
 
     // Overwrite last to setup clock
-    routines[NRO_ROUTINES - 1]->set("every2m", "Mc3."); // show time
+    routines[NRO_ROUTINES - 1]->set("~2m", "Mc3."); // show time
   }
 
   const char *getName() {
