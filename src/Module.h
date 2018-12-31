@@ -21,28 +21,28 @@
 
 #define COMMAND_MAX_LENGTH 128
 
-#define HELP_COMMAND_CLI                                                                                                                   \
-  "\n  run        : go to run mode"                                                                                                        \
-  "\n  conf       : go to conf mode"                                                                                                       \
-  "\n  wifi       : init steady wifi"                                                                                                      \
-  "\n  get        : display actors properties"                                                                                             \
-  "\n  get        : display actor <actor> properties"                                                                                             \
-  "\n  set        : set an actor property (example: 'set body msg0 HELLO')"                                                                \
-  "\n  move       : execute a move (example: 'move A00C55')"                                                                               \
-  "\n  logl       : change log level"                                                                                                      \
-  "\n  clear      : clear crashes stacktrace"                                                                                              \
-  "\n  actall     : all act"                                                                                                               \
-  "\n  actone     : make actor <x> act"                                                                                                               \
-  "\n  rnd        : execute random routine"                                                                                                \
-  "\n  lcd        : write on display <x> <y> <color> <wrap> <clear> <size> <str>"                                                          \
-  "\n  wifissid   : set wifi ssid"                                                                                                         \
-  "\n  wifipass   : set wifi pass"                                                                                                         \
-  "\n  ifttttoken : set ifttt token"                                                                                                       \
-  "\n  timezonekey: set timezonedb.com/v2 api key"                                                                                         \
-  "\n  store      : save properties credentials in eeprom (mainly for credentials)"                                                        \
-  "\n  ack        : notification read"                                                                                                     \
-  "\n  help       : show this help"                                                                                                        \
-  "\n  (all messages are shown as info log level)"                                                                                         \
+#define HELP_COMMAND_CLI                                                                                                                        \
+  "\n  run             : go to run mode"                                                                                                        \
+  "\n  conf            : go to conf mode"                                                                                                       \
+  "\n  wifi            : init steady wifi"                                                                                                      \
+  "\n  get             : display actors properties"                                                                                             \
+  "\n  get ...         : display actor <actor> properties"                                                                                      \
+  "\n  set ...         : set an actor property (example: 'set body msg0 HELLO')"                                                                \
+  "\n  move ...        : execute a move (example: 'move A00C55')"                                                                               \
+  "\n  logl ...        : change log level to X (0 to 3)"                                                                                        \
+  "\n  clear           : clear device (eeprom and crashes stacktrace)"                                                                          \
+  "\n  actall          : all act"                                                                                                               \
+  "\n  actone ...      : make actor <x> act"                                                                                                    \
+  "\n  rnd             : execute random routine"                                                                                                \
+  "\n  lcd ...         : write on display <x> <y> <color> <wrap> <clear> <size> <str>"                                                          \
+  "\n  wifissid ...    : set wifi ssid"                                                                                                         \
+  "\n  wifipass ...    : set wifi pass"                                                                                                         \
+  "\n  ifttttoken ...  : set ifttt token"                                                                                                       \
+  "\n  timezonekey ... : set timezonedb.com/v2 api key"                                                                                         \
+  "\n  store           : save properties in eeprom (mainly for credentials)"                                                                    \
+  "\n  ack             : notification read"                                                                                                     \
+  "\n  help            : show this help"                                                                                                        \
+  "\n  (all messages are shown as info log level)"                                                                                              \
   "\n"
 
 /**

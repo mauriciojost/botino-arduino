@@ -340,6 +340,7 @@ void ios(char led, int value) {
 }
 
 void clearDevice() {
+  SPIFFS.format();
   SaveCrash.clear();
 }
 
@@ -527,7 +528,7 @@ void runModeArchitecture() {
   // Handle stack-traces stored in memory
   if (SaveCrash.count() > 5) {
     log(CLASS_MAIN, Warn, "Too many Stack-trcs / clearing (!!!)");
-    clearDevice();
+    SaveCrash.clear();
   } else if (SaveCrash.count() > 0) {
     log(CLASS_MAIN, Warn, "Stack-trcs (!!!)");
     SaveCrash.print();
