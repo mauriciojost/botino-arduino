@@ -21,6 +21,8 @@
 
 #define COMMAND_MAX_LENGTH 128
 
+#define PERIOD_CONFIGURE_MSEC 4000
+
 #define HELP_COMMAND_CLI                                                                                                                        \
   "\n  run             : go to run mode"                                                                                                        \
   "\n  conf            : go to conf mode"                                                                                                       \
@@ -66,6 +68,9 @@ private:
   bool (*initWifiSteadyFunc)();
   void (*clearDeviceFunc)();
   void (*messageFunct)(int x, int y, int color, bool wrap, bool clear, int size, const char *str);
+  void (*sleepInterruptable)(time_t cycleBegin, time_t periodSec);
+  void (*configureModeArchitecture)();
+  void (*runModeArchitecture)();
 
 public:
   Module() {
@@ -101,9 +106,13 @@ public:
     initWifiSteadyFunc = NULL;
     clearDeviceFunc = NULL;
     messageFunct = NULL;
+    sleepInterruptable = NULL;
+    configureModeArchitecture = NULL;
+    runModeArchitecture = NULL;
   }
 
-  void setup(void (*lcdImg)(char img, uint8_t bitmap[]),
+  void setup(void (*setupArchitecture)(),
+  		       void (*lcdImg)(char img, uint8_t bitmap[]),
              void (*arms)(int left, int right, int steps),
              void (*messageFunc)(int x, int y, int color, bool wrap, bool clear, int size, const char *str),
              void (*ios)(char led, int v),
@@ -111,8 +120,12 @@ public:
              int (*httpPost)(const char *url, const char *body, ParamStream *response, Table *headers),
              int (*httpGet)(const char *url, ParamStream *response, Table *headers),
              void (*clearDevice)(),
-             bool (*fr)(const char *fname, Buffer* content),
-             bool (*fw)(const char *fname, const char* content)
+             bool (*fileReadFunc)(const char *fname, Buffer* content),
+             bool (*fileWriteFunc)(const char *fname, const char* content),
+             void (*abortFunc)(const char *msg),
+             void (*sleepInterruptableFunc)(time_t cycleBegin, time_t periodSec),
+             void (*configureModeArchitectureFunc)(),
+             void (*runModeArchitectureFunc)()
 						 ) {
 
     notifier->setMessageFunc(messageFunc);
@@ -120,7 +133,7 @@ public:
     body->setArmsFunc(arms);
     body->setIosFunc(ios);
 
-    propSync->setup(bot, initWifiSteady, httpGet, httpPost, fr, fw);
+    propSync->setup(bot, initWifiSteady, httpGet, httpPost, fileReadFunc, fileWriteFunc);
     clockSync->setup(bot->getClock(), initWifiSteady, httpGet);
     quotes->setHttpGet(httpGet);
     quotes->setInitWifi(initWifiSteady);
@@ -130,6 +143,31 @@ public:
     initWifiSteadyFunc = initWifiSteady;
     clearDeviceFunc = clearDevice;
     messageFunct = messageFunc;
+    sleepInterruptable = sleepInterruptableFunc;
+    configureModeArchitecture = configureModeArchitectureFunc;
+    runModeArchitecture = runModeArchitectureFunc;
+
+    setupArchitecture(); // module completely initialized, architecture can be initialized now
+
+    Buffer timeAux(19);
+
+    log(CLASS_MODULE, Info, "# Loading credentials stored in FS...");
+    getPropSync()->fsLoadActorsProps(); // load stored properties (most importantly credentials)
+    log(CLASS_MODULE, Info, "# Syncing actors with server...");
+    bool serSyncd = getPropSync()->serverSyncRetry(); // sync properties from the server
+    time_t leftTime = getBot()->getClock()->currentTime();
+
+    log(CLASS_MODULE, Info, "# Previous actors' times: %s...", Timing::humanize(leftTime, &timeAux));
+    getBot()->setActorsTime(leftTime);
+    log(CLASS_MODULE, Info, "# Syncing clock...");
+    bool clockSyncd = getClockSync()->syncClock(getSettings()->inDeepSleepMode()); // sync real date / time on clock, block if in deep sleep
+    log(CLASS_MODULE, Info, "# Current time: %s", Timing::humanize(getBot()->getClock()->currentTime(), &timeAux));
+
+    if (serSyncd && clockSyncd) {
+      getBot()->setMode(RunMode);
+    } else {
+      abortFunc("Setup failed");
+    }
   }
 
   bool command(const char *cmd) {
@@ -281,7 +319,7 @@ public:
     }
   }
 
-  void loop(bool mode, bool set, bool cycle) {
+  void cycleBot(bool mode, bool set, bool cycle) {
 
     TimingInterrupt interruptType = TimingInterruptNone;
 
@@ -355,6 +393,39 @@ public:
           log(CLASS_MODULE, Info, " ");
         }
       }
+  }
+
+  void configureMode() {
+    time_t cycleBegin = now();
+    configureModeArchitecture();
+    sleepInterruptable(cycleBegin, PERIOD_CONFIGURE_MSEC / 1000);
+  }
+
+  void runMode() {
+    time_t cycleBegin = now();
+    runModeArchitecture();
+    cycleBot(false, false, true);
+    if (getSettings()->inDeepSleepMode()) {
+      // before going to deep sleep store in the server the last status of all actors
+      log(CLASS_MODULE, Info, "Syncing actors with server (run)...");
+      getPropSync()->serverSyncRetry(); // sync properties from the server (with new props and new clock blocked timing)
+    }
+    sleepInterruptable(cycleBegin, getSettings()->periodMsec() / 1000);
+  }
+
+  void loop() {
+    log(CLASS_MODULE, Info, "BEGIN LOOP (ver: %s)\n\n", STRINGIFY(PROJ_VERSION));
+    switch (getBot()->getMode()) {
+      case (RunMode):
+        runMode();
+        break;
+      case (ConfigureMode):
+        configureMode();
+        break;
+      default:
+        break;
+    }
+    log(CLASS_MODULE, Info, "END LOOP\n\n");
   }
 
 };

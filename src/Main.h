@@ -23,8 +23,6 @@
 #define FRAG_TO_SLEEP_MS_MAX 1000 // maximum sleeping time for which the module can be unresponsive
 #endif                            // FRAG_TO_SLEEP_MS_MAX
 
-#define PERIOD_CONFIGURE_MSEC 4000
-
 #define WAIT_BEFORE_HTTP_MS 100
 
 #ifndef URL_PRINT_MAX_LENGTH
@@ -52,9 +50,6 @@ void setup();
 
 // Standard arduino loop
 void loop();
-
-// Initialize steady wifi
-bool initWifiSteady();
 
 //////////////////////////////////////////////////////////////
 // To be provided by the Main of a specific architecture
