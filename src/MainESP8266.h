@@ -1,6 +1,4 @@
 
-#include <Main.h>
-
 #include "EspSaveCrash.h"
 #include "RemoteDebug.h"
 #include <Adafruit_GFX.h>
