@@ -30,8 +30,7 @@
 #define MAX_NRO_NOTIFS 4 // must be aligned with enum below
 
 enum NotifierProps {
-  NotifierFreqProp = 0,
-  NotifierNotif0Prop,
+  NotifierNotif0Prop = 0,
   NotifierNotif1Prop,
   NotifierNotif2Prop,
   NotifierNotif3Prop,
@@ -96,6 +95,7 @@ public:
   int notification(const char *msg) {
     int i = queue.pushUnique(msg);
     log(CLASS_NOTIFIER, Debug, "New notif: %s (%d)", msg, i);
+    getMetadata()->changed();
     return i;
   }
 
@@ -105,29 +105,20 @@ public:
 
   int notificationRead() {
   	int i = queue.pop();
+    getMetadata()->changed();
     log(CLASS_NOTIFIER, Debug, "Remove notif: %d", i);
     return i;
   }
 
-  void act() {
-    if (!isInitialized()) {
-      log(CLASS_NOTIFIER, Warn, "No init!");
-      return;
-    }
-    if (getTiming()->matches()) {
-    	notify();
-    }
-  }
+  void act() { }
 
   void notify() {
     const char *currentNotif = getNotification();
     if (currentNotif != NULL) {
       log(CLASS_NOTIFIER, Debug, "Notif(%d): %s", queue.size(), currentNotif);
-      Buffer aux(LCD_WIDTH);
-        aux.fill("--(%d)--", queue.size());
-        messageFunc(0, (NOTIF_LINE - 1) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, DO_NOT_CLEAR, NOTIF_SIZE, aux.center(' ', LCD_WIDTH));
-        aux.load(currentNotif);
-        messageFunc(0, (NOTIF_LINE) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, DO_NOT_CLEAR, NOTIF_SIZE, aux.center(' ', LCD_WIDTH));
+      Buffer msg(LCD_WIDTH);
+      msg.fill("(%d) %s", queue.size(), currentNotif);
+      messageFunc(0, (NOTIF_LINE) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, DO_NOT_CLEAR, NOTIF_SIZE, msg.center(' ', LCD_WIDTH));
     } else {
       log(CLASS_NOTIFIER, Debug, "No notifs");
     }
@@ -135,8 +126,6 @@ public:
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
-      case (NotifierFreqProp):
-        return "freq";
       case (NotifierNotif0Prop):
         return "n0";
       case (NotifierNotif1Prop):
@@ -162,8 +151,6 @@ public:
       if (actualValue != NULL) {
         actualValue->load(queue.getAt(i, EMPTY_NOTIF_REPRESENTATION));
       }
-    } else if (propIndex == NotifierFreqProp) {
-      setPropTiming(m, targetValue, actualValue, md->getTiming());
     }
     if (m != GetValue) {
       getMetadata()->changed();
