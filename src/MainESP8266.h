@@ -1,6 +1,7 @@
 
-#include "EspSaveCrash.h"
-#include "RemoteDebug.h"
+#include <Main.h>
+#include <EspSaveCrash.h>
+#include <RemoteDebug.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <Arduino.h>
@@ -73,6 +74,8 @@
 
 #define ONLY_SHOW_MSG true
 #define SHOW_MSG_AND_REACT false
+
+#define WAIT_BEFORE_HTTP_MS 100
 
 extern "C" {
 #include "user_interface.h"
