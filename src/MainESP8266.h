@@ -559,6 +559,7 @@ void debugHandle() {
 bool reactToButtonHeld(int cycles, bool onlyMsg) {
   switch (cycles) {
     case 0: {
+    	// TODO allow to configure this map [msg, routineS[
       m.getNotifier()->message(0, 2, "Ack?");
       if (!onlyMsg) {
         m.command("ack");
