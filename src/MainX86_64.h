@@ -153,11 +153,6 @@ void sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
   sleep(1);
 }
 
-bool haveToInterrupt() {
-  // noting to do here
-  return false;
-}
-
 void setupArchitecture() {
   setExternalMillis(millis);
 }

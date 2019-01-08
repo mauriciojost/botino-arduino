@@ -116,6 +116,7 @@ void heartbeat();
 void lightSleepInterruptable(time_t cycleBegin, time_t periodSecs);
 void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs);
 void debugHandle();
+bool haveToInterrupt();
 
 ////////////////////////////////////////
 // Functions requested for architecture
@@ -443,45 +444,6 @@ void sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
 	}
 }
 
-bool haveToInterrupt() {
-  heartbeat();
-  if (Serial.available()) {
-    // Handle serial commands
-    Buffer cmdBuffer(COMMAND_MAX_LENGTH);
-    log(CLASS_MAIN, Info, "Listening...");
-    cmdBuffer.clear();
-    Serial.readBytesUntil('\n', cmdBuffer.getUnsafeBuffer(), COMMAND_MAX_LENGTH);
-    cmdBuffer.replace('\n', '\0');
-    cmdBuffer.replace('\r', '\0');
-    bool interrupt = m.command(cmdBuffer.getBuffer());
-    log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
-    return interrupt;
-  } else if (buttonInterrupts > 0) {
-    // Handle button commands
-    log(CLASS_MAIN, Debug, "Button command (%d)", buttonInterrupts);
-    int holds = 0;
-    reactToButtonHeld(holds, ONLY_SHOW_MSG);
-    delay(100); // anti-bouncing
-    while (digitalRead(BUTTON0_PIN)) {
-      holds++;
-      log(CLASS_MAIN, Debug, "%d", holds);
-      LED_INT_ON;
-      reactToButtonHeld(holds, ONLY_SHOW_MSG);
-      LED_INT_OFF;
-      delay(950);
-    }
-    bool interruptMe = reactToButtonHeld(holds, SHOW_MSG_AND_REACT);
-    LED_INT_OFF;
-    buttonInterrupts = 0;
-
-    log(CLASS_MAIN, Debug, "Done");
-    return interruptMe;
-  } else {
-    // Nothing to handle, no reason to interrupt
-    return false;
-  }
-}
-
 void setupArchitecture() {
 
   // Let HW startup
@@ -718,3 +680,43 @@ void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs) {
     ESP.deepSleep(leftSecs * 1000000L);
   }
 }
+
+bool haveToInterrupt() {
+  heartbeat();
+  if (Serial.available()) {
+    // Handle serial commands
+    Buffer cmdBuffer(COMMAND_MAX_LENGTH);
+    log(CLASS_MAIN, Info, "Listening...");
+    cmdBuffer.clear();
+    Serial.readBytesUntil('\n', cmdBuffer.getUnsafeBuffer(), COMMAND_MAX_LENGTH);
+    cmdBuffer.replace('\n', '\0');
+    cmdBuffer.replace('\r', '\0');
+    bool interrupt = m.command(cmdBuffer.getBuffer());
+    log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
+    return interrupt;
+  } else if (buttonInterrupts > 0) {
+    // Handle button commands
+    log(CLASS_MAIN, Debug, "Button command (%d)", buttonInterrupts);
+    int holds = 0;
+    reactToButtonHeld(holds, ONLY_SHOW_MSG);
+    delay(100); // anti-bouncing
+    while (digitalRead(BUTTON0_PIN)) {
+      holds++;
+      log(CLASS_MAIN, Debug, "%d", holds);
+      LED_INT_ON;
+      reactToButtonHeld(holds, ONLY_SHOW_MSG);
+      LED_INT_OFF;
+      delay(950);
+    }
+    bool interruptMe = reactToButtonHeld(holds, SHOW_MSG_AND_REACT);
+    LED_INT_OFF;
+    buttonInterrupts = 0;
+
+    log(CLASS_MAIN, Debug, "Done");
+    return interruptMe;
+  } else {
+    // Nothing to handle, no reason to interrupt
+    return false;
+  }
+}
+

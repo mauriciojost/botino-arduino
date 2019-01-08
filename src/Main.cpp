@@ -75,9 +75,6 @@ bool writeFile(const char* fname, const char* content);
 // Interruptable sleep function (haveToInterrupt called within).
 void sleepInterruptable(time_t cycleBegin, time_t periodSec);
 
-// Function to execute whenever a button is pressed (interrupt handling)
-bool haveToInterrupt();
-
 // Setup step specific to the architecture
 void setupArchitecture();
 
