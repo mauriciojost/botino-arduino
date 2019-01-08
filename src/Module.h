@@ -149,14 +149,13 @@ public:
 
     setupArchitecture(); // module completely initialized, architecture can be initialized now
 
-    Buffer timeAux(19);
-
     log(CLASS_MODULE, Info, "# Loading credentials stored in FS...");
     getPropSync()->fsLoadActorsProps(); // load stored properties (most importantly credentials)
     log(CLASS_MODULE, Info, "# Syncing actors with server...");
     bool serSyncd = getPropSync()->serverSyncRetry(); // sync properties from the server
     time_t leftTime = getBot()->getClock()->currentTime();
 
+    Buffer timeAux(19);
     log(CLASS_MODULE, Info, "# Previous actors' times: %s...", Timing::humanize(leftTime, &timeAux));
     getBot()->setActorsTime(leftTime);
     log(CLASS_MODULE, Info, "# Syncing clock...");
