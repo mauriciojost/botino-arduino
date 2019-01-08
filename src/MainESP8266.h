@@ -12,8 +12,17 @@
 #include <SPI.h>
 #include <Servo.h>
 #include <Wire.h>
+#include <Io.h>
 
 #define DELAY_MS_SPI 3
+
+#ifndef WIFI_DELAY_MS
+#define WIFI_DELAY_MS 3000
+#endif // WIFI_DELAY_MS
+
+#ifndef FRAG_TO_SLEEP_MS_MAX
+#define FRAG_TO_SLEEP_MS_MAX 1000 // maximum sleeping time for which the module can be unresponsive
+#endif                            // FRAG_TO_SLEEP_MS_MAX
 
 #define HARDWARE_TEST_STEP_DELAY_MS 2000
 
@@ -53,6 +62,14 @@
 #define DEV_USER_DELAY_MS 1000
 
 #define LOG_LINE 7
+
+#ifndef URL_PRINT_MAX_LENGTH
+#define URL_PRINT_MAX_LENGTH 20
+#endif // URL_PRINT_MAX_LENGTH
+
+#ifndef USER_DELAY_MS
+#define USER_DELAY_MS 3000
+#endif // USER_DELAY_MS
 
 #define ONLY_SHOW_MSG true
 #define SHOW_MSG_AND_REACT false

@@ -9,37 +9,14 @@
 
 #define CLASS_MAIN "MA"
 
-#include "Io.h"
 #include <Module.h>
-#include <main4ino/HttpCodes.h>
 #include <main4ino/Misc.h>
-#include <main4ino/Table.h>
 
 #ifndef PROJ_VERSION
 #error "No PROJ_VERSION defined"
 #endif // PROJ_VERSION
 
-#ifndef FRAG_TO_SLEEP_MS_MAX
-#define FRAG_TO_SLEEP_MS_MAX 1000 // maximum sleeping time for which the module can be unresponsive
-#endif                            // FRAG_TO_SLEEP_MS_MAX
-
 #define WAIT_BEFORE_HTTP_MS 100
-
-#ifndef URL_PRINT_MAX_LENGTH
-#define URL_PRINT_MAX_LENGTH 20
-#endif // URL_PRINT_MAX_LENGTH
-
-#ifndef USER_DELAY_MS
-#define USER_DELAY_MS 3000
-#endif // USER_DELAY_MS
-
-#ifndef WIFI_DELAY_MS
-#define WIFI_DELAY_MS 3000
-#endif // WIFI_DELAY_MS
-
-#define HEADERS_MAX 3
-#define HEADERS_KEY_LENGTH 16
-#define HEADERS_VAL_LENGTH 32
 
 //////////////////////////////////////////////////////////////
 // Provided by generic Main
