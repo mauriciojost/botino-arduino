@@ -156,6 +156,7 @@ void sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
 }
 
 void setupArchitecture() {
+  log(CLASS_MAIN, Debug, "Setup timing");
   setExternalMillis(millis);
 }
 
