@@ -106,8 +106,9 @@ public:
 
   int notification(const char *msg) {
     int i = queue.pushUnique(msg);
-    log(CLASS_NOTIFIER, Debug, "New notif: %s (%d)", msg, i);
+    log(CLASS_NOTIFIER, Debug, "New notif: %s (%d left)", msg, i);
     getMetadata()->changed();
+    notify(); // update notification
     return i;
   }
 
@@ -117,8 +118,9 @@ public:
 
   int notificationRead() {
   	int i = queue.pop();
+    log(CLASS_NOTIFIER, Debug, "Notif read: %d left", i);
     getMetadata()->changed();
-    log(CLASS_NOTIFIER, Debug, "Remove notif: %d", i);
+    notify(); // update notification
     return i;
   }
 
