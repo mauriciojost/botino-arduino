@@ -2,7 +2,6 @@
 
 -D WIFI_SSID_STEADY="wifi"
 -D WIFI_PASSWORD_STEADY="pass"
--D TIMEZONE_DB_KEY="key"
 -D TIMEZONE_DB_ZONE="Europe/Paris"
 -D IFTTT_KEY="ifttt"
 -D API_USERNAME="name"

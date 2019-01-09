@@ -40,7 +40,6 @@
   "\n  wifissid ...    : set wifi ssid"                                                                                                         \
   "\n  wifipass ...    : set wifi pass"                                                                                                         \
   "\n  ifttttoken ...  : set ifttt token"                                                                                                       \
-  "\n  timezonekey ... : set timezonedb.com/v2 api key"                                                                                         \
   "\n  store           : save properties in eeprom (mainly for credentials)"                                                                    \
   "\n  ack             : notification read"                                                                                                     \
   "\n  help            : show this help"                                                                                                        \
@@ -290,15 +289,6 @@ public:
       int routine = (int)random(getSettings()->getNroRoutinesForButton());
       log(CLASS_MODULE, Debug, "Routine %d...", routine);
       getBody()->performMove(routine);
-      return false;
-    } else if (strcmp("timezonekey", c) == 0) {
-      c = strtok(NULL, " ");
-      if (c == NULL) {
-        logRaw(CLASS_MODULE, Info, "Argument needed:\n  timezonekey <key>");
-        return false;
-      }
-      clockSync->setDbKey(c);
-      log(CLASS_MODULE, Info, "TimeZoneDb key: %s", clockSync->getDbKey());
       return false;
     } else if (strcmp("store", c) == 0) {
       propSync->fsStoreActorsProps(); // load mainly credentials already set
