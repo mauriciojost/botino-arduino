@@ -50,6 +50,18 @@ private:
     return lcdImgFunc != NULL && messageFunc != NULL;
   }
 
+  void notify() {
+    const char *currentNotif = getNotification();
+    if (currentNotif != NULL) {
+      log(CLASS_NOTIFIER, Debug, "Notif(%d): %s", queue.size(), currentNotif);
+      Buffer msg(LCD_WIDTH);
+      msg.fill("(%d) %s", queue.size(), currentNotif);
+      messageFunc(0, (NOTIF_LINE) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, DO_NOT_CLEAR, NOTIF_SIZE, msg.center(' ', LCD_WIDTH));
+    } else {
+      log(CLASS_NOTIFIER, Debug, "No notifs");
+    }
+  }
+
 public:
   Notifier(const char *n) {
     name = n;
@@ -67,13 +79,13 @@ public:
     lcdImgFunc = f;
   }
 
+  void setMessageFunc(void (*f)(int x, int y, int color, bool wrap, bool clear, int size, const char *str)) {
+    messageFunc = f;
+  }
+
   void lcdImg(char img, uint8_t bitmap[]) {
     lcdImgFunc(img, bitmap);
     notify(); // apart from the message, also notify if notifications are available
-  }
-
-  void setMessageFunc(void (*f)(int x, int y, int color, bool wrap, bool clear, int size, const char *str)) {
-    messageFunc = f;
   }
 
   void message(int line, int size, const char *format, ...) {
@@ -111,18 +123,6 @@ public:
   }
 
   void act() { }
-
-  void notify() {
-    const char *currentNotif = getNotification();
-    if (currentNotif != NULL) {
-      log(CLASS_NOTIFIER, Debug, "Notif(%d): %s", queue.size(), currentNotif);
-      Buffer msg(LCD_WIDTH);
-      msg.fill("(%d) %s", queue.size(), currentNotif);
-      messageFunc(0, (NOTIF_LINE) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, DO_NOT_CLEAR, NOTIF_SIZE, msg.center(' ', LCD_WIDTH));
-    } else {
-      log(CLASS_NOTIFIER, Debug, "No notifs");
-    }
-  }
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
