@@ -436,6 +436,20 @@ bool writeFile(const char* fname, const char* content) {
   return success;
 }
 
+void info() {
+
+  m.getNotifier()->message(0,
+                           1,
+                           "Name:%s\nVers:%s\nCrashes:%d\nIP: %s\nMemory:%lu\nUptime:%luh",
+                           DEVICE_NAME,
+                           STRINGIFY(PROJ_VERSION),
+                           SaveCrash.count(),
+                           WiFi.localIP().toString().c_str(),
+                           ESP.getFreeHeap(),
+                           (millis() / 1000) / 3600);
+
+}
+
 // Execution
 ///////////////////
 
@@ -602,16 +616,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
     case 9: {
       m.getNotifier()->message(0, 2, "Show info?");
       if (!onlyMsg) {
-        m.getNotifier()->message(0,
-                                 1,
-                                 "Name:%s\nVers:%s\nCrashes:%d\nIP: %s\nMemory:%lu\nUptime:%luh",
-                                 DEVICE_NAME,
-                                 STRINGIFY(PROJ_VERSION),
-                                 SaveCrash.count(),
-                                 WiFi.localIP().toString().c_str(),
-                                 ESP.getFreeHeap(),
-                                 (millis() / 1000) / 3600);
-
+        m.command("info");
       }
     } break;
     default: {

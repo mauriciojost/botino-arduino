@@ -61,6 +61,9 @@ bool readFile(const char* fname, Buffer* content);
 // Write a file to the filesystem (returns true if success)
 bool writeFile(const char* fname, const char* content);
 
+// Display some useful info related to the HW
+void info();
+
 // Execution
 ///////////////////
 

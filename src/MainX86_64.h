@@ -147,6 +147,8 @@ bool writeFile(const char* fname, const char* content) {
 	return success;
 }
 
+void info() {}
+
 // Execution
 ///////////////////
 
