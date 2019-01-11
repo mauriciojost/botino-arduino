@@ -54,7 +54,7 @@ public:
     md = new Metadata(n);
     for (int i = 0; i < NRO_MOVES; i++) {
       moves[i] = new Buffer(MOVE_NAME_VALUE_MAX_LENGTH);
-      moves[i]->fill("mv%d%cZ.", i, MOVE_NAME_VALUE_SEPARATOR);
+      moves[i]->fill("Move %d%cmove Z.", i, MOVE_NAME_VALUE_SEPARATOR);
       moveNames[i] = new Buffer(MOVE_NAME_MAX_LENGTH);
     }
     updateMoveNames();
