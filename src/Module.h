@@ -307,15 +307,15 @@ public:
       log(CLASS_MODULE, Info, "Properties stored locally");
       return false;
     } else if (strcmp("load", c) == 0) {
-      propSync->fsReadActorsProps(); // load mainly credentials already set
+      propSync->fsLoadActorsProps(); // load mainly credentials already set
       log(CLASS_MODULE, Info, "Properties stored locally");
       return false;
     } else if (strcmp("readone", c) == 0) {
       c = strtok(NULL, " ");
       Buffer fname(32);
       Buffer fcontent(256);
-      fileRead(fname.fill("%s", c), fcontent);
-      logRaw(CLASS_MODULE, Info, "%s", fcontent.getBuffer());
+      fileRead(fname.fill("%s", c), &fcontent);
+      logRaw(CLASS_MODULE, Info, fcontent.getBuffer());
       return false;
     } else if (strcmp("ack", c) == 0) {
       c = strtok(NULL, " ");
