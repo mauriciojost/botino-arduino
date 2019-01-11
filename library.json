@@ -1,6 +1,6 @@
 {
   "name": "botino",
-  "version": "1.20.0",
+  "version": "1.20.0-SNAPSHOT",
   "keywords": "botino, alarm, bot",
   "description": "Cool alarm!",
   "repository": {
