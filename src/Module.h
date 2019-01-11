@@ -27,6 +27,7 @@
 #define HELP_COMMAND_CLI                                                                                                                        \
   "\n  run             : go to run mode"                                                                                                        \
   "\n  conf            : go to conf mode"                                                                                                       \
+  "\n  info            : show info about the device"                                                                                            \
   "\n  wifi            : init steady wifi"                                                                                                      \
   "\n  get             : display actors properties"                                                                                             \
   "\n  get ...         : display actor <actor> properties"                                                                                      \
@@ -245,6 +246,9 @@ public:
       return true;
     } else if (strcmp("wifi", c) == 0) {
       initWifiSteadyFunc();
+      return false;
+    } else if (strcmp("info", c) == 0) {
+      info();
       return false;
     } else if (strcmp("clear", c) == 0) {
       clearDeviceFunc();
