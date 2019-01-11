@@ -40,7 +40,8 @@ void setup() {
 			abort,
 			sleepInterruptable,
 			configureModeArchitecture,
-			runModeArchitecture
+			runModeArchitecture,
+			info
 			);
 }
 

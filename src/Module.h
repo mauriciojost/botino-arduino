@@ -77,6 +77,7 @@ private:
   void (*runModeArchitecture)();
   bool (*fileRead)(const char *fname, Buffer* content);
   bool (*fileWrite)(const char *fname, const char* content);
+  void (*info)();
 
 public:
   Module() {
@@ -119,6 +120,7 @@ public:
     runModeArchitecture = NULL;
     fileRead = NULL;
     fileWrite = NULL;
+    info = NULL;
   }
 
   void setup(void (*setupArchitecture)(),
@@ -135,7 +137,8 @@ public:
              void (*abortFunc)(const char *msg),
              void (*sleepInterruptableFunc)(time_t cycleBegin, time_t periodSec),
              void (*configureModeArchitectureFunc)(),
-             void (*runModeArchitectureFunc)()
+             void (*runModeArchitectureFunc)(),
+             void (*infoFunc)()
 						 ) {
 
     notifier->setMessageFunc(messageFunc);
@@ -158,6 +161,7 @@ public:
     runModeArchitecture = runModeArchitectureFunc;
     fileRead = fileReadFunc;
     fileWrite = fileWriteFunc;
+    info = infoFunc;
 
     setupArchitecture(); // module completely initialized, architecture can be initialized now
 
