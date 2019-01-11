@@ -560,34 +560,22 @@ void debugHandle() {
 bool reactToButtonHeld(int cycles, bool onlyMsg) {
   switch (cycles) {
     case 0: {
-    	// TODO allow to configure this map [msg, routineS[
       m.getNotifier()->message(0, 2, "Ack?");
       if (!onlyMsg) {
         m.command("ack");
         m.command("move Z.");
       }
     } break;
-    case 1: {
-      m.getNotifier()->message(0, 2, "Random routine?");
-      if (!onlyMsg) {
-        m.command("rnd");
-        m.getNotifier()->message(0, 1, "Random routine...");
-      }
-    } break;
+    case 1:
     case 2:
     case 3:
     case 4:
     case 5: {
-      int event = cycles - 2;
-      const char *evtName = m.getIfttt()->getEventName(event);
-      m.getNotifier()->message(0, 2, "Push event %s?", evtName);
+      int ind = cycles - 1;
+      const char *mvName = m.getMoves()->getMoveName(ind);
+      m.getNotifier()->message(0, 2, "%s?", mvName);
       if (!onlyMsg) {
-        bool suc = m.getIfttt()->triggerEvent(event);
-        if (suc) {
-          m.getNotifier()->message(0, 1, "Event %s pushed!", evtName);
-        } else {
-          m.getNotifier()->message(0, 1, "Failed: event not pushed");
-        }
+        m.command(m.getMoves()->getMoveValue(ind));
       }
     } break;
     case 6: {

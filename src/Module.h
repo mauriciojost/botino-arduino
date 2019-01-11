@@ -8,6 +8,7 @@
 #include <actors/Ifttt.h>
 #include <actors/Images.h>
 #include <actors/Notifier.h>
+#include <actors/Moves.h>
 #include <log4ino/Log.h>
 #include <main4ino/ClockSync.h>
 #include <main4ino/Actor.h>
@@ -63,6 +64,7 @@ private:
   Images *images;
   Ifttt *ifttt;
   Notifier *notifier;
+  Moves *moves;
 
   bool (*initWifiSteadyFunc)();
   void (*clearDeviceFunc)();
@@ -83,8 +85,9 @@ public:
     images = new Images("images");
     ifttt = new Ifttt("ifttt");
     notifier = new Notifier("notifier");
+    moves = new Moves("moves");
 
-    actors = new Array<Actor *>(9);
+    actors = new Array<Actor *>(10);
     actors->set(0, (Actor *)propSync);
     actors->set(1, (Actor *)clockSync);
     actors->set(2, (Actor *)clock);
@@ -94,6 +97,7 @@ public:
     actors->set(6, (Actor *)images);
     actors->set(7, (Actor *)ifttt);
     actors->set(8, (Actor *)notifier);
+    actors->set(9, (Actor *)moves);
 
     bot = new SerBot(clock, actors);
 
@@ -328,6 +332,10 @@ public:
 
   Settings *getSettings() {
     return settings;
+  }
+
+  Moves *getMoves() {
+    return moves;
   }
 
   Body *getBody() {
