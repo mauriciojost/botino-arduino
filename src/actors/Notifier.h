@@ -58,7 +58,6 @@ private:
       msg.fill("(%d) %s", queue.size(), currentNotif);
       messageFunc(0, (NOTIF_LINE) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, DO_NOT_CLEAR, NOTIF_SIZE, msg.center(' ', LCD_WIDTH));
     } else {
-      messageFunc(0, 0, WHITE, DO_NOT_WRAP, DO_CLEAR, NOTIF_SIZE, ""); // clear
       log(CLASS_NOTIFIER, Debug, "No notifs");
     }
   }
