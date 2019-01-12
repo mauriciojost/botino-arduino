@@ -273,6 +273,7 @@ void messageFunc(int x, int y, int color, bool wrap, bool clear, int size, const
   lcd.setCursor(x, y);
   lcd.print(str);
   lcd.display();
+  log(CLASS_MAIN, Debug, "Msg: (%d,%d)'%s'", x, y, str);
   delay(DELAY_MS_SPI);
 }
 
@@ -444,7 +445,7 @@ void info() {
 
   m.getNotifier()->message(0,
                            1,
-                           "Name:%s\nVers:%s\nCrashes:%d\nIP: %s\nMemory:%lu\nUptime:%luh",
+                           "DEV NAME:%s\nVers:%s\nCrashes:%d\nIP: %s\nMemory:%lu\nUptime:%luh",
                            DEVICE_NAME,
                            STRINGIFY(PROJ_VERSION),
                            SaveCrash.count(),
@@ -516,13 +517,6 @@ void setupArchitecture() {
 
 void runModeArchitecture() {
   Settings *s = m.getSettings();
-
-  // Logs
-  log(CLASS_MAIN, Info, "DEV NAME: %s", DEVICE_NAME);
-  log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
-  log(CLASS_MAIN, Info, "Memory: %lu", ESP.getFreeHeap());
-  log(CLASS_MAIN, Info, "Crashes: %d", SaveCrash.count());
-  log(CLASS_MAIN, Info, "HTTP size: %d", httpClient.getSize());
 
   // Handle stack-traces stored in memory
   if (SaveCrash.count() > 5) {
