@@ -596,6 +596,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
       m.getNotifier()->message(0, 2, "All act?");
       if (!onlyMsg) {
         m.command("actall");
+        m.command("run");
         m.getNotifier()->message(0, 1, "All act one-off");
       }
     } break;
