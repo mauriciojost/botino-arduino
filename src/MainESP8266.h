@@ -56,8 +56,7 @@
 #define SERVO0_STEP_DEGREES ((float)SERVO0_RANGE_DEGREES / (MAX_SERVO_STEPS - 1))
 #define SERVO1_STEP_DEGREES ((float)SERVO1_RANGE_DEGREES / (MAX_SERVO_STEPS - 1))
 
-
-#define DEV_USER_DELAY_MS 1000
+#define SERVO_PERIOD_REACTION_MS 15
 
 #define LOG_LINE 7
 
@@ -295,7 +294,7 @@ void arms(int left, int right, int steps) {
     int vR = lastPosR + ((targetPosR - lastPosR) * factor);
     servoLeft.write(vL);
     servoRight.write(vR);
-    delay(15);
+    delay(SERVO_PERIOD_REACTION_MS);
   }
   lastPosL = targetPosL;
   lastPosR = targetPosR;
