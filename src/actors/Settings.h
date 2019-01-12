@@ -30,6 +30,11 @@
 #define PERIOD_SEC 60
 #endif // PERIOD_SEC
 
+#ifndef FRAG_TO_SLEEP_MS_MAX
+#define FRAG_TO_SLEEP_MS_MAX 1000 // maximum sleeping time for which the module can be unresponsive
+#endif                            // FRAG_TO_SLEEP_MS_MAX
+
+
 #define PERIOD_MSEC (PERIOD_SEC * 1000)
 
 
@@ -40,7 +45,8 @@ enum SettingsProps {
   SettingsDebugProp = 0,          // boolean, define if the device is in debug mode
   SettingsDeepSleepProp,          // boolean, define if the device is in deep sleep mode
   SettingsButtonRoutineLimitProp, // integer, define the first X routines that are randomly executed when the button is pressed
-  SettingsPeriodMsProp,           // period in msec for the device to sleep
+  SettingsPeriodMsProp,           // period in msec for the device to wait until update clock and make actors catch up with acting (if any)
+  SettingsMiniPeriodMsProp,       // period in msec for the device to got to sleep (and remain unresponsive from user) (only if no deep sleep)
   SettingsWifiSsidProp,           // wifi ssid
   SettingsWifiPassProp,           // wifi pass
   SettingsPropsDelimiter          // amount of properties
@@ -53,6 +59,7 @@ private:
   bool devDebug;
   bool deepSleep;
   int periodms;
+  int miniperiodms;
   int buttonRoutineUntil;
   Buffer *infoBuffer;
   Buffer *ssid;
@@ -78,6 +85,7 @@ public:
     buttonRoutineUntil = 4;
     infoBuffer->clear();
     periodms = PERIOD_MSEC;
+    miniperiodms = FRAG_TO_SLEEP_MS_MAX;
     md = new Metadata(n);
   }
 
@@ -99,6 +107,8 @@ public:
         return "deepsleep";
       case (SettingsPeriodMsProp):
         return "periodms";
+      case (SettingsMiniPeriodMsProp):
+        return "mperiodms";
       case (SettingsButtonRoutineLimitProp):
         return "btnrout";
       default:
@@ -124,6 +134,9 @@ public:
         break;
       case (SettingsPeriodMsProp):
         setPropInteger(m, targetValue, actualValue, &periodms);
+        break;
+      case (SettingsMiniPeriodMsProp):
+        setPropInteger(m, targetValue, actualValue, &miniperiodms);
         break;
       case (SettingsButtonRoutineLimitProp):
         setPropInteger(m, targetValue, actualValue, &buttonRoutineUntil);
@@ -200,6 +213,11 @@ public:
   int periodMsec() {
   	return periodms;
   }
+
+  int miniPeriodMsec() {
+  	return miniperiodms;
+  }
+
 
 };
 

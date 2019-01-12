@@ -574,10 +574,10 @@ void debugHandle() {
 bool reactToButtonHeld(int cycles, bool onlyMsg) {
   switch (cycles) {
     case 0: {
-      m.getNotifier()->message(0, 2, "Ack?");
+      m.getNotifier()->message(0, 2, "Done?");
       if (!onlyMsg) {
         m.command("ack");
-        m.command("move Z.");
+        m.command("move Fs.W1.Z.");
       }
     } break;
     case 1:
