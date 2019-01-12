@@ -137,7 +137,9 @@ void logLine(const char *str) {
   // telnet print
   if (telnet.isActive()) {
     Serial.print(">");
-    telnet.print(str);
+    for (int i=0; i< strlen(str); i++) {
+      telnet.print(str[i]);
+    }
     Serial.print(">");
   }
   Serial.print(str);
