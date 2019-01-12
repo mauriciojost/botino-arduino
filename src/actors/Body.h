@@ -284,7 +284,7 @@ private:
     }
   }
 
-  void handle1CharPoses(char c1, const char *pose) {
+  bool handle1CharPoses(char c1, const char *pose) {
     if (c1 == 'Z') {
       notifier->lcdImg('b', NULL);
       notifier->lcdImg('l', NULL);
@@ -293,74 +293,77 @@ private:
       iosFunc('y', IO_OFF);
       iosFunc('f', IO_OFF);
       arms(0, 0, ARM_FAST_STEPS);
+      return true;
     } else {
-      log(CLASS_BODY, Debug, "Ignoring 1-letter-code pose %s", pose);
+      return false;
     }
   }
 
-  void handle2CharPoses(char c1, char c2, const char *pose) {
+  bool handle2CharPoses(char c1, char c2, const char *pose) {
     if (c1 == 'W') {
       // WAIT
       int v = getInt(c2);
       log(CLASS_BODY, Debug, "Wait %d s", v);
       delay(v * 1000);
+      return true;
     } else if (c1 == 'F') {
       // FACES
       switch (c2) {
         case '0':
           notifier->lcdImg('c', images->get(0)); // custom 0
-          break;
+          return true;
         case '1':
           notifier->lcdImg('c', images->get(1)); // custom 1
-          break;
+          return true;
         case '2':
           notifier->lcdImg('c', images->get(2)); // custom 2
-          break;
+          return true;
         case '3':
           notifier->lcdImg('c', images->get(3)); // custom 3
-          break;
+          return true;
         case '_':
           notifier->lcdImg('_', NULL); // dim
-          break;
+          return true;
         case '-':
           notifier->lcdImg('-', NULL); // bright
-          break;
+          return true;
         case 'w':
           notifier->lcdImg('w', NULL); // white
-          break;
+          return true;
         case 'b':
           notifier->lcdImg('b', NULL); // black
-          break;
+          return true;
         case 'l':
           notifier->lcdImg('l', NULL); // clear
-          break;
+          return true;
         case 'r':
           notifier->lcdImg('c', IMG_CRAZY); // crazy
-          break;
+          return true;
         case 's':
           notifier->lcdImg('c', IMG_SMILY); // smile
-          break;
+          return true;
         case 'S':
           notifier->lcdImg('c', IMG_SAD); // sad
-          break;
+          return true;
         case 'n':
           notifier->lcdImg('c', IMG_NORMAL); // normal
-          break;
+          return true;
         case 'a':
           notifier->lcdImg('c', IMG_ANGRY); // angry
-          break;
+          return true;
         case 'z':
           notifier->lcdImg('c', IMG_SLEEPY); // sleepy
-          break;
+          return true;
         default:
           log(CLASS_BODY, Debug, "Face '%c'?", c2);
-          break;
+          return false;
       }
     } else if (c1 == 'I') {
       // IFTTT
       int i = getInt(c2);
       log(CLASS_BODY, Debug, "Ifttt %d", i);
       ifttt->triggerEvent(i);
+      return true;
     } else if (c1 == 'L') {
       // IO (LEDS / FAN)
       switch (c2) {
@@ -368,78 +371,81 @@ private:
           iosFunc('r', random(2));
           iosFunc('w', random(2));
           iosFunc('y', random(2));
-          break;
+          return true;
         }
         default:
           log(CLASS_BODY, Debug, "Inv.IO.pose:%c%c", c1, c2);
-          break;
+          return false;
       }
     } else if (c1 == 'D') {
       // DANCE
       switch (c2) {
         case '0':
           performMove(MOVE_DANCE0);
-          break;
+          return true;
         case '1':
           performMove(MOVE_DANCE1);
-          break;
+          return true;
         case '2':
           performMove(MOVE_DANCE2);
-          break;
+          return true;
         case '3':
           performMove(MOVE_DANCE3);
-          break;
+          return true;
         case '4':
           performMove(MOVE_DANCE4);
-          break;
+          return true;
         case '5':
           performMove(MOVE_DANCE5);
-          break;
+          return true;
         case '6':
           performMove(MOVE_DANCE6);
-          break;
+          return true;
         case '7':
           performMove(MOVE_DANCE7);
-          break;
+          return true;
         case 'n':
           performMove(MOVE_DANCE_n);
-          break;
+          return true;
         case 'u':
           performMove(MOVE_DANCE_U);
-          break;
+          return true;
         case '\\':
           performMove(MOVE_DANCE_BACK_SLASH);
-          break;
+          return true;
         case '/':
           performMove(MOVE_DANCE_FORW_SLASH);
-          break;
+          return true;
         default:
-          log(CLASS_BODY, Debug, "Inv. dance:%c%c", c1, c2);
+          return false;
       }
     } else {
-      log(CLASS_BODY, Debug, "Ignoring 2-letter-code pose %s", pose);
+      return false;
     }
   }
 
-  void handle3CharPoses(char c1, char c2, char c3, const char *pose) {
+  bool handle3CharPoses(char c1, char c2, char c3, const char *pose) {
     if (c1 == 'A') {
       // ARMS FAST
       int l = getInt(c2);
       int r = getInt(c3);
       log(CLASS_BODY, Debug, "Armsf %d&%d", l, r);
       arms(l, r, ARM_FAST_STEPS);
+      return true;
     } else if (c1 == 'B') {
       // ARMS MEDIUM
       int l = getInt(c2);
       int r = getInt(c3);
       log(CLASS_BODY, Debug, "Armsn %d&%d", l, r);
       arms(l, r, ARM_NORMAL_STEPS);
+      return true;
     } else if (c1 == 'C') {
       // ARMS SLOW
       int l = getInt(c2);
       int r = getInt(c3);
       log(CLASS_BODY, Debug, "Armss %d&%d", l, r);
       arms(l, r, ARM_SLOW_STEPS);
+      return true;
     } else if (c1 == 'L') {
       // IO (LEDS / FAN)
       switch (c2) {
@@ -447,29 +453,28 @@ private:
           int b = getIosState(c3);
           log(CLASS_BODY, Debug, "Led red: %d", b);
           iosFunc('r', b);
-          break;
+          return true;
         }
         case 'w': {
           int b = getIosState(c3);
           log(CLASS_BODY, Debug, "Led white: %d", b);
           iosFunc('w', b);
-          break;
+          return true;
         }
         case 'y': {
           int b = getIosState(c3);
           log(CLASS_BODY, Debug, "Led yellow: %d", b);
           iosFunc('y', b);
-          break;
+          return true;
         }
         case 'f': {
           int b = getIosState(c3);
           log(CLASS_BODY, Debug, "Fan: %d", b);
           iosFunc('f', b);
-          break;
+          return true;
         }
         default:
-          log(CLASS_BODY, Debug, "Inv.IO.pose:%c%c%c", c1, c2, c3);
-          break;
+          return false;
       }
     } else if (c1 == 'M') {
       // MESSAGES
@@ -481,35 +486,38 @@ private:
           Buffer t(6, "");
           t.fill("%02d:%02d", h, m);
           notifier->message(0, getInt(c3), t.getBuffer());
-        } break;
+          return true;
+        }
         case 'k': {
           log(CLASS_BODY, Debug, "Msg date");
           long t = getTiming()->getCurrentTime();
           Buffer b(18, "");
           b.fill("%4d-%02d-%02d\n%02d:%02d", GET_YEARS(t), GET_MONTHS(t), GET_DAYS(t), GET_HOURS(t), GET_MINUTES(t));
           notifier->message(0, getInt(c3), b.getBuffer());
-        } break;
+          return true;
+        }
         case 'q': {
           log(CLASS_BODY, Debug, "Msg quote");
           int i = random(NRO_QUOTES);
           notifier->message(0, getInt(c3), quotes->getQuote(i));
-        } break;
+          return true;
+        }
         case 'p': {
           log(CLASS_BODY, Debug, "Msg prediction");
           Buffer pr(200, "");
           Predictions::getPrediction(&pr);
           notifier->message(0, getInt(c3), pr.getBuffer());
-        } break;
+          return true;
+        }
         default:
-          log(CLASS_BODY, Debug, "Invalid message %s", pose);
-          break;
+          return false;
       }
     } else {
-      log(CLASS_BODY, Warn, "Ignoring 3-letter-code pose %s", pose);
+      return false;
     }
   }
 
-  void handleNCharPoses(char c1, char c2, const char *pose) {
+  bool handleNCharPoses(char c1, char c2, const char *pose) {
     if (c1 == 'M') {
       // MESSAGES
       int size = getInt(c2);
@@ -517,20 +525,23 @@ private:
       msg.replace('.', 0);
       log(CLASS_BODY, Debug, "Msg '%s'", msg.getBuffer());
       notifier->message(0, size, msg.getBuffer());
+      return true;
     } else if (c1 == 'N') {
       // NOTIFICATION
       Buffer msg(MOVE_STR_LENGTH, pose + 1);
       msg.replace('.', 0);
       log(CLASS_BODY, Debug, "Not '%s'", msg.getBuffer());
       notifier->notification(msg.getBuffer());
+      return true;
     } else if (c1 == 'I') {
       // IFTTT
       Buffer evt(MOVE_STR_LENGTH, pose + 1);
       evt.replace('.', 0);
       log(CLASS_BODY, Debug, "Event '%s'", evt.getBuffer());
       ifttt->triggerEvent(evt.getBuffer());
+      return true;
     } else {
-      log(CLASS_BODY, Warn, "Ignoring N-letter-code pose %s", pose);
+      return false;
     }
   }
 
@@ -543,33 +554,37 @@ public:
   const char *performPose(const char *pose) {
 
     int poseLen = poseStrLen(pose);
+    const char* nextPoseIfAllOk = pose + poseLen + 1;
+    bool success = false;
 
-    if (poseLen == -1) { // invalid number of chars poses
-      return NULL;
-    } else if (poseLen == 0) { // 0 chars poses
-      return NULL;
+    if (poseLen <= 0) { // invalid number of chars poses
+    	success = false;
     } else if (poseLen == 1) { // 1 chars poses
       char c1 = pose[0];
-      handle1CharPoses(c1, pose);
-      return pose + 1 + 1;
+      success = handle1CharPoses(c1, pose);
     } else if (poseLen == 2) { // 2 chars poses
       char c1 = pose[0];
       char c2 = pose[1];
-      handle2CharPoses(c1, c2, pose);
-      return pose + 2 + 1;
+      success = handle2CharPoses(c1, c2, pose);
     } else if (poseLen == 3) { // 3 chars poses
       char c1 = pose[0];
       char c2 = pose[1];
       char c3 = pose[2];
-      handle3CharPoses(c1, c2, c3, pose);
-      return pose + 3 + 1;
-    } else if (poseLen > 3) { // N chars poses
+      success = handle3CharPoses(c1, c2, c3, pose);
+    } else { // N chars poses
       char c1 = pose[0];
       char c2 = pose[1];
-      handleNCharPoses(c1, c2, pose);
-      return pose + poseLen + 1;
+      success = handleNCharPoses(c1, c2, pose);
+    }
+
+    if (success) {
+      return nextPoseIfAllOk;
+    } else if (!success && poseLen > 0) { // there was a message but invalid
+      notifier->message(0, 1, "Invalid: %s", pose);
+      delay(1000);
+    	return NULL;
     } else {
-      return NULL;
+    	return NULL;
     }
   }
 
