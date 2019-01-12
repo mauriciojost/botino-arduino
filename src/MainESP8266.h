@@ -565,6 +565,7 @@ void debugHandle() {
   if (firstTime) {
     Telnet.begin("ESP" DEVICE_NAME); // Intialize the remote logging framework
     ArduinoOTA.begin();              // Intialize OTA
+    firstTime = false;
   }
   Telnet.handle();     // Handle telnet log server and commands
   ArduinoOTA.handle(); // Handle on the air firmware load
