@@ -700,7 +700,7 @@ bool haveToInterrupt() {
       LED_INT_ON;
       reactToButtonHeld(holds, ONLY_SHOW_MSG);
       LED_INT_OFF;
-      delay(950);
+      delay(m.getSettings()->miniPeriodMsec());
     }
     bool interruptMe = reactToButtonHeld(holds, SHOW_MSG_AND_REACT);
     LED_INT_OFF;
