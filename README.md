@@ -119,7 +119,7 @@ To upload the firmware just do:
 
 # if you want to upload via OTA: 
 
- platformio run --target upload --upload-port <IP> # OTA
+ PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=`git rev-parse --short HEAD` `cat profiles/dev1-home.prof`" platformio run --target upload --upload-port <IP> # OTA
 
 ```
 
