@@ -326,7 +326,6 @@ public:
       logRaw(CLASS_MODULE, Info, fcontent.getBuffer());
       return false;
     } else if (strcmp("ack", c) == 0) {
-      c = strtok(NULL, " ");
       notifier->notificationRead();
       log(CLASS_MODULE, Info, "Notification read");
       return false;

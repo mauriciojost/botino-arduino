@@ -580,8 +580,8 @@ public:
     if (success) {
       return nextPoseIfAllOk;
     } else if (!success && poseLen > 0) { // there was a message but invalid
-      notifier->message(0, 1, "Invalid: %s", pose);
-      delay(1000);
+      notifier->message(0, 1, "Bad pose: %s", pose);
+      delay(2000);
     	return NULL;
     } else {
     	return NULL;
