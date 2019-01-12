@@ -33,7 +33,7 @@
   "\n  get ...         : display actor <actor> properties"                                                                                      \
   "\n  set ...         : set an actor property (example: 'set body msg0 HELLO')"                                                                \
   "\n  move ...        : execute a move (example: 'move A00C55')"                                                                               \
-  "\n  logl ...        : change log level to X (0 to 3)"                                                                                        \
+  "\n  logl [...]      : get / change log level to <x> (0 is more verbose, to 3 least verbose)"                                                 \
   "\n  clear           : clear device (eeprom and crashes stacktrace)"                                                                          \
   "\n  actall          : all act"                                                                                                               \
   "\n  actone ...      : make actor <x> act"                                                                                                    \
@@ -260,7 +260,8 @@ public:
     } else if (strcmp("logl", c) == 0) {
       c = strtok(NULL, " ");
       if (c == NULL) {
-        logRaw(CLASS_MODULE, Info, "Argument needed:\n  logl <loglevel>");
+        char ll = getLogLevel();
+        log(CLASS_MODULE, Info, "Log level: %d", ll);
         return false;
       }
       int ll = atoi(c);
