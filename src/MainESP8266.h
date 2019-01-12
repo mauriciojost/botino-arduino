@@ -136,15 +136,14 @@ void logLine(const char *str) {
   Serial.print("|");
   // telnet print
   if (telnet.isActive()) {
-    Serial.print(">");
-    for (int i=0; i< strlen(str); i++) {
-      telnet.print(str[i]);
-    }
-    Serial.print(">");
+    Serial.print("TELNET|");
+  	for (int i=0; i< strlen(str); i++) {
+      telnet.write(str[i]);
+  	}
   }
-  Serial.print(str);
   // lcd print
   if (m.getSettings()->getDebug()) {
+    Serial.print("LCD|");
     lcd.setTextWrap(false);
     lcd.fillRect(0, LOG_LINE * 8, 128, 8, BLACK);
     lcd.setTextSize(1);
@@ -154,6 +153,7 @@ void logLine(const char *str) {
     lcd.display();
     delay(DELAY_MS_SPI);
   }
+  Serial.print(str);
 }
 
 bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries) {
