@@ -100,7 +100,7 @@ uint8_t initImage[IMG_SIZE_BYTES] = {0b00000000, 0b00000000,
 // clang-format on
 
 HTTPClient httpClient;
-RemoteDebug Telnet;
+RemoteDebug telnet;
 Servo servoLeft;
 Servo servoRight;
 Adafruit_SSD1306 lcd(-1);
@@ -134,11 +134,13 @@ void logLine(const char *str) {
   Serial.print("HEAP ");
   Serial.print(ESP.getFreeHeap());
   Serial.print("|");
-  Serial.print(str);
   // telnet print
-  if (Telnet.isActive()) {
-    Telnet.printf("%s", str);
+  if (telnet.isActive()) {
+    Serial.print(">");
+    telnet.print(str);
+    Serial.print(">");
   }
+  Serial.print(str);
   // lcd print
   if (m.getSettings()->getDebug()) {
     lcd.setTextWrap(false);
@@ -503,9 +505,9 @@ void setupArchitecture() {
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, RISING);
 
   log(CLASS_MAIN, Debug, "Setup commands");
-  Telnet.setCallBackProjectCmds(reactCommandCustom);
+  telnet.setCallBackProjectCmds(reactCommandCustom);
   String helpCli(HELP_COMMAND_CLI);
-  Telnet.setHelpProjectsCmds(helpCli);
+  telnet.setHelpProjectsCmds(helpCli);
 
   hwTest();
 }
@@ -563,11 +565,12 @@ void abort(const char* msg) {
 void debugHandle() {
   static bool firstTime = true;
   if (firstTime) {
-    Telnet.begin("ESP" DEVICE_NAME); // Intialize the remote logging framework
+    log(CLASS_MAIN, Debug, "Initialize debuggers...");
+    telnet.begin("ESP" DEVICE_NAME); // Intialize the remote logging framework
     ArduinoOTA.begin();              // Intialize OTA
     firstTime = false;
   }
-  Telnet.handle();     // Handle telnet log server and commands
+  telnet.handle();     // Handle telnet log server and commands
   ArduinoOTA.handle(); // Handle on the air firmware load
 }
 
@@ -652,7 +655,7 @@ void bitmapToLcd(uint8_t bitmap[]) {
 }
 
 void reactCommandCustom() { // for the use via telnet
-  m.command(Telnet.getLastCommand().c_str());
+  m.command(telnet.getLastCommand().c_str());
 }
 
 void heartbeat() {
