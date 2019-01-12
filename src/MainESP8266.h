@@ -572,7 +572,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
       m.getNotifier()->message(0, 2, "Done?");
       if (!onlyMsg) {
         m.command("ack");
-        m.command("move Fs.W1.Z.");
+        m.command("move Fs.W1.Fc3.W1.Z.");
       }
     } break;
     case 1:
