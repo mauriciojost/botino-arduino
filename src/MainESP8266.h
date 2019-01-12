@@ -21,10 +21,6 @@
 #define WIFI_DELAY_MS 3000
 #endif // WIFI_DELAY_MS
 
-#ifndef FRAG_TO_SLEEP_MS_MAX
-#define FRAG_TO_SLEEP_MS_MAX 1000 // maximum sleeping time for which the module can be unresponsive
-#endif                            // FRAG_TO_SLEEP_MS_MAX
-
 #define HARDWARE_TEST_STEP_DELAY_MS 2000
 
 #define PRE_DEEP_SLEEP_WINDOW_FACTOR 10
@@ -667,7 +663,7 @@ void lightSleepInterruptable(time_t cycleBegin, time_t periodSecs) {
     if (haveToInterrupt()) {
       break;
     }
-    delay(FRAG_TO_SLEEP_MS_MAX);
+    delay(m.getSettings()->miniPeriodMsec());
   }
 }
 
