@@ -15,9 +15,6 @@
 
 #define CLASS_SETTINGS "ST"
 
-
-#define INFO_BUFFER_LENGTH 256
-
 #ifndef WIFI_SSID_STEADY
 #define WIFI_SSID_STEADY "???"
 #endif // WIFI_SSID_STEADY
@@ -37,9 +34,7 @@
 
 #define PERIOD_MSEC (PERIOD_SEC * 1000)
 
-
 #define CREDENTIAL_BUFFER_SIZE 64
-
 
 enum SettingsProps {
   SettingsDebugProp = 0,          // boolean, define if the device is in debug mode
@@ -61,7 +56,6 @@ private:
   int periodms;
   int miniperiodms;
   int buttonRoutineUntil;
-  Buffer *infoBuffer;
   Buffer *ssid;
   Buffer *pass;
   Metadata *md;
@@ -75,7 +69,6 @@ public:
     pass = new Buffer(CREDENTIAL_BUFFER_SIZE);
     pass->load(WIFI_PASSWORD_STEADY);
 
-    infoBuffer = new Buffer(INFO_BUFFER_LENGTH);
     devDebug = true;
 #ifdef DEEP_SLEEP_MODE_ENABLED
     deepSleep = true;
@@ -83,7 +76,6 @@ public:
     deepSleep = false;
 #endif // DEEP_SLEEP_MODE_ENABLED
     buttonRoutineUntil = 4;
-    infoBuffer->clear();
     periodms = PERIOD_MSEC;
     miniperiodms = FRAG_TO_SLEEP_MS_MAX;
     md = new Metadata(n);
@@ -159,12 +151,10 @@ public:
     return SettingsPropsDelimiter;
   }
 
-  void getInfo(int infoIndex, Buffer *info) {
-    info->load(infoBuffer);
-  }
+  void getInfo(int infoIndex, Buffer *info) { }
 
   int getNroInfos() {
-    return 1;
+    return 0;
   }
 
   Metadata *getMetadata() {
@@ -184,10 +174,6 @@ public:
       getMetadata()->changed();
     }
     devDebug = b;
-  }
-
-  void setInfo(const char *s) {
-    infoBuffer->fill(s);
   }
 
   const char *getSsid() {

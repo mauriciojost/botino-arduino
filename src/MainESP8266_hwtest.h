@@ -77,9 +77,4 @@ void hwTest() {
 
 #endif
 
-  ios('r', IO_OFF);
-  ios('y', IO_OFF);
-  ios('w', IO_OFF);
-  ios('f', IO_OFF);
-  lcdImg('l', NULL);
 }

@@ -507,6 +507,13 @@ void setupArchitecture() {
   String helpCli(HELP_COMMAND_CLI);
   telnet.setHelpProjectsCmds(helpCli);
 
+  log(CLASS_MAIN, Debug, "Setup IO/lcd");
+  ios('r', IO_OFF);
+  ios('y', IO_OFF);
+  ios('w', IO_OFF);
+  ios('f', IO_OFF);
+  lcdImg('l', NULL);
+
   hwTest();
 }
 
@@ -521,11 +528,6 @@ void runModeArchitecture() {
     log(CLASS_MAIN, Warn, "Stack-trcs (!!!)");
     SaveCrash.print();
   }
-
-  // Report interesting information about the device
-  Buffer infoBuffer(INFO_BUFFER_LENGTH);
-  infoBuffer.fill("crs %d / ver %s / upt %lu h", SaveCrash.count(), STRINGIFY(PROJ_VERSION), (millis() / 1000) / 3600);
-  s->setInfo(infoBuffer.getBuffer());
 
   // Handle log level as per settings
   Serial.setDebugOutput(s->getDebug()); // deep HW logs
