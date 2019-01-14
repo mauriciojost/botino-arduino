@@ -1,10 +1,5 @@
 # TODO
 
-- Package electronics without breadboard
-- Improve simulator
-- Find better alternative to scripts and replace them (simulator, format, ...)
-- Make body be able to call ifttt event in a pose
-- Add smoke test that includes a whole architecture (to ensure it goes smootly for 100 cycles)
 - Improve memory use wrt JSON parsing (ParamStream is a memory hog, array + JsonBuffer, when actually
 JsonBuffer could be used right away as a sink for a stream in httpGet and httpPost)). + prefer heap (big) over stack (4k), i.e. 
 switch from heap
@@ -20,6 +15,11 @@ JsonObject& root = jsonBuffer.parseObject(myFile);
 
 # DONE
 
+- Package electronics without breadboard
+- Add smoke test that includes a whole architecture (to ensure it goes smootly for 100 cycles)
+- Find better alternative to scripts and replace them (simulator, format, ...) < won't do
+- Make body be able to call ifttt event in a pose
+- Improve simulator
 - Add one-shot timing setting
 - Share settings between uploader and simulator
 - Make a good pass and fix data types (avoid char, use better uint8 for instance)
