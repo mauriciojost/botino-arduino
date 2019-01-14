@@ -2,20 +2,18 @@
 
 [![Build Status](https://jenkins.martinenhome.com/buildStatus/icon?job=botino-arduino/master)](https://jenkins.martinenhome.com/job/botino-arduino/job/master/)
 
-This is a cool-geek-fully-configurable alarm project.
+This is a cool-geek-fully-configurable more-than-an-alarm project. 
 
 ![Botino](misc/images/botino-v0.jpg)
 
 What it does:
 
-- It connects to Wifi
-- It gets set up via REST JSON
-- It offers several moves (smily arms up, greetings, dances, disco night, rainy, etc.)
-- It offers severall alarms (can invoke moves)
-- It offers moves using: LCD, mobile arms, messages, LEDs, fan, IFTTT service
-- Random quote of the day
-- Random future reading
-- IFTTT connectivity (as This component for now)
+- 8 fully configurable alarms
+- alarms can trigger cool moves
+- can provide the random quote of the day (as part of a move)
+- can provide random future reading (as part of a move)
+- can fire IFTTT events
+- can be fired by IFTTT events
 
 ## 1. Get Started
 
@@ -57,9 +55,20 @@ for the device to pick it up). Then send the command `help` for help.
 
 ## Poses
 
-A pose is a status of a device. For instance a LED on, a fan off, a message in the LCD, etc.
+A pose refers to a pose of *Botino*. For instance a LED on, a fan off, a message in the LCD, etc.
 
-A sequence of poses make a move, which together with a timing make a routine. 
+A sequence of poses make a move: it can be dances, anymated messages on the screen, images on the screen, a light show, 
+an IFTTT event, etc.
+
+Among the poses, *Botino* can trigger IFTTT events. 
+
+### IFTTT connectivity
+
+This connectivity (as both This and That block) allows:
+- (as This) to control home artifacts like lights, heaters, etc. via a single button
+- (as This) to count events
+- (as That) make a move when an Ifttt condition is met (notify with a dance when tomorrow will rain)
+
 
 Properties: see [here for more information](src/actors/Body.h)
 
@@ -100,13 +109,6 @@ To get started with _eclipse_ do:
 ```
 platformio init --ide eclipse --board esp12e
 ```
-
-Then open with _eclipse_. When missing sources, you could link them to the `src` directory as follows:
-
-```
-ln -s `readlink -e .piolibdeps/Arduino/libraries/ESP8266HTTPClient/src/ESP8266HTTPClient.*` src/
-```
-However this method is not recommended.
 
 ## 3.3. Upload
 
