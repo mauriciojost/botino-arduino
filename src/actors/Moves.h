@@ -57,8 +57,11 @@ public:
       moves[i]->fill("Move %d%cmove Z.", i, MOVE_NAME_VALUE_SEPARATOR);
       moveNames[i] = new Buffer(MOVE_NAME_MAX_LENGTH);
     }
-    moves[0]->fill("Done!%cack", MOVE_NAME_VALUE_SEPARATOR);
-    moves[1]->fill("Time%cmove Mc3.W3.Z.", MOVE_NAME_VALUE_SEPARATOR);
+    moves[0]->fill("Done?%cack", MOVE_NAME_VALUE_SEPARATOR);
+    moves[1]->fill("Time?%cmove Mc3.W2.Z.", MOVE_NAME_VALUE_SEPARATOR);
+    moves[2]->fill("Dance?%cmove Fs.D3.D2.D1.D0.", MOVE_NAME_VALUE_SEPARATOR);
+    moves[3]->fill("Custom?%cmove M2custom?.", MOVE_NAME_VALUE_SEPARATOR);
+    moves[4]->fill("Custom?%cmove M2custom?.", MOVE_NAME_VALUE_SEPARATOR);
     updateMoveNames();
   }
 

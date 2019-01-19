@@ -570,26 +570,19 @@ void debugHandle() {
 
 bool reactToButtonHeld(int cycles, bool onlyMsg) {
   switch (cycles) {
-    case 0: {
-      m.getNotifier()->message(0, 2, "Done?");
-      if (!onlyMsg) {
-        m.command("ack");
-        m.command("move Fs.W1.Mc3.W1.Z.");
-      }
-    } break;
+    case 0:
     case 1:
     case 2:
     case 3:
-    case 4:
-    case 5: {
-      int ind = cycles - 1;
+    case 4: {
+      int ind = cycles - 0;
       const char *mvName = m.getMoves()->getMoveName(ind);
       m.getNotifier()->message(0, 2, "%s?", mvName);
       if (!onlyMsg) {
         m.command(m.getMoves()->getMoveValue(ind));
       }
     } break;
-    case 6: {
+    case 5: {
       m.getNotifier()->message(0, 2, "All act?");
       if (!onlyMsg) {
         m.command("actall");
@@ -597,21 +590,21 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
         m.getNotifier()->message(0, 1, "All act one-off");
       }
     } break;
-    case 7: {
+    case 6: {
       m.getNotifier()->message(0, 2, "Config mode?");
       if (!onlyMsg) {
         m.command("conf");
         m.getNotifier()->message(0, 1, "In config mode");
       }
     } break;
-    case 8: {
+    case 7: {
       m.getNotifier()->message(0, 2, "Run mode?");
       if (!onlyMsg) {
         m.command("run");
         m.getNotifier()->message(0, 1, "In run mode");
       }
     } break;
-    case 9: {
+    case 8: {
       m.getNotifier()->message(0, 2, "Show info?");
       if (!onlyMsg) {
         m.command("info");
@@ -620,7 +613,7 @@ bool reactToButtonHeld(int cycles, bool onlyMsg) {
     default: {
       m.getNotifier()->message(0, 2, "Abort?");
       if (!onlyMsg) {
-        m.getNotifier()->message(0, 1, "");
+        m.command("move Z.");
       }
     } break;
   }
