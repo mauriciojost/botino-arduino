@@ -340,13 +340,10 @@ public:
   }
 
   void cycleBot(bool mode, bool set, bool cycle) {
-
     TimingInterrupt interruptType = TimingInterruptNone;
-
     if (cycle) {
       interruptType = TimingInterruptCycle;
     }
-
     // execute a cycle on the bot
     bot->cycle(mode, set, interruptType);
   }
@@ -385,6 +382,9 @@ public:
     return notifier;
   }
 
+  /**
+   * Make all actors act
+   */
   void actall() {
     for (int i = 0; i < getBot()->getActors()->size(); i++) {
       Actor *a = getBot()->getActors()->get(i);
@@ -393,6 +393,9 @@ public:
     }
   }
 
+  /**
+   * Make a given by-name-actor act
+   */
   void actone(const char* actorName) {
     for (int i = 0; i < getBot()->getActors()->size(); i++) {
       Actor *a = getBot()->getActors()->get(i);
@@ -402,6 +405,65 @@ public:
       }
     }
   }
+
+  /**
+   * Execute a command given an index
+   *
+   * Thought to be used via single button devices, so that
+   * a button pressed can execute one of many available commands.
+   */
+  bool sequentialCommand(int index, bool dryRun) {
+    switch (index) {
+      case 0:
+      case 1:
+      case 2:
+      case 3:
+      case 4: {
+        int ind = index - 0;
+        const char *mvName = getMoves()->getMoveName(ind);
+        getNotifier()->message(0, 2, "%s?", mvName);
+        if (!dryRun) {
+          command(getMoves()->getMoveValue(ind));
+        }
+      } break;
+      case 5: {
+        getNotifier()->message(0, 2, "All act?");
+        if (!dryRun) {
+          command("actall");
+          command("run");
+          getNotifier()->message(0, 1, "All act one-off");
+        }
+      } break;
+      case 6: {
+        getNotifier()->message(0, 2, "Config mode?");
+        if (!dryRun) {
+          command("conf");
+          getNotifier()->message(0, 1, "In config mode");
+        }
+      } break;
+      case 7: {
+        getNotifier()->message(0, 2, "Run mode?");
+        if (!dryRun) {
+          command("run");
+          getNotifier()->message(0, 1, "In run mode");
+        }
+      } break;
+      case 8: {
+        getNotifier()->message(0, 2, "Show info?");
+        if (!dryRun) {
+          command("info");
+        }
+      } break;
+      default: {
+        getNotifier()->message(0, 2, "Abort?");
+        if (!dryRun) {
+          command("move Z.");
+        }
+      } break;
+    }
+    return false;
+  }
+
 
   void getProps(const char* actorN) {
       Array<Actor *> *actors = bot->getActors();

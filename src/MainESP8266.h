@@ -110,7 +110,6 @@ void bitmapToLcd(uint8_t bitmap[]);
 void reactCommandCustom();
 #include "MainESP8266_hwtest.h" // defines hwTest()
 void buttonPressed();
-bool reactToButtonHeld(int cycles, bool onlyMsg);
 void heartbeat();
 void lightSleepInterruptable(time_t cycleBegin, time_t periodSecs);
 void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs);
@@ -568,58 +567,6 @@ void debugHandle() {
 }
 
 
-bool reactToButtonHeld(int cycles, bool onlyMsg) {
-  switch (cycles) {
-    case 0:
-    case 1:
-    case 2:
-    case 3:
-    case 4: {
-      int ind = cycles - 0;
-      const char *mvName = m.getMoves()->getMoveName(ind);
-      m.getNotifier()->message(0, 2, "%s?", mvName);
-      if (!onlyMsg) {
-        m.command(m.getMoves()->getMoveValue(ind));
-      }
-    } break;
-    case 5: {
-      m.getNotifier()->message(0, 2, "All act?");
-      if (!onlyMsg) {
-        m.command("actall");
-        m.command("run");
-        m.getNotifier()->message(0, 1, "All act one-off");
-      }
-    } break;
-    case 6: {
-      m.getNotifier()->message(0, 2, "Config mode?");
-      if (!onlyMsg) {
-        m.command("conf");
-        m.getNotifier()->message(0, 1, "In config mode");
-      }
-    } break;
-    case 7: {
-      m.getNotifier()->message(0, 2, "Run mode?");
-      if (!onlyMsg) {
-        m.command("run");
-        m.getNotifier()->message(0, 1, "In run mode");
-      }
-    } break;
-    case 8: {
-      m.getNotifier()->message(0, 2, "Show info?");
-      if (!onlyMsg) {
-        m.command("info");
-      }
-    } break;
-    default: {
-      m.getNotifier()->message(0, 2, "Abort?");
-      if (!onlyMsg) {
-        m.command("move Z.");
-      }
-    } break;
-  }
-  return false;
-}
-
 ICACHE_RAM_ATTR
 void buttonPressed() {
   buttonInterrupts++;
@@ -687,17 +634,17 @@ bool haveToInterrupt() {
     // Handle button commands
     log(CLASS_MAIN, Debug, "Button command (%d)", buttonInterrupts);
     int holds = 0;
-    reactToButtonHeld(holds, ONLY_SHOW_MSG);
+    m.sequentialCommand(holds, ONLY_SHOW_MSG);
     delay(100); // anti-bouncing
     while (digitalRead(BUTTON0_PIN)) {
       holds++;
       log(CLASS_MAIN, Debug, "%d", holds);
       LED_INT_ON;
-      reactToButtonHeld(holds, ONLY_SHOW_MSG);
+      m.sequentialCommand(holds, ONLY_SHOW_MSG);
       LED_INT_OFF;
       delay(m.getSettings()->miniPeriodMsec());
     }
-    bool interruptMe = reactToButtonHeld(holds, SHOW_MSG_AND_REACT);
+    bool interruptMe = m.sequentialCommand(holds, SHOW_MSG_AND_REACT);
     LED_INT_OFF;
     buttonInterrupts = 0;
 
