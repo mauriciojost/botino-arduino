@@ -454,7 +454,9 @@ void info() {
 
 void sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
 	if (m.getSettings()->inDeepSleepMode() && periodSecs > 120) { // in deep sleep mode and period big enough
+		m.command("move Z.");
 		lightSleepInterruptable(now() /* always do it */, periodSecs / PRE_DEEP_SLEEP_WINDOW_FACTOR);
+		m.command("move Z.");
 		deepSleepNotInterruptable(cycleBegin, periodSecs);
 	} else {
 		lightSleepInterruptable(cycleBegin, periodSecs);
