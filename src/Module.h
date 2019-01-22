@@ -505,10 +505,11 @@ public:
   }
 
   void loop() {
-    log(CLASS_MODULE, Info, "BEGIN LOOP (ver: %s)\n\n", STRINGIFY(PROJ_VERSION));
     switch (getBot()->getMode()) {
       case (RunMode):
+        log(CLASS_MODULE, Info, "BEGIN LOOP (ver: %s)\n\n", STRINGIFY(PROJ_VERSION));
         runMode();
+        log(CLASS_MODULE, Info, "END LOOP\n\n");
         break;
       case (ConfigureMode):
         configureMode();
@@ -516,7 +517,6 @@ public:
       default:
         break;
     }
-    log(CLASS_MODULE, Info, "END LOOP\n\n");
   }
 
 };
