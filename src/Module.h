@@ -45,7 +45,6 @@
   "\n  ifttttoken ...  : set ifttt token"                                                                                                       \
   "\n  store           : save properties in eeprom (mainly for credentials)"                                                                    \
   "\n  load            : load properties in eeprom (mainly for credentials)"                                                                    \
-  "\n  readone ...     : read file <filename> from eeprom                  "                                                                    \
   "\n  ack             : notification read"                                                                                                     \
   "\n  help            : show this help"                                                                                                        \
   "\n  (all messages are shown as info log level)"                                                                                              \
@@ -323,13 +322,6 @@ public:
       propSync->fsLoadActorsProps(); // load mainly credentials already set
       log(CLASS_MODULE, Info, "Properties loaded from local copy");
       return false;
-    } else if (strcmp("readone", c) == 0) {
-      c = strtok(NULL, " ");
-      Buffer fname(32);
-      Buffer fcontent(256);
-      fileRead(fname.fill("%s", c), &fcontent);
-      logRaw(CLASS_MODULE, Info, fcontent.getBuffer());
-      return false;
     } else if (strcmp("ack", c) == 0) {
       notifier->notificationRead();
       body->performMove("Z.");
@@ -483,17 +475,16 @@ public:
 
 
   void getProps(const char* actorN) {
+      Buffer contentAuxBuffer(256);
       Array<Actor *> *actors = bot->getActors();
       for (int i = 0; i < actors->size(); i++) {
         Actor *actor = actors->get(i);
         if (actorN == NULL || strcmp(actor->getName(), actorN) == 0) {
-          log(CLASS_MODULE, Info, " '%s'", actor->getName());
-          for (int j = 0; j < actor->getNroProps(); j++) {
-            Buffer value(COMMAND_MAX_LENGTH);
-            actor->getPropValue(j, &value);
-            log(CLASS_MODULE, Info, "   '%s': '%s'", actor->getPropName(j), value.getBuffer());
-          }
-          log(CLASS_MODULE, Info, " ");
+          bot->getPropsJson(&contentAuxBuffer, i, EXCLUSIVE_FILTER_MODE, SENSITIVE_PROP_PREFIX);
+          contentAuxBuffer.replace('{', '\n');
+          contentAuxBuffer.replace('}', '\n');
+          log(CLASS_MODULE, Info, "'%s'", actor->getName());
+          log(CLASS_MODULE, Info, "   '%s'", contentAuxBuffer.getBuffer());
         }
       }
   }
