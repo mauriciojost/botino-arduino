@@ -332,6 +332,7 @@ public:
       return false;
     } else if (strcmp("ack", c) == 0) {
       notifier->notificationRead();
+      body->performMove("Z.");
       log(CLASS_MODULE, Info, "Notification read");
       return false;
     } else if (strcmp("help", c) == 0) {
