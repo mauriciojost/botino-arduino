@@ -36,6 +36,7 @@
   "\n  logl [...]      : get / change log level to <x> (0 is more verbose, to 3 least verbose)"                                                 \
   "\n  clear           : clear device (eeprom and crashes stacktrace)"                                                                          \
   "\n  actall          : all act"                                                                                                               \
+  "\n  touchall        : mark actors as 'changed' to force synchronization with the server"                                                     \
   "\n  actone ...      : make actor <x> act"                                                                                                    \
   "\n  rnd             : execute random routine"                                                                                                \
   "\n  lcd ...         : write on display <x> <y> <color> <wrap> <clear> <size> <str>"                                                          \
@@ -298,6 +299,9 @@ public:
     } else if (strcmp("actall", c) == 0) {
       actall();
       return false;
+    } else if (strcmp("touchall", c) == 0) {
+      touchall();
+      return false;
     } else if (strcmp("actone", c) == 0) {
       c = strtok(NULL, " ");
       if (c == NULL) {
@@ -390,6 +394,18 @@ public:
       Actor *a = getBot()->getActors()->get(i);
       log(CLASS_MODULE, Info, "One off: %s", a->getName());
       a->oneOff();
+    }
+  }
+
+  /**
+   * Touch all actors (to force them to be syncrhonized)
+   */
+  void touchall() {
+    for (int i = 0; i < getBot()->getActors()->size(); i++) {
+      Actor *a = getBot()->getActors()->get(i);
+      Metadata *m = a->getMetadata();
+      log(CLASS_MODULE, Info, "Touch: %s", a->getName());
+      m->changed();
     }
   }
 
