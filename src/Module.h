@@ -481,10 +481,7 @@ public:
         Actor *actor = actors->get(i);
         if (actorN == NULL || strcmp(actor->getName(), actorN) == 0) {
           bot->getPropsJson(&contentAuxBuffer, i, EXCLUSIVE_FILTER_MODE, SENSITIVE_PROP_PREFIX);
-          contentAuxBuffer.replace('{', '\n');
-          contentAuxBuffer.replace('}', '\n');
-          log(CLASS_MODULE, Info, "'%s'", actor->getName());
-          log(CLASS_MODULE, Info, "   '%s'", contentAuxBuffer.getBuffer());
+          log(CLASS_MODULE, Info, "'%s' -> %s", actor->getName(), contentAuxBuffer.getBuffer());
         }
       }
   }
