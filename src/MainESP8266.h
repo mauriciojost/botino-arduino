@@ -635,19 +635,16 @@ bool haveToInterrupt() {
   } else if (buttonInterrupts > 0) {
     // Handle button commands
     log(CLASS_MAIN, Debug, "Button command (%d)", buttonInterrupts);
-    int holds = 0;
-    m.sequentialCommand(holds, ONLY_SHOW_MSG);
-    delay(100); // anti-bouncing
-    while (digitalRead(BUTTON0_PIN)) {
+    int holds = -1;
+    do {
       holds++;
       log(CLASS_MAIN, Debug, "%d", holds);
       LED_INT_ON;
       m.sequentialCommand(holds, ONLY_SHOW_MSG);
       LED_INT_OFF;
       delay(m.getSettings()->miniPeriodMsec());
-    }
+    } while (digitalRead(BUTTON0_PIN));
     bool interruptMe = m.sequentialCommand(holds, SHOW_MSG_AND_REACT);
-    LED_INT_OFF;
     buttonInterrupts = 0;
 
     log(CLASS_MAIN, Debug, "Done");
