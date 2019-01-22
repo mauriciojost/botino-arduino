@@ -540,7 +540,9 @@ void runModeArchitecture() {
 
 void configureModeArchitecture() {
 	debugHandle();
-  m.getNotifier()->message(0, 1, "telnet %s", WiFi.localIP().toString().c_str());
+	if (m.getBot()->getClock()->currentTime() % 60 == 0) { // every minute
+    m.getNotifier()->message(0, 1, "telnet %s", WiFi.localIP().toString().c_str());
+	}
 }
 
 void abort(const char* msg) {
