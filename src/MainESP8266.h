@@ -81,19 +81,6 @@ extern "C" {
 
 volatile unsigned char buttonInterrupts = 0;
 
-// clang-format off
-
-uint8_t initImage[IMG_SIZE_BYTES] = {0b00000000, 0b00000000,
-                                     0b01111110, 0b00000000,
-                                     0b01000010, 0b00111110,
-                                     0b01000010, 0b00100010,
-                                     0b01001010, 0b00101010,
-                                     0b01000010, 0b00100010,
-                                     0b01111110, 0b00111110,
-                                     0b00000000, 0b00000000};
-
-// clang-format on
-
 HTTPClient httpClient;
 RemoteDebug telnet;
 Servo servoLeft;
