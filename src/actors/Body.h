@@ -292,7 +292,7 @@ private:
       iosFunc('w', IO_OFF);
       iosFunc('y', IO_OFF);
       iosFunc('f', IO_OFF);
-      arms(0, 0, ARM_FAST_STEPS);
+      arms(0, 0, ARM_NORMAL_STEPS);
       return true;
     } else {
       return false;
