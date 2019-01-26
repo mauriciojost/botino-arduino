@@ -168,7 +168,7 @@ public:
     log(CLASS_MODULE, Info, "# Loading credentials stored in FS...");
     getPropSync()->fsLoadActorsProps(); // load stored properties (most importantly credentials)
     log(CLASS_MODULE, Info, "# Syncing actors with server...");
-    bool serSyncd = getPropSync()->serverSyncRetry(false); // sync properties from the server
+    bool serSyncd = getPropSync()->serverSyncRetry(); // sync properties from the server
     time_t leftTime = getBot()->getClock()->currentTime();
 
     Buffer timeAux(19);
@@ -499,7 +499,7 @@ public:
     if (getSettings()->inDeepSleepMode()) {
       // before going to deep sleep store in the server the last status of all actors
       log(CLASS_MODULE, Info, "Syncing actors with server (run)...");
-      getPropSync()->serverSyncRetry(false); // sync properties from the server (with new props and new clock blocked timing)
+      getPropSync()->serverSyncRetry(); // sync properties from the server (with new props and new clock blocked timing)
     }
     sleepInterruptable(cycleBegin, getSettings()->periodMsec() / 1000);
   }
