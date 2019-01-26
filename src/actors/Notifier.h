@@ -146,9 +146,7 @@ public:
       int i = (int)propIndex - (int)NotifierNotif0Prop;
       if (m == SetCustomValue) {
         Buffer a = Buffer(MAX_NOTIF_LENGTH, targetValue);
-        if (!a.isEmpty()) {
-          queue.pushUnique(a.getBuffer());
-        }
+        queue.setAt(i, a.getBuffer());
       }
       if (actualValue != NULL) {
         actualValue->load(queue.getAt(i, EMPTY_NOTIF_REPRESENTATION));
