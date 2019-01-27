@@ -1,6 +1,9 @@
 // https://jenkins.io/doc/book/pipeline/jenkinsfile/
 // Scripted pipeline (not declarative)
 pipeline {
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+  }
   agent {
     docker { 
       image 'mauriciojost/arduino-ci:platformio-3.5.3-0.1.0' 
