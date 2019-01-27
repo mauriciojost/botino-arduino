@@ -38,6 +38,7 @@
 
 enum SettingsProps {
   SettingsDebugProp = 0,          // boolean, define if the device is in debug mode
+  SettingsLcdLogsProp,            // boolean, define if the device display logs in LCD
   SettingsDeepSleepProp,          // boolean, define if the device is in deep sleep mode
   SettingsButtonRoutineLimitProp, // integer, define the first X routines that are randomly executed when the button is pressed
   SettingsPeriodMsProp,           // period in msec for the device to wait until update clock and make actors catch up with acting (if any)
@@ -52,6 +53,7 @@ class Settings : public Actor {
 private:
   const char *name;
   bool devDebug;
+  bool lcdLogs;
   bool deepSleep;
   int periodms;
   int miniperiodms;
@@ -70,6 +72,7 @@ public:
     pass->load(WIFI_PASSWORD_STEADY);
 
     devDebug = true;
+    lcdLogs = false;
 #ifdef DEEP_SLEEP_MODE_ENABLED
     deepSleep = true;
 #else // DEEP_SLEEP_MODE_ENABLED
@@ -95,6 +98,8 @@ public:
         return "_wifipass"; // with obfuscation (starts with _)
       case (SettingsDebugProp):
         return "debug";
+      case (SettingsLcdLogsProp):
+        return "lcdlogs";
       case (SettingsDeepSleepProp):
         return "deepsleep";
       case (SettingsPeriodMsProp):
@@ -112,6 +117,9 @@ public:
     switch (propIndex) {
       case (SettingsDebugProp):
         setPropBoolean(m, targetValue, actualValue, &devDebug);
+        break;
+      case (SettingsLcdLogsProp):
+        setPropBoolean(m, targetValue, actualValue, &lcdLogs);
         break;
       case (SettingsDeepSleepProp):
 #ifdef DEEP_SLEEP_MODE_ENABLED
@@ -167,6 +175,10 @@ public:
 
   bool getDebug() {
     return devDebug;
+  }
+
+  bool getLcdLogs() {
+    return lcdLogs;
   }
 
   void setDebug(bool b) {

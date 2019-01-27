@@ -128,7 +128,7 @@ void logLine(const char *str) {
   	}
   }
   // lcd print
-  if (m.getSettings()->getDebug()) {
+  if (m.getSettings()->getLcdLogs()) {
     Serial.print("LCD|");
     lcd.setTextWrap(false);
     lcd.fillRect(0, LOG_LINE * 8, 128, 8, BLACK);
