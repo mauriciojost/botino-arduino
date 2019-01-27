@@ -606,6 +606,7 @@ void lightSleepInterruptable(time_t cycleBegin, time_t periodSecs) {
 }
 
 void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs) {
+  log(CLASS_MAIN, Debug, "Deep Sleep(%ds)...", (int)periodSecs);
   time_t spentSecs = now() - cycleBegin;
   time_t leftSecs = periodSecs - spentSecs;
   if (leftSecs > 0) {
