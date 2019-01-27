@@ -93,6 +93,8 @@ Adafruit_SSD1306 lcd(-1);
 #define LED_ALIVE_ON ios('r', IO_ON);
 #define LED_ALIVE_OFF ios('r', IO_OFF);
 
+ADC_MODE(ADC_VCC);
+
 void bitmapToLcd(uint8_t bitmap[]);
 void reactCommandCustom();
 #include "MainESP8266_hwtest.h" // defines hwTest()
