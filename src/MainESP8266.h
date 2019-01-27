@@ -115,6 +115,9 @@ void logLine(const char *str) {
   Serial.print("HEAP ");
   Serial.print(ESP.getFreeHeap());
   Serial.print("|");
+  Serial.print("VCC ");
+  Serial.print(ESP.getVcc());
+  Serial.print("|");
   // telnet print
   if (telnet.isActive()) {
     Serial.print("TELNET|");
