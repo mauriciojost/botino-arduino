@@ -429,13 +429,14 @@ void info() {
 
   m.getNotifier()->message(0,
                            1,
-                           "DEV NAME:%s\nVers:%s\nCrashes:%d\nIP: %s\nMemory:%lu\nUptime:%luh",
+                           "DEV NAME:%s\nVers:%s\nCrashes:%d\nIP: %s\nMemory:%lu\nUptime:%luh\nVcc: %0.2f",
                            DEVICE_NAME,
                            STRINGIFY(PROJ_VERSION),
                            SaveCrash.count(),
                            WiFi.localIP().toString().c_str(),
                            ESP.getFreeHeap(),
-                           (millis() / 1000) / 3600);
+                           (millis() / 1000) / 3600,
+                           ((float)ESP.getVcc()/1024));
 
 }
 
