@@ -58,7 +58,7 @@
 
 #define SERVO_PERIOD_REACTION_MS 15
 
-#define LOG_LINE 7
+#define LOG_LINE 0
 
 #ifndef URL_PRINT_MAX_LENGTH
 #define URL_PRINT_MAX_LENGTH 20
