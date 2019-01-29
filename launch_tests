@@ -18,6 +18,8 @@ function run_test() {
   export headers_unity="-I libs/Unity/src"
   export src_unity="libs/Unity/src/*.c"
 
+  rm -f ./simulator.bin
+
   cmd_l="g++ -Wno-deprecated-declarations -g -ggdb -o simulator.bin $flags "$PLATFORMIO_BUILD_FLAGS" $src_c $src_cpp $src_unity $main_src $headers -I src $headers_unity"
   $cmd_l 
 
