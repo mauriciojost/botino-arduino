@@ -22,7 +22,7 @@ function run_test() {
   $cmd_l 
 
   ./simulator.bin
-  #gdbtui simulator.bin
+  #cgdb simulator.bin
 
   rm ./simulator.bin
 
