@@ -75,6 +75,32 @@ void hwTest() {
   SPIFFS.end();
   delay(HARDWARE_TEST_STEP_DELAY_MS);
 
+  m.command("move Fs.");
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
+  m.command("move Nhello.");
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
+  m.command("move A99.A00.B99.Z.");
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
+  m.command("move D0.D1.");
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
+  m.command("move D2.D3.");
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
+  m.command("move D/.D\.");
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
+  m.command("move Du.Dn.");
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
+  m.command("move Mc3.");
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
+  m.command("move Fs.");
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
+  m.command("move FS.W2.Fs.");
+  m.command("move Lry.W2.Lrn.");
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
+  m.command("move Mq2.");
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
+  m.command("move Mp2.");
+  delay(HARDWARE_TEST_STEP_DELAY_MS);
+
 #endif
 
 }

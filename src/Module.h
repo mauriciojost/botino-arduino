@@ -163,7 +163,7 @@ public:
     fileWrite = fileWriteFunc;
     info = infoFunc;
 
-    setupArchitecture(); // module completely initialized, architecture can be initialized now
+    setupArchitecture(); // module objects initialized, architecture can be initialized now
 
     log(CLASS_MODULE, Info, "# Loading credentials stored in FS...");
     getPropSync()->fsLoadActorsProps(); // load stored properties (most importantly credentials)
