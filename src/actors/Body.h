@@ -24,13 +24,8 @@
 POSES (X-char codes separated by separator)
 --------------------
 
-### 1 LETTER CODE POSES
-
 Codes:
   Z. : turn all power consuming components off
-
-
-### 2 LETTER CODE POSES
 
 WAIT POSES: wait a given number of seconds
 Codes:
@@ -76,8 +71,6 @@ IO POSES: turn on/off a given IO device, such as LEDS or the FAN (on = y, off = 
 Codes:
   L?.. : turn randomly all leds
 
-### 3 LETTER CODE POSES
-
 ARMS POSES: move both arms to a given position each (left, then right) (A=fast, B=normal, C=slow)
 Codes:
   A00. : Move left and right arms to respective position 0 and 0 (both down) at high speed
@@ -107,13 +100,8 @@ Codes:
   Mk3. : show message containing current date-time (with font size 3)
   Mp1. : show random future reading (with font size 1)
   Mq1. : show random quote (with font size 1)
-
-
-### N>3 LETTER CODE POSES
-
-MESSAGE POSES: show a certain message in the LCD with a given font size
-Codes:
   M1HELLO. : show message HELLO with font size 1 (user provided)
+
 
 NOTIFICATION POSES: show a certain notification in the LCD (requires user's ACK before removal)
 Codes:
@@ -139,7 +127,6 @@ Codes:
 #include <main4ino/Integer.h>
 #include <main4ino/Misc.h>
 #include <main4ino/Timing.h>
-#include <string.h>
 #include <Io.h>
 
 #define CLASS_BODY "BO"
@@ -284,8 +271,108 @@ private:
     }
   }
 
-  bool handle1CharPoses(const char *pose) {
-    if (sscanf(pose, "Z") == 0) {
+  bool handleCharPoses(const char *pose) {
+
+    char c0 = 'x', c1 = 'x';
+
+    if (sscanf(pose, "A%c%c.", &c0, &c1) == 2) {
+      // ARMS FAST
+      int l = getInt(c0);
+      int r = getInt(c1);
+      log(CLASS_BODY, Debug, "Armsf %d&%d", l, r);
+      arms(l, r, ARM_FAST_STEPS);
+      return true;
+    } else if (sscanf(pose, "B%c%c.", &c0, &c1) == 2) {
+      // ARMS MEDIUM
+      int l = getInt(c0);
+      int r = getInt(c1);
+      log(CLASS_BODY, Debug, "Armsn %d&%d", l, r);
+      arms(l, r, ARM_NORMAL_STEPS);
+      return true;
+    } else if (sscanf(pose, "C%c%c.", &c0, &c1) == 2) {
+      // ARMS SLOW
+      int l = getInt(c0);
+      int r = getInt(c1);
+      log(CLASS_BODY, Debug, "Armss %d&%d", l, r);
+      arms(l, r, ARM_SLOW_STEPS);
+      return true;
+    } else if (sscanf(pose, "L%c%c.", &c0, &c1) == 2) {
+      // IO (LEDS / FAN)
+      int b = getIosState(c1);
+      switch (c0) {
+        case 'r': {
+          log(CLASS_BODY, Debug, "Led red: %d", b);
+          iosFunc('r', b);
+          return true;
+        }
+        case 'w': {
+          log(CLASS_BODY, Debug, "Led white: %d", b);
+          iosFunc('w', b);
+          return true;
+        }
+        case 'y': {
+          log(CLASS_BODY, Debug, "Led yellow: %d", b);
+          iosFunc('y', b);
+          return true;
+        }
+        case 'f': {
+          log(CLASS_BODY, Debug, "Fan: %d", b);
+          iosFunc('f', b);
+          return true;
+        }
+        default:
+          return false;
+      }
+    } else if (sscanf(pose, "M%c%c.", &c0, &c1) == 2) {
+      // MESSAGES
+      switch (c0) {
+        case 'c': {
+          log(CLASS_BODY, Debug, "Msg clock");
+          int h = GET_HOURS(getTiming()->getCurrentTime());
+          int m = GET_MINUTES(getTiming()->getCurrentTime());
+          Buffer t(6, "");
+          t.fill("%02d:%02d", h, m);
+          notifier->message(0, getInt(c1), t.getBuffer());
+          return true;
+        }
+        case 'k': {
+          log(CLASS_BODY, Debug, "Msg date");
+          long t = getTiming()->getCurrentTime();
+          Buffer b(18, "");
+          b.fill("%4d-%02d-%02d\n%02d:%02d", GET_YEARS(t), GET_MONTHS(t), GET_DAYS(t), GET_HOURS(t), GET_MINUTES(t));
+          notifier->message(0, getInt(c1), b.getBuffer());
+          return true;
+        }
+        case 'q': {
+          log(CLASS_BODY, Debug, "Msg quote");
+          int i = random(NRO_QUOTES);
+          notifier->message(0, getInt(c1), quotes->getQuote(i));
+          return true;
+        }
+        case 'p': {
+          log(CLASS_BODY, Debug, "Msg prediction");
+          Buffer pr(200, "");
+          Predictions::getPrediction(&pr);
+          notifier->message(0, getInt(c1), pr.getBuffer());
+          return true;
+        }
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6': {
+          int size = getInt(c0);
+          Buffer msg(MOVE_STR_LENGTH, pose + 2);
+          msg.replace('.', 0);
+          log(CLASS_BODY, Debug, "Msg '%s'", msg.getBuffer());
+          notifier->message(0, size, msg.getBuffer());
+          return true;
+        }
+        default:
+          return false;
+      }
+    } else if (sscanf(pose, "Z.") == 0) {
       notifier->lcdImg('b', NULL);
       notifier->lcdImg('l', NULL);
       iosFunc('r', IO_OFF);
@@ -294,21 +381,13 @@ private:
       iosFunc('f', IO_OFF);
       arms(0, 0, ARM_NORMAL_STEPS);
       return true;
-    } else {
-      return false;
-    }
-  }
-
-  bool handle2CharPoses(const char *pose) {
-    char c0 = 'x';
-    char* cp0 = NULL;
-    if (sscanf(pose, "W") == 0) {
+    } else if (sscanf(pose, "W%c.", &c0) == 1) {
       // WAIT
-      int v = getInt(pose[1]);
+      int v = getInt(c0);
       log(CLASS_BODY, Debug, "Wait %d s", v);
       delay(v * 1000);
       return true;
-    } else if (sscanf(pose, "F%c", &c0) == 1) {
+    } else if (sscanf(pose, "F%c.", &c0) == 1) {
       // FACES
       switch (c0) {
         case '0':
@@ -359,13 +438,13 @@ private:
         default:
           return false;
       }
-    } else if (sscanf(pose, "I%c", &c0) == 1) {
+    } else if (sscanf(pose, "I%c.", &c0) == 1) {
       // IFTTT
       int i = getInt(c0);
       log(CLASS_BODY, Debug, "Ifttt %d", i);
       ifttt->triggerEvent(i);
       return true;
-    } else if (sscanf(pose, "L%c", &c0) == 1) {
+    } else if (sscanf(pose, "L%c.", &c0) == 1) {
       // IO (LEDS / FAN)
       switch (c0) {
         case '?': {
@@ -377,7 +456,7 @@ private:
         default:
           return false;
       }
-    } else if (sscanf(pose, "D%c", &c0) == 1) {
+    } else if (sscanf(pose, "D%c.", &c0) == 1) {
       // DANCE
       switch (c0) {
         case '0':
@@ -419,130 +498,19 @@ private:
         default:
           return false;
       }
-    } else {
-      return false;
-    }
-  }
 
-  bool handle3CharPoses(const char *pose) {
-
-    char c0 = 'x', c1 = 'x';
-
-    if (sscanf(pose, "A%c%c", &c0, &c1) == 2) {
-      // ARMS FAST
-      int l = getInt(c0);
-      int r = getInt(c1);
-      log(CLASS_BODY, Debug, "Armsf %d&%d", l, r);
-      arms(l, r, ARM_FAST_STEPS);
-      return true;
-    } else if (sscanf(pose, "B%c%c", &c0, &c1) == 2) {
-      // ARMS MEDIUM
-      int l = getInt(c0);
-      int r = getInt(c1);
-      log(CLASS_BODY, Debug, "Armsn %d&%d", l, r);
-      arms(l, r, ARM_NORMAL_STEPS);
-      return true;
-    } else if (sscanf(pose, "C%c%c", &c0, &c1) == 2) {
-      // ARMS SLOW
-      int l = getInt(c0);
-      int r = getInt(c1);
-      log(CLASS_BODY, Debug, "Armss %d&%d", l, r);
-      arms(l, r, ARM_SLOW_STEPS);
-      return true;
-    } else if (sscanf(pose, "L%c%c", &c0, &c1) == 2) {
-      // IO (LEDS / FAN)
-      switch (c0) {
-        case 'r': {
-          int b = getIosState(c1);
-          log(CLASS_BODY, Debug, "Led red: %d", b);
-          iosFunc('r', b);
-          return true;
-        }
-        case 'w': {
-          int b = getIosState(c1);
-          log(CLASS_BODY, Debug, "Led white: %d", b);
-          iosFunc('w', b);
-          return true;
-        }
-        case 'y': {
-          int b = getIosState(c1);
-          log(CLASS_BODY, Debug, "Led yellow: %d", b);
-          iosFunc('y', b);
-          return true;
-        }
-        case 'f': {
-          int b = getIosState(c1);
-          log(CLASS_BODY, Debug, "Fan: %d", b);
-          iosFunc('f', b);
-          return true;
-        }
-        default:
-          return false;
-      }
-    } else if (sscanf(pose, "M%c%c", &c0, &c1) == 2) {
+    } else if (sscanf(pose, "M%c%c", &c0, &c1) == 2) { // for some reason a simple sscanf("hey", "%s", cp0) returns 0
       // MESSAGES
-      switch (c0) {
-        case 'c': {
-          log(CLASS_BODY, Debug, "Msg clock");
-          int h = GET_HOURS(getTiming()->getCurrentTime());
-          int m = GET_MINUTES(getTiming()->getCurrentTime());
-          Buffer t(6, "");
-          t.fill("%02d:%02d", h, m);
-          notifier->message(0, getInt(c1), t.getBuffer());
-          return true;
-        }
-        case 'k': {
-          log(CLASS_BODY, Debug, "Msg date");
-          long t = getTiming()->getCurrentTime();
-          Buffer b(18, "");
-          b.fill("%4d-%02d-%02d\n%02d:%02d", GET_YEARS(t), GET_MONTHS(t), GET_DAYS(t), GET_HOURS(t), GET_MINUTES(t));
-          notifier->message(0, getInt(c1), b.getBuffer());
-          return true;
-        }
-        case 'q': {
-          log(CLASS_BODY, Debug, "Msg quote");
-          int i = random(NRO_QUOTES);
-          notifier->message(0, getInt(c1), quotes->getQuote(i));
-          return true;
-        }
-        case 'p': {
-          log(CLASS_BODY, Debug, "Msg prediction");
-          Buffer pr(200, "");
-          Predictions::getPrediction(&pr);
-          notifier->message(0, getInt(c1), pr.getBuffer());
-          return true;
-        }
-        default:
-          return false;
-      }
-    } else {
-      return false;
-    }
-  }
-
-  bool handleNCharPoses(const char *pose) {
-
-    char c0 = 'x';
-    char* cp0 = NULL;
-
-    if (sscanf(pose, "M%c%s", &c0, cp0) == 2) {
-      // MESSAGES
-      int size = getInt(c0);
-      Buffer msg(MOVE_STR_LENGTH, cp0);
-      msg.replace('.', 0);
-      log(CLASS_BODY, Debug, "Msg '%s'", msg.getBuffer());
-      notifier->message(0, size, msg.getBuffer());
-      return true;
-    } else if (sscanf(pose, "N%s", cp0) == 1) {
+    } else if (sscanf(pose, "N%c", &c0) == 1) {
       // NOTIFICATION
-      Buffer msg(MOVE_STR_LENGTH, cp0);
+      Buffer msg(MOVE_STR_LENGTH, pose + 1);
       msg.replace('.', 0);
       log(CLASS_BODY, Debug, "Not '%s'", msg.getBuffer());
       notifier->notification(msg.getBuffer());
       return true;
-    } else if (sscanf(pose, "I%s", cp0) == 1) {
+    } else if (sscanf(pose, "I%c", &c0) == 1) {
       // IFTTT
-      Buffer evt(MOVE_STR_LENGTH, cp0);
+      Buffer evt(MOVE_STR_LENGTH, pose + 1);
       evt.replace('.', 0);
       log(CLASS_BODY, Debug, "Event '%s'", evt.getBuffer());
       ifttt->triggerEvent(evt.getBuffer());
@@ -566,17 +534,12 @@ public:
 
     if (poseLen <= 0) { // invalid number of chars poses
     	success = false;
-    } else if (poseLen == 1) { // 1 chars poses
-      success = handle1CharPoses(pose);
-    } else if (poseLen == 2) { // 2 chars poses
-      success = handle2CharPoses(pose);
-    } else if (poseLen == 3) { // 3 chars poses
-      success = handle3CharPoses(pose);
-    } else { // N chars poses
-      success = handleNCharPoses(pose);
+    } else if (poseLen > 0) {
+      success = handleCharPoses(pose);
     }
 
     if (success) {
+      log(CLASS_BODY, Debug, "Done pose '%s'", pose);
       return nextPoseIfAllOk;
     } else if (!success && poseLen > 0) { // there was a message but invalid
       notifier->message(0, 1, "Bad pose: %s", pose);
