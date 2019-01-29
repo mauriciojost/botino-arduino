@@ -78,7 +78,6 @@ void initBody(Body *b, Quotes *q, Images *i, Ifttt *it, Notifier *n) {
 
 void test_body_shows_time() {
 
-  setLogLevel(Warn);
   Quotes q("q");
   Notifier n("n");
   n.setMessageFunc(messageOnLcd);
