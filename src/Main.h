@@ -64,6 +64,9 @@ bool writeFile(const char* fname, const char* content);
 // Display some useful info related to the HW
 void info();
 
+// Update the firmware and restart the device
+void updateFirmware();
+
 // Execution
 ///////////////////
 

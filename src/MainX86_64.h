@@ -149,6 +149,8 @@ bool writeFile(const char* fname, const char* content) {
 
 void info() {}
 
+void updateFirmware() {}
+
 // Execution
 ///////////////////
 

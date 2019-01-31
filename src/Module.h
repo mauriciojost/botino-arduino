@@ -28,6 +28,7 @@
   "\n  run             : go to run mode"                                                                                                        \
   "\n  conf            : go to conf mode"                                                                                                       \
   "\n  info            : show info about the device"                                                                                            \
+  "\n  update          : update the firmware"                                                                                                   \
   "\n  wifi            : init steady wifi"                                                                                                      \
   "\n  get             : display actors properties"                                                                                             \
   "\n  get ...         : display actor <actor> properties"                                                                                      \
@@ -78,6 +79,7 @@ private:
   bool (*fileRead)(const char *fname, Buffer* content);
   bool (*fileWrite)(const char *fname, const char* content);
   void (*info)();
+  void (*update)();
 
 public:
   Module() {
@@ -121,6 +123,7 @@ public:
     fileRead = NULL;
     fileWrite = NULL;
     info = NULL;
+    update = NULL;
   }
 
   void setup(void (*setupArchitecture)(),
@@ -138,7 +141,8 @@ public:
              void (*sleepInterruptableFunc)(time_t cycleBegin, time_t periodSec),
              void (*configureModeArchitectureFunc)(),
              void (*runModeArchitectureFunc)(),
-             void (*infoFunc)()
+             void (*infoFunc)(),
+             void (*updateFunc)()
 						 ) {
 
     notifier->setMessageFunc(messageFunc);
@@ -162,6 +166,7 @@ public:
     fileRead = fileReadFunc;
     fileWrite = fileWriteFunc;
     info = infoFunc;
+    update = updateFunc;
 
     setupArchitecture(); // module objects initialized, architecture can be initialized now
 
@@ -253,6 +258,9 @@ public:
       return false;
     } else if (strcmp("info", c) == 0) {
       info();
+      return false;
+    } else if (strcmp("update", c) == 0) {
+      update();
       return false;
     } else if (strcmp("clear", c) == 0) {
       clearDeviceFunc();

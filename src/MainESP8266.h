@@ -7,6 +7,7 @@
 #include <Arduino.h>
 #include <ArduinoOTA.h>
 #include <ESP8266HTTPClient.h>
+#include <ESP8266httpUpdate.h>
 #include <ESP8266WiFi.h>
 #include <FS.h>
 #include <Pinout.h>
@@ -22,6 +23,10 @@
 #endif // WIFI_DELAY_MS
 
 #define HARDWARE_TEST_STEP_DELAY_MS 2000
+
+#ifndef FIRMWARE_UPDATE_URL
+#define FIRMWARE_UPDATE_URL "http://martinenhome.com:6781/firmwares/botino/latest"
+#endif // FIRMWARE_UPDATE_URL
 
 #define PRE_DEEP_SLEEP_WINDOW_FACTOR 10
 
@@ -440,6 +445,23 @@ void info() {
 
 }
 
+void updateFirmware() {
+  ESP8266HTTPUpdate updater;
+  log(CLASS_MAIN, Info, "Updating firmware from '%s'...", FIRMWARE_UPDATE_URL);
+  t_httpUpdate_return ret = updater.update(FIRMWARE_UPDATE_URL);
+  switch (ret) {
+    case HTTP_UPDATE_FAILED:
+      log(CLASS_MAIN, Error, "HTTP_UPDATE_FAILD Error (%d): %s\n", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+      break;
+    case HTTP_UPDATE_NO_UPDATES:
+      log(CLASS_MAIN, Info, "HTTP_UPDATE_NO_UPDATES");
+      break;
+    case HTTP_UPDATE_OK:
+      log(CLASS_MAIN, Info, "HTTP_UPDATE_OK");
+      break;
+  }
+}
+
 // Execution
 ///////////////////
 
@@ -656,4 +678,3 @@ bool haveToInterrupt() {
     return false;
   }
 }
-
