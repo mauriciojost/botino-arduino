@@ -459,12 +459,23 @@ void setupArchitecture() {
   // Let HW startup
   delay(2 * 1000);
 
+  // Setup pins
+  log(CLASS_MAIN, Debug, "Setup pins");
+  pinMode(LEDR_PIN, OUTPUT);
+  pinMode(LEDW_PIN, OUTPUT);
+  pinMode(LEDY_PIN, OUTPUT);
+  pinMode(FAN_PIN, OUTPUT);
+  pinMode(SERVO0_PIN, OUTPUT);
+  pinMode(SERVO1_PIN, OUTPUT);
+  pinMode(BUTTON0_PIN, INPUT);
+
   // Intialize the logging framework
   Serial.begin(115200);     // Initialize serial port
   Serial.setTimeout(10000); // Timeout for read
   lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   delay(DELAY_MS_SPI); // Initialize LCD
   setupLog(logLine);   // Initialize log callback
+  heartbeat();
 
   log(CLASS_MAIN, Debug, "Setup timing");
   setExternalMillis(millis);
@@ -475,29 +486,25 @@ void setupArchitecture() {
   log(CLASS_MAIN, Debug, "Setup wifi");
   WiFi.persistent(false);
   WiFi.hostname(DEVICE_NAME);
+  heartbeat();
 
   log(CLASS_MAIN, Debug, "Setup http");
   httpClient.setTimeout(HTTP_TIMEOUT_MS);
-
-  log(CLASS_MAIN, Debug, "Setup pins");
-  pinMode(LEDR_PIN, OUTPUT);
-  pinMode(LEDW_PIN, OUTPUT);
-  pinMode(LEDY_PIN, OUTPUT);
-  pinMode(FAN_PIN, OUTPUT);
-  pinMode(SERVO0_PIN, OUTPUT);
-  pinMode(SERVO1_PIN, OUTPUT);
-  pinMode(BUTTON0_PIN, INPUT);
+  heartbeat();
 
   log(CLASS_MAIN, Debug, "Setup random");
   randomSeed(analogRead(0) * 256 + analogRead(0));
+  heartbeat();
 
   log(CLASS_MAIN, Debug, "Setup interrupts");
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, RISING);
+  heartbeat();
 
   log(CLASS_MAIN, Debug, "Setup commands");
   telnet.setCallBackProjectCmds(reactCommandCustom);
   String helpCli(HELP_COMMAND_CLI);
   telnet.setHelpProjectsCmds(helpCli);
+  heartbeat();
 
   log(CLASS_MAIN, Debug, "Setup IO/lcd");
   ios('r', IO_OFF);
@@ -505,8 +512,10 @@ void setupArchitecture() {
   ios('w', IO_OFF);
   ios('f', IO_OFF);
   lcdImg('l', NULL);
+  heartbeat();
 
   hwTest();
+  heartbeat();
 }
 
 void runModeArchitecture() {
