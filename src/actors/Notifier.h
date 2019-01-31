@@ -60,7 +60,7 @@ private:
       log(CLASS_NOTIFIER, Debug, "Notif(%d): %s", queue.size(), currentNotif);
       Buffer msg(LCD_WIDTH);
       msg.fill("(%d) %s", queue.size(), currentNotif);
-      messageFunc(0, (NOTIF_LINE) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, NoClear, NOTIF_SIZE, msg.center(' ', LCD_WIDTH));
+      messageFunc(0, (NOTIF_LINE) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, LineClear, NOTIF_SIZE, msg.center(' ', LCD_WIDTH));
     } else {
       log(CLASS_NOTIFIER, Debug, "No notifs");
     }
