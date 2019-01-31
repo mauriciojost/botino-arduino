@@ -89,7 +89,7 @@ public:
 
   void lcdImg(char img, uint8_t bitmap[]) {
     lcdImgFunc(img, bitmap);
-    notify(); // apart from the message, also notify if notifications are available
+    notify(); // apart from the image, also notify if notifications are available
   }
 
   void message(int line, int size, const char *format, ...) {
