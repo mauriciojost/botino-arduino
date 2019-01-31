@@ -25,7 +25,7 @@
 #define HARDWARE_TEST_STEP_DELAY_MS 2000
 
 #ifndef FIRMWARE_UPDATE_URL
-#define FIRMWARE_UPDATE_URL "http://martinenhome.com:6781/firmwares/botino/latest"
+#define FIRMWARE_UPDATE_URL "http://martinenhome.com:6780/firmwares/botino/latest"
 #endif // FIRMWARE_UPDATE_URL
 
 #define PRE_DEEP_SLEEP_WINDOW_FACTOR 10
