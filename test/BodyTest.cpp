@@ -38,7 +38,7 @@ void lcdImg(char img, uint8_t bitmap[]) {
   }
 }
 
-void messageOnLcd(int x, int y, int color, bool wrap, bool clear, int size, const char *str) {
+void messageOnLcd(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str) {
 	if (y == 0) { // ignore messages that do not belong to body
     strcpy(lastMsg, str);
 	}
