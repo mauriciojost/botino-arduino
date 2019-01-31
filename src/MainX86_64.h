@@ -93,7 +93,7 @@ int httpPost(const char *url, const char *body, ParamStream *response, Table *he
   return httpCode;
 }
 
-void messageFunc(int x, int y, int color, bool wrap, bool clear, int size, const char *str) {
+void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str) {
   printf("\n\n***** LCD (size %d)\n  %s\n*****\n\n", size, str);
 }
 

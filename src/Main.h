@@ -41,7 +41,7 @@ int httpGet(const char *url, ParamStream *response, Table *headers);
 int httpPost(const char *url, const char *body, ParamStream *response, Table *headers);
 
 // Message function. Directly connected with user.
-void messageFunc(int x, int y, int color, bool wrap, bool clear, int size, const char *str);
+void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str);
 
 // Arms control function.
 void arms(int left, int right, int steps);

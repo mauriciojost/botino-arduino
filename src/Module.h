@@ -71,7 +71,7 @@ private:
 
   bool (*initWifiSteadyFunc)();
   void (*clearDeviceFunc)();
-  void (*messageFunct)(int x, int y, int color, bool wrap, bool clear, int size, const char *str);
+  void (*messageFunct)(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str);
   void (*sleepInterruptable)(time_t cycleBegin, time_t periodSec);
   void (*configureModeArchitecture)();
   void (*runModeArchitecture)();
@@ -126,7 +126,7 @@ public:
   void setup(void (*setupArchitecture)(),
   		       void (*lcdImg)(char img, uint8_t bitmap[]),
              void (*arms)(int left, int right, int steps),
-             void (*messageFunc)(int x, int y, int color, bool wrap, bool clear, int size, const char *str),
+             void (*messageFunc)(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str),
              void (*ios)(char led, int v),
              bool (*initWifiSteady)(),
              int (*httpPost)(const char *url, const char *body, ParamStream *response, Table *headers),
@@ -221,7 +221,7 @@ public:
         return false;
       }
       log(CLASS_MODULE, Info, "-> Lcd %s", str);
-      messageFunct(atoi(x), atoi(y), atoi(color), atoi(wrap), atoi(clear), atoi(size), str);
+      messageFunct(atoi(x), atoi(y), atoi(color), atoi(wrap), (MsgClearMode)atoi(clear), atoi(size), str);
       return false;
     } else if (strcmp("set", c) == 0) {
       const char *actor = strtok(NULL, " ");

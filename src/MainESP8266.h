@@ -238,23 +238,21 @@ int httpPost(const char *url, const char *body, ParamStream *response, Table *he
   return errorCode;
 }
 
-void messageFunc(int x, int y, int color, bool wrap, bool clear, int size, const char *str) {
+void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clearMode, int size, const char *str) {
   int l = strlen(str);
-  if (clear) {
-    lcd.clearDisplay();
+  switch (clearMode) {
+  	case FullClear:
+      lcd.clearDisplay();
+      break;
+  	case LineClear:
+      lcd.fillRect(x * size * 6, y * size * 8, 128, size * 8, !color);
+      wrap = false;
+      break;
+  	case NoClear:
+      break;
   }
   lcd.setTextWrap(wrap);
-  lcd.setTextSize(size);
-  lcd.setTextColor(!color);
-  int i;
-  lcd.setCursor(x, y);
-  for (i = 0; i < l; i++) {
-  	lcd.print("\x07");
-  }
-  lcd.setCursor(x, y);
-  for (i = 0; i < l; i++) {
-  	lcd.print("\x08");
-  }
+  lcd.setTextSize(size); // line = size * 8, row = size * 6
   lcd.setTextColor(color);
   lcd.setCursor(x, y);
   lcd.print(str);

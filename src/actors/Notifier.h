@@ -16,8 +16,12 @@
 #define WHITE 1
 #define DO_WRAP true
 #define DO_NOT_WRAP false
-#define DO_CLEAR true
-#define DO_NOT_CLEAR false
+
+enum MsgClearMode {
+  FullClear = 0,
+  LineClear,
+  NoClear
+};
 
 #ifndef LCD_WIDTH
 #define LCD_WIDTH 21
@@ -43,7 +47,7 @@ private:
   const char *name;
   Metadata *md;
   Queue<MAX_NRO_NOTIFS, MAX_NOTIF_LENGTH> queue;
-  void (*messageFunc)(int x, int y, int color, bool wrap, bool clear, int size, const char *str);
+  void (*messageFunc)(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str);
   void((*lcdImgFunc)(char img, uint8_t bitmap[]));
 
   bool isInitialized() {
@@ -56,7 +60,7 @@ private:
       log(CLASS_NOTIFIER, Debug, "Notif(%d): %s", queue.size(), currentNotif);
       Buffer msg(LCD_WIDTH);
       msg.fill("(%d) %s", queue.size(), currentNotif);
-      messageFunc(0, (NOTIF_LINE) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, DO_NOT_CLEAR, NOTIF_SIZE, msg.center(' ', LCD_WIDTH));
+      messageFunc(0, (NOTIF_LINE) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, NoClear, NOTIF_SIZE, msg.center(' ', LCD_WIDTH));
     } else {
       log(CLASS_NOTIFIER, Debug, "No notifs");
     }
@@ -79,7 +83,7 @@ public:
     lcdImgFunc = f;
   }
 
-  void setMessageFunc(void (*f)(int x, int y, int color, bool wrap, bool clear, int size, const char *str)) {
+  void setMessageFunc(void (*f)(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str)) {
     messageFunc = f;
   }
 
@@ -98,7 +102,7 @@ public:
     va_start(args, format);
     vsnprintf(buffer.getUnsafeBuffer(), MAX_NOTIF_LENGTH, format, args);
     buffer.getUnsafeBuffer()[MAX_NOTIF_LENGTH - 1] = 0;
-    messageFunc(0, line * 8 * size, WHITE, DO_WRAP, DO_CLEAR, size, buffer.getBuffer());
+    messageFunc(0, line * 8 * size, WHITE, DO_WRAP, FullClear, size, buffer.getBuffer());
     va_end(args);
 
     notify(); // apart from the message, also notify if notifications are available
