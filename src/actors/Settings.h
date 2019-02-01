@@ -72,7 +72,7 @@ public:
     pass->load(WIFI_PASSWORD_STEADY);
 
     devDebug = true;
-    lcdLogs = false;
+    lcdLogs = true;
 #ifdef DEEP_SLEEP_MODE_ENABLED
     deepSleep = true;
 #else // DEEP_SLEEP_MODE_ENABLED
