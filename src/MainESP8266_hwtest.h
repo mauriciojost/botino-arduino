@@ -1,5 +1,7 @@
 void hwTest() {
 
+#define HARDWARE_TEST_STEP_DELAY_MS 2000
+
 #ifdef HARDWARE_TEST
   Buffer aux(32);
   log(CLASS_MAIN, Debug, "USER INFO");

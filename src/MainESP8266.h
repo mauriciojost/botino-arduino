@@ -22,8 +22,6 @@
 #define WIFI_DELAY_MS 3000
 #endif // WIFI_DELAY_MS
 
-#define HARDWARE_TEST_STEP_DELAY_MS 2000
-
 #ifndef FIRMWARE_UPDATE_URL
 #define FIRMWARE_UPDATE_URL "http://martinenhome.com:6780/firmwares/botino/latest"
 #endif // FIRMWARE_UPDATE_URL
