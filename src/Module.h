@@ -189,10 +189,11 @@ public:
 
     getBot()->setMode(mode);
 
-    bool syncSucc = sync();
-
-    if (!syncSucc) {
-      abortFunc("Setup failed");
+    if (mode == RunMode) {
+      bool syncSucc = sync();
+      if (!syncSucc) {
+        abortFunc("Setup failed");
+      }
     }
   }
 
