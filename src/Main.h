@@ -73,8 +73,8 @@ void updateFirmware();
 // Interruptable sleep function (haveToInterrupt called within).
 void sleepInterruptable(time_t cycleBegin, time_t periodSec);
 
-// Setup step specific to the architecture
-void setupArchitecture();
+// Setup step specific to the architecture, tell bot mode to go to
+BotMode setupArchitecture();
 
 // Loop in run mode specific to the architecture
 void runModeArchitecture();

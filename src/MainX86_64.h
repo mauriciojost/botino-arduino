@@ -159,9 +159,10 @@ void sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
   sleep(1);
 }
 
-void setupArchitecture() {
+BotMode setupArchitecture() {
   log(CLASS_MAIN, Debug, "Setup timing");
   setExternalMillis(millis);
+  return RunMode;
 }
 
 void runModeArchitecture() {

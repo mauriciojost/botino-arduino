@@ -474,7 +474,7 @@ void sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
 	}
 }
 
-void setupArchitecture() {
+BotMode setupArchitecture() {
 
   // Let HW startup
   delay(2 * 1000);
@@ -536,6 +536,12 @@ void setupArchitecture() {
 
   hwTest();
   heartbeat();
+
+  if (digitalRead(BUTTON0_PIN)) {
+    return ConfigureMode;
+  } else {
+    return RunMode;
+  }
 }
 
 void runModeArchitecture() {

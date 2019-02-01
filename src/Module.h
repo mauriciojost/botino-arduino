@@ -81,6 +81,23 @@ private:
   void (*info)();
   void (*update)();
 
+  bool sync() {
+    log(CLASS_MODULE, Info, "# Loading credentials stored in FS...");
+    getPropSync()->fsLoadActorsProps(); // load stored properties (most importantly credentials)
+    log(CLASS_MODULE, Info, "# Syncing actors with server...");
+    bool serSyncd = getPropSync()->serverSyncRetry(false); // sync properties from the server
+    time_t leftTime = getBot()->getClock()->currentTime();
+
+    Buffer timeAux(19);
+    log(CLASS_MODULE, Info, "# Previous actors' times: %s...", Timing::humanize(leftTime, &timeAux));
+    getBot()->setActorsTime(leftTime);
+    log(CLASS_MODULE, Info, "# Syncing clock...");
+    bool clockSyncd = getClockSync()->syncClock(getSettings()->inDeepSleepMode()); // sync real date / time on clock, block if in deep sleep
+    log(CLASS_MODULE, Info, "# Current time: %s", Timing::humanize(getBot()->getClock()->currentTime(), &timeAux));
+
+    return serSyncd && clockSyncd;
+  }
+
 public:
   Module() {
 
@@ -126,7 +143,7 @@ public:
     update = NULL;
   }
 
-  void setup(void (*setupArchitecture)(),
+  void setup(BotMode (*setupArchitecture)(),
   		       void (*lcdImg)(char img, uint8_t bitmap[]),
              void (*arms)(int left, int right, int steps),
              void (*messageFunc)(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str),
@@ -168,24 +185,13 @@ public:
     info = infoFunc;
     update = updateFunc;
 
-    setupArchitecture(); // module objects initialized, architecture can be initialized now
+    BotMode mode = setupArchitecture(); // module objects initialized, architecture can be initialized now
 
-    log(CLASS_MODULE, Info, "# Loading credentials stored in FS...");
-    getPropSync()->fsLoadActorsProps(); // load stored properties (most importantly credentials)
-    log(CLASS_MODULE, Info, "# Syncing actors with server...");
-    bool serSyncd = getPropSync()->serverSyncRetry(false); // sync properties from the server
-    time_t leftTime = getBot()->getClock()->currentTime();
+    getBot()->setMode(mode);
 
-    Buffer timeAux(19);
-    log(CLASS_MODULE, Info, "# Previous actors' times: %s...", Timing::humanize(leftTime, &timeAux));
-    getBot()->setActorsTime(leftTime);
-    log(CLASS_MODULE, Info, "# Syncing clock...");
-    bool clockSyncd = getClockSync()->syncClock(getSettings()->inDeepSleepMode()); // sync real date / time on clock, block if in deep sleep
-    log(CLASS_MODULE, Info, "# Current time: %s", Timing::humanize(getBot()->getClock()->currentTime(), &timeAux));
+    bool syncSucc = sync();
 
-    if (serSyncd && clockSyncd) {
-      getBot()->setMode(RunMode);
-    } else {
+    if (!syncSucc) {
       abortFunc("Setup failed");
     }
   }
