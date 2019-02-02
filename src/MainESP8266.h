@@ -140,7 +140,7 @@ void logLine(const char *str) {
   	}
   }
   // lcd print
-  if (m.getSettings()->getLcdLogs()) {
+  if (m->getSettings()->getLcdLogs()) {
     Serial.print("LCD|");
     lcd.setTextWrap(false);
     lcd.fillRect(0, LOG_LINE * 8, 128, 8, BLACK);
@@ -439,10 +439,10 @@ bool writeFile(const char* fname, const char* content) {
 
 void info() {
 
-  m.getNotifier()->message(0,
+  m->getNotifier()->message(0,
                            1,
-                           "DEV NAME:%s\nVers:%s\nCrashes:%d\nIP: %s\nMemory:%lu\nUptime:%luh\nVcc: %0.2f",
-                           DEVICE_NAME,
+                           "DEV ID:%s\nVers:%s\nCrashes:%d\nIP: %s\nMemory:%lu\nUptime:%luh\nVcc: %0.2f",
+                           deviceId(),
                            STRINGIFY(PROJ_VERSION),
                            SaveCrash.count(),
                            WiFi.localIP().toString().c_str(),
@@ -473,10 +473,10 @@ void updateFirmware() {
 ///////////////////
 
 void sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
-	if (m.getSettings()->inDeepSleepMode() && periodSecs > 120) { // in deep sleep mode and period big enough
-		m.command("move Z.");
+	if (m->getSettings()->inDeepSleepMode() && periodSecs > 120) { // in deep sleep mode and period big enough
+		m->command("move Z.");
 		lightSleepInterruptable(now() /* always do it */, periodSecs / PRE_DEEP_SLEEP_WINDOW_FACTOR);
-		m.command("move Z.");
+		m->command("move Z.");
 		deepSleepNotInterruptable(cycleBegin, periodSecs);
 	} else {
 		lightSleepInterruptable(cycleBegin, periodSecs);
@@ -514,7 +514,7 @@ BotMode setupArchitecture() {
 
   log(CLASS_MAIN, Debug, "Setup wifi");
   WiFi.persistent(false);
-  WiFi.hostname(DEVICE_NAME);
+  WiFi.hostname(deviceId());
   heartbeat();
 
   log(CLASS_MAIN, Debug, "Setup http");
@@ -554,7 +554,7 @@ BotMode setupArchitecture() {
 }
 
 void runModeArchitecture() {
-  Settings *s = m.getSettings();
+  Settings *s = m->getSettings();
 
   // Handle stack-traces stored in memory
   if (SaveCrash.count() > 5) {
@@ -575,8 +575,8 @@ void runModeArchitecture() {
 
 void configureModeArchitecture() {
 	debugHandle();
-	if (m.getBot()->getClock()->currentTime() % 60 == 0) { // every minute
-    m.getNotifier()->message(0, 1, "telnet %s", WiFi.localIP().toString().c_str());
+	if (m->getBot()->getClock()->currentTime() % 60 == 0) { // every minute
+    m->getNotifier()->message(0, 1, "telnet %s", WiFi.localIP().toString().c_str());
 	}
 }
 
@@ -597,7 +597,7 @@ void debugHandle() {
   static bool firstTime = true;
   if (firstTime) {
     log(CLASS_MAIN, Debug, "Initialize debuggers...");
-    telnet.begin("ESP" DEVICE_NAME); // Intialize the remote logging framework
+    telnet.begin(deviceId());        // Intialize the remote logging framework
     ArduinoOTA.begin();              // Intialize OTA
     firstTime = false;
   }
@@ -628,7 +628,7 @@ void bitmapToLcd(uint8_t bitmap[]) {
 }
 
 void reactCommandCustom() { // for the use via telnet
-  m.command(telnet.getLastCommand().c_str());
+  m->command(telnet.getLastCommand().c_str());
 }
 
 void heartbeat() {
@@ -643,7 +643,7 @@ void lightSleepInterruptable(time_t cycleBegin, time_t periodSecs) {
     if (haveToInterrupt()) {
       break;
     }
-    delay(m.getSettings()->miniPeriodMsec());
+    delay(m->getSettings()->miniPeriodMsec());
   }
 }
 
@@ -666,7 +666,7 @@ bool haveToInterrupt() {
     Serial.readBytesUntil('\n', cmdBuffer.getUnsafeBuffer(), COMMAND_MAX_LENGTH);
     cmdBuffer.replace('\n', '\0');
     cmdBuffer.replace('\r', '\0');
-    bool interrupt = m.command(cmdBuffer.getBuffer());
+    bool interrupt = m->command(cmdBuffer.getBuffer());
     log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
     return interrupt;
   } else if (buttonInterrupts > 0) {
@@ -677,11 +677,11 @@ bool haveToInterrupt() {
       holds++;
       log(CLASS_MAIN, Debug, "%d", holds);
       LED_INT_ON;
-      m.sequentialCommand(holds, ONLY_SHOW_MSG);
+      m->sequentialCommand(holds, ONLY_SHOW_MSG);
       LED_INT_OFF;
-      delay(m.getSettings()->miniPeriodMsec());
+      delay(m->getSettings()->miniPeriodMsec());
     } while (digitalRead(BUTTON0_PIN));
-    bool interruptMe = m.sequentialCommand(holds, SHOW_MSG_AND_REACT);
+    bool interruptMe = m->sequentialCommand(holds, SHOW_MSG_AND_REACT);
     buttonInterrupts = 0;
 
     log(CLASS_MAIN, Debug, "Done");

@@ -99,9 +99,9 @@ private:
   }
 
 public:
-  Module() {
+  Module(const char* devId) {
 
-    propSync = new PropSync("propsync");
+    propSync = new PropSync(devId, "propsync");
     clockSync = new ClockSync("clocksync");
     clock = new Clock("clock");
     settings = new Settings("settings");

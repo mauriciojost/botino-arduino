@@ -1,5 +1,3 @@
--D DEVICE_NAME="simulate"
-
 -D WIFI_SSID_STEADY="ssid"
 -D WIFI_PASSWORD_STEADY="pass"
 -D TIMEZONE_DB_ZONE="Europe/Paris"

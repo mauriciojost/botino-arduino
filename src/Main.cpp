@@ -9,7 +9,7 @@
 
 #include <Main.h>
 
-Module m;
+Module* m;
 
 #ifdef ARDUINO // on ESP8266
 #include <MainESP8266.h>
@@ -18,14 +18,15 @@ Module m;
 #endif // ARDUINO
 
 bool initWifiSimple() {
-  Settings *s = m.getSettings();
+  Settings *s = m->getSettings();
   log(CLASS_MAIN, Info, "W.steady");
   bool connected = initWifi(s->getSsid(), s->getPass(), true, 10);
   return connected;
 }
 
 void setup() {
-  m.setup(
+  m = new Module(deviceId());
+  m->setup(
   		setupArchitecture,
 			lcdImg,
 			arms,
@@ -47,6 +48,6 @@ void setup() {
 }
 
 void loop() {
-	m.loop();
+	m->loop();
 }
 

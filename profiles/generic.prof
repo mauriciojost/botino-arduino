@@ -1,5 +1,3 @@
--D DEVICE_NAME=\"generic\"
-
 -D WIFI_SSID_STEADY=\"\"
 -D WIFI_PASSWORD_STEADY=\"\"
 -D TIMEZONE_DB_ZONE=\"Europe/Paris\"

@@ -175,7 +175,7 @@ void runModeArchitecture() {
     printf("Waiting for input: \n   ");
     fgets(str, 100, stdin);
     if (strlen(str) != 0) {
-      m.command(str);
+      m->command(str);
     }
   }
 }
