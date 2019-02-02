@@ -102,7 +102,7 @@ public:
   Module(const char* devId) {
 
     propSync = new PropSync(devId, "propsync");
-    clockSync = new ClockSync("clocksync");
+    clockSync = new ClockSync(devId, "clocksync");
     clock = new Clock("clock");
     settings = new Settings("settings");
     quotes = new Quotes("quotes");
