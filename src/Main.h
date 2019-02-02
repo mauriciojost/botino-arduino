@@ -27,11 +27,14 @@ void loop();
 // Callbacks
 ///////////////////
 
-// The log function (that will print to screen, Serial, telnet, or whatever wished)
+// Provide a unique id to identify the device.
+const char* deviceId();
+
+// The log function (that will print to screen, Serial, telnet, or whatever wished).
 // It should not include "\n" ending as the log4ino library handles newline addition.
 void logLine(const char *str);
 
-// Setup wifi using provided parameters
+// Setup wifi using provided parameters.
 bool initWifi(const char *ssid, const char *pass, bool skipIfAlreadyConnected, int retries);
 
 // HTTP GET function.

@@ -89,6 +89,7 @@ RemoteDebug telnet;
 Servo servoLeft;
 Servo servoRight;
 Adafruit_SSD1306 lcd(-1);
+char* devId = NULL;
 
 #define LED_INT_ON ios('y', IO_ON);
 #define LED_INT_OFF ios('y', IO_OFF);
@@ -114,6 +115,14 @@ bool haveToInterrupt();
 
 // Callbacks
 ///////////////////
+
+const char* deviceId() {
+	if (devId == NULL) {
+		devId = new char[20];
+		sprintf(devId, "%d", ESP.getChipId());
+	}
+	return devId;
+}
 
 void logLine(const char *str) {
   // serial print

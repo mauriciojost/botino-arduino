@@ -23,6 +23,10 @@ unsigned long millis();
 // Callbacks
 ///////////////////
 
+const char* deviceId() {
+	return "PC";
+}
+
 void logLine(const char *str) {
   printf("LOG: %s", str);
 }
