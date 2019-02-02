@@ -2,7 +2,6 @@
 -D WIFI_PASSWORD_STEADY=\"\"
 -D TIMEZONE_DB_ZONE=\"Europe/Paris\"
 -D IFTTT_KEY=\"\"
--D API_USERNAME=\"generic\"
 -D API_PASSWORD=\"passwordgeneric\"
 -D MAIN4INOSERVER_API_HOST_BASE=\"http://martinenhome.com:6780\"
 
