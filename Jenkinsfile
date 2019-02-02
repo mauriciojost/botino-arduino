@@ -40,6 +40,7 @@ pipeline {
       steps {
         wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
           sh 'PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=generic `cat profiles/generic.prof`" platformio run'
+          sh 'export commitid=`git rev-parse HEAD` && cp .pioenvs/main/firmware.bin firmware-$commitid.bin'
         }
       }
     }
@@ -50,7 +51,7 @@ pipeline {
     }  
     success {  
       emailext body: "<b>[JENKINS] Success</b>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> Build URL: ${env.BUILD_URL}", from: '', mimeType: 'text/html', replyTo: '', subject: "SUCCESS CI: ${env.JOB_NAME}", to: "mauriciojostx@gmail.com", attachLog: false, compressLog: false;
-      archiveArtifacts artifacts: '.pioenvs/main/firmware.elf', fingerprint: true
+      archiveArtifacts artifacts: 'firmware-*.bin', fingerprint: true
     }  
   }
 }
