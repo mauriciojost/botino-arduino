@@ -11,6 +11,10 @@ to stack
 DynamicJsonBuffer jsonBuffer(bufSize);  
 File myFile = SD.open(cocktailDataPath);
 JsonObject& root = jsonBuffer.parseObject(myFile);
+- Make README mention main4ino main server
+- Mention auto-update for firmware
+- Mention deep sleep mode (in progress)
+
 
 
 # DONE
