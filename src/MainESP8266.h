@@ -18,7 +18,7 @@
 
 #define DELAY_MS_SPI 3
 
-#define DEVICE_ALIAS_FILENAME "device.alias"
+#define DEVICE_ALIAS_FILENAME "/device.alias"
 #define DEVICE_ALIAS_MAX_LENGTH 16
 
 #define LCD_PIXEL_WIDTH 6
