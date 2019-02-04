@@ -95,7 +95,7 @@ RemoteDebug telnet;
 Servo servoLeft;
 Servo servoRight;
 Adafruit_SSD1306 lcd(-1);
-char* devId = NULL;
+Buffer* devId = NULL;
 
 #define LED_INT_ON ios('y', IoOn);
 #define LED_INT_OFF ios('y', IoOff);
@@ -124,17 +124,17 @@ bool haveToInterrupt();
 
 const char* deviceId() {
 	if (devId == NULL) {
-		devId = new char[DEVICE_ALIAS_MAX_LENGTH + 1];
-		Buffer alias(DEVICE_ALIAS_MAX_LENGTH);
-    bool succ = readFile(DEVICE_ALIAS_FILENAME, &alias); // preserve the alias
+		devId = new Buffer(DEVICE_ALIAS_MAX_LENGTH);
+    bool succ = readFile(DEVICE_ALIAS_FILENAME, devId); // preserve the alias
     if (succ) { // managed to retrieve the alias
-      sprintf(devId, "%s", alias.getBuffer());
+    	// content already with the alias
+      devId->replace('\n', 0);
     } else { // no alias, fallback to chip id
-      sprintf(devId, "%d", ESP.getChipId());
+      devId->fill("%d", ESP.getChipId());
     }
 	}
   log(CLASS_MAIN, Info, "Alias '%s'", devId);
-	return devId;
+	return devId->getBuffer();
 }
 
 void logLine(const char *str) {
