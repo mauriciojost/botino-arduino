@@ -60,7 +60,7 @@ private:
       log(CLASS_NOTIFIER, Debug, "Notif(%d): %s", queue.size(), currentNotif);
       Buffer msg(LCD_WIDTH);
       msg.fill("(%d) %s", queue.size(), currentNotif);
-      messageFunc(0, (NOTIF_LINE) * 8 * NOTIF_SIZE, WHITE, DO_NOT_WRAP, LineClear, NOTIF_SIZE, msg.center(' ', LCD_WIDTH));
+      messageFunc(0, NOTIF_LINE, WHITE, DO_NOT_WRAP, LineClear, NOTIF_SIZE, msg.center(' ', LCD_WIDTH));
     } else {
       log(CLASS_NOTIFIER, Debug, "No notifs");
     }
@@ -102,7 +102,7 @@ public:
     va_start(args, format);
     vsnprintf(buffer.getUnsafeBuffer(), MAX_NOTIF_LENGTH, format, args);
     buffer.getUnsafeBuffer()[MAX_NOTIF_LENGTH - 1] = 0;
-    messageFunc(0, line * 8 * size, WHITE, DO_WRAP, FullClear, size, buffer.getBuffer());
+    messageFunc(0, line, WHITE, DO_WRAP, FullClear, size, buffer.getBuffer());
     va_end(args);
 
     notify(); // apart from the message, also notify if notifications are available

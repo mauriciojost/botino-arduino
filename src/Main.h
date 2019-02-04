@@ -43,7 +43,8 @@ int httpGet(const char *url, ParamStream *response, Table *headers);
 // HTTP POST function.
 int httpPost(const char *url, const char *body, ParamStream *response, Table *headers);
 
-// Message function. Directly connected with user.
+// Message function.
+// Parameters x/y are text coordinates: 1;0 means second line to the left.
 void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str);
 
 // Arms control function.

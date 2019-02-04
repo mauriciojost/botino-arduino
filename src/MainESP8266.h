@@ -18,6 +18,9 @@
 
 #define DELAY_MS_SPI 3
 
+#define LCD_PIXEL_WIDTH 6
+#define LCD_PIXEL_HEIGHT 8
+
 #ifndef WIFI_DELAY_MS
 #define WIFI_DELAY_MS 3000
 #endif // WIFI_DELAY_MS
@@ -143,10 +146,10 @@ void logLine(const char *str) {
   if (m->getSettings()->getLcdLogs()) {
     Serial.print("LCD|");
     lcd.setTextWrap(false);
-    lcd.fillRect(0, LOG_LINE * 8, 128, 8, BLACK);
+    lcd.fillRect(0, LOG_LINE * LCD_PIXEL_HEIGHT, 128, LCD_PIXEL_HEIGHT, BLACK);
     lcd.setTextSize(1);
     lcd.setTextColor(WHITE);
-    lcd.setCursor(0, LOG_LINE * 8);
+    lcd.setCursor(0, LOG_LINE * LCD_PIXEL_HEIGHT);
     lcd.print(str);
     lcd.display();
     delay(DELAY_MS_SPI);
@@ -257,16 +260,16 @@ void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clearMode, int
       lcd.clearDisplay();
       break;
   	case LineClear:
-      lcd.fillRect(0, y * size * 8, 128, size * 8, !color);
+      lcd.fillRect(x * size * LCD_PIXEL_WIDTH, y * size * LCD_PIXEL_HEIGHT, 128, size * LCD_PIXEL_HEIGHT, !color);
       wrap = false;
       break;
   	case NoClear:
       break;
   }
   lcd.setTextWrap(wrap);
-  lcd.setTextSize(size); // line = size * 8, row = size * 6
+  lcd.setTextSize(size);
   lcd.setTextColor(color);
-  lcd.setCursor(x, y);
+  lcd.setCursor(x * size * LCD_PIXEL_WIDTH, y * size * LCD_PIXEL_HEIGHT);
   lcd.print(str);
   lcd.display();
   log(CLASS_MAIN, Debug, "Msg: (%d,%d)'%s'", x, y, str);
