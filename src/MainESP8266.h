@@ -18,6 +18,9 @@
 
 #define DELAY_MS_SPI 3
 
+#define DEVICE_ALIAS_FILENAME "device.alias"
+#define DEVICE_ALIAS_MAX_LENGTH 16
+
 #define LCD_PIXEL_WIDTH 6
 #define LCD_PIXEL_HEIGHT 8
 
@@ -122,7 +125,13 @@ bool haveToInterrupt();
 const char* deviceId() {
 	if (devId == NULL) {
 		devId = new char[20];
-		sprintf(devId, "%d", ESP.getChipId());
+		Buffer alias(DEVICE_ALIAS_MAX_LENGTH);
+    bool succ = readFile(DEVICE_ALIAS_FILENAME, &alias); // preserve the alias
+    if (succ) { // managed to retrieve the alias
+      sprintf(devId, "%s", alias.getBuffer());
+    } else { // no alias, fallback to chip id
+      sprintf(devId, "%d", ESP.getChipId());
+    }
 	}
 	return devId;
 }
@@ -364,8 +373,11 @@ void ios(char led, IoMode value) {
 }
 
 void clearDevice() {
+	Buffer alias(DEVICE_ALIAS_MAX_LENGTH);
+  readFile(DEVICE_ALIAS_FILENAME, &alias); // preserve the alias
   SPIFFS.format();
   SaveCrash.clear();
+  writeFile(DEVICE_ALIAS_FILENAME, alias.getBuffer());
 }
 
 void lcdImg(char img, uint8_t bitmap[]) {

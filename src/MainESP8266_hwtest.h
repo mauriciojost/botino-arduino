@@ -82,7 +82,7 @@ void hwTest() {
 
   log(CLASS_MAIN, Debug, "..SPIFFS");
   SPIFFS.begin();
-  File f = SPIFFS.open("/version.txt", "r");
+  File f = SPIFFS.open("/device.alias", "r");
   if (!f) {
     log(CLASS_MAIN, Warn, "File reading failed");
   } else {
