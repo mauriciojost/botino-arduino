@@ -124,7 +124,7 @@ bool haveToInterrupt();
 
 const char* deviceId() {
 	if (devId == NULL) {
-		devId = new char[20];
+		devId = new char[DEVICE_ALIAS_MAX_LENGTH + 1];
 		Buffer alias(DEVICE_ALIAS_MAX_LENGTH);
     bool succ = readFile(DEVICE_ALIAS_FILENAME, &alias); // preserve the alias
     if (succ) { // managed to retrieve the alias
@@ -133,6 +133,7 @@ const char* deviceId() {
       sprintf(devId, "%d", ESP.getChipId());
     }
 	}
+  log(CLASS_MAIN, Info, "Alias '%s'", devId);
 	return devId;
 }
 
