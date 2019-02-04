@@ -132,8 +132,8 @@ const char* deviceId() {
     } else { // no alias, fallback to chip id
       devId->fill("%d", ESP.getChipId());
     }
+    log(CLASS_MAIN, Info, "Alias '%s'", devId->getBuffer());
 	}
-  log(CLASS_MAIN, Info, "Alias '%s'", devId);
 	return devId->getBuffer();
 }
 
