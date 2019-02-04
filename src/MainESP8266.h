@@ -257,7 +257,7 @@ void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clearMode, int
       lcd.clearDisplay();
       break;
   	case LineClear:
-      lcd.fillRect(x * size * 6, y * size * 8, 128, size * 8, !color);
+      lcd.fillRect(0, y * size * 8, 128, size * 8, !color);
       wrap = false;
       break;
   	case NoClear:
