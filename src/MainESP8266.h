@@ -91,11 +91,11 @@ Servo servoRight;
 Adafruit_SSD1306 lcd(-1);
 char* devId = NULL;
 
-#define LED_INT_ON ios('y', IO_ON);
-#define LED_INT_OFF ios('y', IO_OFF);
+#define LED_INT_ON ios('y', IoOn);
+#define LED_INT_OFF ios('y', IoOff);
 
-#define LED_ALIVE_ON ios('r', IO_ON);
-#define LED_ALIVE_OFF ios('r', IO_OFF);
+#define LED_ALIVE_ON ios('r', IoOn);
+#define LED_ALIVE_OFF ios('r', IoOff);
 
 ADC_MODE(ADC_VCC);
 
@@ -303,17 +303,17 @@ void arms(int left, int right, int steps) {
   servoRight.detach();
 }
 
-int invert(int v) {
-	if (v == IO_ON) {
-		return IO_OFF;
-	} else if (v == IO_OFF) {
-		return IO_ON;
+IoMode invert(IoMode v) {
+	if (v == IoOn) {
+		return IoOff;
+	} else if (v == IoOff) {
+		return IoOn;
 	} else {
 		return v;
 	}
 }
 
-void ios(char led, int value) {
+void ios(char led, IoMode value) {
 	uint8_t pin = -1;
   switch (led) {
     case 'r':
@@ -348,11 +348,11 @@ void ios(char led, int value) {
     log(CLASS_MAIN, Warn, "Unknown pin: %c", pin);
   	return;
   }
-  if (value == IO_ON) {
+  if (value == IoOn) {
   	digitalWrite(pin, LOW);
-  } else if (value == IO_OFF) {
+  } else if (value == IoOff) {
   	digitalWrite(pin, HIGH);
-  } else if (value == IO_TOGGLE){
+  } else if (value == IoToggle){
   	digitalWrite(pin, digitalRead(pin));
   } else {
     log(CLASS_MAIN, Warn, "Unknown IO request: %c<-%d", pin, value);
@@ -437,7 +437,7 @@ bool writeFile(const char* fname, const char* content) {
   return success;
 }
 
-void info() {
+void infoArchitecture() {
 
   m->getNotifier()->message(0,
                            1,
@@ -450,6 +450,10 @@ void info() {
                            (millis() / 1000) / 3600,
                            ((float)ESP.getVcc()/1024));
 
+}
+
+void testArchitecture() {
+  hwTest();
 }
 
 void updateFirmware() {
@@ -536,14 +540,11 @@ BotMode setupArchitecture() {
   heartbeat();
 
   log(CLASS_MAIN, Debug, "Setup IO/lcd");
-  ios('r', IO_OFF);
-  ios('y', IO_OFF);
-  ios('w', IO_OFF);
-  ios('f', IO_OFF);
+  ios('r', IoOff);
+  ios('y', IoOff);
+  ios('w', IoOff);
+  ios('f', IoOff);
   lcdImg('l', NULL);
-  heartbeat();
-
-  hwTest();
   heartbeat();
 
   if (digitalRead(BUTTON0_PIN)) {

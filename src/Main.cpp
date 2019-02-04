@@ -42,8 +42,9 @@ void setup() {
 			sleepInterruptable,
 			configureModeArchitecture,
 			runModeArchitecture,
-			info,
-			updateFirmware
+			infoArchitecture,
+			updateFirmware,
+			testArchitecture
 			);
 }
 

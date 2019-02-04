@@ -105,7 +105,7 @@ void arms(int left, int right, int steps) {
   printf("\n\nARMS: %d %d %d\n\n", left, right, steps);
 }
 
-void ios(char led, int v) {
+void ios(char led, IoMode v) {
   log(CLASS_MAIN, Debug, "Led'%c'->%d", led, v);
 }
 
@@ -151,7 +151,9 @@ bool writeFile(const char* fname, const char* content) {
 	return success;
 }
 
-void info() {}
+void infoArchitecture() {}
+
+void testArchitecture() {}
 
 void updateFirmware() {}
 

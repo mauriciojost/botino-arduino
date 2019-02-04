@@ -48,19 +48,19 @@ void arms(int left, int right, int steps) {
   sprintf(lastArms, "left:%d,right:%d,steps:%d", left, right, steps);
 }
 
-void led(char led, int v) {
+void led(char led, IoMode v) {
   switch (led) {
     case 'y':
-      ledY = v;
+      ledY = (int)v;
       break;
     case 'w':
-      ledW = v;
+      ledW = (int)v;
       break;
     case 'r':
-      ledR = v;
+      ledR = (int)v;
       break;
     case 'f':
-      fan = v;
+      fan = (int)v;
       break;
     default:
       break;

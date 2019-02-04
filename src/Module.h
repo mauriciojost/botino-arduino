@@ -28,6 +28,7 @@
   "\n  run             : go to run mode"                                                                                                        \
   "\n  conf            : go to conf mode"                                                                                                       \
   "\n  info            : show info about the device"                                                                                            \
+  "\n  test            : test the architecture/hardware"                                                                                        \
   "\n  update          : update the firmware"                                                                                                   \
   "\n  wifi            : init steady wifi"                                                                                                      \
   "\n  get             : display actors properties"                                                                                             \
@@ -79,6 +80,7 @@ private:
   bool (*fileRead)(const char *fname, Buffer* content);
   bool (*fileWrite)(const char *fname, const char* content);
   void (*info)();
+  void (*test)();
   void (*update)();
 
   bool sync() {
@@ -140,6 +142,7 @@ public:
     fileRead = NULL;
     fileWrite = NULL;
     info = NULL;
+    test = NULL;
     update = NULL;
   }
 
@@ -147,7 +150,7 @@ public:
   		       void (*lcdImg)(char img, uint8_t bitmap[]),
              void (*arms)(int left, int right, int steps),
              void (*messageFunc)(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str),
-             void (*ios)(char led, int v),
+             void (*ios)(char led, IoMode v),
              bool (*initWifiSteady)(),
              int (*httpPost)(const char *url, const char *body, ParamStream *response, Table *headers),
              int (*httpGet)(const char *url, ParamStream *response, Table *headers),
@@ -159,7 +162,8 @@ public:
              void (*configureModeArchitectureFunc)(),
              void (*runModeArchitectureFunc)(),
              void (*infoFunc)(),
-             void (*updateFunc)()
+             void (*updateFunc)(),
+             void (*testFunc)()
 						 ) {
 
     notifier->setMessageFunc(messageFunc);
@@ -183,6 +187,7 @@ public:
     fileRead = fileReadFunc;
     fileWrite = fileWriteFunc;
     info = infoFunc;
+    test = testFunc;
     update = updateFunc;
 
     BotMode mode = setupArchitecture(); // module objects initialized, architecture can be initialized now
@@ -265,6 +270,9 @@ public:
       return false;
     } else if (strcmp("info", c) == 0) {
       info();
+      return false;
+    } else if (strcmp("test", c) == 0) {
+      test();
       return false;
     } else if (strcmp("update", c) == 0) {
       update();

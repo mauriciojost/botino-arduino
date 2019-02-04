@@ -47,10 +47,12 @@ int httpPost(const char *url, const char *body, ParamStream *response, Table *he
 void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str);
 
 // Arms control function.
+// Parameters left/right are from 0 to 9 included, 0 being down, 9 being up.
+// Parameter steps defines how slow the movement is (1 being the fastest).
 void arms(int left, int right, int steps);
 
 // IO control function.
-void ios(char led, int v);
+void ios(char led, IoMode m);
 
 // Clear device (for development purposes, to clear logs, stacktraces, etc)
 void clearDevice();
@@ -65,7 +67,10 @@ bool readFile(const char* fname, Buffer* content);
 bool writeFile(const char* fname, const char* content);
 
 // Display some useful info related to the HW
-void info();
+void infoArchitecture();
+
+// Perform tests on the architecture
+void testArchitecture();
 
 // Update the firmware and restart the device
 void updateFirmware();

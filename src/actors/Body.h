@@ -242,7 +242,7 @@ private:
   Metadata *md;
   void (*arms)(int left, int right, int steps);
   Notifier *notifier;
-  void (*iosFunc)(char led, int v);
+  void (*iosFunc)(char led, IoMode v);
   Quotes *quotes;
   Images *images;
   Ifttt *ifttt;
@@ -261,13 +261,13 @@ private:
 
   int getIosState(char c) {
   	if (c == 'n' || c == 'N' || c == '0') {
-  		return IO_OFF;
+  		return IoOff;
   	} else if (c == 'y' || c == 'Y' || c == '1') {
-  		return IO_ON;
+  		return IoOn;
   	} else if (c == 't' || c == 'T') {
-  		return IO_TOGGLE;
+  		return IoToggle;
   	} else {
-  		return IO_OFF;
+  		return IoOff;
   	}
   }
 
@@ -288,10 +288,10 @@ private:
     if (strncmp(pose, "Z", 1) == 0) {
       notifier->lcdImg('b', NULL);
       notifier->lcdImg('l', NULL);
-      iosFunc('r', IO_OFF);
-      iosFunc('w', IO_OFF);
-      iosFunc('y', IO_OFF);
-      iosFunc('f', IO_OFF);
+      iosFunc('r', IoOff);
+      iosFunc('w', IoOff);
+      iosFunc('y', IoOff);
+      iosFunc('f', IoOff);
       arms(0, 0, ARM_NORMAL_STEPS);
       return true;
     } else {
@@ -367,9 +367,9 @@ private:
       // IO (LEDS / FAN)
       switch (pose[1]) {
         case '?': {
-          iosFunc('r', random(2));
-          iosFunc('w', random(2));
-          iosFunc('y', random(2));
+          iosFunc('r', (IoMode)random(2));
+          iosFunc('w', (IoMode)random(2));
+          iosFunc('y', (IoMode)random(2));
           return true;
         }
         default:
@@ -450,25 +450,25 @@ private:
         case 'r': {
           int b = getIosState(pose[2]);
           log(CLASS_BODY, Debug, "Led red: %d", b);
-          iosFunc('r', b);
+          iosFunc('r', (IoMode)b);
           return true;
         }
         case 'w': {
           int b = getIosState(pose[2]);
           log(CLASS_BODY, Debug, "Led white: %d", b);
-          iosFunc('w', b);
+          iosFunc('w', (IoMode)b);
           return true;
         }
         case 'y': {
           int b = getIosState(pose[2]);
           log(CLASS_BODY, Debug, "Led yellow: %d", b);
-          iosFunc('y', b);
+          iosFunc('y', (IoMode)b);
           return true;
         }
         case 'f': {
           int b = getIosState(pose[2]);
           log(CLASS_BODY, Debug, "Fan: %d", b);
-          iosFunc('f', b);
+          iosFunc('f', (IoMode)b);
           return true;
         }
         default:
@@ -621,7 +621,7 @@ public:
     arms = f;
   }
 
-  void setIosFunc(void (*f)(char led, int v)) {
+  void setIosFunc(void (*f)(char led, IoMode v)) {
     iosFunc = f;
   }
 
