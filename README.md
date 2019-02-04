@@ -138,8 +138,7 @@ To see the logs:
 To upload the `data` folder just do: 
 
 ```
-PLATFORMIO_BUILD_FLAGS="`cat profiles/demo.prof`" platformio run --target buildfs
-PLATFORMIO_BUILD_FLAGS="`cat profiles/demo.prof`" platformio run --target uploadfs
+upload_spiffs
 ```
 
 ## 3.4. Simulate

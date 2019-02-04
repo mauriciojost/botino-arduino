@@ -1,0 +1,6 @@
+#/usr/bin/env bash
+echo "Uploading:"
+ls data
+platformio run --target buildfs
+platformio run --target uploadfs
+echo "Done."
