@@ -265,9 +265,6 @@ public:
       log(CLASS_MODULE, Info, "-> Configure mode");
       bot->setMode(ConfigureMode);
       return true;
-    } else if (strcmp("wifi", c) == 0) {
-      initWifiSteadyFunc();
-      return false;
     } else if (strcmp("info", c) == 0) {
       info();
       return false;
@@ -308,6 +305,9 @@ public:
       }
       settings->setPass(c);
       log(CLASS_MODULE, Info, "Wifi pass: %s", settings->getPass());
+      return false;
+    } else if (strcmp("wifi", c) == 0) {
+      initWifiSteadyFunc();
       return false;
     } else if (strcmp("ifttttoken", c) == 0) {
       c = strtok(NULL, " ");
