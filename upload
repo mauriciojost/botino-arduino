@@ -14,7 +14,7 @@ then
 fi
 
 echo "### Using profile $PROFILE..."
-export PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=$COMMIT_ID `cat $PROFILE`" 
+export PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=$COMMIT_ID `cat $PROFILE | grep -v '^#'`" 
 
 echo "### Compiling..."
 platformio run -v
