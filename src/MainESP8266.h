@@ -340,9 +340,7 @@ void ios(char led, IoMode value) {
       break;
     case 'f':
       pin = FAN_PIN;
-#ifdef FAN_0V_IS_OFF
       value = invert(value);
-#endif
       break;
     default:
     	pin = -1;
