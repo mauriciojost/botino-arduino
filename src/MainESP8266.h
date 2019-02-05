@@ -331,21 +331,12 @@ void ios(char led, IoMode value) {
   switch (led) {
     case 'r':
       pin = LEDR_PIN;
-#ifdef LEDR_0V_IS_OFF
-      value = invert(value);
-#endif
       break;
     case 'w':
       pin = LEDW_PIN;
-#ifdef LEDW_0V_IS_OFF
-      value = invert(value);
-#endif
       break;
     case 'y':
       pin = LEDY_PIN;
-#ifdef LEDY_0V_IS_OFF
-      value = invert(value);
-#endif
       break;
     case 'f':
       pin = FAN_PIN;
