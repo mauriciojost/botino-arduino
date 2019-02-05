@@ -25,7 +25,7 @@ pipeline {
     stage('Test') {
       steps {
         wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
-          sh 'PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=test `cat profiles/test.prof`" ./launch_tests'
+          sh 'PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=test `cat profiles/test.prof | grep -v '^#'`" ./launch_tests'
         }
       }
     }
