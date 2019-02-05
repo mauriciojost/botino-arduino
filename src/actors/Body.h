@@ -144,18 +144,11 @@ Codes:
 
 #define CLASS_BODY "BO"
 
-#define ON 1
-#define OFF 0
-
-#define GET_POSE(a, b) (int)(((int)(a)) * 256 + (b))
-
 #define NRO_ROUTINES 8
 
 #define ARM_SLOW_STEPS 100
 #define ARM_NORMAL_STEPS 40
 #define ARM_FAST_STEPS 20
-
-#define IMG_SIZE_BYTES 16
 
 enum BodyProps {
   BodyRoutine0Prop = 0, // string, routine for the routine 0
@@ -209,21 +202,21 @@ public:
   void set(const Value *v) {
     Buffer aux(MOVE_STR_LENGTH);
     aux.load(v);
-    const char* mv = aux.since(':');
-    aux.replace(':', 0);
+    const char* mv = aux.since(TIMING_SEPARATOR);
+    aux.replace(TIMING_SEPARATOR, 0);
     const char* tm = aux.getBuffer();
     set(tm, mv);
   }
   void set(const char *tmg, const char *mov) {
     if (tmg == NULL || strlen(tmg) == 0) {
-      timingMove->fill("error:%s", mov);
+      timingMove->fill("error%c%s", TIMING_SEPARATOR, mov);
     } else {
       timing->setFreq(tmg);
-      timingMove->fill("%s:%s", timing->getFreq(), mov);
+      timingMove->fill("%s%c%s", timing->getFreq(), TIMING_SEPARATOR, mov);
     }
   }
   const char *getMove() {
-    const char *m = timingMove->since(':');
+    const char *m = timingMove->since(TIMING_SEPARATOR);
     if (m != NULL) {
       return m;
     } else {
