@@ -1,8 +1,8 @@
 #ifndef MODULE_INC
 #define MODULE_INC
 
-#include "actors/Quotes.h"
-#include "actors/Settings.h"
+#include <actors/Quotes.h>
+#include <actors/Settings.h>
 #include <Pinout.h>
 #include <actors/Body.h>
 #include <actors/Ifttt.h>

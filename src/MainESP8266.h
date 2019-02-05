@@ -11,6 +11,7 @@
 #include <ESP8266WiFi.h>
 #include <FS.h>
 #include <Pinout.h>
+#include <ServoConf.h>
 #include <SPI.h>
 #include <Servo.h>
 #include <Wire.h>
@@ -18,7 +19,10 @@
 
 #define DELAY_MS_SPI 3
 
-#define DEVICE_ALIAS_FILENAME "/device.alias"
+#define DEVICE_ALIAS_FILENAME "/alias.tuning"
+#define SERVO_0_FILENAME "/servo0.tuning"
+#define SERVO_1_FILENAME "/servo1.tuning"
+
 #define DEVICE_ALIAS_MAX_LENGTH 16
 
 #define LCD_PIXEL_WIDTH 6
@@ -33,37 +37,6 @@
 #endif // FIRMWARE_UPDATE_URL
 
 #define PRE_DEEP_SLEEP_WINDOW_FACTOR 10
-
-#define SERVO_INVERT_POS(p, f, m) (((f) ? ((m) - (p)) : (p)))
-
-#ifndef SERVO0_INVERTED
-#define SERVO0_INVERTED false
-#endif // SERVO0_INVERTED
-
-#ifndef SERVO1_INVERTED
-#define SERVO1_INVERTED false
-#endif // SERVO1_INVERTED
-
-#ifndef SERVO0_BASE_DEGREES
-#define SERVO0_BASE_DEGREES 10
-#endif // SERVO0_BASE_DEGREES
-
-#ifndef SERVO1_BASE_DEGREES
-#define SERVO1_BASE_DEGREES 10
-#endif // SERVO1_BASE_DEGREES
-
-#ifndef SERVO0_RANGE_DEGREES
-#define SERVO0_RANGE_DEGREES 140
-#endif // SERVO0_RANGE_DEGREES
-
-#ifndef SERVO1_RANGE_DEGREES
-#define SERVO1_RANGE_DEGREES 140
-#endif // SERVO1_RANGE_DEGREES
-
-#define MAX_SERVO_STEPS 10
-
-#define SERVO0_STEP_DEGREES ((float)SERVO0_RANGE_DEGREES / (MAX_SERVO_STEPS - 1))
-#define SERVO1_STEP_DEGREES ((float)SERVO1_RANGE_DEGREES / (MAX_SERVO_STEPS - 1))
 
 #define SERVO_PERIOD_REACTION_MS 15
 
@@ -96,6 +69,8 @@ Servo servoLeft;
 Servo servoRight;
 Adafruit_SSD1306 lcd(-1);
 Buffer* devId = NULL;
+ServoConf* servo0Conf = NULL;
+ServoConf* servo1Conf = NULL;
 
 #define LED_INT_ON ios('y', IoOn);
 #define LED_INT_OFF ios('y', IoOff);
@@ -114,6 +89,7 @@ void lightSleepInterruptable(time_t cycleBegin, time_t periodSecs);
 void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs);
 void debugHandle();
 bool haveToInterrupt();
+void initializeDeviceTuning();
 
 ////////////////////////////////////////
 // Functions requested for architecture
@@ -123,17 +99,6 @@ bool haveToInterrupt();
 ///////////////////
 
 const char* deviceId() {
-	if (devId == NULL) {
-		devId = new Buffer(DEVICE_ALIAS_MAX_LENGTH);
-    bool succ = readFile(DEVICE_ALIAS_FILENAME, devId); // preserve the alias
-    if (succ) { // managed to retrieve the alias
-    	// content already with the alias
-      devId->replace('\n', 0);
-    } else { // no alias, fallback to chip id
-      devId->fill("%d", ESP.getChipId());
-    }
-    log(CLASS_MAIN, Info, "Alias '%s'", devId->getBuffer());
-	}
 	return devId->getBuffer();
 }
 
@@ -291,9 +256,11 @@ void arms(int left, int right, int steps) {
   static int lastPosR = -1;
 
   log(CLASS_MAIN, Debug, "Arms>%d&%d", left, right);
-  int targetPosL = SERVO0_BASE_DEGREES + SERVO_INVERT_POS(((POSIT(left) % MAX_SERVO_STEPS) * SERVO0_STEP_DEGREES) , SERVO0_INVERTED, SERVO0_RANGE_DEGREES);
-  int targetPosR = SERVO1_BASE_DEGREES + SERVO_INVERT_POS(((POSIT(right) % MAX_SERVO_STEPS) * SERVO1_STEP_DEGREES), SERVO1_INVERTED, SERVO1_RANGE_DEGREES);
+
+  int targetPosL = servo0Conf->getTargetDegreesFromPosition(left);
   servoLeft.attach(SERVO0_PIN);
+
+  int targetPosR = servo1Conf->getTargetDegreesFromPosition(right);
   servoRight.attach(SERVO1_PIN);
 
   // leave as target if first time
@@ -364,10 +331,8 @@ void ios(char led, IoMode value) {
 
 void clearDevice() {
 	Buffer alias(DEVICE_ALIAS_MAX_LENGTH);
-  readFile(DEVICE_ALIAS_FILENAME, &alias); // preserve the alias
   SPIFFS.format();
   SaveCrash.clear();
-  writeFile(DEVICE_ALIAS_FILENAME, alias.getBuffer());
 }
 
 void lcdImg(char img, uint8_t bitmap[]) {
@@ -514,6 +479,9 @@ BotMode setupArchitecture() {
   delay(DELAY_MS_SPI); // Initialize LCD
   setupLog(logLine);   // Initialize log callback
   heartbeat();
+
+  log(CLASS_MAIN, Info, "Setup device id");
+	initializeDeviceTuning();
 
   log(CLASS_MAIN, Debug, "Setup timing");
   setExternalMillis(millis);
@@ -696,4 +664,34 @@ bool haveToInterrupt() {
     // Nothing to handle, no reason to interrupt
     return false;
   }
+}
+
+void initializeDeviceTuning() {
+  devId = new Buffer(DEVICE_ALIAS_MAX_LENGTH);
+  bool succAlias = readFile(DEVICE_ALIAS_FILENAME, devId); // preserve the alias
+  if (succAlias) { // managed to retrieve the alias
+    devId->replace('\n', 0); // content already with the alias
+  } else { // no alias, fallback to chip id
+    devId->fill("%d", ESP.getChipId());
+  }
+
+	Buffer aux(64);
+
+  bool succServo0 = readFile(SERVO_0_FILENAME, &aux);
+  if (succServo0) {
+    aux.replace('\n', 0);
+    servo0Conf = new ServoConf(aux.getBuffer());
+  } else {
+    servo0Conf = new ServoConf();
+  }
+
+  bool succServo1 = readFile(SERVO_1_FILENAME, &aux);
+  if (succServo1) {
+    aux.replace('\n', 0);
+    servo1Conf = new ServoConf(aux.getBuffer());
+  } else {
+    servo1Conf = new ServoConf();
+  }
+
+  log(CLASS_MAIN, Info, "Alias '%s'", devId->getBuffer());
 }
