@@ -7,7 +7,7 @@ rm -f .simulator.bin
 
 PROFILE="$1"
 
-PARAM_FLAGS="-D PROJ_VERSION=simulation `cat $PROFILE`"
+PARAM_FLAGS="-D PROJ_VERSION=simulation `cat $PROFILE | grep -v '^#'`"
 
 FLAGS="-U ARDUINO $PARAM_FLAGS"
 
