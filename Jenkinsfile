@@ -16,7 +16,7 @@ pipeline {
           sshagent(['bitbucket_key']) {
             wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
               sh 'export GIT_COMMITTER_NAME=jenkinsbot && export GIT_COMMITTER_EMAIL=mauriciojostx@gmail.com && set && ./pull_dependencies'
-              sh 'PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=test `cat profiles/build.prof | grep -v \"^#\"`" platformio run'
+              sh './upload -p profiles/build.prof -c'
             }
           }
         }
@@ -39,7 +39,7 @@ pipeline {
     stage('Artifact') {
       steps {
         wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
-          sh 'PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=`git rev-parse --short HEAD` `cat profiles/generic.prof | grep -v \"^#\"`" platformio run'
+          sh './upload -p profiles/generic.prof -c'
           sh 'export commitid=`git rev-parse HEAD` && cp .pioenvs/main/firmware.bin firmware-$commitid.bin'
         }
       }

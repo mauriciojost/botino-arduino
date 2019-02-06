@@ -3,15 +3,23 @@
 set -e
 set -x
 
-PROFILE="$1"
-COMMIT_ID=`git rev-parse --short HEAD`
-LOG_DIR=images
+while getopts p:c option
+do
+  case "${option}"
+  in
+    p) PROFILE=${OPTARG};;
+    c) COMPILE_ONLY=true;;
+  esac
+done
 
 if [ -z "$PROFILE" ]
 then
-  echo "Profile missing"
+  echo "Variable PROFILE is mandatory"
   exit 1
 fi
+
+COMMIT_ID=`git rev-parse --short HEAD`
+LOG_DIR=images
 
 echo "### Using profile $PROFILE..."
 export PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=$COMMIT_ID `cat $PROFILE | grep -v '^#'`" 
@@ -19,18 +27,25 @@ export PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=$COMMIT_ID `cat $PROFILE | grep -
 echo "### Compiling..."
 platformio run -v
 
-echo "### Checking if no changes to be committed..."
-git diff --exit-code
+if [ -z "$COMPILE_ONLY" ]
+then
 
-echo "### Uploading..."
-platformio run --target upload
+  echo "### Will also upload..."
 
-echo "### Backing up image..."
-mkdir -p $LOG_DIR/$COMMIT_ID/
-rm -f $LOG_DIR/$COMMIT_ID/*
-find . -name *.elf | xargs -I% cp -f % $LOG_DIR/$COMMIT_ID/
+  echo "### Checking if no changes to be committed..."
+  git diff --exit-code
 
-echo "### Monitoring..."
+  echo "### Uploading..."
+  platformio run --target upload
+
+  echo "### Backing up image..."
+  mkdir -p $LOG_DIR/$COMMIT_ID/
+  rm -f $LOG_DIR/$COMMIT_ID/*
+  find . -name *.elf | xargs -I% cp -f % $LOG_DIR/$COMMIT_ID/
+
+  echo "### Monitoring..."
 
 
-{ ./serial_monitor 0 > >(tee $LOG_DIR/$COMMIT_ID/stdout.txt ); } 2> >(tee $LOG_DIR/$COMMIT_ID/stderr.txt )
+  { ./serial_monitor 0 > >(tee $LOG_DIR/$COMMIT_ID/stdout.txt ); } 2> >(tee $LOG_DIR/$COMMIT_ID/stderr.txt )
+
+fi
