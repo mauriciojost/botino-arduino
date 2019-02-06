@@ -34,7 +34,7 @@ function run_test() {
 
 
 source mavarduino.conf
-export PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=`git rev-parse --short HEAD` `cat $PROFILE`"
+export PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=`git rev-parse --short HEAD` `cat $PROFILE | grep -v '^#'`"
 
 
 
