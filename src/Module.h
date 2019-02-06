@@ -345,7 +345,7 @@ public:
     } else if (strcmp("save", c) == 0) {
       const char *fname = strtok(NULL, " ");
       const char *content = strtok(NULL, "?????");
-      bool suc = writeFile(fname, content);
+      bool suc = fileWrite(fname, content);
       log(CLASS_MODULE, Info, "File '%s' saved: %d", fname, (int)suc);
       return false;
     } else if (strcmp("load", c) == 0) {
