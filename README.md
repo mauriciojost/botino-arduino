@@ -152,5 +152,5 @@ Even if the current main implementation uses ESP8266, *Botino* is meant to be mu
 ## 3.5. Test
 
 ```
-PLATFORMIO_BUILD_FLAGS="`cat profiles/test.prof | grep -v '^#'`" ./launch_tests
+./launch_tests cat profiles/test.prof
 ```

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+PROFILE=$1
+
 set -e
 #set -x
 
@@ -32,6 +34,9 @@ function run_test() {
 
 
 source mavarduino.conf
+export PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=`git rev-parse --short HEAD` `cat $PROFILE`"
+
+
 
 for f in $(find test -name *.cpp)
 do
@@ -42,3 +47,4 @@ do
   echo ""
   run_test "$f" "$test_general_flags" "$test_excludes_pattern"
 done
+
