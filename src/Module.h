@@ -36,7 +36,7 @@
   "\n  set ...         : set an actor property (example: 'set body msg0 HELLO')"                                                                \
   "\n  move ...        : execute a move (example: 'move A00C55')"                                                                               \
   "\n  logl [...]      : get / change log level to <x> (0 is more verbose, to 3 least verbose)"                                                 \
-  "\n  clear           : clear device (eeprom and crashes stacktrace)"                                                                          \
+  "\n  clear           : clear device (filesystem, crashes stacktrace, etc.)"                                                                   \
   "\n  actall          : all act"                                                                                                               \
   "\n  touchall        : mark actors as 'changed' to force synchronization with the server"                                                     \
   "\n  actone ...      : make actor <x> act"                                                                                                    \
@@ -45,8 +45,9 @@
   "\n  wifissid ...    : set wifi ssid"                                                                                                         \
   "\n  wifipass ...    : set wifi pass"                                                                                                         \
   "\n  ifttttoken ...  : set ifttt token"                                                                                                       \
-  "\n  store           : save properties in eeprom (mainly for credentials)"                                                                    \
-  "\n  load            : load properties in eeprom (mainly for credentials)"                                                                    \
+  "\n  load            : load properties in persistent fs (mainly for credentials)"                                                             \
+  "\n  store           : save properties in persistent fs (mainly for credentials)"                                                             \
+  "\n  save ...        : save a file <f> with content <y> in persistent fs (mainly for tuning) "                                                \
   "\n  ack             : notification read"                                                                                                     \
   "\n  help            : show this help"                                                                                                        \
   "\n  (all messages are shown as info log level)"                                                                                              \
@@ -340,6 +341,12 @@ public:
     } else if (strcmp("store", c) == 0) {
       propSync->fsStoreActorsProps(); // store credentials
       log(CLASS_MODULE, Info, "Properties stored locally");
+      return false;
+    } else if (strcmp("save", c) == 0) {
+      const char *fname = strtok(NULL, " ");
+      const char *content = strtok(NULL, "?????");
+      bool suc = writeFile(fname, content);
+      log(CLASS_MODULE, Info, "File '%s' saved: %d", fname, (int)suc);
       return false;
     } else if (strcmp("load", c) == 0) {
       propSync->fsLoadActorsProps(); // load mainly credentials already set
