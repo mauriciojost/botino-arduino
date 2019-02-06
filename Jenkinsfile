@@ -39,7 +39,7 @@ pipeline {
     stage('Artifact') {
       steps {
         wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
-          sh 'PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=`git rev-parse --short HEAD` `cat profiles/generic.prof | grep -v \"^#\"``" platformio run'
+          sh 'PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=`git rev-parse --short HEAD` `cat profiles/generic.prof | grep -v \"^#\"`" platformio run'
           sh 'export commitid=`git rev-parse HEAD` && cp .pioenvs/main/firmware.bin firmware-$commitid.bin'
         }
       }
