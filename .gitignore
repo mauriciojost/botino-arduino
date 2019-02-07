@@ -145,3 +145,12 @@
 /src/Base64.cpp
 /src/Base64.h
 /profiles/dev3-sleeper.prof
+/profiles/dev1-home-tuning/device.alias
+/profiles/dev1-home-tuning/servo0.tuning
+/profiles/dev1-home-tuning/servo1.tuning
+/profiles/dev2-custom-tuning/device.alias
+/profiles/dev2-simulate-tuning/device.alias
+/profiles/dev3-sleeper-tuning/device.alias
+/profiles/dev7-work-tuning/device.alias
+/profiles/dev7-work-tuning/servo0.tuning
+/profiles/dev7-work-tuning/servo1.tuning
