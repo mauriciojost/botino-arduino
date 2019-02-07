@@ -154,3 +154,9 @@
 /profiles/dev7-work-tuning/device.alias
 /profiles/dev7-work-tuning/servo0.tuning
 /profiles/dev7-work-tuning/servo1.tuning
+/data
+/profiles/dev1-home-tuning/alias.tuning
+/profiles/dev2-custom-tuning/alias.tuning
+/profiles/dev2-simulate-tuning/alias.tuning
+/profiles/dev3-sleeper-tuning/alias.tuning
+/profiles/dev7-work-tuning/alias.tuning
