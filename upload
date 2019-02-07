@@ -11,6 +11,7 @@ do
     W) DONT_UPLOAD_FIRMWARE=true;;
     t) UPLOAD_FS=true;;
     m) MONITOR=true;;
+    v) PLATFORMIO_RUN_PARAMS="-v";;
   esac
 done
 
@@ -27,7 +28,7 @@ echo "### Using profile $PROFILE..."
 export PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=$COMMIT_ID `cat $PROFILE | grep -v '^#'`" 
 
 echo "### Compiling..."
-platformio run -v
+platformio run $PLATFORMIO_RUN_PARAMS
 
 if [ -z "$DONT_UPLOAD_FIRMWARE" ]
 then
