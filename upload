@@ -3,18 +3,20 @@
 set -e
 set -x
 
-while getopts p:c option
+while getopts p:Wtm option
 do
   case "${option}"
   in
     p) PROFILE=${OPTARG};;
-    c) COMPILE_ONLY=true;;
+    W) DONT_UPLOAD_FIRMWARE=true;;
+    t) UPLOAD_FS=true;;
+    m) MONITOR=true;;
   esac
 done
 
 if [ -z "$PROFILE" ]
 then
-  echo "Variable PROFILE is mandatory"
+  echo "Variable -p PROFILE is mandatory"
   exit 1
 fi
 
@@ -27,10 +29,10 @@ export PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=$COMMIT_ID `cat $PROFILE | grep -
 echo "### Compiling..."
 platformio run -v
 
-if [ -z "$COMPILE_ONLY" ]
+if [ -z "$DONT_UPLOAD_FIRMWARE" ]
 then
 
-  echo "### Will also upload..."
+  echo "### Will upload firmware..."
 
   echo "### Checking if no changes to be committed..."
   git diff --exit-code
@@ -41,11 +43,30 @@ then
   echo "### Backing up image..."
   mkdir -p $LOG_DIR/$COMMIT_ID/
   rm -f $LOG_DIR/$COMMIT_ID/*
+  echo "### Backing up logs..."
   find . -name *.elf | xargs -I% cp -f % $LOG_DIR/$COMMIT_ID/
 
-  echo "### Monitoring..."
-
-
-  { ./serial_monitor 0 > >(tee $LOG_DIR/$COMMIT_ID/stdout.txt ); } 2> >(tee $LOG_DIR/$COMMIT_ID/stderr.txt )
-
 fi
+
+if [ -n "$UPLOAD_FS" ]
+then
+  echo "### Will upload tuning to file-system..."
+  PROFILE_BASE="${PROFILE%.*}"
+  TUNING_PATH="$PROFILE_BASE-tuning"
+  rm -fr data
+  ln -s `readlink -e $TUNING_PATH` data
+  echo "### Uploading $TUNING_PATH"
+  platformio run --target buildfs
+  platformio run --target uploadfs
+fi
+
+
+if [ -n "$MONITOR" ]
+then
+  echo "### Monitoring..."
+  { ./serial_monitor 0 > >(tee $LOG_DIR/$COMMIT_ID/stdout.txt ); } 2> >(tee $LOG_DIR/$COMMIT_ID/stderr.txt )
+fi
+
+echo "Done."
+
+

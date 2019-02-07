@@ -117,9 +117,9 @@ To upload the firmware just do:
 ```
 # upload via USB serial port:
 
- ./upload profiles/dev7-custom.prof
+ ./upload -p profiles/dev7-custom.prof
 
-# if you want to upload via OTA: 
+# if you want to upload via OTA (outdated): 
 
  PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=`git rev-parse --short HEAD` `cat profiles/dev1-home.prof`" platformio run --target upload --upload-port <IP> # OTA
 
@@ -135,10 +135,10 @@ To see the logs:
 
 ```
 
-To upload the `data` folder just do: 
+To upload any tuning folder just do: 
 
 ```
-upload_spiffs
+upload -p <profile> -s
 ```
 
 ## 3.4. Simulate
