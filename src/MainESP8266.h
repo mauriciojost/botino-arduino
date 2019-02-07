@@ -89,7 +89,7 @@ void lightSleepInterruptable(time_t cycleBegin, time_t periodSecs);
 void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs);
 void debugHandle();
 bool haveToInterrupt();
-void initializeDeviceTuning();
+void initializeServoConfigs();
 
 ////////////////////////////////////////
 // Functions requested for architecture
@@ -99,6 +99,15 @@ void initializeDeviceTuning();
 ///////////////////
 
 const char* deviceId() {
+  if (devId == NULL) {
+    devId = new Buffer(DEVICE_ALIAS_MAX_LENGTH);
+    bool succAlias = readFile(DEVICE_ALIAS_FILENAME, devId); // preserve the alias
+    if (succAlias) { // managed to retrieve the alias
+      devId->replace('\n', 0); // content already with the alias
+    } else { // no alias, fallback to chip id
+      devId->fill("%d", ESP.getChipId());
+    }
+  }
 	return devId->getBuffer();
 }
 
@@ -254,6 +263,8 @@ void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clearMode, int
 void arms(int left, int right, int steps) {
   static int lastPosL = -1;
   static int lastPosR = -1;
+
+  initializeServoConfigs();
 
   log(CLASS_MAIN, Debug, "Arms>%d&%d", left, right);
 
@@ -480,9 +491,6 @@ BotMode setupArchitecture() {
   setupLog(logLine);   // Initialize log callback
   heartbeat();
 
-  log(CLASS_MAIN, Info, "Setup device id");
-	initializeDeviceTuning();
-
   log(CLASS_MAIN, Debug, "Setup timing");
   setExternalMillis(millis);
 
@@ -666,14 +674,10 @@ bool haveToInterrupt() {
   }
 }
 
-void initializeDeviceTuning() {
-  devId = new Buffer(DEVICE_ALIAS_MAX_LENGTH);
-  bool succAlias = readFile(DEVICE_ALIAS_FILENAME, devId); // preserve the alias
-  if (succAlias) { // managed to retrieve the alias
-    devId->replace('\n', 0); // content already with the alias
-  } else { // no alias, fallback to chip id
-    devId->fill("%d", ESP.getChipId());
-  }
+void initializeServoConfigs() {
+	if (servo0Conf != NULL) {
+		return;
+	}
 
 	Buffer aux(64);
 
