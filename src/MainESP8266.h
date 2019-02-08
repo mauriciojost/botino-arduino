@@ -264,8 +264,6 @@ void arms(int left, int right, int steps) {
   static int lastPosL = -1;
   static int lastPosR = -1;
 
-  initializeServoConfigs();
-
   log(CLASS_MAIN, Debug, "Arms>%d&%d", left, right);
 
   int targetPosL = servo0Conf->getTargetDegreesFromPosition(left);
@@ -494,6 +492,9 @@ BotMode setupArchitecture() {
   log(CLASS_MAIN, Debug, "Setup timing");
   setExternalMillis(millis);
 
+  log(CLASS_MAIN, Debug, "Setup servos");
+  initializeServoConfigs();
+
   log(CLASS_MAIN, Debug, "Setup wdt");
   ESP.wdtEnable(1); // argument not used
 
@@ -675,10 +676,6 @@ bool haveToInterrupt() {
 }
 
 void initializeServoConfigs() {
-	if (servo0Conf != NULL) {
-		return;
-	}
-
 	Buffer aux(64);
 
   bool succServo0 = readFile(SERVO_0_FILENAME, &aux);
@@ -697,5 +694,4 @@ void initializeServoConfigs() {
     servo1Conf = new ServoConf();
   }
 
-  log(CLASS_MAIN, Info, "Alias '%s'", devId->getBuffer());
 }
