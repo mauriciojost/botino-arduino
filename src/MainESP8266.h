@@ -441,6 +441,7 @@ void testArchitecture() {
 void updateFirmware() {
   ESP8266HTTPUpdate updater;
   log(CLASS_MAIN, Info, "Updating firmware from '%s'...", FIRMWARE_UPDATE_URL);
+  log(CLASS_MAIN, Info, "Make sure wifi command is executed before!");
   t_httpUpdate_return ret = updater.update(FIRMWARE_UPDATE_URL);
   switch (ret) {
     case HTTP_UPDATE_FAILED:
