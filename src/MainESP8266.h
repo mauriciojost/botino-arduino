@@ -561,7 +561,50 @@ void runModeArchitecture() {
 }
 
 bool commandArchitecture(const char* c) {
+  if (strcmp("servotune", c) == 0) {
+    char servo = strtok(NULL, " ")[0];
+    int base = atoi(strtok(NULL, " "));
+    int range = atoi(strtok(NULL, " "));
+    bool inv = (bool)atoi(strtok(NULL, " "));
+    ServoConf* s = NULL;
+    if (servo == 'r' || servo == 'R') {
+      s = servo1Conf; // right servo1
+    } else if (servo == 'l' || servo == 'L') {
+    	s = servo0Conf;// left servo0
+    } else {
+      log(CLASS_MAIN, Warn, "Invalid servo (l|r)");
+    	return false;
+    }
+    s->setBase(base);
+    s->setRange(range);
+    s->setInvert(inv);
+    arms(9,9,100);
+    arms(0,0,100);
+    log(CLASS_MODULE, Info, "Tune servo %d", servo);
     return false;
+  } else if (strcmp("servosave", c) == 0) {
+    char servo = strtok(NULL, " ")[0];
+    Buffer serialized(16);
+    if (servo == 'r' || servo == 'R') {
+      servo1Conf->serialize(&serialized); // right servo1
+      writeFile(SERVO_1_FILENAME, serialized.getBuffer());
+      log(CLASS_MAIN, Info, "Stored tunning right servo");
+    } else if (servo == 'l' || servo == 'L') {
+    	servo0Conf->serialize(&serialized); // left servo0
+      writeFile(SERVO_0_FILENAME, serialized.getBuffer());
+      log(CLASS_MAIN, Info, "Stored tunning left servo");
+    } else {
+      log(CLASS_MAIN, Warn, "Invalid servo (l|r)");
+    	return false;
+    }
+    return false;
+
+  } else if (strcmp("help", c) == 0) {
+    logRaw(CLASS_MODULE, Warn, HELP_COMMAND_ARCH_CLI);
+    return false;
+  } else {
+  	return false;
+  }
 }
 
 void configureModeArchitecture() {

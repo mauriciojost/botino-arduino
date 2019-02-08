@@ -18,7 +18,6 @@ private:
 
 	void logValues() {
     log(CLASS_MAIN, Debug, "Base %d, range %d, invert %d, stepDeg %f", base, range, (int)invert, stepDegrees);
-    log(CLASS_MAIN, Debug, "To store: %d/%d/%d", base, range, (int)invert);
 	}
 
 public:
@@ -29,9 +28,9 @@ public:
     stepDegrees = (float)getRangeDegrees() / (MAX_SERVO_STEPS - 1);
     logValues();
   }
-  ServoConf(const char *s) {
+  ServoConf(const char *serialized) {
   	Buffer b(16);
-  	b.load(s);
+  	b.load(serialized);
     base = atoi(strtok(b.getUnsafeBuffer(), PROPS_SEPARATOR));
     range = atoi(strtok(NULL, PROPS_SEPARATOR));
     invert = (bool)atoi(strtok(NULL, PROPS_SEPARATOR));
@@ -42,9 +41,12 @@ public:
   int getRangeDegrees() { return range; }
   bool getInvert() { return invert; }
   float getStepDegrees() { return stepDegrees; }
-  void setIBase(int b) { base = b; logValues(); }
+  void setBase(int b) { base = b; logValues(); }
   void setRange(int r) { range = r; logValues(); }
   void setInvert(bool i) { invert = i; logValues(); }
+  void serialize(Buffer* dst) {
+  	dst->fill("%d" PROPS_SEPARATOR "%d" PROPS_SEPARATOR "%d" PROPS_SEPARATOR, base, range, (int)invert);
+  }
 
   /**
    * Given a position (between 0 and MAX_SERVO_STEPS -1) return the degrees.
