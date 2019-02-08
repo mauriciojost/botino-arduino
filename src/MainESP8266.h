@@ -579,7 +579,7 @@ bool commandArchitecture(const char* c) {
     s->setInvert(inv);
     arms(9,9,100);
     arms(0,0,100);
-    log(CLASS_MODULE, Info, "Tune servo %d", servo);
+    log(CLASS_MODULE, Info, "Tune servo '%c'", servo);
     return false;
   } else if (strcmp("servosave", c) == 0) {
     char servo = strtok(NULL, " ")[0];
@@ -587,11 +587,11 @@ bool commandArchitecture(const char* c) {
     if (servo == 'r' || servo == 'R') {
       servo1Conf->serialize(&serialized); // right servo1
       writeFile(SERVO_1_FILENAME, serialized.getBuffer());
-      log(CLASS_MAIN, Info, "Stored tunning right servo");
+      log(CLASS_MAIN, Info, "Stored tuning right servo");
     } else if (servo == 'l' || servo == 'L') {
     	servo0Conf->serialize(&serialized); // left servo0
       writeFile(SERVO_0_FILENAME, serialized.getBuffer());
-      log(CLASS_MAIN, Info, "Stored tunning left servo");
+      log(CLASS_MAIN, Info, "Stored tuning left servo");
     } else {
       log(CLASS_MAIN, Warn, "Invalid servo (l|r)");
     	return false;

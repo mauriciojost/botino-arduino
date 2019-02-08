@@ -72,6 +72,23 @@ This connectivity (as both This and That block) allows:
 
 Properties: see [here for more information](src/actors/Body.h)
 
+## Tuning
+
+Use the following commands to tune the servos: 
+
+```
+## Focus on the right arm of the botino
+# Set base, range, and inversion until fully up and down
+servotune r 0 200 0
+# Save
+servosave r
+## Focus on the left arm of the botino (set base, range, and inversion until fully up and down)
+# Set base, range, and inversion until fully up and down
+servotune l 0 220 1
+# Save
+servosave l
+```
+
 ## Timing
 
 Refer to the `Timing` section of the documentation of `main4ino`.
