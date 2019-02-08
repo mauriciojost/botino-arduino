@@ -242,7 +242,6 @@ int httpPost(const char *url, const char *body, ParamStream *response, Table *he
 }
 
 void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clearMode, int size, const char *str) {
-  int l = strlen(str);
   switch (clearMode) {
   	case FullClear:
       lcd.clearDisplay();
