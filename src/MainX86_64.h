@@ -182,6 +182,10 @@ void runModeArchitecture() {
   }
 }
 
+bool commandArchitecture(const char* command) {
+	return false;
+}
+
 void configureModeArchitecture() {
   // nothing to be done here
 }

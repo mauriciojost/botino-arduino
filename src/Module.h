@@ -78,6 +78,7 @@ private:
   void (*sleepInterruptable)(time_t cycleBegin, time_t periodSec);
   void (*configureModeArchitecture)();
   void (*runModeArchitecture)();
+  bool (*commandArchitecture)(const char* cmd);
   bool (*fileRead)(const char *fname, Buffer* content);
   bool (*fileWrite)(const char *fname, const char* content);
   void (*info)();
@@ -140,6 +141,7 @@ public:
     sleepInterruptable = NULL;
     configureModeArchitecture = NULL;
     runModeArchitecture = NULL;
+    commandArchitecture = NULL;
     fileRead = NULL;
     fileWrite = NULL;
     info = NULL;
@@ -162,6 +164,7 @@ public:
              void (*sleepInterruptableFunc)(time_t cycleBegin, time_t periodSec),
              void (*configureModeArchitectureFunc)(),
              void (*runModeArchitectureFunc)(),
+             bool (*commandArchitectureFunc)(const char* cmd),
              void (*infoFunc)(),
              void (*updateFunc)(),
              void (*testFunc)()
@@ -190,6 +193,7 @@ public:
     sleepInterruptable = sleepInterruptableFunc;
     configureModeArchitecture = configureModeArchitectureFunc;
     runModeArchitecture = runModeArchitectureFunc;
+    commandArchitecture = commandArchitectureFunc;
     fileRead = fileReadFunc;
     fileWrite = fileWriteFunc;
     info = infoFunc;
@@ -208,6 +212,11 @@ public:
     }
   }
 
+  /**
+   * Handle a user command.
+   * If no command maches, commandArchitecture will be used as fallback.
+   * Returns true if the command requires the current wait batch to be interrupted (normally true with change of bot mode)
+   */
   bool command(const char *cmd) {
 
     Buffer *b = new Buffer(COMMAND_MAX_LENGTH);
@@ -364,10 +373,10 @@ public:
       return false;
     } else if (strcmp("help", c) == 0) {
       logRaw(CLASS_MODULE, Warn, HELP_COMMAND_CLI);
-      return false;
+      return commandArchitecture(c);
     } else {
       logRaw(CLASS_MODULE, Warn, "What? (try: 'help', log level is Info)");
-      return false;
+      return commandArchitecture(c);
     }
   }
 

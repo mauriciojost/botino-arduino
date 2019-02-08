@@ -61,6 +61,10 @@ extern "C" {
 
 #define HTTP_TIMEOUT_MS 8000
 
+#define HELP_COMMAND_ARCH_CLI                                                                                                                   \
+  "\n  servotune         : tune the servo <n> with <base> <range> <inversion> and make a test round "                                           \
+  "\n"
+
 volatile unsigned char buttonInterrupts = 0;
 
 HTTPClient httpClient;
@@ -517,7 +521,7 @@ BotMode setupArchitecture() {
 
   log(CLASS_MAIN, Debug, "Setup commands");
   telnet.setCallBackProjectCmds(reactCommandCustom);
-  String helpCli(HELP_COMMAND_CLI);
+  String helpCli("Type 'help' for help");
   telnet.setHelpProjectsCmds(helpCli);
   heartbeat();
 
@@ -554,6 +558,10 @@ void runModeArchitecture() {
   if (s->getDebug()) {
     debugHandle();
   }
+}
+
+bool commandArchitecture(const char* c) {
+    return false;
 }
 
 void configureModeArchitecture() {
