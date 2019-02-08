@@ -167,6 +167,11 @@ public:
              void (*testFunc)()
 						 ) {
 
+  	// Unstable situation from now until the end of the function
+  	// Actors are being initialized, and use callback functions that may trigger
+  	// low level calls, like IO, LCD, arms, fan, etc. but they are not set up yet.
+  	// Setup of low level calls happens in setupArchitecture().
+
     notifier->setMessageFunc(messageFunc);
     notifier->setLcdImgFunc(lcdImg);
     body->setArmsFunc(arms);
