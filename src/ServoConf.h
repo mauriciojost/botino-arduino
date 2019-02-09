@@ -4,6 +4,8 @@
 #include <main4ino/Buffer.h>
 #include <log4ino/Log.h>
 
+#define CLASS_SERVOCONF "SC"
+
 #define PROPS_SEPARATOR "/"
 #define MAX_SERVO_STEPS 10
 
@@ -17,7 +19,7 @@ private:
 	float stepDegrees;
 
 	void logValues() {
-    log(CLASS_MAIN, Debug, "Base %d, range %d, invert %d, stepDeg %f", base, range, (int)invert, stepDegrees);
+    log(CLASS_SERVOCONF, Debug, "Base %d, range %d, invert %d, stepDeg %f", base, range, (int)invert, stepDegrees);
 	}
 
 public:
@@ -52,8 +54,10 @@ public:
    * Given a position (between 0 and MAX_SERVO_STEPS -1) return the degrees.
    */
   int getTargetDegreesFromPosition(int po) {
-  	return getBaseDegrees()
+  	int deg = getBaseDegrees()
   			+ SERVO_INVERT_POS(((POSIT(po) % MAX_SERVO_STEPS) * getStepDegrees()), getInvert(), getRangeDegrees());
+    log(CLASS_SERVOCONF, Debug, "Pos %d === %d deg", po, deg);
+    return deg;
   }
 
 };
