@@ -21,7 +21,7 @@ then
   exit 1
 fi
 
-COMMIT_ID=`git rev-parse --short HEAD`
+COMMIT_ID="`cat library.json | jq -r .version`-`git rev-parse --short HEAD`" 
 LOG_DIR=images
 
 echo "### Using profile $PROFILE..."
