@@ -578,8 +578,15 @@ bool commandArchitecture(const char* c) {
     s->setBase(base);
     s->setRange(range);
     s->setInvert(inv);
-    arms(9,9,100);
-    arms(0,0,100);
+    if (servo == 'r' || servo == 'R') {
+      arms(0,0,100);
+      arms(0,9,100);
+      arms(0,0,100);
+    } else if (servo == 'l' || servo == 'L') {
+      arms(0,0,100);
+      arms(9,0,100);
+      arms(0,0,100);
+    }
     log(CLASS_MODULE, Info, "Tune servo '%c'", servo);
     return false;
   } else if (strcmp("servosave", c) == 0) {
