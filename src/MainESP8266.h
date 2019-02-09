@@ -258,33 +258,33 @@ void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clearMode, int
 }
 
 void arms(int left, int right, int steps) {
-  static int lastPosL = -1;
-  static int lastPosR = -1;
+  static int lastDegL = -1;
+  static int lastDegR = -1;
 
   log(CLASS_MAIN, Debug, "Arms>%d&%d", left, right);
 
-  int targetPosL = servo0Conf->getTargetDegreesFromPosition(left);
+  int targetDegL = servo0Conf->getTargetDegreesFromPosition(left);
   servoLeft.attach(SERVO0_PIN);
 
-  int targetPosR = servo1Conf->getTargetDegreesFromPosition(right);
+  int targetDegR = servo1Conf->getTargetDegreesFromPosition(right);
   servoRight.attach(SERVO1_PIN);
 
   // leave as target if first time
-  lastPosL = (lastPosL == -1 ? targetPosL : lastPosL);
-  lastPosR = (lastPosR == -1 ? targetPosR : lastPosR);
+  lastDegL = (lastDegL == -1 ? targetDegL : lastDegL);
+  lastDegR = (lastDegR == -1 ? targetDegR : lastDegR);
 
-  log(CLASS_MAIN, Debug, "Sv.L%d>%d", lastPosL, targetPosL);
-  log(CLASS_MAIN, Debug, "Sv.R%d>%d", lastPosR, targetPosR);
+  log(CLASS_MAIN, Debug, "Sv.Ldeg%d>deg%d", lastDegL, targetDegL);
+  log(CLASS_MAIN, Debug, "Sv.Rdeg%d>deg%d", lastDegR, targetDegR);
   for (int i = 1; i <= steps; i++) {
     float factor = ((float)i) / steps;
-    int vL = lastPosL + ((targetPosL - lastPosL) * factor);
-    int vR = lastPosR + ((targetPosR - lastPosR) * factor);
+    int vL = lastDegL + ((targetDegL - lastDegL) * factor);
+    int vR = lastDegR + ((targetDegR - lastDegR) * factor);
     servoLeft.write(vL);
     servoRight.write(vR);
     delay(SERVO_PERIOD_REACTION_MS);
   }
-  lastPosL = targetPosL;
-  lastPosR = targetPosR;
+  lastDegL = targetDegL;
+  lastDegR = targetDegR;
   servoLeft.detach();
   servoRight.detach();
 }
