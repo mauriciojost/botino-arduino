@@ -21,7 +21,7 @@ then
   exit 1
 fi
 
-VERSION="`cat library.json | jq -r .version`"
+VERSION=`cat library.json | python -c 'import sys, json; print json.load(sys.stdin)["version"]'`
 COMMIT_ID="`git rev-parse --short HEAD`"
 PROJ_VERSION_ID="$VERSION-$COMMIT_ID" 
 LOG_DIR=images
