@@ -21,11 +21,13 @@ then
   exit 1
 fi
 
-COMMIT_ID="`cat library.json | jq -r .version`-`git rev-parse --short HEAD`" 
+VERSION="`cat library.json | jq -r .version`"
+COMMIT_ID="`git rev-parse --short HEAD`"
+PROJ_VERSION_ID="$VERSION-$COMMIT_ID" 
 LOG_DIR=images
 
 echo "### Using profile $PROFILE..."
-export PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=$COMMIT_ID `cat $PROFILE | grep -v '^#'`" 
+export PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=$PROJ_VERSION_ID `cat $PROFILE | grep -v '^#'`" 
 
 echo "### Compiling..."
 platformio run $PLATFORMIO_RUN_PARAMS
@@ -42,10 +44,10 @@ then
   platformio run --target upload
 
   echo "### Backing up image..."
-  mkdir -p $LOG_DIR/$COMMIT_ID/
-  rm -f $LOG_DIR/$COMMIT_ID/*
+  mkdir -p $LOG_DIR/$PROJ_VERSION_ID/
+  rm -f $LOG_DIR/$PROJ_VERSION_ID/*
   echo "### Backing up logs..."
-  find . -name *.elf | xargs -I% cp -f % $LOG_DIR/$COMMIT_ID/
+  find . -name *.elf | xargs -I% cp -f % $LOG_DIR/$PROJ_VERSION_ID/
 
 fi
 
@@ -65,7 +67,7 @@ fi
 if [ -n "$MONITOR" ]
 then
   echo "### Monitoring..."
-  { ./serial_monitor 0 > >(tee $LOG_DIR/$COMMIT_ID/stdout.txt ); } 2> >(tee $LOG_DIR/$COMMIT_ID/stderr.txt )
+  { ./serial_monitor 0 > >(tee $LOG_DIR/$PROJ_VERSION_ID/stdout.txt ); } 2> >(tee $LOG_DIR/$PROJ_VERSION_ID/stderr.txt )
 fi
 
 echo "Done."
