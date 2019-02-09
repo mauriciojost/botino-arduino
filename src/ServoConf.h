@@ -13,50 +13,53 @@
 
 class ServoConf {
 private:
-	int base;
-	int range;
+	int baseDeg;
+	int rangeDeg;
 	bool invert;
-	float stepDegrees;
+	float stepDeg;
 
 	void logValues() {
-    log(CLASS_SERVOCONF, Debug, "Base %d, range %d, invert %d, stepDeg %f", base, range, (int)invert, stepDegrees);
+    log(CLASS_SERVOCONF, Debug, "Base %d, range %d, invert %d, stepDeg %f", baseDeg, rangeDeg, (int)invert, stepDeg);
 	}
+
+  void updateStepDegrees() {
+    stepDeg = (float)getRangeDegrees() / (MAX_SERVO_STEPS - 1);
+  }
 
 public:
   ServoConf() {
-    base = 10;
-    range = 140;
+    baseDeg = 10;
+    rangeDeg = 140;
     invert = false;
-    stepDegrees = (float)getRangeDegrees() / (MAX_SERVO_STEPS - 1);
+    stepDeg = (float)getRangeDegrees() / (MAX_SERVO_STEPS - 1);
     logValues();
   }
   ServoConf(const char *serialized) {
   	Buffer b(16);
   	b.load(serialized);
-    base = atoi(strtok(b.getUnsafeBuffer(), PROPS_SEPARATOR));
-    range = atoi(strtok(NULL, PROPS_SEPARATOR));
+    baseDeg = atoi(strtok(b.getUnsafeBuffer(), PROPS_SEPARATOR));
+    rangeDeg = atoi(strtok(NULL, PROPS_SEPARATOR));
     invert = (bool)atoi(strtok(NULL, PROPS_SEPARATOR));
-    stepDegrees = (float)getRangeDegrees() / (MAX_SERVO_STEPS - 1);
+    updateStepDegrees();
     logValues();
   }
-  int getBaseDegrees() { return base; }
-  int getRangeDegrees() { return range; }
+  int getBaseDegrees() { return baseDeg; }
+  int getRangeDegrees() { return rangeDeg; }
   bool getInvert() { return invert; }
-  float getStepDegrees() { return stepDegrees; }
-  void setBase(int b) { base = b; logValues(); }
-  void setRange(int r) { range = r; logValues(); }
+  float getStepDegrees() { return stepDeg; }
+  void setBase(int b) { baseDeg = b; logValues(); }
+  void setRange(int r) { rangeDeg = r; updateStepDegrees(); logValues(); }
   void setInvert(bool i) { invert = i; logValues(); }
   void serialize(Buffer* dst) {
-  	dst->fill("%d" PROPS_SEPARATOR "%d" PROPS_SEPARATOR "%d" PROPS_SEPARATOR, base, range, (int)invert);
+  	dst->fill("%d" PROPS_SEPARATOR "%d" PROPS_SEPARATOR "%d" PROPS_SEPARATOR, baseDeg, rangeDeg, (int)invert);
   }
 
   /**
    * Given a position (between 0 and MAX_SERVO_STEPS -1) return the degrees.
    */
   int getTargetDegreesFromPosition(int po) {
-  	int deg = getBaseDegrees()
-  			+ SERVO_INVERT_POS(((POSIT(po) % MAX_SERVO_STEPS) * getStepDegrees()), getInvert(), getRangeDegrees());
-    log(CLASS_SERVOCONF, Debug, "(%d/%d/%d) Pos %d === %d deg", base, range, (int)invert, po, deg);
+  	int deg = baseDeg + SERVO_INVERT_POS(((POSIT(po) % MAX_SERVO_STEPS) * stepDeg), invert, rangeDeg);
+    log(CLASS_SERVOCONF, Debug, "(%d/%d/%d %f) Pos %d === %d deg", baseDeg, rangeDeg, (int)invert, stepDeg, po, deg);
     return deg;
   }
 
