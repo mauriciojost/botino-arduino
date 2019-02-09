@@ -25,7 +25,7 @@ bool initWifiSimple() {
 }
 
 void setup() {
-  m = new Module(deviceId());
+  m = new Module();
   m->setup(
   		setupArchitecture,
 			lcdImg,

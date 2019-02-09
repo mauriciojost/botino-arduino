@@ -103,10 +103,10 @@ private:
   }
 
 public:
-  Module(const char* devId) {
+  Module() {
 
-    propSync = new PropSync(devId, "propsync");
-    clockSync = new ClockSync(devId, "clocksync");
+    propSync = new PropSync("propsync");
+    clockSync = new ClockSync("clocksync");
     clock = new Clock("clock");
     settings = new Settings("settings");
     quotes = new Quotes("quotes");

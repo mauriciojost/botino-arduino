@@ -20,10 +20,12 @@
 #define DELAY_MS_SPI 3
 
 #define DEVICE_ALIAS_FILENAME "/alias.tuning"
+#define DEVICE_PWD_FILENAME "/pass.tuning"
 #define SERVO_0_FILENAME "/servo0.tuning"
 #define SERVO_1_FILENAME "/servo1.tuning"
 
 #define DEVICE_ALIAS_MAX_LENGTH 16
+#define DEVICE_PWD_MAX_LENGTH 16
 
 #define LCD_PIXEL_WIDTH 6
 #define LCD_PIXEL_HEIGHT 8
@@ -72,7 +74,8 @@ RemoteDebug telnet;
 Servo servoLeft;
 Servo servoRight;
 Adafruit_SSD1306 lcd(-1);
-Buffer* devId = NULL;
+Buffer* apiDeviceId = NULL;
+Buffer* apiDevicePwd = NULL;
 ServoConf* servo0Conf = NULL;
 ServoConf* servo1Conf = NULL;
 
@@ -94,6 +97,8 @@ void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs);
 void debugHandle();
 bool haveToInterrupt();
 void initializeServoConfigs();
+const char* apiDeviceLogin();
+const char* apiDevicePass();
 
 ////////////////////////////////////////
 // Functions requested for architecture
@@ -101,19 +106,6 @@ void initializeServoConfigs();
 
 // Callbacks
 ///////////////////
-
-const char* deviceId() {
-  if (devId == NULL) {
-    devId = new Buffer(DEVICE_ALIAS_MAX_LENGTH);
-    bool succAlias = readFile(DEVICE_ALIAS_FILENAME, devId); // preserve the alias
-    if (succAlias) { // managed to retrieve the alias
-      devId->replace('\n', 0); // content already with the alias
-    } else { // no alias, fallback to chip id
-      devId->fill("%d", ESP.getChipId());
-    }
-  }
-	return devId->getBuffer();
-}
 
 void logLine(const char *str) {
   // serial print
@@ -424,7 +416,7 @@ void infoArchitecture() {
   m->getNotifier()->message(0,
                            1,
                            "DEV ID:%s\nVers:%s\nCrashes:%d\nIP: %s\nMemory:%lu\nUptime:%luh\nVcc: %0.2f",
-                           deviceId(),
+                           apiDeviceLogin(),
                            STRINGIFY(PROJ_VERSION),
                            SaveCrash.count(),
                            WiFi.localIP().toString().c_str(),
@@ -496,15 +488,12 @@ BotMode setupArchitecture() {
   log(CLASS_MAIN, Debug, "Setup timing");
   setExternalMillis(millis);
 
-  log(CLASS_MAIN, Debug, "Setup servos");
-  initializeServoConfigs();
-
   log(CLASS_MAIN, Debug, "Setup wdt");
   ESP.wdtEnable(1); // argument not used
 
   log(CLASS_MAIN, Debug, "Setup wifi");
   WiFi.persistent(false);
-  WiFi.hostname(deviceId());
+  WiFi.hostname(apiDeviceLogin());
   heartbeat();
 
   log(CLASS_MAIN, Debug, "Setup http");
@@ -532,6 +521,15 @@ BotMode setupArchitecture() {
   ios('f', IoOff);
   lcdImg('l', NULL);
   heartbeat();
+
+
+  log(CLASS_MAIN, Debug, "Setup credentials");
+  m->getPropSync()->setLoginPass(apiDeviceLogin(), apiDevicePass());
+  m->getClockSync()->setLoginPass(apiDeviceLogin(), apiDevicePass());
+
+  log(CLASS_MAIN, Debug, "Setup servos");
+  initializeServoConfigs();
+
 
   if (digitalRead(BUTTON0_PIN)) {
     return ConfigureMode;
@@ -631,7 +629,7 @@ void debugHandle() {
   static bool firstTime = true;
   if (firstTime) {
     log(CLASS_MAIN, Debug, "Initialize debuggers...");
-    telnet.begin(deviceId());        // Intialize the remote logging framework
+    telnet.begin(apiDeviceLogin());  // Intialize the remote logging framework
     ArduinoOTA.begin();              // Intialize OTA
     firstTime = false;
   }
@@ -746,3 +744,31 @@ void initializeServoConfigs() {
   }
 
 }
+
+const char* apiDeviceLogin() {
+  if (apiDeviceId == NULL) {
+    apiDeviceId = new Buffer(DEVICE_ALIAS_MAX_LENGTH);
+    bool succAlias = readFile(DEVICE_ALIAS_FILENAME, apiDeviceId); // preserve the alias
+    if (succAlias) { // managed to retrieve the alias
+      apiDeviceId->replace('\n', 0); // content already with the alias
+    } else {
+    	abort("Cannot find login!");
+    }
+  }
+	return apiDeviceId->getBuffer();
+}
+
+const char* apiDevicePass() {
+  if (apiDevicePwd == NULL) {
+    apiDevicePwd = new Buffer(DEVICE_PWD_MAX_LENGTH);
+    bool succAlias = readFile(DEVICE_PWD_FILENAME, apiDevicePwd);
+    if (succAlias) { // managed to retrieve the alias
+      apiDevicePwd->replace('\n', 0); // content already with the alias
+    } else {
+    	abort("Cannot find pass!");
+    }
+  }
+	return apiDevicePwd->getBuffer();
+}
+
+
