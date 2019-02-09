@@ -3,14 +3,14 @@
 set -e
 set -x
 
-while getopts p:Wtm option
+while getopts p:fmsv option
 do
   case "${option}"
   in
     p) PROFILE=${OPTARG};;
-    W) DONT_UPLOAD_FIRMWARE=true;;
-    t) UPLOAD_FS=true;;
+    f) UPLOAD_FIRMWARE=true;;
     m) MONITOR=true;;
+    s) UPLOAD_FS=true;;
     v) PLATFORMIO_RUN_PARAMS="-v";;
   esac
 done
@@ -30,7 +30,7 @@ export PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=$COMMIT_ID `cat $PROFILE | grep -
 echo "### Compiling..."
 platformio run $PLATFORMIO_RUN_PARAMS
 
-if [ -z "$DONT_UPLOAD_FIRMWARE" ]
+if [ -n "$UPLOAD_FIRMWARE" ]
 then
 
   echo "### Will upload firmware..."

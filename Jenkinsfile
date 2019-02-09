@@ -16,7 +16,7 @@ pipeline {
           sshagent(['bitbucket_key']) {
             wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
               sh 'export GIT_COMMITTER_NAME=jenkinsbot && export GIT_COMMITTER_EMAIL=mauriciojostx@gmail.com && set && ./pull_dependencies'
-              sh './upload -p profiles/build.prof -W'
+              sh './upload -p profiles/build.prof'
             }
           }
         }
@@ -39,7 +39,7 @@ pipeline {
     stage('Artifact') {
       steps {
         wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
-          sh './upload -p profiles/generic.prof -W'
+          sh './upload -p profiles/generic.prof'
           sh 'export commitid=`git rev-parse HEAD` && cp .pioenvs/main/firmware.bin firmware-$commitid.bin'
         }
       }

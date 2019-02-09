@@ -134,11 +134,11 @@ To upload the firmware just do:
 ```
 # upload via USB serial port:
 
- ./upload -p profiles/dev7-custom.prof
+ ./upload -p profiles/dev7-custom.prof -f
 
 # if you want to upload via OTA (outdated): 
 
- PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=`git rev-parse --short HEAD` `cat profiles/dev1-home.prof`" platformio run --target upload --upload-port <IP> # OTA
+ PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=`git rev-parse --short HEAD` `cat profiles/dev1-home.prof | grep -v '^#'`" platformio run --target upload --upload-port <IP> # OTA
 
 ```
 
@@ -169,5 +169,5 @@ Even if the current main implementation uses ESP8266, *Botino* is meant to be mu
 ## 3.5. Test
 
 ```
-./launch_tests cat profiles/test.prof
+./launch_tests profiles/test.prof
 ```
