@@ -64,7 +64,9 @@ extern "C" {
 #define HTTP_TIMEOUT_MS 8000
 
 #define HELP_COMMAND_ARCH_CLI                                                                                                                   \
-  "\n  servotune         : tune the servo <n> with <base> <range> <inversion> and make a test round "                                           \
+  "\n  servotune         : tune the servo <s> (r|l) with <base> <range> <inversion> and make a test round "                                     \
+  "\n  servosave         : save tuning for servo <s> (r|l) "                                                                                    \
+  "\n  clearstack        : clear stack trace "                                                                                                  \
   "\n"
 
 volatile unsigned char buttonInterrupts = 0;
@@ -596,7 +598,9 @@ bool commandArchitecture(const char* c) {
     	return false;
     }
     return false;
-
+  } else if (strcmp("clearstack", c) == 0) {
+    SaveCrash.clear();
+    return false;
   } else if (strcmp("help", c) == 0) {
     logRaw(CLASS_MODULE, Warn, HELP_COMMAND_ARCH_CLI);
     return false;
