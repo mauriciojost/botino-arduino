@@ -56,7 +56,7 @@ public:
   int getTargetDegreesFromPosition(int po) {
   	int deg = getBaseDegrees()
   			+ SERVO_INVERT_POS(((POSIT(po) % MAX_SERVO_STEPS) * getStepDegrees()), getInvert(), getRangeDegrees());
-    log(CLASS_SERVOCONF, Debug, "Pos %d === %d deg", po, deg);
+    log(CLASS_SERVOCONF, Debug, "(%d/%d/%d) Pos %d === %d deg", base, range, (int)invert, po, deg);
     return deg;
   }
 

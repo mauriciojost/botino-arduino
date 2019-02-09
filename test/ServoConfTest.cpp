@@ -95,6 +95,18 @@ void test_non_basic_behaviour() {
   TEST_ASSERT_EQUAL(100, v.getTargetDegreesFromPosition(9));
 
 
+  // another scenario
+  ServoConf w("0/200/1"); // base, range, inversion
+
+  // raw basics
+  TEST_ASSERT_EQUAL(0, w.getBaseDegrees());
+  TEST_ASSERT_EQUAL(200, w.getRangeDegrees());
+  TEST_ASSERT_EQUAL(true, w.getInvert());
+
+  // derived basics
+  TEST_ASSERT_EQUAL(200, w.getTargetDegreesFromPosition(0));
+  TEST_ASSERT_EQUAL(0, w.getTargetDegreesFromPosition(9));
+
 }
 
 
