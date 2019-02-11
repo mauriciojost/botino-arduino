@@ -64,8 +64,7 @@ extern "C" {
 #define HTTP_TIMEOUT_MS 8000
 
 #define HELP_COMMAND_ARCH_CLI                                                                                                                   \
-  "\n  servotune         : tune the servo <s> (r|l) with <base> <range> <inversion> and make a test round "                                     \
-  "\n  servosave         : save tuning for servo <s> (r|l) "                                                                                    \
+  "\n  servo             : tune the servo <s> (r|l) and make a test round "                                                                     \
   "\n  clearstack        : clear stack trace "                                                                                                  \
   "\n"
 
@@ -568,51 +567,63 @@ void runModeArchitecture() {
   }
 }
 
+void tuneServo(const char* name, int pin, Servo* servo, ServoConf* servoConf) {
+  servo->attach(pin);
+
+  servo->write(0);
+  log(CLASS_MODULE, Info, "Press if %s...", name);
+  delay(SERVO_PERIOD_REACTION_MS * 10);
+
+	int min = 100;
+	int max = 100;
+  int testRange = 200;
+
+  for (int d = 0; d <= testRange; d = d + 10) {
+    log(CLASS_MODULE, Info, "Moves: %d/%d", d, testRange);
+    min = ((d < min) && digitalRead(BUTTON0_PIN)? d: min);
+    max = ((d > max) && digitalRead(BUTTON0_PIN)? d: max);
+    servo->write(d);
+    delay(SERVO_PERIOD_REACTION_MS * 10);
+  }
+
+  servo->write(min);
+  log(CLASS_MODULE, Info, "Press if up");
+  delay(SERVO_PERIOD_REACTION_MS * 10);
+  int inv = digitalRead(BUTTON0_PIN);
+
+  servoConf->setBase(min);
+  servoConf->setRange(max - min);
+  servoConf->setInvert(inv);
+
+  servo->detach();
+
+}
+
 bool commandArchitecture(const char* c) {
-  if (strcmp("servotune", c) == 0) {
+  if (strcmp("servo", c) == 0) {
     char servo = strtok(NULL, " ")[0];
-    int base = atoi(strtok(NULL, " "));
-    int range = atoi(strtok(NULL, " "));
-    bool inv = (bool)atoi(strtok(NULL, " "));
-    ServoConf* s = NULL;
+    Buffer serialized(16);
     if (servo == 'r' || servo == 'R') {
-      s = servo1Conf; // right servo1
-    } else if (servo == 'l' || servo == 'L') {
-    	s = servo0Conf;// left servo0
-    } else {
-      log(CLASS_MAIN, Warn, "Invalid servo (l|r)");
-    	return false;
-    }
-    s->setBase(base);
-    s->setRange(range);
-    s->setInvert(inv);
-    if (servo == 'r' || servo == 'R') {
+      tuneServo("servo right", SERVO1_PIN, &servoRight, servo1Conf);
+      servo1Conf->serialize(&serialized); // right servo1
+      writeFile(SERVO_1_FILENAME, serialized.getBuffer());
+      log(CLASS_MAIN, Info, "Stored tuning right servo");
       arms(0,0,100);
       arms(0,9,100);
       arms(0,0,100);
     } else if (servo == 'l' || servo == 'L') {
-      arms(0,0,100);
-      arms(9,0,100);
-      arms(0,0,100);
-    }
-    log(CLASS_MODULE, Info, "Tune servo '%c'", servo);
-    return false;
-  } else if (strcmp("servosave", c) == 0) {
-    char servo = strtok(NULL, " ")[0];
-    Buffer serialized(16);
-    if (servo == 'r' || servo == 'R') {
-      servo1Conf->serialize(&serialized); // right servo1
-      writeFile(SERVO_1_FILENAME, serialized.getBuffer());
-      log(CLASS_MAIN, Info, "Stored tuning right servo");
-    } else if (servo == 'l' || servo == 'L') {
+      tuneServo("servo left", SERVO0_PIN, &servoLeft, servo0Conf);
     	servo0Conf->serialize(&serialized); // left servo0
       writeFile(SERVO_0_FILENAME, serialized.getBuffer());
       log(CLASS_MAIN, Info, "Stored tuning left servo");
+      arms(0,0,100);
+      arms(9,0,100);
+      arms(0,0,100);
     } else {
       log(CLASS_MAIN, Warn, "Invalid servo (l|r)");
     	return false;
     }
-    return false;
+  	return false;
   } else if (strcmp("clearstack", c) == 0) {
     SaveCrash.clear();
     return false;
