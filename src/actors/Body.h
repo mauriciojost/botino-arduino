@@ -24,14 +24,31 @@
 POSES (X-char codes separated by separator)
 --------------------
 
+ARMS POSES: move both arms to a given position each (left, then right) (A=fast, B=normal, C=slow)
 Codes:
-  Z. : turn all power consuming components off
-
-WAIT POSES: wait a given number of seconds
-Codes:
-  W1. : wait 1 second
+  A00. : Move left and right arms to respective position 0 and 0 (both down) at high speed
   ...
-  W9. : wait 9 seconds
+  A90. : Move left and right arms to respective position 9 and 0 (left arm up) at high speed
+  ...
+  A99. : Move left and right arms to respective position 9 and 9 (both up) at high speed
+
+  B99. : Move left and right arms to respective position 9 and 9 (both up) at normal speed
+
+  C99. : Move left and right arms to respective position 9 and 9 (both up) at low speed
+
+
+COMPOSED POSES: dances and other predefined moves usable as poses
+Codes:
+  Dn. : dance n
+  Du. : dance u
+  D\. : dance \
+  D/. : dance /
+
+  D0. : dance 0
+  D1. : dance 1
+  D2. : dance 2
+  D3. : dance 3
+
 
 FACE POSES: show a given image in the LCD
 Codes:
@@ -51,37 +68,21 @@ Codes:
   F2. : Face custom 2 (user provided)
   F3. : Face custom 3 (user provided)
 
-COMPOSED POSES: dances and other predefined moves usable as poses
-Codes:
-  Dn. : dance n
-  Du. : dance u
-  D\. : dance \
-  D/. : dance /
 
-  D0. : dance 0
-  D1. : dance 1
-  D2. : dance 2
-  D3. : dance 3
-
-IFTTT EVENTS: trigger an ifttt event (given the configuration of the ifttt module)
+IFTTT EVENTS: trigger an ifttt event (by index, given the configuration of the ifttt module)
 Codes:
   Ix. : trigger event 'x'
+
+
+IFTTT EVENTS: trigger an ifttt event (by its name)
+Codes:
+  Iname. : trigger event 'name'
+
 
 IO POSES: turn on/off a given IO device, such as LEDS or the FAN (on = y, off = n)
 Codes:
   L?.. : turn randomly all leds
 
-ARMS POSES: move both arms to a given position each (left, then right) (A=fast, B=normal, C=slow)
-Codes:
-  A00. : Move left and right arms to respective position 0 and 0 (both down) at high speed
-  ...
-  A90. : Move left and right arms to respective position 9 and 0 (left arm up) at high speed
-  ...
-  A99. : Move left and right arms to respective position 9 and 9 (both up) at high speed
-
-  B99. : Move left and right arms to respective position 9 and 9 (both up) at normal speed
-
-  C99. : Move left and right arms to respective position 9 and 9 (both up) at low speed
 
 IO POSES: turn on/off a given IO device, such as LEDS or the FAN (on = y, off = n)
 Codes:
@@ -93,6 +94,7 @@ Codes:
   Lyt. : toggle (t) led Yellow
   L?.. : turn randomly all leds
   Lfy. : turn on (y) Fan
+
 
 MESSAGE POSES: show a certain message in the LCD with a given font size
 Codes:
@@ -107,10 +109,17 @@ NOTIFICATION POSES: show a certain notification in the LCD (requires user's ACK 
 Codes:
   NHELLO. : show notification HELLO
 
-IFTTT EVENTS: trigger an ifttt event (by its name)
-Codes:
-  Iname. : trigger event 'name'
 
+WAIT POSES: wait a given number of seconds
+Codes:
+  W1. : wait 1 second
+  ...
+  W9. : wait 9 seconds
+
+
+MISC POSES
+Codes:
+  Z. : turn all power consuming components off
 
 */
 
@@ -188,6 +197,141 @@ private:
   Ifttt *ifttt;
   Routine *routines[NRO_ROUTINES];
 
+  bool dance(char c0) {
+    switch (c0) {
+      case '0':
+        performMove(MOVE_DANCE0);
+        return true;
+      case '1':
+        performMove(MOVE_DANCE1);
+        return true;
+      case '2':
+        performMove(MOVE_DANCE2);
+        return true;
+      case '3':
+        performMove(MOVE_DANCE3);
+        return true;
+      case '4':
+        performMove(MOVE_DANCE4);
+        return true;
+      case '5':
+        performMove(MOVE_DANCE5);
+        return true;
+      case '6':
+        performMove(MOVE_DANCE6);
+        return true;
+      case '7':
+        performMove(MOVE_DANCE7);
+        return true;
+      case 'n':
+        performMove(MOVE_DANCE_n);
+        return true;
+      case 'u':
+        performMove(MOVE_DANCE_U);
+        return true;
+      case '\\':
+        performMove(MOVE_DANCE_BACK_SLASH);
+        return true;
+      case '/':
+        performMove(MOVE_DANCE_FORW_SLASH);
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  bool face(char c0) {
+    switch (c0) {
+      case '0':
+        notifier->lcdImg('c', images->get(0)); // custom 0
+        return true;
+      case '1':
+        notifier->lcdImg('c', images->get(1)); // custom 1
+        return true;
+      case '2':
+        notifier->lcdImg('c', images->get(2)); // custom 2
+        return true;
+      case '3':
+        notifier->lcdImg('c', images->get(3)); // custom 3
+        return true;
+      case '_':
+        notifier->lcdImg('_', NULL); // dim
+        return true;
+      case '-':
+        notifier->lcdImg('-', NULL); // bright
+        return true;
+      case 'w':
+        notifier->lcdImg('w', NULL); // white
+        return true;
+      case 'b':
+        notifier->lcdImg('b', NULL); // black
+        return true;
+      case 'l':
+        notifier->lcdImg('l', NULL); // clear
+        return true;
+      case 'r':
+        notifier->lcdImg('c', IMG_CRAZY); // crazy
+        return true;
+      case 's':
+        notifier->lcdImg('c', IMG_SMILY); // smile
+        return true;
+      case 'S':
+        notifier->lcdImg('c', IMG_SAD); // sad
+        return true;
+      case 'n':
+        notifier->lcdImg('c', IMG_NORMAL); // normal
+        return true;
+      case 'a':
+        notifier->lcdImg('c', IMG_ANGRY); // angry
+        return true;
+      case 'z':
+        notifier->lcdImg('c', IMG_SLEEPY); // sleepy
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  bool io(char c0, char c1) {
+    int b = getIosState(c1);
+    switch (c0) {
+      case 'r': {
+        log(CLASS_BODY, Debug, "Led red: %d", b);
+        iosFunc('r', (IoMode)b);
+        return true;
+      }
+      case 'w': {
+        log(CLASS_BODY, Debug, "Led white: %d", b);
+        iosFunc('w', (IoMode)b);
+        return true;
+      }
+      case 'y': {
+        log(CLASS_BODY, Debug, "Led yellow: %d", b);
+        iosFunc('y', (IoMode)b);
+        return true;
+      }
+      case 'f': {
+        log(CLASS_BODY, Debug, "Fan: %d", b);
+        iosFunc('f', (IoMode)b);
+        return true;
+      }
+      default:
+        return false;
+    }
+  }
+
+  bool zzz() {
+    log(CLASS_BODY, Debug, "ZzZ...");
+    notifier->lcdImg('b', NULL);
+    notifier->lcdImg('l', NULL);
+    iosFunc('r', IoOff);
+    iosFunc('w', IoOff);
+    iosFunc('y', IoOff);
+    iosFunc('f', IoOff);
+    arms(0, 0, ARM_NORMAL_STEPS);
+    return true;
+  }
+
   bool isInitialized() {
     bool init =
         arms != NULL && iosFunc != NULL && notifier != NULL && quotes != NULL && images != NULL && ifttt != NULL;
@@ -249,28 +393,35 @@ private:
       log(CLASS_BODY, Debug, "Armss %d&%d", l, r);
       arms(l, r, ARM_SLOW_STEPS);
       return true;
+    } else if (sscanf(pose, "D%c.", &c0) == 1) {
+      // DANCE
+    	return dance(c0);
+    } else if (sscanf(pose, "F%c.", &c0) == 1) {
+      // FACES
+    	return face(c0);
+    } else if (sscanf(pose, "I%c.", &c0) == 1) {
+      // IFTTT (by index)
+      int i = getInt(c0);
+      log(CLASS_BODY, Debug, "Ifttt %d", i);
+      ifttt->triggerEvent(i);
+      return true;
+    } else if (sscanf(pose, "I%c", &c0) == 1) {
+      // IFTTT (by name)
+      Buffer evt(MOVE_STR_LENGTH, pose + 1);
+      evt.replace('.', 0);
+      log(CLASS_BODY, Debug, "Event '%s'", evt.getBuffer());
+      ifttt->triggerEvent(evt.getBuffer());
+      return true;
     } else if (sscanf(pose, "L%c%c.", &c0, &c1) == 2) {
       // IO (LEDS / FAN)
-      int b = getIosState(c1);
+    	return io(c0, c1);
+    } else if (sscanf(pose, "L%c.", &c0) == 1) {
+      // IO (LEDS / FAN)
       switch (c0) {
-        case 'r': {
-          log(CLASS_BODY, Debug, "Led red: %d", b);
-          iosFunc('r', (IoMode)b);
-          return true;
-        }
-        case 'w': {
-          log(CLASS_BODY, Debug, "Led white: %d", b);
-          iosFunc('w', (IoMode)b);
-          return true;
-        }
-        case 'y': {
-          log(CLASS_BODY, Debug, "Led yellow: %d", b);
-          iosFunc('y', (IoMode)b);
-          return true;
-        }
-        case 'f': {
-          log(CLASS_BODY, Debug, "Fan: %d", b);
-          iosFunc('f', (IoMode)b);
+        case '?': {
+          iosFunc('r', (IoMode)random(2));
+          iosFunc('w', (IoMode)random(2));
+          iosFunc('y', (IoMode)random(2));
           return true;
         }
         default:
@@ -325,163 +476,6 @@ private:
         default:
           return false;
       }
-    } else if (sscanf(pose, "Z%c", &c0) == 1) {
-      log(CLASS_BODY, Debug, "ZzZ...");
-      notifier->lcdImg('b', NULL);
-      notifier->lcdImg('l', NULL);
-      iosFunc('r', IoOff);
-      iosFunc('w', IoOff);
-      iosFunc('y', IoOff);
-      iosFunc('f', IoOff);
-      arms(0, 0, ARM_NORMAL_STEPS);
-      return true;
-    } else if (sscanf(pose, "W%c.", &c0) == 1) {
-      // WAIT
-      int v = getInt(c0);
-      log(CLASS_BODY, Debug, "Wait %d s", v);
-      delay(v * 1000);
-      return true;
-    } else if (sscanf(pose, "F%c.", &c0) == 1) {
-      // FACES
-      switch (c0) {
-        case '0':
-          notifier->lcdImg('c', images->get(0)); // custom 0
-          return true;
-        case '1':
-          notifier->lcdImg('c', images->get(1)); // custom 1
-          return true;
-        case '2':
-          notifier->lcdImg('c', images->get(2)); // custom 2
-          return true;
-        case '3':
-          notifier->lcdImg('c', images->get(3)); // custom 3
-          return true;
-        case '_':
-          notifier->lcdImg('_', NULL); // dim
-          return true;
-        case '-':
-          notifier->lcdImg('-', NULL); // bright
-          return true;
-        case 'w':
-          notifier->lcdImg('w', NULL); // white
-          return true;
-        case 'b':
-          notifier->lcdImg('b', NULL); // black
-          return true;
-        case 'l':
-          notifier->lcdImg('l', NULL); // clear
-          return true;
-        case 'r':
-          notifier->lcdImg('c', IMG_CRAZY); // crazy
-          return true;
-        case 's':
-          notifier->lcdImg('c', IMG_SMILY); // smile
-          return true;
-        case 'S':
-          notifier->lcdImg('c', IMG_SAD); // sad
-          return true;
-        case 'n':
-          notifier->lcdImg('c', IMG_NORMAL); // normal
-          return true;
-        case 'a':
-          notifier->lcdImg('c', IMG_ANGRY); // angry
-          return true;
-        case 'z':
-          notifier->lcdImg('c', IMG_SLEEPY); // sleepy
-          return true;
-        default:
-          return false;
-      }
-    } else if (sscanf(pose, "I%c.", &c0) == 1) {
-      // IFTTT
-      int i = getInt(c0);
-      log(CLASS_BODY, Debug, "Ifttt %d", i);
-      ifttt->triggerEvent(i);
-      return true;
-    } else if (sscanf(pose, "L%c.", &c0) == 1) {
-      // IO (LEDS / FAN)
-      switch (c0) {
-        case '?': {
-          iosFunc('r', (IoMode)random(2));
-          iosFunc('w', (IoMode)random(2));
-          iosFunc('y', (IoMode)random(2));
-          return true;
-        }
-        default:
-          return false;
-      }
-    } else if (sscanf(pose, "D%c.", &c0) == 1) {
-      // DANCE
-      switch (c0) {
-        case '0':
-          performMove(MOVE_DANCE0);
-          return true;
-        case '1':
-          performMove(MOVE_DANCE1);
-          return true;
-        case '2':
-          performMove(MOVE_DANCE2);
-          return true;
-        case '3':
-          performMove(MOVE_DANCE3);
-          return true;
-        case '4':
-          performMove(MOVE_DANCE4);
-          return true;
-        case '5':
-          performMove(MOVE_DANCE5);
-          return true;
-        case '6':
-          performMove(MOVE_DANCE6);
-          return true;
-        case '7':
-          performMove(MOVE_DANCE7);
-          return true;
-        case 'n':
-          performMove(MOVE_DANCE_n);
-          return true;
-        case 'u':
-          performMove(MOVE_DANCE_U);
-          return true;
-        case '\\':
-          performMove(MOVE_DANCE_BACK_SLASH);
-          return true;
-        case '/':
-          performMove(MOVE_DANCE_FORW_SLASH);
-          return true;
-        default:
-          return false;
-      }
-    } else if (sscanf(pose, "L%c%c.", &c0, &c1) == 2) {
-      // IO (LEDS / FAN)
-      switch (c0) {
-        case 'r': {
-          int b = getIosState(c1);
-          log(CLASS_BODY, Debug, "Led red: %d", b);
-          iosFunc('r', (IoMode)b);
-          return true;
-        }
-        case 'w': {
-          int b = getIosState(c1);
-          log(CLASS_BODY, Debug, "Led white: %d", b);
-          iosFunc('w', (IoMode)b);
-          return true;
-        }
-        case 'y': {
-          int b = getIosState(c1);
-          log(CLASS_BODY, Debug, "Led yellow: %d", b);
-          iosFunc('y', (IoMode)b);
-          return true;
-        }
-        case 'f': {
-          int b = getIosState(c1);
-          log(CLASS_BODY, Debug, "Fan: %d", b);
-          iosFunc('f', (IoMode)b);
-          return true;
-        }
-        default:
-          return false;
-      }
     } else if (sscanf(pose, "N%c", &c0) == 1) {
       // NOTIFICATION
       Buffer msg(MOVE_STR_LENGTH, pose + 1);
@@ -489,13 +483,15 @@ private:
       log(CLASS_BODY, Debug, "Not '%s'", msg.getBuffer());
       notifier->notification(msg.getBuffer());
       return true;
-    } else if (sscanf(pose, "I%c", &c0) == 1) {
-      // IFTTT
-      Buffer evt(MOVE_STR_LENGTH, pose + 1);
-      evt.replace('.', 0);
-      log(CLASS_BODY, Debug, "Event '%s'", evt.getBuffer());
-      ifttt->triggerEvent(evt.getBuffer());
+    } else if (sscanf(pose, "W%c.", &c0) == 1) {
+      // WAIT
+      int v = getInt(c0);
+      log(CLASS_BODY, Debug, "Wait %d s", v);
+      delay(v * 1000);
       return true;
+    } else if (sscanf(pose, "Z%c", &c0) == 1) {
+    // POWER OFF
+    	return zzz();
     } else {
       return false;
     }
