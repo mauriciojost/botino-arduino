@@ -1,6 +1,9 @@
 #ifndef ROUTINE_INC
 #define ROUTINE_INC
 
+#include <main4ino/Buffer.h>
+#include <main4ino/Timing.h>
+
 #define TIMING_SEPARATOR ':'
 
 #define TIMING_AND_SEPARATOR_STR_LEN (TIMING_STR_LEN + 1)
