@@ -3,7 +3,7 @@
 set -e
 set -x
 
-while getopts p:fmsv option
+while getopts p:fmsvy option
 do
   case "${option}"
   in
@@ -12,6 +12,7 @@ do
     m) MONITOR=true;;
     s) UPLOAD_FS=true;;
     v) PLATFORMIO_RUN_PARAMS="-v";;
+    y) IGNORE_UNCOMMITED_CHANGES=true;;
   esac
 done
 
@@ -37,8 +38,11 @@ then
 
   echo "### Will upload firmware..."
 
-  echo "### Checking if no changes to be committed..."
-  git diff --exit-code
+  if [ -z "$IGNORE_UNCOMMITED_CHANGES" ]
+  then
+    echo "### Checking if no changes to be committed..."
+    git diff --exit-code
+  fi
 
   echo "### Uploading..."
   platformio run --target upload
