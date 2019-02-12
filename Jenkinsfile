@@ -39,8 +39,7 @@ pipeline {
     stage('Artifact') {
       steps {
         wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
-          sh './upload -p profiles/generic.prof'
-          sh 'export commitid=`git rev-parse HEAD` && cp .pioenvs/main/firmware.bin firmware-$commitid.bin'
+          sh './upload -p profiles/generic.prof -e'
         }
       }
     }

@@ -3,7 +3,7 @@
 set -e
 set -x
 
-while getopts p:fmsvy option
+while getopts p:fmsvye option
 do
   case "${option}"
   in
@@ -13,6 +13,7 @@ do
     s) UPLOAD_FS=true;;
     v) PLATFORMIO_RUN_PARAMS="-v";;
     y) IGNORE_UNCOMMITED_CHANGES=true;;
+    e) EXPORT_FIRMWARE_FILE=true;;
   esac
 done
 
@@ -32,6 +33,12 @@ export PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=$PROJ_VERSION_ID `cat $PROFILE | 
 
 echo "### Compiling..."
 platformio run $PLATFORMIO_RUN_PARAMS
+
+if [ -n "$EXPORT_FIRMWARE_FILE" ]
+then
+  echo "### Exporting firmware file..."
+  cp cp .pioenvs/main/firmware.bin firmware-$PROJ_VERSION_ID.bin
+fi
 
 if [ -n "$UPLOAD_FIRMWARE" ]
 then
