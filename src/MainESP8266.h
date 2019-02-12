@@ -49,7 +49,7 @@
 #endif // URL_PRINT_MAX_LENGTH
 
 #ifndef USER_DELAY_MS
-#define USER_DELAY_MS 3000
+#define USER_DELAY_MS 4000
 #endif // USER_DELAY_MS
 
 #define ONLY_SHOW_MSG true
@@ -416,7 +416,7 @@ void infoArchitecture() {
 
   m->getNotifier()->message(0,
                            1,
-                           "DEV ID:%s\nVers:%s\nCrashes:%d\nIP: %s\nMemory:%lu\nUptime:%luh\nVcc: %0.2f",
+                           "ID:%s\nV:%s\nCrashes:%d\nIP: %s\nMemory:%lu\nUptime:%luh\nVcc: %0.2f",
                            apiDeviceLogin(),
                            STRINGIFY(PROJ_VERSION),
                            SaveCrash.count(),
@@ -570,8 +570,11 @@ void runModeArchitecture() {
 void tuneServo(const char* name, int pin, Servo* servo, ServoConf* servoConf) {
   servo->attach(pin);
 
+  m->getNotifier()->message(0, 1, "Tuning %s", name);
+  delay(USER_DELAY_MS);
+
+  m->getNotifier()->message(0, 1, "Press if moves...");
   servo->write(0);
-  log(CLASS_MODULE, Info, "Press if %s...", name);
   delay(USER_DELAY_MS);
 
 	int min = 100;
@@ -586,9 +589,10 @@ void tuneServo(const char* name, int pin, Servo* servo, ServoConf* servoConf) {
     delay(SERVO_PERIOD_REACTION_MS * 10);
   }
 
+  m->getNotifier()->message(0, 1, "Press if up...");
   servo->write(min);
-  log(CLASS_MODULE, Info, "Press if up");
   delay(USER_DELAY_MS);
+
   int inv = digitalRead(BUTTON0_PIN);
 
   servoConf->setBase(min);
