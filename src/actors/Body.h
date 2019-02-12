@@ -549,7 +549,6 @@ public:
   const char *performPose(const char *pose) {
 
     int poseLen = poseStrLen(pose);
-    const char* nextPoseIfAllOk = pose + poseLen + 1;
     bool success = false;
 
     if (poseLen <= 0) { // invalid number of chars poses
@@ -560,7 +559,7 @@ public:
 
     if (success) {
       log(CLASS_BODY, Debug, "Done pose '%s'", pose);
-      return nextPoseIfAllOk;
+      return pose + poseLen + 1;
     } else if (!success && poseLen > 0) { // there was a message but invalid
       notifier->message(0, 1, "Bad pose: %s", pose);
       delay(2000);
