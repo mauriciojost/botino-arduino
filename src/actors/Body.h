@@ -452,7 +452,7 @@ private:
         default:
           return false;
       }
-    } else if (sscanf(pose, "L%c%c", &c0, &c1) == 2) {
+    } else if (sscanf(pose, "L%c%c.", &c0, &c1) == 2) {
       // IO (LEDS / FAN)
       switch (c0) {
         case 'r': {
