@@ -116,6 +116,7 @@ Codes:
 
 #include <Hexer.h>
 #include <actors/Ifttt.h>
+#include <actors/Routine.h>
 #include <actors/Images.h>
 #include <actors/Notifier.h>
 #include <actors/Predictions.h>
@@ -150,10 +151,6 @@ enum BodyProps {
 };
 
 #define POSE_SEPARATOR '.'
-#define TIMING_SEPARATOR ':'
-#define TIMING_AND_SEPARATOR_STR_LEN (TIMING_STR_LEN + 1)
-
-#define MOVE_STR_LENGTH (32 + TIMING_AND_SEPARATOR_STR_LEN)
 
 #define MOVE_DANCE0 "Lwy.B09.B90.Lwn.B09.B90.Lwy.B55."
 #define MOVE_DANCE1 "Lfy.Lyy.Lwy.A50.A05.Lry.Lwn.A00.A99.Lrn.Lwy.A90.A09.Lwn.Lyy.A90.A09."
@@ -177,43 +174,6 @@ uint8_t IMG_NORMAL[] = {0x00, 0x00, 0x02, 0x40, 0x02, 0x40, 0x00, 0x00, 0x01, 0x
 uint8_t IMG_ANGRY[] = {0x00, 0x00, 0x70, 0x0E, 0x49, 0x12, 0x55, 0x2A, 0x45, 0x22, 0x7D, 0xBE, 0x00, 0x00, 0x03, 0xC0};
 uint8_t IMG_SAD[] = {0x08, 0x10, 0x08, 0x10, 0x09, 0x94, 0x20, 0x00, 0x03, 0xC0, 0x0C, 0x30, 0x10, 0x08, 0x20, 0x04};
 uint8_t IMG_SLEEPY[] = {0x00, 0x00, 0x00, 0x00, 0x12, 0x48, 0x0C, 0x30, 0x01, 0x80, 0x00, 0x00, 0x01, 0x80, 0x00, 0x00};
-
-class Routine {
-public:
-  Buffer *timingMove;
-  Timing *timing;
-  Routine(const char *n) {
-    timingMove = new Buffer(MOVE_STR_LENGTH);
-    timing = new Timing(n);
-  }
-  void set(const Value *v) {
-    Buffer aux(MOVE_STR_LENGTH);
-    aux.load(v);
-    const char* mv = aux.since(TIMING_SEPARATOR);
-    aux.replace(TIMING_SEPARATOR, 0);
-    const char* tm = aux.getBuffer();
-    set(tm, mv);
-  }
-  void set(const char *tmg, const char *mov) {
-    if (tmg == NULL || strlen(tmg) == 0) {
-      timingMove->fill("error%c%s", TIMING_SEPARATOR, mov);
-    } else {
-      timing->setFreq(tmg);
-      timingMove->fill("%s%c%s", timing->getFreq(), TIMING_SEPARATOR, mov);
-    }
-  }
-  const char *getMove() {
-    const char *m = timingMove->since(TIMING_SEPARATOR);
-    if (m != NULL) {
-      return m;
-    } else {
-      return "?";
-    }
-  }
-  Timing *getTiming() {
-    return timing;
-  }
-};
 
 class Body : public Actor {
 
