@@ -65,6 +65,7 @@ extern "C" {
 
 #define HELP_COMMAND_ARCH_CLI                                                                                                                   \
   "\n  servo             : tune the servo <s> (r|l) and make a test round "                                                                     \
+  "\n  ls                : list files present in FS "                                                                                           \
   "\n  clearstack        : clear stack trace "                                                                                                  \
   "\n"
 
@@ -628,6 +629,14 @@ bool commandArchitecture(const char* c) {
     	return false;
     }
   	return false;
+  } else if (strcmp("ls", c) == 0) {
+    SPIFFS.begin();
+    Dir dir = SPIFFS.openDir("");
+    while (dir.next()) {
+      log(CLASS_MAIN, Info, "- %s", dir.fileName().c_str());
+    }
+    SPIFFS.end();
+    return false;
   } else if (strcmp("clearstack", c) == 0) {
     SaveCrash.clear();
     return false;
