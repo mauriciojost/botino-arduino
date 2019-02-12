@@ -604,7 +604,7 @@ bool commandArchitecture(const char* c) {
     char servo = strtok(NULL, " ")[0];
     Buffer serialized(16);
     if (servo == 'r' || servo == 'R') {
-      tuneServo("servo right", SERVO1_PIN, &servoRight, servo1Conf);
+      tuneServo("right servo", SERVO1_PIN, &servoRight, servo1Conf);
       servo1Conf->serialize(&serialized); // right servo1
       writeFile(SERVO_1_FILENAME, serialized.getBuffer());
       log(CLASS_MAIN, Info, "Stored tuning right servo");
@@ -612,7 +612,7 @@ bool commandArchitecture(const char* c) {
       arms(0,9,100);
       arms(0,0,100);
     } else if (servo == 'l' || servo == 'L') {
-      tuneServo("servo left", SERVO0_PIN, &servoLeft, servo0Conf);
+      tuneServo("left servo", SERVO0_PIN, &servoLeft, servo0Conf);
     	servo0Conf->serialize(&serialized); // left servo0
       writeFile(SERVO_0_FILENAME, serialized.getBuffer());
       log(CLASS_MAIN, Info, "Stored tuning left servo");
