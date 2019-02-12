@@ -224,7 +224,7 @@ private:
     }
   }
 
-  bool handleCharPoses(const char *pose) {
+  bool handleCharPoses(const char *pose, int len) {
 
     char c0 = 'x', c1 = 'x';
 
@@ -515,14 +515,15 @@ public:
     if (poseLen <= 0) { // invalid number of chars poses
     	success = false;
     } else if (poseLen > 0) {
-      success = handleCharPoses(pose);
+      success = handleCharPoses(pose, poseLen);
     }
 
     if (success) {
       log(CLASS_BODY, Debug, "Done pose '%s'", pose);
       return pose + poseLen + 1;
     } else if (!success && poseLen > 0) { // there was a message but invalid
-      notifier->message(0, 1, "Bad pose: %s", pose);
+      log(CLASS_BODY, Warn, "Bad pose '%s'", pose);
+      notifier->message(0, 1, "Bad pose: '%s'", pose);
       delay(2000);
       return NULL;
     } else {
@@ -657,9 +658,13 @@ public:
   }
 
   void performMove(const char *move) {
+  	int i = 0;
     const char *p = move;
     while ((p = performPose(p)) != NULL) {
+    	i++;
+      log(CLASS_BODY, Debug, "Next pose %d in move '%s'...", i, move);
     }
+    log(CLASS_BODY, Debug, "Found %d poses in move '%s'", i, move);
   }
 };
 
