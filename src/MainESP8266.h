@@ -142,14 +142,14 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
   wl_status_t status;
   log(CLASS_MAIN, Info, "To '%s'...", ssid);
 
-  if (skipIfConnected) {
+  if (skipIfConnected) { // check if connected
     log(CLASS_MAIN, Info, "Conn.?");
     status = WiFi.status();
     if (status == WL_CONNECTED) {
       log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
       return true; // connected
     }
-  } else {
+  } else { // force disconnection
     log(CLASS_MAIN, Info, "W.Off.");
     WiFi.disconnect();
     delay(WIFI_DELAY_MS);
@@ -165,14 +165,14 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
   while (true) {
     delay(WIFI_DELAY_MS);
     status = WiFi.status();
-    log(CLASS_MAIN, Info, " ..retry(%d)", attemptsLeft);
+    log(CLASS_MAIN, Info, "'%s'...(%d)", ssid, attemptsLeft);
     attemptsLeft--;
     if (status == WL_CONNECTED) {
       log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
       return true; // connected
     }
     if (attemptsLeft < 0) {
-      log(CLASS_MAIN, Warn, "Conn. failed %d", status);
+      log(CLASS_MAIN, Warn, "Conn. to '%s' failed %d", ssid, status);
       return false; // not connected
     }
   }
