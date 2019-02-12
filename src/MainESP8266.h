@@ -572,13 +572,13 @@ void tuneServo(const char* name, int pin, Servo* servo, ServoConf* servoConf) {
 
   servo->write(0);
   log(CLASS_MODULE, Info, "Press if %s...", name);
-  delay(SERVO_PERIOD_REACTION_MS * 10);
+  delay(USER_DELAY_MS);
 
 	int min = 100;
 	int max = 100;
   int testRange = 200;
 
-  for (int d = 0; d <= testRange; d = d + 10) {
+  for (int d = 0; d <= testRange; d = d + 2) {
     log(CLASS_MODULE, Info, "Moves: %d/%d", d, testRange);
     min = ((d < min) && digitalRead(BUTTON0_PIN)? d: min);
     max = ((d > max) && digitalRead(BUTTON0_PIN)? d: max);
@@ -588,7 +588,7 @@ void tuneServo(const char* name, int pin, Servo* servo, ServoConf* servoConf) {
 
   servo->write(min);
   log(CLASS_MODULE, Info, "Press if up");
-  delay(SERVO_PERIOD_REACTION_MS * 10);
+  delay(USER_DELAY_MS);
   int inv = digitalRead(BUTTON0_PIN);
 
   servoConf->setBase(min);
