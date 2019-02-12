@@ -50,7 +50,6 @@ then
   echo "### Backing up image..."
   mkdir -p $LOG_DIR/$PROJ_VERSION_ID/
   rm -f $LOG_DIR/$PROJ_VERSION_ID/*
-  echo "### Backing up logs..."
   find . -name *.elf | xargs -I% cp -f % $LOG_DIR/$PROJ_VERSION_ID/
 
 fi
@@ -70,6 +69,8 @@ fi
 
 if [ -n "$MONITOR" ]
 then
+  echo "### Backing up logs..."
+  mkdir -p $LOG_DIR/$PROJ_VERSION_ID/
   echo "### Monitoring..."
   { ./serial_monitor 0 > >(tee $LOG_DIR/$PROJ_VERSION_ID/stdout.txt ); } 2> >(tee $LOG_DIR/$PROJ_VERSION_ID/stderr.txt )
 fi
