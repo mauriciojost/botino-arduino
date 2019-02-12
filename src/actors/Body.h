@@ -365,7 +365,8 @@ private:
         default:
           return false;
       }
-    } else if (sscanf(pose, "Z.") == 0) {
+    } else if (sscanf(pose, "Z%c", &c0) == 1) {
+      log(CLASS_BODY, Debug, "ZzZ...");
       notifier->lcdImg('b', NULL);
       notifier->lcdImg('l', NULL);
       iosFunc('r', IoOff);
