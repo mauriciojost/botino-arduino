@@ -37,7 +37,7 @@ platformio run $PLATFORMIO_RUN_PARAMS
 if [ -n "$EXPORT_FIRMWARE_FILE" ]
 then
   echo "### Exporting firmware file..."
-  cp cp .pioenvs/main/firmware.bin firmware-$PROJ_VERSION_ID.bin
+  cp .pioenvs/main/firmware.bin firmware-$PROJ_VERSION_ID.bin
 fi
 
 if [ -n "$UPLOAD_FIRMWARE" ]
