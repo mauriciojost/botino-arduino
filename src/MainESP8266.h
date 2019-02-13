@@ -144,7 +144,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
   log(CLASS_MAIN, Info, "To '%s'...", ssid);
 
   if (skipIfConnected) { // check if connected
-    log(CLASS_MAIN, Info, "Conn.?");
+    log(CLASS_MAIN, Info, "Conn. '%s'?", ssid);
     status = WiFi.status();
     if (status == WL_CONNECTED) {
       log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
@@ -166,7 +166,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
   while (true) {
     delay(WIFI_DELAY_MS);
     status = WiFi.status();
-    log(CLASS_MAIN, Info, "'%s'...(%d)", ssid, attemptsLeft);
+    log(CLASS_MAIN, Info, "..'%s'(%d)", ssid, attemptsLeft);
     attemptsLeft--;
     if (status == WL_CONNECTED) {
       log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
@@ -435,8 +435,6 @@ void testArchitecture() {
 void updateFirmware() {
   ESP8266HTTPUpdate updater;
 
-
-
   Settings *s = m->getSettings();
   bool connected = initWifi(s->getSsid(), s->getPass(), false, 10);
   if (!connected){
@@ -444,16 +442,18 @@ void updateFirmware() {
   }
 
   log(CLASS_MAIN, Info, "Updating firmware from '%s'...", FIRMWARE_UPDATE_URL);
+  m->getNotifier()->message(0, 1, "Updating: %s", FIRMWARE_UPDATE_URL);
+
   t_httpUpdate_return ret = updater.update(FIRMWARE_UPDATE_URL);
   switch (ret) {
     case HTTP_UPDATE_FAILED:
       log(CLASS_MAIN, Error, "HTTP_UPDATE_FAILD Error (%d): %s\n", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
       break;
     case HTTP_UPDATE_NO_UPDATES:
-      log(CLASS_MAIN, Info, "HTTP_UPDATE_NO_UPDATES");
+      log(CLASS_MAIN, Info, "No updates.");
       break;
     case HTTP_UPDATE_OK:
-      log(CLASS_MAIN, Info, "HTTP_UPDATE_OK");
+      log(CLASS_MAIN, Info, "Done!");
       break;
   }
 }
@@ -532,14 +532,12 @@ BotMode setupArchitecture() {
   lcdImg('l', NULL);
   heartbeat();
 
-
   log(CLASS_MAIN, Debug, "Setup credentials");
   m->getPropSync()->setLoginPass(apiDeviceLogin(), apiDevicePass());
   m->getClockSync()->setLoginPass(apiDeviceLogin(), apiDevicePass());
 
   log(CLASS_MAIN, Debug, "Setup servos");
   initializeServoConfigs();
-
 
   if (digitalRead(BUTTON0_PIN)) {
     return ConfigureMode;
@@ -574,8 +572,9 @@ void tuneServo(const char* name, int pin, Servo* servo, ServoConf* servoConf) {
   m->getNotifier()->message(0, 1, "Tuning %s", name);
   delay(USER_DELAY_MS);
 
-  m->getNotifier()->message(0, 1, "Press if moves...");
+  m->getNotifier()->message(0, 1, "Press if arm moves...");
   servo->write(0);
+  delay(SERVO_PERIOD_REACTION_MS * 10);
   delay(USER_DELAY_MS);
 
 	int min = 100;
@@ -590,11 +589,14 @@ void tuneServo(const char* name, int pin, Servo* servo, ServoConf* servoConf) {
     delay(SERVO_PERIOD_REACTION_MS * 10);
   }
 
-  m->getNotifier()->message(0, 1, "Press if up...");
-  servo->write(min);
+  m->getNotifier()->message(0, 1, "Press if arm down...");
+  delay(SERVO_PERIOD_REACTION_MS * 10);
   delay(USER_DELAY_MS);
 
   int inv = digitalRead(BUTTON0_PIN);
+
+  m->getNotifier()->message(0, 1, "Done!");
+  delay(USER_DELAY_MS);
 
   servoConf->setBase(min);
   servoConf->setRange(max - min);
