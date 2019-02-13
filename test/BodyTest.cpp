@@ -35,7 +35,7 @@ void lcdImg(char img, uint8_t bitmap[]) {
     case 'b':
       faceCleared++;
       break;
-    case 's':
+    case 'c': // custom
       faceSmiled++;
       break;
     default:
