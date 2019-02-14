@@ -700,7 +700,7 @@ void reactCommandCustom() { // for the use via telnet
 
 void heartbeat() {
   LED_ALIVE_ON
-  delay(1);
+  delay(2);
   LED_ALIVE_OFF
 }
 
