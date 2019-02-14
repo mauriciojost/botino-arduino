@@ -9,7 +9,7 @@
 #include <actors/Body.h>
 
 int faceCleared = 0;
-int faceSmiled = 0;
+int faceCustom = 0;
 char lastMsg[100];
 char lastArms[100];
 int ledY;
@@ -19,7 +19,7 @@ int fan;
 
 void setUp() {
   faceCleared = 0;
-  faceSmiled = 0;
+  faceCustom = 0;
   lastMsg[0] = 0;
   lastArms[0] = 0;
   ledY = 0;
@@ -36,7 +36,7 @@ void lcdImg(char img, uint8_t bitmap[]) {
       faceCleared++;
       break;
     case 'c': // custom
-      faceSmiled++;
+      faceCustom++;
       break;
     default:
       break;
@@ -151,7 +151,7 @@ void test_body_performs_basic_moves() {
   TEST_ASSERT_EQUAL_STRING("left:1,right:3,steps:100", lastArms);
 
   executeMove(&b, "~1s:Fs.");
-  TEST_ASSERT_EQUAL(1, faceSmiled);
+  TEST_ASSERT_EQUAL(1, faceCustom);
 
   executeMove(&b, "~1s:Lyn.");
   TEST_ASSERT_EQUAL(0, ledY);
