@@ -656,11 +656,12 @@ public:
   void performMove(const char *move) {
   	int i = 0;
     const char *p = move;
+    log(CLASS_BODY, Debug, "Performing move '%s'", move);
     while ((p = performPose(p)) != NULL) {
     	i++;
-      log(CLASS_BODY, Debug, "Next pose %d in move '%s'...", i, move);
+      log(CLASS_BODY, Debug, "- pose %d: '%s'...", i, p);
     }
-    log(CLASS_BODY, Debug, "Found %d poses in move '%s'", i, move);
+    log(CLASS_BODY, Debug, "Move '%s' performed: %d poses found", move, i);
   }
 };
 
