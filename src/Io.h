@@ -7,4 +7,14 @@ enum IoMode {
 	IoToggle = 2
 };
 
+IoMode invert(IoMode v) {
+	if (v == IoOn) {
+		return IoOff;
+	} else if (v == IoOff) {
+		return IoOn;
+	} else {
+		return v;
+	}
+}
+
 #endif // IO_INC

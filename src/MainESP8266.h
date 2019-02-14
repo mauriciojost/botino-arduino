@@ -289,16 +289,6 @@ void arms(int left, int right, int steps) {
   servoRight.detach();
 }
 
-IoMode invert(IoMode v) {
-	if (v == IoOn) {
-		return IoOff;
-	} else if (v == IoOff) {
-		return IoOn;
-	} else {
-		return v;
-	}
-}
-
 void ios(char led, IoMode value) {
 	uint8_t pin = -1;
   switch (led) {
