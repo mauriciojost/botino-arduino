@@ -31,7 +31,6 @@
 #define FRAG_TO_SLEEP_MS_MAX 1000 // maximum sleeping time for which the module can be unresponsive
 #endif                            // FRAG_TO_SLEEP_MS_MAX
 
-
 #define PERIOD_MSEC (PERIOD_SEC * 1000)
 
 #define CREDENTIAL_BUFFER_SIZE 64
@@ -42,10 +41,10 @@ enum SettingsProps {
   SettingsDeepSleepProp,          // boolean, define if the device is in deep sleep mode
   SettingsButtonRoutineLimitProp, // integer, define the first X routines that are randomly executed when the button is pressed
   SettingsPeriodMsProp,           // period in msec for the device to wait until update clock and make actors catch up with acting (if any)
-  SettingsMiniPeriodMsProp,       // period in msec for the device to got to sleep (and remain unresponsive from user) (only if no deep sleep)
-  SettingsWifiSsidProp,           // wifi ssid
-  SettingsWifiPassProp,           // wifi pass
-  SettingsPropsDelimiter          // amount of properties
+  SettingsMiniPeriodMsProp, // period in msec for the device to got to sleep (and remain unresponsive from user) (only if no deep sleep)
+  SettingsWifiSsidProp,     // wifi ssid
+  SettingsWifiPassProp,     // wifi pass
+  SettingsPropsDelimiter    // amount of properties
 };
 
 class Settings : public Actor {
@@ -75,7 +74,7 @@ public:
     lcdLogs = true;
 #ifdef DEEP_SLEEP_MODE_ENABLED
     deepSleep = true;
-#else // DEEP_SLEEP_MODE_ENABLED
+#else  // DEEP_SLEEP_MODE_ENABLED
     deepSleep = false;
 #endif // DEEP_SLEEP_MODE_ENABLED
     buttonRoutineUntil = 4;
@@ -124,7 +123,7 @@ public:
       case (SettingsDeepSleepProp):
 #ifdef DEEP_SLEEP_MODE_ENABLED
         setPropBoolean(m, targetValue, actualValue, &deepSleep);
-#else // DEEP_SLEEP_MODE_ENABLED
+#else  // DEEP_SLEEP_MODE_ENABLED
         deepSleep = false;
         if (actualValue != NULL) {
           Boolean b(false);
@@ -159,7 +158,7 @@ public:
     return SettingsPropsDelimiter;
   }
 
-  void getInfo(int infoIndex, Buffer *info) { }
+  void getInfo(int infoIndex, Buffer *info) {}
 
   int getNroInfos() {
     return 0;
@@ -205,18 +204,16 @@ public:
   }
 
   bool inDeepSleepMode() {
-  	return deepSleep;
+    return deepSleep;
   }
 
   int periodMsec() {
-  	return periodms;
+    return periodms;
   }
 
   int miniPeriodMsec() {
-  	return miniperiodms;
+    return miniperiodms;
   }
-
-
 };
 
 #endif // GLOBAL_INC

@@ -8,7 +8,7 @@
 
 #define CL_MAX_LENGTH 5000
 #define HTTP_CODE_KEY "HTTP_CODE:"
-#define CURL_COMMAND_GET  "/usr/bin/curl --silent -w '" HTTP_CODE_KEY "%%{http_code}' -XGET '%s'"
+#define CURL_COMMAND_GET "/usr/bin/curl --silent -w '" HTTP_CODE_KEY "%%{http_code}' -XGET '%s'"
 #define CURL_COMMAND_POST "/usr/bin/curl --silent -w '" HTTP_CODE_KEY "%%{http_code}' -XPOST '%s' -d '%s'"
 
 enum AppMode { Interactive = 0, NonInteractive = 1 };
@@ -23,8 +23,8 @@ unsigned long millis();
 // Callbacks
 ///////////////////
 
-const char* deviceId() {
-	return "PC";
+const char *deviceId() {
+  return "PC";
 }
 
 void logLine(const char *str) {
@@ -55,8 +55,8 @@ int httpGet(const char *url, ParamStream *response, Table *headers) {
     return HTTP_BAD_REQUEST;
   }
   while (fgets(aux.getUnsafeBuffer(), CL_MAX_LENGTH - 1, fp) != NULL) {
-    const char* codeStr = aux.since(HTTP_CODE_KEY);
-    httpCode = (codeStr!=NULL?atoi(codeStr + strlen(HTTP_CODE_KEY)):HTTP_BAD_REQUEST);
+    const char *codeStr = aux.since(HTTP_CODE_KEY);
+    httpCode = (codeStr != NULL ? atoi(codeStr + strlen(HTTP_CODE_KEY)) : HTTP_BAD_REQUEST);
     if (response != NULL) {
       response->fillUntil(aux.getBuffer(), HTTP_CODE_KEY);
       log(CLASS_MAIN, Debug, "-> %s", response->content());
@@ -86,8 +86,8 @@ int httpPost(const char *url, const char *body, ParamStream *response, Table *he
     return HTTP_BAD_REQUEST;
   }
   while (fgets(aux.getUnsafeBuffer(), CL_MAX_LENGTH - 1, fp) != NULL) {
-    const char* codeStr = aux.since(HTTP_CODE_KEY);
-    httpCode = (codeStr!=NULL?atoi(codeStr + strlen(HTTP_CODE_KEY)):HTTP_BAD_REQUEST);
+    const char *codeStr = aux.since(HTTP_CODE_KEY);
+    httpCode = (codeStr != NULL ? atoi(codeStr + strlen(HTTP_CODE_KEY)) : HTTP_BAD_REQUEST);
     if (response != NULL) {
       response->fillUntil(aux.getBuffer(), HTTP_CODE_KEY);
       log(CLASS_MAIN, Debug, "-> %s", response->content());
@@ -117,38 +117,38 @@ void lcdImg(char img, uint8_t bitmap[]) {
   log(CLASS_MAIN, Debug, "Img '%c'", img);
 }
 
-bool readFile(const char* fname, Buffer* content) {
-	bool success = false;
-	char c;
-	int i = 0;
-	FILE *fp = fopen(fname, "r");
-	content->clear();
-	if(fp != NULL) {
-    while((c = getc(fp)) != EOF){
-        content->append(c);
-        i++;
+bool readFile(const char *fname, Buffer *content) {
+  bool success = false;
+  char c;
+  int i = 0;
+  FILE *fp = fopen(fname, "r");
+  content->clear();
+  if (fp != NULL) {
+    while ((c = getc(fp)) != EOF) {
+      content->append(c);
+      i++;
     }
     fclose(fp);
     success = true;
-	} else {
+  } else {
     log(CLASS_MAIN, Warn, "Could not load file: %s", fname);
     success = false;
-	}
-	return success;
+  }
+  return success;
 }
 
-bool writeFile(const char* fname, const char* content) {
-	bool success = false;
-	FILE *file = fopen(fname, "w+");
-	int results = fputs(content, file);
-	if (results == EOF) {
+bool writeFile(const char *fname, const char *content) {
+  bool success = false;
+  FILE *file = fopen(fname, "w+");
+  int results = fputs(content, file);
+  if (results == EOF) {
     log(CLASS_MAIN, Warn, "Failed to write %s ", fname);
     success = false;
-	} else {
-		success = true;
-	}
-	fclose(file);
-	return success;
+  } else {
+    success = true;
+  }
+  fclose(file);
+  return success;
 }
 
 void infoArchitecture() {}
@@ -182,15 +182,15 @@ void runModeArchitecture() {
   }
 }
 
-bool commandArchitecture(const char* command) {
-	return false;
+bool commandArchitecture(const char *command) {
+  return false;
 }
 
 void configureModeArchitecture() {
   // nothing to be done here
 }
 
-void abort(const char* msg) {
+void abort(const char *msg) {
   log(CLASS_MAIN, Error, "Abort: %s", msg);
 }
 

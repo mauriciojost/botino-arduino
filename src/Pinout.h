@@ -41,12 +41,12 @@
 // LEDS
 
 #ifdef DEEP_SLEEP_MODE_ENABLED // cant use D0 in DEEP SLEEP as it is wired to RESET
-#define LEDY_PIN PIN_D3 // YELLOW LED // 1 off, 0 on
-#else // DEEP_SLEEP_MODE_ENABLED
+#define LEDY_PIN PIN_D3        // YELLOW LED // 1 off, 0 on
+#else                          // DEEP_SLEEP_MODE_ENABLED
 #ifndef LEDY_PIN
 #define LEDY_PIN PIN_D0 // YELLOW LED // 1 off, 0 on
-#endif // LEDY_PIN
-#endif // DEEP_SLEEP_MODE_ENABLED
+#endif                  // LEDY_PIN
+#endif                  // DEEP_SLEEP_MODE_ENABLED
 
 // I2C OLED 128x64
 // (Kuman 0.96inches I2C OLED 128x64 LCD screen)
@@ -54,12 +54,12 @@
 #define LCD_SDA_PIN PIN_D2 // same as above
 
 // LEDS
-#ifndef LEDW_PIN // 1 off, 0 on
+#ifndef LEDW_PIN        // 1 off, 0 on
 #define LEDW_PIN PIN_D3 // WHITE LED
-#endif // LEDW_PIN
-#ifndef LEDR_PIN // 1 off, 0 on
+#endif                  // LEDW_PIN
+#ifndef LEDR_PIN        // 1 off, 0 on
 #define LEDR_PIN PIN_D4 // RED LED
-#endif // LEDR_PIN
+#endif                  // LEDR_PIN
 
 // FAN
 #define FAN_PIN PIN_D6 // 0 off, 1 on

@@ -17,11 +17,7 @@
 #define DO_WRAP true
 #define DO_NOT_WRAP false
 
-enum MsgClearMode {
-  FullClear = 0,
-  LineClear,
-  NoClear
-};
+enum MsgClearMode { FullClear = 0, LineClear, NoClear };
 
 #ifndef LCD_WIDTH
 #define LCD_WIDTH 21
@@ -121,14 +117,14 @@ public:
   }
 
   int notificationRead() {
-  	int i = queue.pop();
+    int i = queue.pop();
     log(CLASS_NOTIFIER, Debug, "Notif read: %d left", i);
     getMetadata()->changed();
     notify(); // update notification
     return i;
   }
 
-  void act() { }
+  void act() {}
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {

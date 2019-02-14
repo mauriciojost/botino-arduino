@@ -9,11 +9,11 @@
 
 #include <Main.h>
 
-Module* m;
+Module *m;
 
 #ifdef ARDUINO // on ESP8266
 #include <MainESP8266.h>
-#else   // on PC
+#else // on PC
 #include <MainX86_64.h>
 #endif // ARDUINO
 
@@ -26,30 +26,27 @@ bool initWifiSimple() {
 
 void setup() {
   m = new Module();
-  m->setup(
-  		setupArchitecture,
-			lcdImg,
-			arms,
-			messageFunc,
-			ios,
-			initWifiSimple,
-			httpPost,
-			httpGet,
-			clearDevice,
-			readFile,
-			writeFile,
-			abort,
-			sleepInterruptable,
-			configureModeArchitecture,
-			runModeArchitecture,
-			commandArchitecture,
-			infoArchitecture,
-			updateFirmware,
-			testArchitecture
-			);
+  m->setup(setupArchitecture,
+           lcdImg,
+           arms,
+           messageFunc,
+           ios,
+           initWifiSimple,
+           httpPost,
+           httpGet,
+           clearDevice,
+           readFile,
+           writeFile,
+           abort,
+           sleepInterruptable,
+           configureModeArchitecture,
+           runModeArchitecture,
+           commandArchitecture,
+           infoArchitecture,
+           updateFirmware,
+           testArchitecture);
 }
 
 void loop() {
-	m->loop();
+  m->loop();
 }
-

@@ -333,8 +333,7 @@ private:
   }
 
   bool isInitialized() {
-    bool init =
-        arms != NULL && iosFunc != NULL && notifier != NULL && quotes != NULL && images != NULL && ifttt != NULL;
+    bool init = arms != NULL && iosFunc != NULL && notifier != NULL && quotes != NULL && images != NULL && ifttt != NULL;
     return init;
   }
 
@@ -344,15 +343,15 @@ private:
   }
 
   int getIosState(char c) {
-  	if (c == 'n' || c == 'N' || c == '0') {
-  		return IoOff;
-  	} else if (c == 'y' || c == 'Y' || c == '1') {
-  		return IoOn;
-  	} else if (c == 't' || c == 'T') {
-  		return IoToggle;
-  	} else {
-  		return IoOff;
-  	}
+    if (c == 'n' || c == 'N' || c == '0') {
+      return IoOff;
+    } else if (c == 'y' || c == 'Y' || c == '1') {
+      return IoOn;
+    } else if (c == 't' || c == 'T') {
+      return IoToggle;
+    } else {
+      return IoOff;
+    }
   }
 
   int poseStrLen(const char *p) {
@@ -395,10 +394,10 @@ private:
       return true;
     } else if (sscanf(pose, "D%c.", &c0) == 1) {
       // DANCE
-    	return dance(c0);
+      return dance(c0);
     } else if (sscanf(pose, "F%c.", &c0) == 1) {
       // FACES
-    	return face(c0);
+      return face(c0);
     } else if (sscanf(pose, "I%c.", &c0) == 1) {
       // IFTTT (by index)
       int i = getInt(c0);
@@ -414,7 +413,7 @@ private:
       return true;
     } else if (sscanf(pose, "L%c%c.", &c0, &c1) == 2) {
       // IO (LEDS / FAN)
-    	return io(c0, c1);
+      return io(c0, c1);
     } else if (sscanf(pose, "L%c.", &c0) == 1) {
       // IO (LEDS / FAN)
       switch (c0) {
@@ -491,7 +490,7 @@ private:
       return true;
     } else if (sscanf(pose, "Z%c", &c0) == 1) {
       // POWER OFF
-    	return zzz();
+      return zzz();
     } else {
       return false;
     }
@@ -509,7 +508,7 @@ public:
     bool success = false;
 
     if (poseLen <= 0) { // invalid number of chars poses
-    	success = false;
+      success = false;
     } else if (poseLen > 0) {
       success = handleCharPoses(pose, poseLen);
     }
@@ -523,7 +522,7 @@ public:
       delay(2000);
       return NULL;
     } else {
-    	return NULL;
+      return NULL;
     }
   }
 
@@ -654,11 +653,11 @@ public:
   }
 
   void performMove(const char *move) {
-  	int i = 0;
+    int i = 0;
     const char *p = move;
     log(CLASS_BODY, Debug, "Performing move '%s'", move);
     while ((p = performPose(p)) != NULL) {
-    	i++;
+      i++;
       log(CLASS_BODY, Debug, "- pose %d: '%s'...", i, p);
     }
     log(CLASS_BODY, Debug, "Move '%s' performed: %d poses found", move, i);

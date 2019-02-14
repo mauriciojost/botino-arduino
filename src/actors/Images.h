@@ -42,7 +42,7 @@ private:
   const char *name;
   Metadata *md;
   uint8_t *imagesBin[NRO_IMGS];
-  Buffer* imagesHex[NRO_IMGS];
+  Buffer *imagesHex[NRO_IMGS];
 
 public:
   Images(const char *n) {

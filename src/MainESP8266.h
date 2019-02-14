@@ -63,10 +63,10 @@ extern "C" {
 
 #define HTTP_TIMEOUT_MS 8000
 
-#define HELP_COMMAND_ARCH_CLI                                                                                                                   \
-  "\n  servo             : tune the servo <s> (r|l) and make a test round "                                                                     \
-  "\n  ls                : list files present in FS "                                                                                           \
-  "\n  clearstack        : clear stack trace "                                                                                                  \
+#define HELP_COMMAND_ARCH_CLI                                                                                                              \
+  "\n  servo             : tune the servo <s> (r|l) and make a test round "                                                                \
+  "\n  ls                : list files present in FS "                                                                                      \
+  "\n  clearstack        : clear stack trace "                                                                                             \
   "\n"
 
 #define BUTTON_IS_PRESSED ((bool)digitalRead(BUTTON0_PIN))
@@ -78,10 +78,10 @@ RemoteDebug telnet;
 Servo servoLeft;
 Servo servoRight;
 Adafruit_SSD1306 lcd(-1);
-Buffer* apiDeviceId = NULL;
-Buffer* apiDevicePwd = NULL;
-ServoConf* servo0Conf = NULL;
-ServoConf* servo1Conf = NULL;
+Buffer *apiDeviceId = NULL;
+Buffer *apiDevicePwd = NULL;
+ServoConf *servo0Conf = NULL;
+ServoConf *servo1Conf = NULL;
 
 #define LED_INT_ON ios('y', IoOn);
 #define LED_INT_OFF ios('y', IoOff);
@@ -101,8 +101,8 @@ void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs);
 void debugHandle();
 bool haveToInterrupt();
 void initializeServoConfigs();
-const char* apiDeviceLogin();
-const char* apiDevicePass();
+const char *apiDeviceLogin();
+const char *apiDevicePass();
 
 ////////////////////////////////////////
 // Functions requested for architecture
@@ -122,9 +122,9 @@ void logLine(const char *str) {
   // telnet print
   if (telnet.isActive()) {
     Serial.print("TELNET|");
-  	for (unsigned int i = 0; i < strlen(str); i++) {
+    for (unsigned int i = 0; i < strlen(str); i++) {
       telnet.write(str[i]);
-  	}
+    }
   }
   // lcd print
   if (m->getSettings()->getLcdLogs()) {
@@ -239,14 +239,14 @@ int httpPost(const char *url, const char *body, ParamStream *response, Table *he
 
 void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clearMode, int size, const char *str) {
   switch (clearMode) {
-  	case FullClear:
+    case FullClear:
       lcd.clearDisplay();
       break;
-  	case LineClear:
+    case LineClear:
       lcd.fillRect(x * size * LCD_PIXEL_WIDTH, y * size * LCD_PIXEL_HEIGHT, 128, size * LCD_PIXEL_HEIGHT, !color);
       wrap = false;
       break;
-  	case NoClear:
+    case NoClear:
       break;
   }
   lcd.setTextWrap(wrap);
@@ -292,7 +292,7 @@ void arms(int left, int right, int steps) {
 }
 
 void ios(char led, IoMode value) {
-	uint8_t pin = -1;
+  uint8_t pin = -1;
   switch (led) {
     case 'r':
       pin = LEDR_PIN;
@@ -308,23 +308,22 @@ void ios(char led, IoMode value) {
       value = invert(value);
       break;
     default:
-    	pin = -1;
+      pin = -1;
       break;
   }
   if (pin == -1) {
     log(CLASS_MAIN, Warn, "Unknown pin: %c", pin);
-  	return;
+    return;
   }
   if (value == IoOn) {
-  	digitalWrite(pin, LOW);
+    digitalWrite(pin, LOW);
   } else if (value == IoOff) {
-  	digitalWrite(pin, HIGH);
-  } else if (value == IoToggle){
-  	digitalWrite(pin, digitalRead(pin));
+    digitalWrite(pin, HIGH);
+  } else if (value == IoToggle) {
+    digitalWrite(pin, digitalRead(pin));
   } else {
     log(CLASS_MAIN, Warn, "Unknown IO request: %c<-%d", pin, value);
   }
-
 }
 
 void clearDevice() {
@@ -370,8 +369,8 @@ void lcdImg(char img, uint8_t bitmap[]) {
   delay(DELAY_MS_SPI);
 }
 
-bool readFile(const char* fname, Buffer* content) {
-	bool success = false;
+bool readFile(const char *fname, Buffer *content) {
+  bool success = false;
   SPIFFS.begin();
   File f = SPIFFS.open(fname, "r");
   if (!f) {
@@ -388,15 +387,15 @@ bool readFile(const char* fname, Buffer* content) {
   return success;
 }
 
-bool writeFile(const char* fname, const char* content) {
-	bool success = false;
+bool writeFile(const char *fname, const char *content) {
+  bool success = false;
   SPIFFS.begin();
   File f = SPIFFS.open(fname, "w+");
   if (!f) {
     log(CLASS_MAIN, Warn, "File writing failed: %s", fname);
     success = false;
   } else {
-    f.write((const uint8_t*)content, strlen(content));
+    f.write((const uint8_t *)content, strlen(content));
     log(CLASS_MAIN, Info, "File written: %s", fname);
     success = true;
   }
@@ -407,16 +406,15 @@ bool writeFile(const char* fname, const char* content) {
 void infoArchitecture() {
 
   m->getNotifier()->message(0,
-                           1,
-                           "ID:%s\nV:%s\nCrashes:%d\nIP: %s\nMemory:%lu\nUptime:%luh\nVcc: %0.2f",
-                           apiDeviceLogin(),
-                           STRINGIFY(PROJ_VERSION),
-                           SaveCrash.count(),
-                           WiFi.localIP().toString().c_str(),
-                           ESP.getFreeHeap(),
-                           (millis() / 1000) / 3600,
-                           ((float)ESP.getVcc()/1024));
-
+                            1,
+                            "ID:%s\nV:%s\nCrashes:%d\nIP: %s\nMemory:%lu\nUptime:%luh\nVcc: %0.2f",
+                            apiDeviceLogin(),
+                            STRINGIFY(PROJ_VERSION),
+                            SaveCrash.count(),
+                            WiFi.localIP().toString().c_str(),
+                            ESP.getFreeHeap(),
+                            (millis() / 1000) / 3600,
+                            ((float)ESP.getVcc() / 1024));
 }
 
 void testArchitecture() {
@@ -428,7 +426,7 @@ void updateFirmware() {
 
   Settings *s = m->getSettings();
   bool connected = initWifi(s->getSsid(), s->getPass(), false, 10);
-  if (!connected){
+  if (!connected) {
     log(CLASS_MAIN, Error, "Cannot connect to wifi");
   }
 
@@ -438,7 +436,11 @@ void updateFirmware() {
   t_httpUpdate_return ret = updater.update(FIRMWARE_UPDATE_URL);
   switch (ret) {
     case HTTP_UPDATE_FAILED:
-      log(CLASS_MAIN, Error, "HTTP_UPDATE_FAILD Error (%d): %s\n", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+      log(CLASS_MAIN,
+          Error,
+          "HTTP_UPDATE_FAILD Error (%d): %s\n",
+          ESPhttpUpdate.getLastError(),
+          ESPhttpUpdate.getLastErrorString().c_str());
       break;
     case HTTP_UPDATE_NO_UPDATES:
       log(CLASS_MAIN, Info, "No updates.");
@@ -453,14 +455,14 @@ void updateFirmware() {
 ///////////////////
 
 void sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
-	if (m->getSettings()->inDeepSleepMode() && periodSecs > 120) { // in deep sleep mode and period big enough
-		m->command("move Z.");
-		lightSleepInterruptable(now() /* always do it */, periodSecs / PRE_DEEP_SLEEP_WINDOW_FACTOR);
-		m->command("move Z.");
-		deepSleepNotInterruptable(cycleBegin, periodSecs);
-	} else {
-		lightSleepInterruptable(cycleBegin, periodSecs);
-	}
+  if (m->getSettings()->inDeepSleepMode() && periodSecs > 120) { // in deep sleep mode and period big enough
+    m->command("move Z.");
+    lightSleepInterruptable(now() /* always do it */, periodSecs / PRE_DEEP_SLEEP_WINDOW_FACTOR);
+    m->command("move Z.");
+    deepSleepNotInterruptable(cycleBegin, periodSecs);
+  } else {
+    lightSleepInterruptable(cycleBegin, periodSecs);
+  }
 }
 
 BotMode setupArchitecture() {
@@ -557,37 +559,39 @@ void runModeArchitecture() {
   }
 }
 
-bool askQuestion(const char* question) {
+bool askQuestion(const char *question) {
   m->getNotifier()->message(0, 1, "%s\n(Press if true)", question);
   delay(USER_DELAY_MS);
   int answer = BUTTON_IS_PRESSED;
   return (bool)answer;
 }
 
-void tuneServo(const char* name, int pin, Servo* servo, ServoConf* servoConf) {
+void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
   servo->attach(pin);
   servo->write(0);
 
-  m->getNotifier()->message(0, 1, "Tuning %s", name); delay(USER_DELAY_MS);
+  m->getNotifier()->message(0, 1, "Tuning %s", name);
+  delay(USER_DELAY_MS);
 
   m->getNotifier()->message(0, 1, "Press if arm moves...");
   delay(SERVO_PERIOD_REACTION_MS * 10);
   delay(USER_DELAY_MS);
 
-	int min = 100;
-	int max = 100;
+  int min = 100;
+  int max = 100;
   int testRange = 200;
 
   for (int d = 0; d <= testRange; d = d + 2) {
     log(CLASS_MODULE, Info, "Moves: %d/%d", d, testRange);
-    min = ((d < min) && BUTTON_IS_PRESSED? d: min);
-    max = ((d > max) && BUTTON_IS_PRESSED? d: max);
+    min = ((d < min) && BUTTON_IS_PRESSED ? d : min);
+    max = ((d > max) && BUTTON_IS_PRESSED ? d : max);
     servo->write(d);
     delay(SERVO_PERIOD_REACTION_MS * 10);
   }
 
   bool inv = askQuestion("Is arm down?");
-  m->getNotifier()->message(0, 1, "Done!"); delay(USER_DELAY_MS);
+  m->getNotifier()->message(0, 1, "Done!");
+  delay(USER_DELAY_MS);
 
   servoConf->setBase(min);
   servoConf->setRange(max - min);
@@ -596,7 +600,7 @@ void tuneServo(const char* name, int pin, Servo* servo, ServoConf* servoConf) {
   servo->detach();
 }
 
-bool commandArchitecture(const char* c) {
+bool commandArchitecture(const char *c) {
   if (strcmp("servo", c) == 0) {
     char servo = strtok(NULL, " ")[0];
     Buffer serialized(16);
@@ -605,22 +609,22 @@ bool commandArchitecture(const char* c) {
       servo1Conf->serialize(&serialized); // right servo1
       writeFile(SERVO_1_FILENAME, serialized.getBuffer());
       log(CLASS_MAIN, Info, "Stored tuning right servo");
-      arms(0,0,100);
-      arms(0,9,100);
-      arms(0,0,100);
+      arms(0, 0, 100);
+      arms(0, 9, 100);
+      arms(0, 0, 100);
     } else if (servo == 'l' || servo == 'L') {
       tuneServo("left servo", SERVO0_PIN, &servoLeft, servo0Conf);
-    	servo0Conf->serialize(&serialized); // left servo0
+      servo0Conf->serialize(&serialized); // left servo0
       writeFile(SERVO_0_FILENAME, serialized.getBuffer());
       log(CLASS_MAIN, Info, "Stored tuning left servo");
-      arms(0,0,100);
-      arms(9,0,100);
-      arms(0,0,100);
+      arms(0, 0, 100);
+      arms(9, 0, 100);
+      arms(0, 0, 100);
     } else {
       log(CLASS_MAIN, Warn, "Invalid servo (l|r)");
-    	return false;
+      return false;
     }
-  	return false;
+    return false;
   } else if (strcmp("ls", c) == 0) {
     SPIFFS.begin();
     Dir dir = SPIFFS.openDir("");
@@ -636,24 +640,24 @@ bool commandArchitecture(const char* c) {
     logRaw(CLASS_MODULE, Warn, HELP_COMMAND_ARCH_CLI);
     return false;
   } else {
-  	return false;
+    return false;
   }
 }
 
 void configureModeArchitecture() {
-	debugHandle();
-	if (m->getBot()->getClock()->currentTime() % 60 == 0) { // every minute
+  debugHandle();
+  if (m->getBot()->getClock()->currentTime() % 60 == 0) { // every minute
     m->getNotifier()->message(0, 1, "telnet %s", WiFi.localIP().toString().c_str());
-	}
+  }
 }
 
-void abort(const char* msg) {
+void abort(const char *msg) {
   log(CLASS_MAIN, Error, "Abort: %s", msg);
 #ifdef DEEP_SLEEP_MODE_ENABLED
   ESP.deepSleep(60 * 1000000L); // reboot in a while
-#else // DEEP_SLEEP_MODE_ENABLED
+#else                           // DEEP_SLEEP_MODE_ENABLED
   ESP.restart(); // restart right away
-#endif // DEEP_SLEEP_MODE_ENABLED
+#endif                          // DEEP_SLEEP_MODE_ENABLED
 }
 
 ////////////////////////////////////////
@@ -664,14 +668,13 @@ void debugHandle() {
   static bool firstTime = true;
   if (firstTime) {
     log(CLASS_MAIN, Debug, "Initialize debuggers...");
-    telnet.begin(apiDeviceLogin());  // Intialize the remote logging framework
-    ArduinoOTA.begin();              // Intialize OTA
+    telnet.begin(apiDeviceLogin()); // Intialize the remote logging framework
+    ArduinoOTA.begin();             // Intialize OTA
     firstTime = false;
   }
   telnet.handle();     // Handle telnet log server and commands
   ArduinoOTA.handle(); // Handle on the air firmware load
 }
-
 
 ICACHE_RAM_ATTR
 void buttonPressed() {
@@ -759,9 +762,8 @@ bool haveToInterrupt() {
   }
 }
 
-
-void initializeServoConfig(const char* tuningFilename, ServoConf** conf) {
-	Buffer aux(SERVO_CONF_SERIALIZED_MAX_LENGTH);
+void initializeServoConfig(const char *tuningFilename, ServoConf **conf) {
+  Buffer aux(SERVO_CONF_SERIALIZED_MAX_LENGTH);
   bool succServo0 = readFile(tuningFilename, &aux);
   if (succServo0) {
     aux.replace('\n', 0);
@@ -776,26 +778,24 @@ void initializeServoConfigs() {
   initializeServoConfig(SERVO_1_FILENAME, &servo1Conf);
 }
 
-void initializeTuningVariable(Buffer** var, const char* filename, int maxLength) {
+void initializeTuningVariable(Buffer **var, const char *filename, int maxLength) {
   if (*var == NULL) {
     *var = new Buffer(maxLength);
     bool succAlias = readFile(filename, *var); // preserve the alias
-    if (succAlias) { // managed to retrieve the alias
-      (*var)->replace('\n', 0); // content already with the alias
+    if (succAlias) {                           // managed to retrieve the alias
+      (*var)->replace('\n', 0);                // content already with the alias
     } else {
-    	abort(filename);
+      abort(filename);
     }
   }
 }
 
-const char* apiDeviceLogin() {
-	initializeTuningVariable(&apiDeviceId, DEVICE_ALIAS_FILENAME, DEVICE_ALIAS_MAX_LENGTH);
-	return apiDeviceId->getBuffer();
+const char *apiDeviceLogin() {
+  initializeTuningVariable(&apiDeviceId, DEVICE_ALIAS_FILENAME, DEVICE_ALIAS_MAX_LENGTH);
+  return apiDeviceId->getBuffer();
 }
 
-const char* apiDevicePass() {
-	initializeTuningVariable(&apiDevicePwd, DEVICE_PWD_FILENAME, DEVICE_PWD_MAX_LENGTH);
-	return apiDevicePwd->getBuffer();
+const char *apiDevicePass() {
+  initializeTuningVariable(&apiDevicePwd, DEVICE_PWD_FILENAME, DEVICE_PWD_MAX_LENGTH);
+  return apiDevicePwd->getBuffer();
 }
-
-

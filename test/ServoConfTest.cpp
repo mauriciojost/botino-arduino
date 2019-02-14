@@ -8,7 +8,7 @@
 // Being tested
 #include <ServoConf.h>
 
-void setUp() { }
+void setUp() {}
 
 void tearDown() {}
 
@@ -38,7 +38,6 @@ void test_basic_behaviour() {
   TEST_ASSERT_EQUAL(0.0f, t.getStepDegrees());
   TEST_ASSERT_EQUAL(10, t.getTargetDegreesFromPosition(0));
   TEST_ASSERT_EQUAL(10, t.getTargetDegreesFromPosition(9));
-
 }
 
 void test_non_basic_behaviour() {
@@ -94,7 +93,6 @@ void test_non_basic_behaviour() {
   TEST_ASSERT_EQUAL(190, v.getTargetDegreesFromPosition(0));
   TEST_ASSERT_EQUAL(100, v.getTargetDegreesFromPosition(9));
 
-
   // another scenario
   ServoConf w("0/200/1"); // base, range, inversion
 
@@ -106,9 +104,7 @@ void test_non_basic_behaviour() {
   // derived basics
   TEST_ASSERT_EQUAL(200, w.getTargetDegreesFromPosition(0));
   TEST_ASSERT_EQUAL(0, w.getTargetDegreesFromPosition(9));
-
 }
-
 
 int main() {
   UNITY_BEGIN();

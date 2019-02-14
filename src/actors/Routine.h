@@ -21,9 +21,9 @@ public:
   void set(const Value *v) {
     Buffer aux(MOVE_STR_LENGTH);
     aux.load(v);
-    const char* mv = aux.since(TIMING_SEPARATOR);
+    const char *mv = aux.since(TIMING_SEPARATOR);
     aux.replace(TIMING_SEPARATOR, 0);
-    const char* tm = aux.getBuffer();
+    const char *tm = aux.getBuffer();
     set(tm, mv);
   }
   void set(const char *tmg, const char *mov) {
@@ -46,6 +46,5 @@ public:
     return timing;
   }
 };
-
 
 #endif // ROUTINE_INC

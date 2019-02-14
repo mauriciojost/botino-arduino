@@ -22,7 +22,6 @@
 #define IFTTT_KEY "???"
 #endif // IFTTT_KEY
 
-
 enum IftttProps {
   IftttEvtName0Prop = 0,
   IftttEvtName1Prop,
@@ -75,7 +74,7 @@ public:
     iftttKey->fill("%s", k);
   }
 
-  const char* getKey() {
+  const char *getKey() {
     return iftttKey->getBuffer();
   }
 

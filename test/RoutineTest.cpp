@@ -8,8 +8,7 @@
 #include <string.h>
 #include <unity.h>
 
-
-void setUp() { }
+void setUp() {}
 
 void tearDown() {}
 
@@ -26,7 +25,6 @@ void test_basic_behaviour() {
 
   TEST_ASSERT_EQUAL_STRING("D0.", r1.getMove());
   TEST_ASSERT_EQUAL_STRING("@11h00", r1.getTiming()->getFreq());
-
 }
 
 int main() {

@@ -59,10 +59,10 @@ void clearDevice();
 void lcdImg(char img, uint8_t bitmap[]);
 
 // Read a file from the filesystem (returns true if success)
-bool readFile(const char* fname, Buffer* content);
+bool readFile(const char *fname, Buffer *content);
 
 // Write a file to the filesystem (returns true if success)
-bool writeFile(const char* fname, const char* content);
+bool writeFile(const char *fname, const char *content);
 
 // Display some useful info related to the HW
 void infoArchitecture();
@@ -87,13 +87,12 @@ void runModeArchitecture();
 
 // Handle an architecture specific command (if all the regular commands don't match).
 // Returns true if the command requires the current wait batch to be interrupted (normally true with change of bot mode)
-bool commandArchitecture(const char* command);
+bool commandArchitecture(const char *command);
 
 // Loop in configure mode specific to the architecture
 void configureModeArchitecture();
 
 // Abort execution (non-recoverable-error)
-void abort(const char* msg);
+void abort(const char *msg);
 
 #endif // MAIN_INC
-

@@ -24,33 +24,33 @@
 
 #define PERIOD_CONFIGURE_MSEC 4000
 
-#define HELP_COMMAND_CLI                                                                                                                        \
-  "\n  run             : go to run mode"                                                                                                        \
-  "\n  conf            : go to conf mode"                                                                                                       \
-  "\n  info            : show info about the device"                                                                                            \
-  "\n  test            : test the architecture/hardware"                                                                                        \
-  "\n  update          : update the firmware"                                                                                                   \
-  "\n  wifi            : init steady wifi"                                                                                                      \
-  "\n  get             : display actors properties"                                                                                             \
-  "\n  get ...         : display actor <actor> properties"                                                                                      \
-  "\n  set ...         : set an actor property (example: 'set body msg0 HELLO')"                                                                \
-  "\n  move ...        : execute a move (example: 'move A00C55')"                                                                               \
-  "\n  logl [...]      : get / change log level to <x> (0 is more verbose, to 3 least verbose)"                                                 \
-  "\n  clear           : clear device (filesystem, crashes stacktrace, etc.)"                                                                   \
-  "\n  actall          : all act"                                                                                                               \
-  "\n  touchall        : mark actors as 'changed' to force synchronization with the server"                                                     \
-  "\n  actone ...      : make actor <x> act"                                                                                                    \
-  "\n  rnd             : execute random routine"                                                                                                \
-  "\n  lcd ...         : write on display <x> <y> <color> <wrap> <clear> <size> <str>"                                                          \
-  "\n  wifissid ...    : set wifi ssid"                                                                                                         \
-  "\n  wifipass ...    : set wifi pass"                                                                                                         \
-  "\n  ifttttoken ...  : set ifttt token"                                                                                                       \
-  "\n  load            : load properties in persistent fs (mainly for credentials)"                                                             \
-  "\n  store           : save properties in persistent fs (mainly for credentials)"                                                             \
-  "\n  save ...        : save a file <f> with content <y> in persistent fs (mainly for tuning) "                                                \
-  "\n  ack             : notification read"                                                                                                     \
-  "\n  help            : show this help"                                                                                                        \
-  "\n  (all messages are shown as info log level)"                                                                                              \
+#define HELP_COMMAND_CLI                                                                                                                   \
+  "\n  run             : go to run mode"                                                                                                   \
+  "\n  conf            : go to conf mode"                                                                                                  \
+  "\n  info            : show info about the device"                                                                                       \
+  "\n  test            : test the architecture/hardware"                                                                                   \
+  "\n  update          : update the firmware"                                                                                              \
+  "\n  wifi            : init steady wifi"                                                                                                 \
+  "\n  get             : display actors properties"                                                                                        \
+  "\n  get ...         : display actor <actor> properties"                                                                                 \
+  "\n  set ...         : set an actor property (example: 'set body msg0 HELLO')"                                                           \
+  "\n  move ...        : execute a move (example: 'move A00C55')"                                                                          \
+  "\n  logl [...]      : get / change log level to <x> (0 is more verbose, to 3 least verbose)"                                            \
+  "\n  clear           : clear device (filesystem, crashes stacktrace, etc.)"                                                              \
+  "\n  actall          : all act"                                                                                                          \
+  "\n  touchall        : mark actors as 'changed' to force synchronization with the server"                                                \
+  "\n  actone ...      : make actor <x> act"                                                                                               \
+  "\n  rnd             : execute random routine"                                                                                           \
+  "\n  lcd ...         : write on display <x> <y> <color> <wrap> <clear> <size> <str>"                                                     \
+  "\n  wifissid ...    : set wifi ssid"                                                                                                    \
+  "\n  wifipass ...    : set wifi pass"                                                                                                    \
+  "\n  ifttttoken ...  : set ifttt token"                                                                                                  \
+  "\n  load            : load properties in persistent fs (mainly for credentials)"                                                        \
+  "\n  store           : save properties in persistent fs (mainly for credentials)"                                                        \
+  "\n  save ...        : save a file <f> with content <y> in persistent fs (mainly for tuning) "                                           \
+  "\n  ack             : notification read"                                                                                                \
+  "\n  help            : show this help"                                                                                                   \
+  "\n  (all messages are shown as info log level)"                                                                                         \
   "\n"
 
 /**
@@ -78,9 +78,9 @@ private:
   void (*sleepInterruptable)(time_t cycleBegin, time_t periodSec);
   void (*configureModeArchitecture)();
   void (*runModeArchitecture)();
-  bool (*commandArchitecture)(const char* cmd);
-  bool (*fileRead)(const char *fname, Buffer* content);
-  bool (*fileWrite)(const char *fname, const char* content);
+  bool (*commandArchitecture)(const char *cmd);
+  bool (*fileRead)(const char *fname, Buffer *content);
+  bool (*fileWrite)(const char *fname, const char *content);
   void (*info)();
   void (*test)();
   void (*update)();
@@ -150,7 +150,7 @@ public:
   }
 
   void setup(BotMode (*setupArchitecture)(),
-  		       void (*lcdImg)(char img, uint8_t bitmap[]),
+             void (*lcdImg)(char img, uint8_t bitmap[]),
              void (*arms)(int left, int right, int steps),
              void (*messageFunc)(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str),
              void (*ios)(char led, IoMode v),
@@ -158,22 +158,21 @@ public:
              int (*httpPost)(const char *url, const char *body, ParamStream *response, Table *headers),
              int (*httpGet)(const char *url, ParamStream *response, Table *headers),
              void (*clearDevice)(),
-             bool (*fileReadFunc)(const char *fname, Buffer* content),
-             bool (*fileWriteFunc)(const char *fname, const char* content),
+             bool (*fileReadFunc)(const char *fname, Buffer *content),
+             bool (*fileWriteFunc)(const char *fname, const char *content),
              void (*abortFunc)(const char *msg),
              void (*sleepInterruptableFunc)(time_t cycleBegin, time_t periodSec),
              void (*configureModeArchitectureFunc)(),
              void (*runModeArchitectureFunc)(),
-             bool (*commandArchitectureFunc)(const char* cmd),
+             bool (*commandArchitectureFunc)(const char *cmd),
              void (*infoFunc)(),
              void (*updateFunc)(),
-             void (*testFunc)()
-						 ) {
+             void (*testFunc)()) {
 
-  	// Unstable situation from now until the end of the function
-  	// Actors are being initialized, and use callback functions that may trigger
-  	// low level calls, like IO, LCD, arms, fan, etc. but they are not set up yet.
-  	// Setup of low level calls happens in setupArchitecture().
+    // Unstable situation from now until the end of the function
+    // Actors are being initialized, and use callback functions that may trigger
+    // low level calls, like IO, LCD, arms, fan, etc. but they are not set up yet.
+    // Setup of low level calls happens in setupArchitecture().
 
     notifier->setMessageFunc(messageFunc);
     notifier->setLcdImgFunc(lcdImg);
@@ -449,7 +448,7 @@ public:
   /**
    * Make a given by-name-actor act
    */
-  void actone(const char* actorName) {
+  void actone(const char *actorName) {
     for (int i = 0; i < getBot()->getActors()->size(); i++) {
       Actor *a = getBot()->getActors()->get(i);
       if (strcmp(a->getName(), actorName) == 0) {
@@ -517,17 +516,16 @@ public:
     return false;
   }
 
-
-  void getProps(const char* actorN) {
-      Buffer contentAuxBuffer(256);
-      Array<Actor *> *actors = bot->getActors();
-      for (int i = 0; i < actors->size(); i++) {
-        Actor *actor = actors->get(i);
-        if (actorN == NULL || strcmp(actor->getName(), actorN) == 0) {
-          bot->getPropsJson(&contentAuxBuffer, i, EXCLUSIVE_FILTER_MODE, SENSITIVE_PROP_PREFIX);
-          log(CLASS_MODULE, Info, "'%s' -> %s", actor->getName(), contentAuxBuffer.getBuffer());
-        }
+  void getProps(const char *actorN) {
+    Buffer contentAuxBuffer(256);
+    Array<Actor *> *actors = bot->getActors();
+    for (int i = 0; i < actors->size(); i++) {
+      Actor *actor = actors->get(i);
+      if (actorN == NULL || strcmp(actor->getName(), actorN) == 0) {
+        bot->getPropsJson(&contentAuxBuffer, i, EXCLUSIVE_FILTER_MODE, SENSITIVE_PROP_PREFIX);
+        log(CLASS_MODULE, Info, "'%s' -> %s", actor->getName(), contentAuxBuffer.getBuffer());
       }
+    }
   }
 
   void configureMode() {
@@ -562,8 +560,6 @@ public:
         break;
     }
   }
-
 };
-
 
 #endif // MODULE_INC

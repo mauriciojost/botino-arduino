@@ -107,5 +107,4 @@ void hwTest() {
   delay(HARDWARE_TEST_STEP_DELAY_MS);
 
 #endif
-
 }
