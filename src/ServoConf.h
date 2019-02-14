@@ -10,6 +10,7 @@
 #define MAX_SERVO_STEPS 10
 
 #define SERVO_INVERT_POS(p, i, r) (((i) ? ((r) - (p)) : (p)))
+#define SERVO_CONF_SERIALIZED_MAX_LENGTH 16 // 123/567/8
 
 class ServoConf {
 private:

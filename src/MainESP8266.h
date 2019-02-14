@@ -69,6 +69,8 @@ extern "C" {
   "\n  clearstack        : clear stack trace "                                                                                                  \
   "\n"
 
+#define BUTTON_IS_PRESSED ((bool)digitalRead(BUTTON0_PIN))
+
 volatile unsigned char buttonInterrupts = 0;
 
 HTTPClient httpClient;
@@ -326,7 +328,6 @@ void ios(char led, IoMode value) {
 }
 
 void clearDevice() {
-	Buffer alias(DEVICE_ALIAS_MAX_LENGTH);
   SPIFFS.format();
   SaveCrash.clear();
 }
@@ -529,7 +530,7 @@ BotMode setupArchitecture() {
   log(CLASS_MAIN, Debug, "Setup servos");
   initializeServoConfigs();
 
-  if (digitalRead(BUTTON0_PIN)) {
+  if (BUTTON_IS_PRESSED) {
     return ConfigureMode;
   } else {
     return RunMode;
@@ -556,14 +557,20 @@ void runModeArchitecture() {
   }
 }
 
+bool askQuestion(const char* question) {
+  m->getNotifier()->message(0, 1, "%s\n(Press if true)", question);
+  delay(USER_DELAY_MS);
+  int answer = BUTTON_IS_PRESSED;
+  return (bool)answer;
+}
+
 void tuneServo(const char* name, int pin, Servo* servo, ServoConf* servoConf) {
   servo->attach(pin);
+  servo->write(0);
 
-  m->getNotifier()->message(0, 1, "Tuning %s", name);
-  delay(USER_DELAY_MS);
+  m->getNotifier()->message(0, 1, "Tuning %s", name); delay(USER_DELAY_MS);
 
   m->getNotifier()->message(0, 1, "Press if arm moves...");
-  servo->write(0);
   delay(SERVO_PERIOD_REACTION_MS * 10);
   delay(USER_DELAY_MS);
 
@@ -573,27 +580,20 @@ void tuneServo(const char* name, int pin, Servo* servo, ServoConf* servoConf) {
 
   for (int d = 0; d <= testRange; d = d + 2) {
     log(CLASS_MODULE, Info, "Moves: %d/%d", d, testRange);
-    min = ((d < min) && digitalRead(BUTTON0_PIN)? d: min);
-    max = ((d > max) && digitalRead(BUTTON0_PIN)? d: max);
+    min = ((d < min) && BUTTON_IS_PRESSED? d: min);
+    max = ((d > max) && BUTTON_IS_PRESSED? d: max);
     servo->write(d);
     delay(SERVO_PERIOD_REACTION_MS * 10);
   }
 
-  m->getNotifier()->message(0, 1, "Press if arm down...");
-  delay(SERVO_PERIOD_REACTION_MS * 10);
-  delay(USER_DELAY_MS);
-
-  int inv = digitalRead(BUTTON0_PIN);
-
-  m->getNotifier()->message(0, 1, "Done!");
-  delay(USER_DELAY_MS);
+  bool inv = askQuestion("Is arm down?");
+  m->getNotifier()->message(0, 1, "Done!"); delay(USER_DELAY_MS);
 
   servoConf->setBase(min);
   servoConf->setRange(max - min);
   servoConf->setInvert(inv);
 
   servo->detach();
-
 }
 
 bool commandArchitecture(const char* c) {
@@ -747,7 +747,7 @@ bool haveToInterrupt() {
       m->sequentialCommand(holds, ONLY_SHOW_MSG);
       LED_INT_OFF;
       delay(m->getSettings()->miniPeriodMsec());
-    } while (digitalRead(BUTTON0_PIN));
+    } while (BUTTON_IS_PRESSED);
     bool interruptMe = m->sequentialCommand(holds, SHOW_MSG_AND_REACT);
     buttonInterrupts = 0;
 
@@ -759,50 +759,42 @@ bool haveToInterrupt() {
   }
 }
 
-void initializeServoConfigs() {
-	Buffer aux(64);
 
-  bool succServo0 = readFile(SERVO_0_FILENAME, &aux);
+void initializeServoConfig(const char* tuningFilename, ServoConf** conf) {
+	Buffer aux(SERVO_CONF_SERIALIZED_MAX_LENGTH);
+  bool succServo0 = readFile(tuningFilename, &aux);
   if (succServo0) {
     aux.replace('\n', 0);
-    servo0Conf = new ServoConf(aux.getBuffer());
+    *conf = new ServoConf(aux.getBuffer());
   } else {
-    servo0Conf = new ServoConf();
+    *conf = new ServoConf();
   }
+}
 
-  bool succServo1 = readFile(SERVO_1_FILENAME, &aux);
-  if (succServo1) {
-    aux.replace('\n', 0);
-    servo1Conf = new ServoConf(aux.getBuffer());
-  } else {
-    servo1Conf = new ServoConf();
+void initializeServoConfigs() {
+  initializeServoConfig(SERVO_0_FILENAME, &servo0Conf);
+  initializeServoConfig(SERVO_1_FILENAME, &servo1Conf);
+}
+
+void initializeTuningVariable(Buffer** var, const char* filename, int maxLength) {
+  if (*var == NULL) {
+    *var = new Buffer(maxLength);
+    bool succAlias = readFile(filename, *var); // preserve the alias
+    if (succAlias) { // managed to retrieve the alias
+      (*var)->replace('\n', 0); // content already with the alias
+    } else {
+    	abort(filename);
+    }
   }
-
 }
 
 const char* apiDeviceLogin() {
-  if (apiDeviceId == NULL) {
-    apiDeviceId = new Buffer(DEVICE_ALIAS_MAX_LENGTH);
-    bool succAlias = readFile(DEVICE_ALIAS_FILENAME, apiDeviceId); // preserve the alias
-    if (succAlias) { // managed to retrieve the alias
-      apiDeviceId->replace('\n', 0); // content already with the alias
-    } else {
-    	abort("Cannot find login!");
-    }
-  }
+	initializeTuningVariable(&apiDeviceId, DEVICE_ALIAS_FILENAME, DEVICE_ALIAS_MAX_LENGTH);
 	return apiDeviceId->getBuffer();
 }
 
 const char* apiDevicePass() {
-  if (apiDevicePwd == NULL) {
-    apiDevicePwd = new Buffer(DEVICE_PWD_MAX_LENGTH);
-    bool succAlias = readFile(DEVICE_PWD_FILENAME, apiDevicePwd);
-    if (succAlias) { // managed to retrieve the alias
-      apiDevicePwd->replace('\n', 0); // content already with the alias
-    } else {
-    	abort("Cannot find pass!");
-    }
-  }
+	initializeTuningVariable(&apiDevicePwd, DEVICE_PWD_FILENAME, DEVICE_PWD_MAX_LENGTH);
 	return apiDevicePwd->getBuffer();
 }
 
