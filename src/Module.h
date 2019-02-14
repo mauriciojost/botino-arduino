@@ -1,19 +1,19 @@
 #ifndef MODULE_INC
 #define MODULE_INC
 
-#include <actors/Quotes.h>
-#include <actors/Settings.h>
 #include <Pinout.h>
 #include <actors/Body.h>
 #include <actors/Ifttt.h>
 #include <actors/Images.h>
-#include <actors/Notifier.h>
 #include <actors/Moves.h>
+#include <actors/Notifier.h>
+#include <actors/Quotes.h>
+#include <actors/Settings.h>
 #include <log4ino/Log.h>
-#include <main4ino/ClockSync.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Array.h>
 #include <main4ino/Clock.h>
+#include <main4ino/ClockSync.h>
 #include <main4ino/PropSync.h>
 #include <main4ino/SerBot.h>
 #include <main4ino/Table.h>

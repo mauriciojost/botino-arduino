@@ -124,12 +124,13 @@ Codes:
 */
 
 #include <Hexer.h>
+#include <Io.h>
 #include <actors/Ifttt.h>
-#include <actors/Routine.h>
 #include <actors/Images.h>
 #include <actors/Notifier.h>
 #include <actors/Predictions.h>
 #include <actors/Quotes.h>
+#include <actors/Routine.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Boolean.h>
@@ -137,7 +138,6 @@ Codes:
 #include <main4ino/Integer.h>
 #include <main4ino/Misc.h>
 #include <main4ino/Timing.h>
-#include <Io.h>
 
 #define CLASS_BODY "BO"
 

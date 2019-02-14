@@ -1,8 +1,8 @@
 #ifndef SERVO_CONF_INC
 #define SERVO_CONF_INC
 
-#include <main4ino/Buffer.h>
 #include <log4ino/Log.h>
+#include <main4ino/Buffer.h>
 
 #define CLASS_SERVOCONF "SC"
 
