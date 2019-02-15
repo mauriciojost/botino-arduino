@@ -83,11 +83,9 @@ Buffer *apiDevicePwd = NULL;
 ServoConf *servo0Conf = NULL;
 ServoConf *servo1Conf = NULL;
 
+#define LED_INT_TOGGLE ios('y', IoToggle);
 #define LED_INT_ON ios('y', IoOn);
-#define LED_INT_OFF ios('y', IoOff);
-
-#define LED_ALIVE_ON ios('r', IoOn);
-#define LED_ALIVE_OFF ios('r', IoOff);
+#define LED_ALIVE_TOGGLE ios('r', IoToggle);
 
 ADC_MODE(ADC_VCC);
 
@@ -702,9 +700,9 @@ void reactCommandCustom() { // for the use via telnet
 }
 
 void heartbeat() {
-  LED_ALIVE_ON
+  LED_ALIVE_TOGGLE
   delay(2);
-  LED_ALIVE_OFF
+  LED_ALIVE_TOGGLE
 }
 
 void lightSleepInterruptable(time_t cycleBegin, time_t periodSecs) {
@@ -746,9 +744,9 @@ bool haveToInterrupt() {
     do {
       holds++;
       log(CLASS_MAIN, Debug, "%d", holds);
-      LED_INT_ON;
+      LED_INT_TOGGLE;
       m->sequentialCommand(holds, ONLY_SHOW_MSG);
-      LED_INT_OFF;
+      LED_INT_TOGGLE;
       delay(m->getSettings()->miniPeriodMsec());
     } while (BUTTON_IS_PRESSED);
     bool interruptMe = m->sequentialCommand(holds, SHOW_MSG_AND_REACT);
