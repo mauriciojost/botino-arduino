@@ -11,6 +11,9 @@
 # - mauriciojost/log4ino-arduino#1.0.0
 # - git@bitbucket.org:mauriciojost/main4ino-arduino.git#master
 # 
+# It picks up files from each repository and simlynks them into 
+# src directory.
+# 
 # This is also an attempt to stop using platformio, because: 
 # - the community support is not very mature yet
 # - its dependency management features are not satisfactory
@@ -20,8 +23,19 @@
 set -x
 set -e
 
+while getopts c:plu option
+do
+  case "${option}"
+  in
+    p) SKIP_PULL=true;;
+    l) SKIP_LINK=true;;
+    u) SKIP_CLEANUP=true;;
+    c) CONFIG_FILE=${OPTARG};;
+  esac
+done
+
 root_dir=`dirname $(readlink -e $0)`
-config_file=${1:-mavarduino.conf}
+config_file=${CONFIG_FILE:-mavarduino.conf}
 libs_dir=$root_dir/libs
 src_dir=$root_dir/src
 
@@ -46,20 +60,26 @@ function pull_dependency() {
     echo "Unkown syntax, discarding: $d"
   fi
 
-  echo "Pulling: $giturl / $gitbranch (files: $gitfiles)"
-  cd $libs_dir
-  git clone "$giturl"
-  cd $gitproject
-  git checkout "$gitbranch"
-  cd ..
-
-  local dep_dir="$gitproject"
-  if [ "$gitfiles" == "none" ]
+  if [ -z "$SKIP_PULL" ]
   then
-    echo "Linking no file"
-  else
-    echo "Linking $dep_dir/$gitfiles to $src_dir/..."
-    ln -svf `readlink -e $dep_dir/$gitfiles` $src_dir/
+    echo "Pulling: $giturl / $gitbranch (files: $gitfiles)"
+    cd $libs_dir
+    git clone "$giturl"
+    cd $gitproject
+    git checkout "$gitbranch"
+    cd ..
+  fi
+
+  if [ -z "$SKIP_LINK" ]
+  then
+    local dep_dir="$gitproject"
+    if [ "$gitfiles" == "none" ]
+    then
+      echo "Linking no file"
+    else
+      echo "Linking $dep_dir/$gitfiles to $src_dir/..."
+      ln -svf `readlink -e $dep_dir/$gitfiles` $src_dir/
+    fi
   fi
 
 }
@@ -68,10 +88,15 @@ function pull_dependency() {
 echo "### Reading configuration file $config_file ..."
 source $config_file
 
+echo "### Performing cleanup ..."
+if [ -z "$SKIP_CLEANUP" ]
+then
+  rm -fr "$libs_dir"
+  find ./src -type l -delete # delete symlinks
+  mkdir -p "$libs_dir"
+fi
+
 echo "### Pulling dependencies ..."
-rm -fr "$libs_dir"
-find ./src -type l -delete # delete symlinks
-mkdir -p "$libs_dir"
 for dep in $lib_deps_external
 do
   pull_dependency "$dep"
