@@ -776,24 +776,24 @@ void initializeServoConfigs() {
   initializeServoConfig(SERVO_1_FILENAME, &servo1Conf);
 }
 
-void initializeTuningVariable(Buffer **var, const char *filename, int maxLength) {
+Buffer* initializeTuningVariable(Buffer **var, const char *filename, int maxLength) {
   if (*var == NULL) {
     *var = new Buffer(maxLength);
     bool succAlias = readFile(filename, *var); // preserve the alias
     if (succAlias) {                           // managed to retrieve the alias
       (*var)->replace('\n', 0);                // content already with the alias
+      return *var;
     } else {
       abort(filename);
     }
   }
+  return *var;
 }
 
 const char *apiDeviceLogin() {
-  initializeTuningVariable(&apiDeviceId, DEVICE_ALIAS_FILENAME, DEVICE_ALIAS_MAX_LENGTH);
-  return apiDeviceId->getBuffer();
+  return initializeTuningVariable(&apiDeviceId, DEVICE_ALIAS_FILENAME, DEVICE_ALIAS_MAX_LENGTH)->getBuffer();
 }
 
 const char *apiDevicePass() {
-  initializeTuningVariable(&apiDevicePwd, DEVICE_PWD_FILENAME, DEVICE_PWD_MAX_LENGTH);
-  return apiDevicePwd->getBuffer();
+  return initializeTuningVariable(&apiDevicePwd, DEVICE_PWD_FILENAME, DEVICE_PWD_MAX_LENGTH)->getBuffer();
 }
