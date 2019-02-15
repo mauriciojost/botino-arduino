@@ -402,14 +402,20 @@ private:
       // IFTTT (by index)
       int i = getInt(c0);
       log(CLASS_BODY, Debug, "Ifttt %d", i);
-      ifttt->triggerEvent(i);
+      bool suc = ifttt->triggerEvent(i);
+      if (!suc) {
+        notifier->message(0, 1, "Failed ifttt %d", i);
+      }
       return true;
     } else if (sscanf(pose, "I%c", &c0) == 1) {
       // IFTTT (by name)
       Buffer evt(MOVE_STR_LENGTH, pose + 1);
       evt.replace('.', 0);
       log(CLASS_BODY, Debug, "Event '%s'", evt.getBuffer());
-      ifttt->triggerEvent(evt.getBuffer());
+      bool suc = ifttt->triggerEvent(evt.getBuffer());
+      if (!suc) {
+        notifier->message(0, 1, "Failed ifttt\n'%s'", evt.getBuffer());
+      }
       return true;
     } else if (sscanf(pose, "L%c%c.", &c0, &c1) == 2) {
       // IO (LEDS / FAN)
