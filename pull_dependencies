@@ -11,10 +11,10 @@
 # - mauriciojost/log4ino-arduino#1.0.0
 # - git@bitbucket.org:mauriciojost/main4ino-arduino.git#master
 # 
-# This is also an attempt to stop using platformio as: 
+# This is also an attempt to stop using platformio, because: 
 # - the community support is not very mature yet
-# - as its dependency management features are not satisfactory
-#  - many interesting libraries do not publish to platformio
+# - its dependency management features are not satisfactory
+# - many interesting libraries do not publish to platformio
 #
 
 set -x
