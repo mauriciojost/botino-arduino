@@ -54,8 +54,13 @@ function pull_dependency() {
   cd ..
 
   local dep_dir="$gitproject"
-  echo "Linking $dep_dir/$gitfiles to $src_dir/..."
-  ln -svf `readlink -e $dep_dir/$gitfiles` $src_dir/
+  if [ "$gitfiles" == "none" ]
+  then
+    echo "Linking no file"
+  else
+    echo "Linking $dep_dir/$gitfiles to $src_dir/..."
+    ln -svf `readlink -e $dep_dir/$gitfiles` $src_dir/
+  fi
 
 }
 
