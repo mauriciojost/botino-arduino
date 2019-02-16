@@ -42,7 +42,7 @@
 
 #define SERVO_PERIOD_REACTION_MS 15
 
-#define LOG_LINE 0
+#define NEXT_LOG_LINE_ALGORITHM ((currentLogLine + 1)%4)
 
 #ifndef URL_PRINT_MAX_LENGTH
 #define URL_PRINT_MAX_LENGTH 20
@@ -82,6 +82,7 @@ Buffer *apiDeviceId = NULL;
 Buffer *apiDevicePwd = NULL;
 ServoConf *servo0Conf = NULL;
 ServoConf *servo1Conf = NULL;
+int currentLogLine = 0;
 
 #define LED_INT_TOGGLE ios('y', IoToggle);
 #define LED_INT_ON ios('y', IoOn);
@@ -119,22 +120,23 @@ void logLine(const char *str) {
   Serial.print("|");
   // telnet print
   if (telnet.isActive()) {
-    Serial.print("TELNET|");
     for (unsigned int i = 0; i < strlen(str); i++) {
       telnet.write(str[i]);
     }
+    Serial.print("TELNET|");
   }
   // lcd print
   if (m->getSettings()->getLcdLogs()) {
-    Serial.print("LCD|");
+  	currentLogLine = NEXT_LOG_LINE_ALGORITHM;
     lcd.setTextWrap(false);
-    lcd.fillRect(0, LOG_LINE * LCD_PIXEL_HEIGHT, 128, LCD_PIXEL_HEIGHT, BLACK);
+    lcd.fillRect(0, currentLogLine * LCD_PIXEL_HEIGHT, 128, LCD_PIXEL_HEIGHT, BLACK);
     lcd.setTextSize(1);
     lcd.setTextColor(WHITE);
-    lcd.setCursor(0, LOG_LINE * LCD_PIXEL_HEIGHT);
+    lcd.setCursor(0, currentLogLine * LCD_PIXEL_HEIGHT);
     lcd.print(str);
     lcd.display();
     delay(DELAY_MS_SPI);
+    Serial.print("LCD|");
   }
   Serial.print(str);
 }
