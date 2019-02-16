@@ -12,7 +12,7 @@
 
 #define CLASS_MOVES "MV"
 
-#define NRO_MOVES 5
+#define NRO_MOVES 8
 #define MOVE_NAME_MAX_LENGTH 16
 #define MOVE_NAME_VALUE_MAX_LENGTH 64
 #define MOVE_NAME_VALUE_SEPARATOR ':'
@@ -23,6 +23,9 @@ enum MovesProps {
   MovesMoveNameValue2Prop,
   MovesMoveNameValue3Prop,
   MovesMoveNameValue4Prop,
+  MovesMoveNameValue5Prop,
+  MovesMoveNameValue6Prop,
+  MovesMoveNameValue7Prop,
   MovesPropsDelimiter // delimiter of the configuration states
 };
 
@@ -60,8 +63,6 @@ public:
     moves[0]->fill("Done?%cack", MOVE_NAME_VALUE_SEPARATOR);
     moves[1]->fill("Time?%cmove Mc3.W2.Z.", MOVE_NAME_VALUE_SEPARATOR);
     moves[2]->fill("Dance?%cmove Fs.D3.D2.D1.D0.", MOVE_NAME_VALUE_SEPARATOR);
-    moves[3]->fill("Custom?%cmove M2custom?.", MOVE_NAME_VALUE_SEPARATOR);
-    moves[4]->fill("Custom?%cmove M2custom?.", MOVE_NAME_VALUE_SEPARATOR);
     updateMoveNames();
   }
 
@@ -110,6 +111,12 @@ public:
         return "mv3";
       case (MovesMoveNameValue4Prop):
         return "mv4";
+      case (MovesMoveNameValue5Prop):
+        return "mv5";
+      case (MovesMoveNameValue6Prop):
+        return "mv6";
+      case (MovesMoveNameValue7Prop):
+        return "mv7";
       default:
         return "";
     }
