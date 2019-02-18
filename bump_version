@@ -51,7 +51,7 @@ git tag "$NEW_VERSION" -m "$NEW_VERSION"
 echo "### Creating commit new version snapshot: $NEW_VERSION-SNAPSHOT ..."
 sed -i "s/$NEW_VERSION/$NEW_VERSION-SNAPSHOT/g" library.json 
 git add library.json
-git commit -s -m "Bump to $NEW_VERSION"
+git commit -s -m "Bump to $NEW_VERSION-SNAPSHOT"
 
 echo "### Pushing to git..."
 git push 
