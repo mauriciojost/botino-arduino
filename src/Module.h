@@ -470,7 +470,10 @@ public:
       case 1:
       case 2:
       case 3:
-      case 4: {
+      case 4:
+      case 5:
+      case 6:
+      case 7: {
         int ind = index - 0;
         const char *mvName = getMoves()->getMoveName(ind);
         getNotifier()->message(0, 2, "%s?", mvName);
@@ -478,7 +481,7 @@ public:
           command(getMoves()->getMoveValue(ind));
         }
       } break;
-      case 5: {
+      case 8: {
         getNotifier()->message(0, 2, "All act?");
         if (!dryRun) {
           command("actall");
@@ -486,21 +489,21 @@ public:
           getNotifier()->message(0, 1, "All act one-off");
         }
       } break;
-      case 6: {
+      case 9: {
         getNotifier()->message(0, 2, "Config mode?");
         if (!dryRun) {
           command("conf");
           getNotifier()->message(0, 1, "In config mode");
         }
       } break;
-      case 7: {
+      case 10: {
         getNotifier()->message(0, 2, "Run mode?");
         if (!dryRun) {
           command("run");
           getNotifier()->message(0, 1, "In run mode");
         }
       } break;
-      case 8: {
+      case 11: {
         getNotifier()->message(0, 2, "Show info?");
         if (!dryRun) {
           command("info");
