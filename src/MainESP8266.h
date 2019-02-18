@@ -320,7 +320,7 @@ void ios(char led, IoMode value) {
   } else if (value == IoOff) {
     digitalWrite(pin, HIGH);
   } else if (value == IoToggle) {
-    digitalWrite(pin, digitalRead(pin));
+    digitalWrite(pin, !digitalRead(pin));
   } else {
     log(CLASS_MAIN, Warn, "Unknown IO request: %c<-%d", pin, value);
   }
