@@ -165,3 +165,7 @@
 /profiles/old/dev1-home.prof
 /profiles/old/dev3-sleeper.prof
 /profiles/old/dev7-work.prof
+/profiles/dev3-sleeper-tuning/pass.tuning
+/profiles/dev3-sleeper-tuning/servo0.tuning
+/profiles/dev3-sleeper-tuning/servo1.tuning
+/profiles/generic-deepsleeper.prof
