@@ -629,7 +629,7 @@ bool commandArchitecture(const char *c) {
     SPIFFS.begin();
     Dir dir = SPIFFS.openDir("");
     while (dir.next()) {
-      log(CLASS_MAIN, Info, "- %s", dir.fileName().c_str());
+      log(CLASS_MAIN, Info, "- %s (%d bytes)", dir.fileName().c_str(), (int)dir.fileSize());
     }
     SPIFFS.end();
     return false;
