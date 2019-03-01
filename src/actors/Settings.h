@@ -71,7 +71,7 @@ public:
     pass->load(WIFI_PASSWORD_STEADY);
 
     devDebug = true;
-    lcdLogs = true;
+    lcdLogs = false;
     deepSleep = false;
     buttonRoutineUntil = 4;
     periodms = PERIOD_MSEC;
