@@ -662,11 +662,11 @@ void configureModeArchitecture() {
 void abort(const char *msg) {
   log(CLASS_MAIN, Error, "Abort: %s", msg);
   delay(ABORT_DELAY_MS);
-#ifdef DEEP_SLEEP_MODE_ENABLED
-  ESP.deepSleep(60 * 1000000L); // reboot in a while
-#else                           // DEEP_SLEEP_MODE_ENABLED
-  ESP.restart(); // restart right away
-#endif                          // DEEP_SLEEP_MODE_ENABLED
+  if (m->getSettings()->inDeepSleepMode()) {
+    ESP.deepSleep(60 * 1000000L); // reboot in a while
+  } else {
+    ESP.restart(); // restart right away
+  }
 }
 
 ////////////////////////////////////////

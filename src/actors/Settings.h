@@ -72,11 +72,7 @@ public:
 
     devDebug = true;
     lcdLogs = true;
-#ifdef DEEP_SLEEP_MODE_ENABLED
-    deepSleep = true;
-#else  // DEEP_SLEEP_MODE_ENABLED
     deepSleep = false;
-#endif // DEEP_SLEEP_MODE_ENABLED
     buttonRoutineUntil = 4;
     periodms = PERIOD_MSEC;
     miniperiodms = FRAG_TO_SLEEP_MS_MAX;
@@ -121,15 +117,7 @@ public:
         setPropBoolean(m, targetValue, actualValue, &lcdLogs);
         break;
       case (SettingsDeepSleepProp):
-#ifdef DEEP_SLEEP_MODE_ENABLED
         setPropBoolean(m, targetValue, actualValue, &deepSleep);
-#else  // DEEP_SLEEP_MODE_ENABLED
-        deepSleep = false;
-        if (actualValue != NULL) {
-          Boolean b(false);
-          actualValue->load(&b);
-        }
-#endif // DEEP_SLEEP_MODE_ENABLED
         break;
       case (SettingsPeriodMsProp):
         setPropInteger(m, targetValue, actualValue, &periodms);
