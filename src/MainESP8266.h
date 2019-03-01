@@ -69,6 +69,8 @@ extern "C" {
   "\n  ls                : list files present in FS "                                                                                      \
   "\n  cat ...           : show content of a file (only if in insecure mode)"                                                              \
   "\n  reset             : reset the device"                                                                                               \
+  "\n  deepsleep ...     : deep sleep N provided seconds"                                                                                  \
+  "\n  lightsleep ...         : light sleep N provided seconds"                                                                                  \
   "\n  clearstack        : clear stack trace "                                                                                             \
   "\n"
 
@@ -644,6 +646,14 @@ bool commandArchitecture(const char *c) {
 #endif // INSECURE
   } else if (strcmp("reset", c) == 0) {
     ESP.restart();
+    return false;
+  } else if (strcmp("deepsleep", c) == 0) {
+    int s = atoi(strtok(NULL, " "));
+    deepSleepNotInterruptable(now(), s);
+    return false;
+  } else if (strcmp("lightsleep", c) == 0) {
+    int s = atoi(strtok(NULL, " "));
+    lightSleepInterruptable(now(), s);
     return false;
   } else if (strcmp("clearstack", c) == 0) {
     SaveCrash.clear();
