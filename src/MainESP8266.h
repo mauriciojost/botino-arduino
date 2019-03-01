@@ -18,6 +18,7 @@
 #include <Wire.h>
 
 #define DELAY_MS_SPI 3
+#define ABORT_DELAY_MS 5000
 
 #define DEVICE_ALIAS_FILENAME "/alias.tuning"
 #define DEVICE_PWD_FILENAME "/pass.tuning"
@@ -653,6 +654,7 @@ void configureModeArchitecture() {
 
 void abort(const char *msg) {
   log(CLASS_MAIN, Error, "Abort: %s", msg);
+  delay(ABORT_DELAY_MS);
 #ifdef DEEP_SLEEP_MODE_ENABLED
   ESP.deepSleep(60 * 1000000L); // reboot in a while
 #else                           // DEEP_SLEEP_MODE_ENABLED
