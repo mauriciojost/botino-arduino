@@ -25,6 +25,7 @@
 #define PERIOD_CONFIGURE_MSEC 4000
 
 #define HELP_COMMAND_CLI                                                                                                                   \
+  "\n  init            : initialize essential settings (wifi connection, logins, etc.)"                                                    \
   "\n  run             : go to run mode"                                                                                                   \
   "\n  conf            : go to conf mode"                                                                                                  \
   "\n  info            : show info about the device"                                                                                       \
@@ -222,7 +223,7 @@ public:
 
     b->load(cmd);
     b->replace('\n', 0);
-    log(CLASS_MODULE, Info, "Command: '%s'", b->getBuffer());
+    log(CLASS_MODULE, Info, "\n> %s\n", b->getBuffer());
 
     if (b->getLength() == 0) {
       return false;
@@ -271,6 +272,16 @@ public:
       const char *actor = strtok(NULL, " ");
       getProps(actor);
       return false;
+    } else if (strcmp("init", c) == 0) {
+      log(CLASS_MODULE, Info, "-> Initialize");
+      log(CLASS_MODULE, Info, "Execute:");
+      log(CLASS_MODULE, Info, "   ls");
+      log(CLASS_MODULE, Info, "   wifissid <ssid>");
+      log(CLASS_MODULE, Info, "   wifipass <password>");
+      log(CLASS_MODULE, Info, "   ifttttoken <token>");
+      log(CLASS_MODULE, Info, "   store");
+      log(CLASS_MODULE, Info, "   ls");
+      return true;
     } else if (strcmp("run", c) == 0) {
       log(CLASS_MODULE, Info, "-> Run mode");
       bot->setMode(RunMode);
