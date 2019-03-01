@@ -67,6 +67,7 @@ extern "C" {
 #define HELP_COMMAND_ARCH_CLI                                                                                                              \
   "\n  servo             : tune the servo <s> (r|l) and make a test round "                                                                \
   "\n  ls                : list files present in FS "                                                                                      \
+  "\n  cat ...           : show content of a file (only if in insecure mode)"                                                              \
   "\n  clearstack        : clear stack trace "                                                                                             \
   "\n"
 
@@ -632,6 +633,14 @@ bool commandArchitecture(const char *c) {
     }
     SPIFFS.end();
     return false;
+#ifdef INSECURE
+  } else if (strcmp("cat", c) == 0) { // could be potentially used to display credentials
+    const char* f = strtok(NULL, " ");
+    Buffer buf(128);
+    readFile(f, &buf);
+    log(CLASS_MAIN, Info, "%s\n", buf.getBuffer());
+    return false;
+#endif // INSECURE
   } else if (strcmp("clearstack", c) == 0) {
     SaveCrash.clear();
     return false;
