@@ -167,7 +167,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
 
   int attemptsLeft = retries;
   while (true) {
-    delay(WIFI_DELAY_MS);
+    lightSleepInterruptable(now(), WIFI_DELAY_MS);
     status = WiFi.status();
     log(CLASS_MAIN, Info, "..'%s'(%d)", ssid, attemptsLeft);
     attemptsLeft--;
