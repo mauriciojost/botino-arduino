@@ -68,6 +68,7 @@ extern "C" {
   "\n  servo             : tune the servo <s> (r|l) and make a test round "                                                                \
   "\n  ls                : list files present in FS "                                                                                      \
   "\n  cat ...           : show content of a file (only if in insecure mode)"                                                              \
+  "\n  reset             : reset the device"                                                                                               \
   "\n  clearstack        : clear stack trace "                                                                                             \
   "\n"
 
@@ -641,6 +642,9 @@ bool commandArchitecture(const char *c) {
     log(CLASS_MAIN, Info, "%s\n", buf.getBuffer());
     return false;
 #endif // INSECURE
+  } else if (strcmp("reset", c) == 0) {
+    ESP.restart();
+    return false;
   } else if (strcmp("clearstack", c) == 0) {
     SaveCrash.clear();
     return false;
