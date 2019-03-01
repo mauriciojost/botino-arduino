@@ -381,11 +381,10 @@ public:
       body->performMove("Z.");
       log(CLASS_MODULE, Info, "Notification read");
       return false;
-    } else if (strcmp("help", c) == 0) {
+    } else if (strcmp("help", c) == 0 || strcmp("?", c) == 0) {
       logRaw(CLASS_MODULE, Warn, HELP_COMMAND_CLI);
       return commandArchitecture(c);
     } else {
-      logRaw(CLASS_MODULE, Warn, "What? (try: 'help', log level is Info)");
       return commandArchitecture(c);
     }
   }

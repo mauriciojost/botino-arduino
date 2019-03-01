@@ -87,6 +87,7 @@ void runModeArchitecture();
 
 // Handle an architecture specific command (if all the regular commands don't match).
 // Returns true if the command requires the current wait batch to be interrupted (normally true with change of bot mode)
+// Should provide a 'help' command too.
 bool commandArchitecture(const char *command);
 
 // Loop in configure mode specific to the architecture

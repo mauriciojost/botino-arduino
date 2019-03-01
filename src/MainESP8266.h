@@ -648,6 +648,7 @@ bool commandArchitecture(const char *c) {
     logRaw(CLASS_MODULE, Warn, HELP_COMMAND_ARCH_CLI);
     return false;
   } else {
+    log(CLASS_MAIN, Warn, "???");
     return false;
   }
 }
