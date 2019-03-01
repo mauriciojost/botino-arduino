@@ -295,14 +295,16 @@ void arms(int left, int right, int steps) {
 void ios(char led, IoMode value) {
   uint8_t pin = -1;
   switch (led) {
+    case '*':
+      ios('r', value);
+      ios('w', value);
+      ios('f', value);
+      return;
     case 'r':
       pin = LEDR_PIN;
       break;
     case 'w':
       pin = LEDW_PIN;
-      break;
-    case 'y':
-      pin = LEDY_PIN;
       break;
     case 'f':
       pin = FAN_PIN;
@@ -475,7 +477,6 @@ BotMode setupArchitecture() {
   log(CLASS_MAIN, Debug, "Setup pins");
   pinMode(LEDR_PIN, OUTPUT);
   pinMode(LEDW_PIN, OUTPUT);
-  pinMode(LEDY_PIN, OUTPUT);
   pinMode(FAN_PIN, OUTPUT);
   pinMode(SERVO0_PIN, OUTPUT);
   pinMode(SERVO1_PIN, OUTPUT);
@@ -519,10 +520,7 @@ BotMode setupArchitecture() {
   heartbeat();
 
   log(CLASS_MAIN, Debug, "Setup IO/lcd");
-  ios('r', IoOff);
-  ios('y', IoOff);
-  ios('w', IoOff);
-  ios('f', IoOff);
+  ios('*', IoOff);
   lcdImg('l', NULL);
   heartbeat();
 

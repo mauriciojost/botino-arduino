@@ -3,8 +3,6 @@
 - Found 3.5 mA used only by a connected black LCD, need to find a command to switch it off
 - Otherwise measurements on deep sleep mode is ~ 0.3 mA, calculate some battery life with such consumption (and ~130 mA when live)
 - Need to handle the initialization of all non-generic properties via a wizard or something
-- The LED that collides with the deepsleep mode should not be used to avoid problems
-- 
 - Improve memory use wrt JSON parsing (ParamStream is a memory hog, array + JsonBuffer, when actually
 JsonBuffer could be used right away as a sink for a stream in httpGet and httpPost)). + prefer heap (big) over stack (4k), i.e. 
 switch from heap
@@ -24,6 +22,7 @@ JsonObject& root = jsonBuffer.parseObject(myFile);
 
 # DONE
 
+- The LED that collides with the deepsleep mode should not be used to avoid problems
 - Package electronics without breadboard
 - Add smoke test that includes a whole architecture (to ensure it goes smootly for 100 cycles)
 - Find better alternative to scripts and replace them (simulator, format, ...) < won't do
