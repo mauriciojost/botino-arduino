@@ -292,34 +292,6 @@ private:
     }
   }
 
-  bool io(char c0, char c1) {
-    int b = getIosState(c1);
-    switch (c0) {
-      case 'r': {
-        log(CLASS_BODY, Debug, "Led red: %d", b);
-        iosFunc('r', (IoMode)b);
-        return true;
-      }
-      case 'w': {
-        log(CLASS_BODY, Debug, "Led white: %d", b);
-        iosFunc('w', (IoMode)b);
-        return true;
-      }
-      case 'y': {
-        log(CLASS_BODY, Debug, "Led yellow: %d", b);
-        iosFunc('y', (IoMode)b);
-        return true;
-      }
-      case 'f': {
-        log(CLASS_BODY, Debug, "Fan: %d", b);
-        iosFunc('f', (IoMode)b);
-        return true;
-      }
-      default:
-        return false;
-    }
-  }
-
   bool zzz() {
     log(CLASS_BODY, Debug, "ZzZ...");
     notifier->lcdImg('b', NULL);
@@ -419,7 +391,9 @@ private:
       return true;
     } else if (sscanf(pose, "L%c%c.", &c0, &c1) == 2) {
       // IO (LEDS / FAN)
-      return io(c0, c1);
+      int b = getIosState(c1);
+      iosFunc(c0, (IoMode)b);
+      return true;
     } else if (sscanf(pose, "L%c.", &c0) == 1) {
       // IO (LEDS / FAN)
       switch (c0) {
