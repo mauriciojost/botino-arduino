@@ -3,30 +3,30 @@
 set -e
 set -x
 
-while getopts p:fmsvye option
+while getopts p:fms:vye option
 do
   case "${option}"
   in
     p) PROFILE=${OPTARG};;
     f) UPLOAD_FIRMWARE=true;;
     m) MONITOR=true;;
-    s) UPLOAD_FS=true;;
+    s) UPLOAD_FS_DIR=${OPTARG};;
     v) PLATFORMIO_RUN_PARAMS="-v";;
     y) IGNORE_UNCOMMITED_CHANGES=true;;
     e) EXPORT_FIRMWARE_FILE=true;;
   esac
 done
 
+VERSION=`cat library.json | python -c 'import sys, json; print json.load(sys.stdin)["version"]'`
+COMMIT_ID="`git rev-parse --short HEAD`"
+PROJ_VERSION_ID="$VERSION-$COMMIT_ID" 
+LOG_DIR=images
+
 if [ -z "$PROFILE" ]
 then
   echo "Variable -p PROFILE is mandatory"
   exit 1
 fi
-
-VERSION=`cat library.json | python -c 'import sys, json; print json.load(sys.stdin)["version"]'`
-COMMIT_ID="`git rev-parse --short HEAD`"
-PROJ_VERSION_ID="$VERSION-$COMMIT_ID" 
-LOG_DIR=images
 
 echo "### Using profile $PROFILE..."
 export PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=$PROJ_VERSION_ID `cat $PROFILE | grep -v '^#'`" 
@@ -61,11 +61,10 @@ then
 
 fi
 
-if [ -n "$UPLOAD_FS" ]
+if [ -n "$UPLOAD_FS_DIR" ]
 then
   echo "### Will upload tuning to file-system..."
-  PROFILE_BASE="${PROFILE%.*}"
-  TUNING_PATH="$PROFILE_BASE-tuning"
+  TUNING_PATH="$UPLOAD_FS_DIR"
   rm -fr data
   ln -s `readlink -e $TUNING_PATH` data
   echo "### Uploading $TUNING_PATH"

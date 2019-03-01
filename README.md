@@ -155,7 +155,7 @@ To see the logs:
 To upload any tuning folder just do: 
 
 ```
-upload -p <profile> -s
+upload -p profile -s directory
 ```
 
 ## 3.4. Simulate
