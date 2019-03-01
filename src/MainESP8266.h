@@ -32,7 +32,7 @@
 #define LCD_PIXEL_HEIGHT 8
 
 #ifndef WIFI_DELAY_MS
-#define WIFI_DELAY_MS 3000
+#define WIFI_DELAY_MS 4000
 #endif // WIFI_DELAY_MS
 
 #ifndef FIRMWARE_UPDATE_URL
