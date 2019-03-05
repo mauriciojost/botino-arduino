@@ -1,7 +1,4 @@
 # TODO
-
-- Found 3.5 mA used only by a connected black LCD, need to find a command to switch it off
-- Otherwise measurements on deep sleep mode is ~ 0.3 mA, calculate some battery life with such consumption (and ~130 mA when live)
 - Need to handle the initialization of all non-generic properties via a wizard or something
 - Improve memory use wrt JSON parsing (ParamStream is a memory hog, array + JsonBuffer, when actually
 JsonBuffer could be used right away as a sink for a stream in httpGet and httpPost)). + prefer heap (big) over stack (4k), i.e. 
@@ -14,14 +11,18 @@ to stack
 DynamicJsonBuffer jsonBuffer(bufSize);  
 File myFile = SD.open(cocktailDataPath);
 JsonObject& root = jsonBuffer.parseObject(myFile);
-- Make README mention main4ino main server
-- Mention auto-update for firmware
-- Mention deep sleep mode (in progress)
 
 
 
 # DONE
 
+- Measure currents: 3.5 mA used only by a connected black LCD, otherwise measurements on deep sleep mode is ~ 0.3 mA, ~130 mA when alive
+  - This means: LIFE_HOURS = BATTERY_mAH / (ALIVE_PERC * 130 mA + SLEEP_PERC * 0.3 mA)
+  - Example   :  LIFE_HOURS = 2800 mAH / (0.015 * 130 mA + 0.985 * 0.3 mA) = 1247H = 52 days (one minute every hour)
+- Found 3.5 mA used only by a connected black LCD, need to find a command to switch it off -> does not exist, seems LCD is not appropriate for low power mode
+- Make README mention main4ino main server
+- Mention deep sleep mode (in progress)
+- Mention auto-update for firmware
 - The LED that collides with the deepsleep mode should not be used to avoid problems
 - Package electronics without breadboard
 - Add smoke test that includes a whole architecture (to ensure it goes smootly for 100 cycles)
