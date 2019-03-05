@@ -557,7 +557,7 @@ public:
     if (getSettings()->inDeepSleepMode()) {
       // before going to deep sleep store in the server the last status of all actors
       log(CLASS_MODULE, Info, "Syncing actors with server (run)...");
-      getPropSync()->serverSyncRetry(false); // sync properties from the server (with new props and new clock blocked timing)
+      getPropSync()->   pullPushActors(DEFAULT_PROP_SYNC_ATTEMPTS, false); // sync properties from the server (with new props and new clock blocked timing)
     }
     sleepInterruptable(cycleBegin, getSettings()->periodMsec() / 1000);
   }
