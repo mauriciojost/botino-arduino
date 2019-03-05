@@ -101,6 +101,10 @@ private:
     getPropSync()->fsLoadActorsProps(); // load stored properties (most importantly credentials)
     log(CLASS_MODULE, Info, "# Syncing actors with server...");
     bool serSyncd = getPropSync()->pullPushActors(DEFAULT_PROP_SYNC_ATTEMPTS, false); // sync properties from the server
+
+    if (!serSyncd)
+    	return false; // fail fast
+
     time_t leftTime = getBot()->getClock()->currentTime();
 
     Buffer timeAux(19);
