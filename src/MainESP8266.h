@@ -39,7 +39,7 @@
 #define FIRMWARE_UPDATE_URL "http://martinenhome.com:6780/firmwares/botino/latest"
 #endif // FIRMWARE_UPDATE_URL
 
-#define PRE_DEEP_SLEEP_WINDOW_FACTOR 10
+#define PRE_DEEP_SLEEP_WINDOW_SECS 5
 
 #define SERVO_PERIOD_REACTION_MS 15
 
@@ -464,7 +464,7 @@ void updateFirmware() {
 void sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
   if (m->getSettings()->inDeepSleepMode() && periodSecs > 120) { // in deep sleep mode and period big enough
     m->command("move Z.");
-    lightSleepInterruptable(now() /* always do it */, periodSecs / PRE_DEEP_SLEEP_WINDOW_FACTOR);
+    lightSleepInterruptable(now() /* always do it */, PRE_DEEP_SLEEP_WINDOW_SECS);
     m->command("move Z.");
     deepSleepNotInterruptable(cycleBegin, periodSecs);
   } else {
