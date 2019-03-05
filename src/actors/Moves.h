@@ -36,6 +36,7 @@ enum MovesProps {
  * the user often uses. If in Arduino HW, they can be invoked via a
  * button being pressed for instance (1 sec = 1st move, 2 sec = 2nd move, etc.).
  */
+// TODO should have been called Commands
 class Moves : public Actor {
 
 private:
