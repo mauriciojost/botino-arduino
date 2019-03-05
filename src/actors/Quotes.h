@@ -18,6 +18,11 @@
 
 #define URL_QUOTES "http://api.forismatic.com/api/1.0/POST?method=getQuote&format=text&lang=en"
 
+enum QuotesProps {
+  QuotesFreqProp = 0,   // frequency of synchronization
+  QuotesPropsDelimiter // count of properties
+};
+
 /**
  * Retrieve quotes from the internet.
  */
@@ -44,7 +49,7 @@ public:
     md = new Metadata(n);
 
     jsonAuxBuffer = new Buffer(MAX_JSON_STR_LENGTH);
-    md->getTiming()->setFreq("201126060");
+    md->getTiming()->setFreq("never");
     for (int i = 0; i < NRO_QUOTES; i++) {
       quotes[i] = new Buffer(QUOTE_MAX_LENGTH, "Damn! No quote yet! :(");
     }
@@ -88,15 +93,28 @@ public:
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
+      case (QuotesFreqProp):
+        return "freq";
       default:
         return "";
     }
   }
 
-  void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {}
+  void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {
+    switch (propIndex) {
+      case (QuotesFreqProp): {
+        setPropTiming(m, targetValue, actualValue, md->getTiming());
+      } break;
+      default:
+        break;
+    }
+    if (m != GetValue) {
+      getMetadata()->changed();
+    }
+  }
 
   int getNroProps() {
-    return 0;
+    return QuotesPropsDelimiter;
   }
 
   void getInfo(int infoIndex, Buffer *info) {}
