@@ -7,13 +7,16 @@ This is a cool-geek-fully-configurable more-than-an-alarm project.
 ![Botino](misc/images/botino-v0.jpg)
 
 What it does:
-
 - 8 fully configurable alarms
-- alarms can trigger cool moves
+- alarms can trigger cool moves on the bot (like arm moves, dances, light shows, fan, images, animations, etc.)
 - can provide the random quote of the day (as part of a move)
 - can provide random future reading (as part of a move)
-- can fire IFTTT events
+- can fire IFTTT events (as part of a move)
 - can be fired by IFTTT events
+
+Other features: 
+- firmware auto update
+- power saving deep sleep mode (work in progress, aim at having the device working for months on standard 3xAA batteries)
 
 ## 1. Get Started
 
@@ -77,22 +80,8 @@ Properties: see [here for more information](src/actors/Body.h)
 Use the following commands to tune the servos: 
 
 ```
-## Focus on the right arm of the botino
-# Set base, range, and inversion until fully up and down
-servotune r 0 200 0
-# Save
-servosave r
-## Focus on the left arm of the botino (set base, range, and inversion until fully up and down)
-# Set base, range, and inversion until fully up and down
-servotune l 0 220 1
-# Save
-servosave l
+init
 ```
-
-## Timing
-
-Refer to the `Timing` section of the documentation of `main4ino`.
-
 
 # 3. Contribute
 
@@ -117,7 +106,7 @@ The project is a `platformio` project.
 
 When contributing, keep always in mind the best practices: 
 
-- Try not to overuse the heap (only 4K!): prefer static memory allocation rathenr than dynamic one
+- Try not to overuse the heap (only 4K!): prefer static memory allocation rather than dynamic one
 - Reuse instances as much as possible
 
 ### Eclipse
@@ -135,12 +124,6 @@ To upload the firmware just do:
 # upload via USB serial port:
 
  ./upload -p profiles/dev7-custom.prof -f
-
-# if you want to upload via OTA (outdated): 
-
- PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=`git rev-parse --short HEAD` `cat profiles/dev1-home.prof | grep -v '^#'`" platformio run --target upload --upload-port <IP> # OTA
-
-```
 
 To see the logs:
 ```
