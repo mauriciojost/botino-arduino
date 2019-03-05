@@ -86,6 +86,16 @@ private:
   void (*test)();
   void (*update)();
 
+  /**
+   * Synchronize with the server.
+   *
+   * 1. Load properties from the file system (credentials).
+   * 2. Pull/push properties from/to the server
+   * 3. Set time of actors with last known time
+   * 4. Find out real current time
+   * 5. Return success if properties and clock sync went well
+   *
+   */
   bool sync() {
     log(CLASS_MODULE, Info, "# Loading credentials stored in FS...");
     getPropSync()->fsLoadActorsProps(); // load stored properties (most importantly credentials)
