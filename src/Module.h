@@ -107,7 +107,7 @@ private:
     log(CLASS_MODULE, Info, "# Previous actors' times: %s...", Timing::humanize(leftTime, &timeAux));
     getBot()->setActorsTime(leftTime);
     log(CLASS_MODULE, Info, "# Syncing clock...");
-    bool clockSyncd = getClockSync()->syncClock(getSettings()->inDeepSleepMode()); // sync real date / time on clock, block if in deep sleep
+    bool clockSyncd = getClockSync()->syncClock(getSettings()->inDeepSleepMode(), DEFAULT_CLOCK_SYNC_ATTEMPTS); // sync real date / time on clock, block if in deep sleep
     log(CLASS_MODULE, Info, "# Current time: %s", Timing::humanize(getBot()->getClock()->currentTime(), &timeAux));
 
     return serSyncd && clockSyncd;
