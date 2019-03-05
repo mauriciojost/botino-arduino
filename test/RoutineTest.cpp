@@ -1,7 +1,7 @@
 #ifdef UNIT_TEST
 
 // Being tested
-#include <actors/Routine.h>
+#include <utils/Routine.h>
 
 // Extra libraries needed
 #include <main4ino/Misc.h>

@@ -123,14 +123,14 @@ Codes:
 
 */
 
-#include <Hexer.h>
-#include <Io.h>
+#include <utils/Hexer.h>
+#include <utils/Io.h>
 #include <actors/Ifttt.h>
 #include <actors/Images.h>
 #include <actors/Notifier.h>
-#include <actors/Predictions.h>
+#include <utils/Predictions.h>
 #include <actors/Quotes.h>
-#include <actors/Routine.h>
+#include <utils/Routine.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Boolean.h>
