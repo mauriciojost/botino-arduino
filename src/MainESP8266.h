@@ -678,7 +678,7 @@ void abort(const char *msg) {
   log(CLASS_MAIN, Error, "Abort: %s", msg);
   delay(ABORT_DELAY_MS);
   if (m->getSettings()->inDeepSleepMode()) {
-    ESP.deepSleep(60 * 1000000L); // reboot in a while
+    ESP.deepSleep(m->getSettings()->periodMsec() * 1000L); // boot again in next cycle
   } else {
     ESP.restart(); // restart right away
   }
