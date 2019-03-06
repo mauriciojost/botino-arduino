@@ -9,7 +9,8 @@
  */
 
 #define CLASS_NOTIFIER "NF"
-#define MAX_NOTIF_LENGTH 64
+#define MAX_NOTIF_LENGTH 16
+#define MAX_MSG_LENGTH 64
 #define NOTIF_LINE 7
 #define NOTIF_SIZE 1
 #define BLACK 0
@@ -27,13 +28,11 @@ enum MsgClearMode { FullClear = 0, LineClear, NoClear };
 #include <main4ino/Queue.h>
 
 #define EMPTY_NOTIF_REPRESENTATION ""
+#define NOTIFS_SEPARATOR ':'
 #define MAX_NRO_NOTIFS 4 // must be aligned with enum below
 
 enum NotifierProps {
-  NotifierNotif0Prop = 0,
-  NotifierNotif1Prop,
-  NotifierNotif2Prop,
-  NotifierNotif3Prop,
+  NotifierNotifsProp = 0,
   NotifierPropsDelimiter // count of properties
 };
 
@@ -93,11 +92,11 @@ public:
       log(CLASS_NOTIFIER, Warn, "No init!");
       return;
     }
-    Buffer buffer(MAX_NOTIF_LENGTH - 1);
+    Buffer buffer(MAX_MSG_LENGTH - 1);
     va_list args;
     va_start(args, format);
-    vsnprintf(buffer.getUnsafeBuffer(), MAX_NOTIF_LENGTH, format, args);
-    buffer.getUnsafeBuffer()[MAX_NOTIF_LENGTH - 1] = 0;
+    vsnprintf(buffer.getUnsafeBuffer(), MAX_MSG_LENGTH, format, args);
+    buffer.getUnsafeBuffer()[MAX_MSG_LENGTH - 1] = 0;
     messageFunc(0, line, WHITE, DO_WRAP, FullClear, size, buffer.getBuffer());
     va_end(args);
 
@@ -128,28 +127,29 @@ public:
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
-      case (NotifierNotif0Prop):
-        return "n0";
-      case (NotifierNotif1Prop):
-        return "n1";
-      case (NotifierNotif2Prop):
-        return "n2";
-      case (NotifierNotif3Prop):
-        return "n3";
+      case (NotifierNotifsProp):
+        return "ns";
       default:
         return "";
     }
   }
 
   void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {
-    if (propIndex >= NotifierNotif0Prop && propIndex < (MAX_NRO_NOTIFS + NotifierNotif0Prop)) {
-      int i = (int)propIndex - (int)NotifierNotif0Prop;
+    if (propIndex == NotifierNotifsProp) {
+      Buffer b = Buffer((MAX_NOTIF_LENGTH + 1) * MAX_NRO_NOTIFS, targetValue);
       if (m == SetCustomValue) {
-        Buffer a = Buffer(MAX_NOTIF_LENGTH, targetValue);
-        queue.setAt(i, a.getBuffer());
+        const char* p;
+        while ((p = b.split(NOTIFS_SEPARATOR)) != NULL) {
+          queue.pushUnique(p);
+        }
       }
       if (actualValue != NULL) {
-        actualValue->load(queue.getAt(i, EMPTY_NOTIF_REPRESENTATION));
+      	b.clear();
+      	for (int i = 0; i < queue.capacity(); i++) {
+          b.append(queue.getAt(i, EMPTY_NOTIF_REPRESENTATION));
+          b.append(NOTIFS_SEPARATOR);
+      	}
+        actualValue->load(&b);
       }
     }
     if (m != GetValue) {
