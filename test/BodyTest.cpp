@@ -30,6 +30,8 @@ void setUp() {
 
 void tearDown() {}
 
+void sleepInt(time_t base, time_t secs) {}
+
 void lcdImg(char img, uint8_t bitmap[]) {
   switch (img) {
     case 'b':
@@ -73,9 +75,8 @@ void led(char led, IoMode v) {
 }
 
 void initBody(Body *b, Quotes *q, Images *i, Ifttt *it, Notifier *n) {
-  b->setArmsFunc(arms);
+  b->setup(arms, led, sleepInt);
   b->setNotifier(n);
-  b->setIosFunc(led);
   b->setQuotes(q);
   b->setImages(i);
   b->setIfttt(it);
