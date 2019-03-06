@@ -190,6 +190,7 @@ private:
   const char *name;
   Metadata *md;
   void (*arms)(int left, int right, int steps);
+  void (*sleepInterruptable)(time_t cycleBegin, time_t periodSec);
   Notifier *notifier;
   void (*iosFunc)(char led, IoMode v);
   Quotes *quotes;
@@ -305,7 +306,7 @@ private:
   }
 
   bool isInitialized() {
-    bool init = arms != NULL && iosFunc != NULL && notifier != NULL && quotes != NULL && images != NULL && ifttt != NULL;
+    bool init = arms != NULL && sleepInterruptable != NULL && iosFunc != NULL && notifier != NULL && quotes != NULL && images != NULL && ifttt != NULL;
     return init;
   }
 
@@ -509,6 +510,7 @@ public:
   Body(const char *n) {
     name = n;
     arms = NULL;
+    sleepInterruptable = NULL;
     iosFunc = NULL;
     quotes = NULL;
     images = NULL;
@@ -545,12 +547,10 @@ public:
     ifttt = i;
   }
 
-  void setArmsFunc(void (*f)(int left, int right, int steps)) {
-    arms = f;
-  }
-
-  void setIosFunc(void (*f)(char led, IoMode v)) {
+  void setup(void (*a)(int left, int right, int steps), void (*f)(char led, IoMode v), void (*i)(time_t cycleBegin, time_t periodSec)) {
+    arms = a;
     iosFunc = f;
+    sleepInterruptable = i;
   }
 
   void act() {
