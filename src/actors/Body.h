@@ -340,6 +340,7 @@ private:
     }
   }
 
+  // TODO the return type represents too much stuff for a bool: interrupted, failed, ok, ...
   bool handleCharPoses(const char *pose, int len) {
 
     char c0 = 'x', c1 = 'x';
@@ -467,7 +468,7 @@ private:
       // WAIT
       int v = getInt(c0);
       log(CLASS_BODY, Debug, "Wait %d s", v);
-      delay(v * 1000);
+      sleepInterruptable(now(), v); // TODO catch interruption and stop all the move instead of just the W pose
       return true;
     } else if (sscanf(pose, "Z%c", &c0) == 1) {
       // POWER OFF
@@ -486,21 +487,20 @@ public:
   const char *performPose(const char *pose) {
 
     int poseLen = poseStrLen(pose);
-    bool success = false;
+    bool goahead = false;
 
     if (poseLen <= 0) { // invalid number of chars poses
-      success = false;
+      goahead = false;
     } else if (poseLen > 0) {
-      success = handleCharPoses(pose, poseLen);
+      goahead = handleCharPoses(pose, poseLen);
     }
 
-    if (success) {
+    if (goahead) {
       log(CLASS_BODY, Debug, "Done pose '%s'", pose);
       return pose + poseLen + 1;
-    } else if (!success && poseLen > 0) { // there was a message but invalid
-      log(CLASS_BODY, Warn, "Bad pose '%s'", pose);
-      notifier->message(0, 1, "Bad pose: '%s'", pose);
-      delay(2000);
+    } else if (!goahead && poseLen > 0) { // there was a message but invalid
+      log(CLASS_BODY, Warn, "Interrupted '%s'", pose);
+      notifier->message(0, 1, "Interrupted: '%s'", pose);
       return NULL;
     } else {
       return NULL;
