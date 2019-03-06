@@ -191,8 +191,7 @@ public:
 
     notifier->setMessageFunc(messageFunc);
     notifier->setLcdImgFunc(lcdImg);
-    body->setArmsFunc(arms);
-    body->setIosFunc(ios);
+    body->setup(arms, ios, sleepInterruptableFunc);
 
     propSync->setup(bot, initWifiSteady, httpGet, httpPost, fileReadFunc, fileWriteFunc);
     clockSync->setup(bot->getClock(), initWifiSteady, httpGet);
