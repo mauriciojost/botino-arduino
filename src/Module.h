@@ -189,8 +189,7 @@ public:
     // low level calls, like IO, LCD, arms, fan, etc. but they are not set up yet.
     // Setup of low level calls happens in setupArchitecture().
 
-    notifier->setMessageFunc(messageFunc);
-    notifier->setLcdImgFunc(lcdImg);
+    notifier->setup(lcdImg, messageFunc);
     body->setup(arms, ios, sleepInterruptableFunc);
 
     propSync->setup(bot, initWifiSteady, httpGet, httpPost, fileReadFunc, fileWriteFunc);

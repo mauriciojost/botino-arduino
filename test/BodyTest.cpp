@@ -69,6 +69,12 @@ void led(char led, IoMode v) {
     case 'f':
       fan = (int)v;
       break;
+    case '*':
+      ledY = (int)v;
+      ledW = (int)v;
+      ledR = (int)v;
+      fan = (int)v;
+      break;
     default:
       break;
   }
@@ -86,8 +92,7 @@ void test_body_shows_time() {
 
   Quotes q("q");
   Notifier n("n");
-  n.setMessageFunc(messageOnLcd);
-  n.setLcdImgFunc(lcdImg);
+  n.setup(lcdImg, messageOnLcd);
   Images i("i");
   Ifttt it("m");
 
@@ -132,8 +137,7 @@ void test_body_performs_basic_moves() {
 
   Quotes q("q");
   Notifier n("n");
-  n.setMessageFunc(messageOnLcd);
-  n.setLcdImgFunc(lcdImg);
+  n.setup(lcdImg, messageOnLcd);
   Images i("i");
   Ifttt it("m");
 
@@ -181,8 +185,7 @@ void test_body_creates_predictions() {
 
   Quotes q("q");
   Notifier n("n");
-  n.setMessageFunc(messageOnLcd);
-  n.setLcdImgFunc(lcdImg);
+  n.setup(lcdImg, messageOnLcd);
   Images i("i");
   Ifttt it("m");
 
@@ -197,8 +200,7 @@ void test_body_parses_moves() {
 
   Quotes q("q");
   Notifier n("n");
-  n.setMessageFunc(messageOnLcd);
-  n.setLcdImgFunc(lcdImg);
+  n.setup(lcdImg, messageOnLcd);
   Images i("i");
   Ifttt it("m");
 
@@ -221,8 +223,7 @@ void test_body_parses_move_timing_alias() {
 
   Quotes q("q");
   Notifier n("n");
-  n.setMessageFunc(messageOnLcd);
-  n.setLcdImgFunc(lcdImg);
+  n.setup(lcdImg, messageOnLcd);
   Images im("i");
   Ifttt it("m");
 

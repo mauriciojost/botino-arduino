@@ -74,12 +74,12 @@ public:
     return name;
   }
 
-  void setLcdImgFunc(void (*f)(char img, uint8_t bitmap[])) {
-    lcdImgFunc = f;
-  }
-
-  void setMessageFunc(void (*f)(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str)) {
-    messageFunc = f;
+  void setup(
+  		void (*i)(char img, uint8_t bitmap[]),
+  		void (*m)(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str)
+  ) {
+    lcdImgFunc = i;
+    messageFunc = m;
   }
 
   void lcdImg(char img, uint8_t bitmap[]) {
