@@ -30,7 +30,9 @@ void setUp() {
 
 void tearDown() {}
 
-void sleepInt(time_t base, time_t secs) {}
+bool sleepInt(time_t base, time_t secs) {
+	return false;
+}
 
 void lcdImg(char img, uint8_t bitmap[]) {
   switch (img) {

@@ -76,7 +76,7 @@ private:
   bool (*initWifiSteadyFunc)();
   void (*clearDeviceFunc)();
   void (*messageFunct)(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str);
-  void (*sleepInterruptable)(time_t cycleBegin, time_t periodSec);
+  bool (*sleepInterruptable)(time_t cycleBegin, time_t periodSec);
   void (*configureModeArchitecture)();
   void (*runModeArchitecture)();
   bool (*commandArchitecture)(const char *cmd);
@@ -176,7 +176,7 @@ public:
              bool (*fileReadFunc)(const char *fname, Buffer *content),
              bool (*fileWriteFunc)(const char *fname, const char *content),
              void (*abortFunc)(const char *msg),
-             void (*sleepInterruptableFunc)(time_t cycleBegin, time_t periodSec),
+             bool (*sleepInterruptableFunc)(time_t cycleBegin, time_t periodSec),
              void (*configureModeArchitectureFunc)(),
              void (*runModeArchitectureFunc)(),
              bool (*commandArchitectureFunc)(const char *cmd),

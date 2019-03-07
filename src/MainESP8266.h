@@ -100,7 +100,7 @@ void reactCommandCustom();
 #include "MainESP8266_hwtest.h" // defines hwTest()
 void buttonPressed();
 void heartbeat();
-void lightSleepInterruptable(time_t cycleBegin, time_t periodSecs);
+bool lightSleepInterruptable(time_t cycleBegin, time_t periodSecs);
 void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs);
 void debugHandle();
 bool haveToInterrupt();
@@ -462,14 +462,15 @@ void updateFirmware() {
 // Execution
 ///////////////////
 
-void sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
+bool sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
   if (m->getSettings()->inDeepSleepMode() && periodSecs > 120) { // in deep sleep mode and period big enough
     m->command("move Z.");
     lightSleepInterruptable(now() /* always do it */, PRE_DEEP_SLEEP_WINDOW_SECS);
     m->command("move Z.");
     deepSleepNotInterruptable(cycleBegin, periodSecs);
+    return false; // won't be called ever
   } else {
-    lightSleepInterruptable(cycleBegin, periodSecs);
+    return lightSleepInterruptable(cycleBegin, periodSecs);
   }
 }
 
@@ -732,14 +733,18 @@ void heartbeat() {
   LED_ALIVE_TOGGLE
 }
 
-void lightSleepInterruptable(time_t cycleBegin, time_t periodSecs) {
+bool lightSleepInterruptable(time_t cycleBegin, time_t periodSecs) {
   log(CLASS_MAIN, Debug, "Light Sleep(%ds)...", (int)periodSecs);
+  if (haveToInterrupt()) { // first quick check before any time considerations
+    return true;
+  }
   while (now() < cycleBegin + periodSecs) {
     if (haveToInterrupt()) {
-      break;
+      return true;
     }
     delay(m->getSettings()->miniPeriodMsec());
   }
+  return false;
 }
 
 void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs) {

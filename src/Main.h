@@ -77,7 +77,8 @@ void updateFirmware();
 ///////////////////
 
 // Interruptable sleep function (haveToInterrupt called within).
-void sleepInterruptable(time_t cycleBegin, time_t periodSec);
+// Returns true if it was interrupted.
+bool sleepInterruptable(time_t cycleBegin, time_t periodSec);
 
 // Setup step specific to the architecture, tell bot mode to go to
 BotMode setupArchitecture();

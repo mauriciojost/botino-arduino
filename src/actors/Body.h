@@ -199,7 +199,7 @@ private:
   const char *name;
   Metadata *md;
   void (*arms)(int left, int right, int steps);
-  void (*sleepInterruptable)(time_t cycleBegin, time_t periodSec);
+  bool (*sleepInterruptable)(time_t cycleBegin, time_t periodSec);
   Notifier *notifier;
   void (*iosFunc)(char led, IoMode v);
   Quotes *quotes;
@@ -472,8 +472,11 @@ private:
       // WAIT
       int v = getInt(c0);
       log(CLASS_BODY, Debug, "Wait %d s", v);
-      sleepInterruptable(now(), v); // TODO catch interruption and stop all the move instead of just the W pose
-      return Success;
+      if (sleepInterruptable(now(), v)) {
+      	return Interrupted;
+      } else {
+        return Success;
+      }
     } else if (sscanf(pose, "Z%c", &c0) == 1) {
       // POWER OFF
       return zzz();
@@ -560,7 +563,7 @@ public:
     ifttt = i;
   }
 
-  void setup(void (*a)(int left, int right, int steps), void (*f)(char led, IoMode v), void (*i)(time_t cycleBegin, time_t periodSec)) {
+  void setup(void (*a)(int left, int right, int steps), void (*f)(char led, IoMode v), bool (*i)(time_t cycleBegin, time_t periodSec)) {
     arms = a;
     iosFunc = f;
     sleepInterruptable = i;

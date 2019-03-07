@@ -160,9 +160,10 @@ void updateFirmware() {}
 // Execution
 ///////////////////
 
-void sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
+bool sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
   log(CLASS_MAIN, Info, "Sleep(%ds)...", (int)periodSecs);
   sleep(1);
+  return false;
 }
 
 BotMode setupArchitecture() {
