@@ -359,6 +359,7 @@ void lcdImg(char img, uint8_t bitmap[]) {
       break;
     case 'l': // clear
       log(CLASS_MAIN, Debug, "Clear face");
+      lcd.invertDisplay(false);
       lcd.clearDisplay();
       break;
     case 'c': // custom
