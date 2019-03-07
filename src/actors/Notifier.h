@@ -145,7 +145,9 @@ public:
   void bufferToQueue(Buffer* b) {
     const char* p;
     while ((p = b->split(NOTIFS_SEPARATOR)) != NULL) {
-      queue.pushUnique(p);
+    	if (strcmp(p, EMPTY_NOTIF_REPRESENTATION) != 0) { // filter out empty notifs
+        queue.pushUnique(p); // add to the existent ones, does not remove
+    	}
     }
   }
 
