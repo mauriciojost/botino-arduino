@@ -349,6 +349,10 @@ private:
 
     char c0 = 'x', c1 = 'x';
 
+    if (sleepInterruptable(now(), 0)) { // check if this pose's execution has to be interrupted
+      return Interrupted;
+    }
+
     if (sscanf(pose, "A%c%c.", &c0, &c1) == 2) {
       // ARMS FAST
       int l = getInt(c0);

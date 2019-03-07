@@ -729,7 +729,7 @@ void reactCommandCustom() { // for the use via telnet
 
 void heartbeat() {
   LED_ALIVE_TOGGLE
-  delay(2);
+  delay(1);
   LED_ALIVE_TOGGLE
 }
 
@@ -742,6 +742,7 @@ bool lightSleepInterruptable(time_t cycleBegin, time_t periodSecs) {
     if (haveToInterrupt()) {
       return true;
     }
+    heartbeat();
     delay(m->getSettings()->miniPeriodMsec());
   }
   return false;
@@ -757,7 +758,6 @@ void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs) {
 }
 
 bool haveToInterrupt() {
-  heartbeat();
   if (Serial.available()) {
     // Handle serial commands
     Buffer cmdBuffer(COMMAND_MAX_LENGTH);
