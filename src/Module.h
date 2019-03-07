@@ -26,6 +26,7 @@
 
 #define HELP_COMMAND_CLI                                                                                                                   \
   "\n  init            : initialize essential settings (wifi connection, logins, etc.)"                                                    \
+  "\n  int             : interrupt current ongoing action"                                                                                 \
   "\n  run             : go to run mode"                                                                                                   \
   "\n  conf            : go to conf mode"                                                                                                  \
   "\n  info            : show info about the device"                                                                                       \
@@ -293,6 +294,9 @@ public:
       log(CLASS_MODULE, Info, "   ifttttoken <token>");
       log(CLASS_MODULE, Info, "   store");
       log(CLASS_MODULE, Info, "   ls");
+      return true;
+    } else if (strcmp("int", c) == 0) {
+      log(CLASS_MODULE, Info, "Interrupt");
       return true;
     } else if (strcmp("run", c) == 0) {
       log(CLASS_MODULE, Info, "-> Run mode");
