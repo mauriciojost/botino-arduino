@@ -49,14 +49,18 @@ private:
     return lcdImgFunc != NULL && messageFunc != NULL;
   }
 
-  void notify() {
+  void notify(bool forceClean) {
     const char *currentNotif = getNotification();
+    Buffer msg(LCD_WIDTH);
     if (currentNotif != NULL) {
       log(CLASS_NOTIFIER, Debug, "Notif(%d): %s", queue.size(), currentNotif);
-      Buffer msg(LCD_WIDTH);
       msg.fill("(%d) %s", queue.size(), currentNotif);
       messageFunc(0, NOTIF_LINE, WHITE, DO_NOT_WRAP, LineClear, NOTIF_SIZE, msg.center(' ', LCD_WIDTH));
     } else {
+    	if (forceClean) {
+        msg.fill("<>");
+        messageFunc(0, NOTIF_LINE, WHITE, DO_NOT_WRAP, LineClear, NOTIF_SIZE, msg.center(' ', LCD_WIDTH));
+    	}
       log(CLASS_NOTIFIER, Debug, "No notifs");
     }
   }
@@ -84,7 +88,8 @@ public:
 
   void lcdImg(char img, uint8_t bitmap[]) {
     lcdImgFunc(img, bitmap);
-    notify(); // apart from the image, also notify if notifications are available
+    notify(false); // apart from the image, also notify if notifications are available
+  }
 
   void clearLcd() {
   	lcdImg('l', NULL);
@@ -103,14 +108,14 @@ public:
     messageFunc(0, line, WHITE, DO_WRAP, FullClear, size, buffer.getBuffer());
     va_end(args);
 
-    notify(); // apart from the message, also notify if notifications are available
+    notify(false); // apart from the message, also notify if notifications are available
   }
 
   int notification(const char *msg) {
     int i = queue.pushUnique(msg);
     log(CLASS_NOTIFIER, Debug, "New notif: %s (%d notifs)", msg, i);
     getMetadata()->changed();
-    notify(); // update notification
+    notify(false); // update notification
     return i;
   }
 
@@ -122,7 +127,7 @@ public:
     int i = queue.pop();
     log(CLASS_NOTIFIER, Debug, "Notif read: %d notifs left", i);
     getMetadata()->changed();
-    notify(); // update notification
+    notify(true); // update notification
     return i;
   }
 
@@ -137,21 +142,30 @@ public:
     }
   }
 
+  void bufferToQueue(Buffer* b) {
+    const char* p;
+    while ((p = b->split(NOTIFS_SEPARATOR)) != NULL) {
+      queue.pushUnique(p);
+    }
+  }
+
+  void queueToBuffer(Buffer* b) {
+    b->clear();
+    for (int i = 0; i < queue.capacity(); i++) {
+      b->append(queue.getAt(i, EMPTY_NOTIF_REPRESENTATION));
+      b->append(NOTIFS_SEPARATOR);
+    }
+  }
+
   void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {
     if (propIndex == NotifierNotifsProp) {
-      Buffer b = Buffer((MAX_NOTIF_LENGTH + 1) * MAX_NRO_NOTIFS, targetValue);
+      Buffer b = Buffer((MAX_NOTIF_LENGTH + 1) * MAX_NRO_NOTIFS);
       if (m == SetCustomValue) {
-        const char* p;
-        while ((p = b.split(NOTIFS_SEPARATOR)) != NULL) {
-          queue.pushUnique(p);
-        }
+      	b.load(targetValue);
+      	bufferToQueue(&b);
       }
       if (actualValue != NULL) {
-      	b.clear();
-      	for (int i = 0; i < queue.capacity(); i++) {
-          b.append(queue.getAt(i, EMPTY_NOTIF_REPRESENTATION));
-          b.append(NOTIFS_SEPARATOR);
-      	}
+      	queueToBuffer(&b);
         actualValue->load(&b);
       }
     }
