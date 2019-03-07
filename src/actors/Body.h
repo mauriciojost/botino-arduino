@@ -660,7 +660,7 @@ public:
       i++;
       log(CLASS_BODY, Debug, "- pose %d: '%s'...", i, p);
     }
-    log(CLASS_BODY, Debug, "Move '%s' performed: %d poses found", move, i);
+    log(CLASS_BODY, Debug, "Move '%s': %d poses executed", move, i);
   }
 };
 

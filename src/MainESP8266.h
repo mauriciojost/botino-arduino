@@ -537,11 +537,7 @@ BotMode setupArchitecture() {
   log(CLASS_MAIN, Debug, "Setup servos");
   initializeServoConfigs();
 
-  //if (BUTTON_IS_PRESSED) {
-  //  return ConfigureMode;
-  //} else {
-    return RunMode;
-  //}
+  return RunMode;
 }
 
 void runModeArchitecture() {
