@@ -295,12 +295,8 @@ private:
 
   bool zzz() {
     log(CLASS_BODY, Debug, "ZzZ...");
-    notifier->lcdImg('b', NULL);
-    notifier->lcdImg('l', NULL);
-    iosFunc('r', IoOff);
-    iosFunc('w', IoOff);
-    iosFunc('y', IoOff);
-    iosFunc('f', IoOff);
+    notifier->clearLcd();
+    iosFunc('*', IoOff);
     arms(0, 0, ARM_NORMAL_STEPS);
     return true;
   }
