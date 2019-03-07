@@ -147,6 +147,15 @@ Codes:
 #define ARM_NORMAL_STEPS 40
 #define ARM_FAST_STEPS 20
 
+enum PoseExecStatus {
+  Unknown = 0,
+  Interrupted,
+  Failed,
+  Invalid,
+  Success,
+  End
+};
+
 enum BodyProps {
   BodyRoutine0Prop = 0, // string, routine for the routine 0
   BodyRoutine1Prop,     // string, routine for the routine 1
@@ -198,107 +207,107 @@ private:
   Ifttt *ifttt;
   Routine *routines[NRO_ROUTINES];
 
-  bool dance(char c0) {
+  PoseExecStatus dance(char c0) {
     switch (c0) {
       case '0':
         performMove(MOVE_DANCE0);
-        return true;
+        return Success;
       case '1':
         performMove(MOVE_DANCE1);
-        return true;
+        return Success;
       case '2':
         performMove(MOVE_DANCE2);
-        return true;
+        return Success;
       case '3':
         performMove(MOVE_DANCE3);
-        return true;
+        return Success;
       case '4':
         performMove(MOVE_DANCE4);
-        return true;
+        return Success;
       case '5':
         performMove(MOVE_DANCE5);
-        return true;
+        return Success;
       case '6':
         performMove(MOVE_DANCE6);
-        return true;
+        return Success;
       case '7':
         performMove(MOVE_DANCE7);
-        return true;
+        return Success;
       case 'n':
         performMove(MOVE_DANCE_n);
-        return true;
+        return Success;
       case 'u':
         performMove(MOVE_DANCE_U);
-        return true;
+        return Success;
       case '\\':
         performMove(MOVE_DANCE_BACK_SLASH);
-        return true;
+        return Success;
       case '/':
         performMove(MOVE_DANCE_FORW_SLASH);
-        return true;
+        return Success;
       default:
-        return false;
+        return Invalid;
     }
   }
 
-  bool face(char c0) {
+  PoseExecStatus face(char c0) {
     switch (c0) {
       case '0':
         notifier->lcdImg('c', images->get(0)); // custom 0
-        return true;
+        return Success;
       case '1':
         notifier->lcdImg('c', images->get(1)); // custom 1
-        return true;
+        return Success;
       case '2':
         notifier->lcdImg('c', images->get(2)); // custom 2
-        return true;
+        return Success;
       case '3':
         notifier->lcdImg('c', images->get(3)); // custom 3
-        return true;
+        return Success;
       case '_':
         notifier->lcdImg('_', NULL); // dim
-        return true;
+        return Success;
       case '-':
         notifier->lcdImg('-', NULL); // bright
-        return true;
+        return Success;
       case 'w':
         notifier->lcdImg('w', NULL); // white
-        return true;
+        return Success;
       case 'b':
         notifier->lcdImg('b', NULL); // black
-        return true;
+        return Success;
       case 'l':
         notifier->lcdImg('l', NULL); // clear
-        return true;
+        return Success;
       case 'r':
         notifier->lcdImg('c', IMG_CRAZY); // crazy
-        return true;
+        return Success;
       case 's':
         notifier->lcdImg('c', IMG_SMILY); // smile
-        return true;
+        return Success;
       case 'S':
         notifier->lcdImg('c', IMG_SAD); // sad
-        return true;
+        return Success;
       case 'n':
         notifier->lcdImg('c', IMG_NORMAL); // normal
-        return true;
+        return Success;
       case 'a':
         notifier->lcdImg('c', IMG_ANGRY); // angry
-        return true;
+        return Success;
       case 'z':
         notifier->lcdImg('c', IMG_SLEEPY); // sleepy
-        return true;
+        return Success;
       default:
-        return false;
+        return Invalid;
     }
   }
 
-  bool zzz() {
+  PoseExecStatus zzz() {
     log(CLASS_BODY, Debug, "ZzZ...");
     notifier->clearLcd();
     iosFunc('*', IoOff);
     arms(0, 0, ARM_NORMAL_STEPS);
-    return true;
+    return Success;
   }
 
   bool isInitialized() {
@@ -336,8 +345,7 @@ private:
     }
   }
 
-  // TODO the return type represents too much stuff for a bool: interrupted, failed, ok, ...
-  bool handleCharPoses(const char *pose, int len) {
+  PoseExecStatus performPoseLen(const char *pose, int len) {
 
     char c0 = 'x', c1 = 'x';
 
@@ -347,21 +355,21 @@ private:
       int r = getInt(c1);
       log(CLASS_BODY, Debug, "Armsf %d&%d", l, r);
       arms(l, r, ARM_FAST_STEPS);
-      return true;
+      return Success;
     } else if (sscanf(pose, "B%c%c.", &c0, &c1) == 2) {
       // ARMS MEDIUM
       int l = getInt(c0);
       int r = getInt(c1);
       log(CLASS_BODY, Debug, "Armsn %d&%d", l, r);
       arms(l, r, ARM_NORMAL_STEPS);
-      return true;
+      return Success;
     } else if (sscanf(pose, "C%c%c.", &c0, &c1) == 2) {
       // ARMS SLOW
       int l = getInt(c0);
       int r = getInt(c1);
       log(CLASS_BODY, Debug, "Armss %d&%d", l, r);
       arms(l, r, ARM_SLOW_STEPS);
-      return true;
+      return Success;
     } else if (sscanf(pose, "D%c.", &c0) == 1) {
       // DANCE
       return dance(c0);
@@ -376,7 +384,7 @@ private:
       if (!suc) {
         notifier->message(0, 1, "Failed ifttt %d", i);
       }
-      return true;
+      return Success;
     } else if (sscanf(pose, "I%c", &c0) == 1) {
       // IFTTT (by name)
       Buffer evt(MOVE_STR_LENGTH, pose + 1);
@@ -386,12 +394,12 @@ private:
       if (!suc) {
         notifier->message(0, 1, "Failed ifttt\n'%s'", evt.getBuffer());
       }
-      return true;
+      return Success;
     } else if (sscanf(pose, "L%c%c.", &c0, &c1) == 2) {
       // IO (LEDS / FAN)
       int b = getIosState(c1);
       iosFunc(c0, (IoMode)b);
-      return true;
+      return Success;
     } else if (sscanf(pose, "L%c.", &c0) == 1) {
       // IO (LEDS / FAN)
       switch (c0) {
@@ -399,10 +407,10 @@ private:
           iosFunc('r', (IoMode)random(2));
           iosFunc('w', (IoMode)random(2));
           iosFunc('y', (IoMode)random(2));
-          return true;
+          return Success;
         }
         default:
-          return false;
+          return Invalid;
       }
     } else if (sscanf(pose, "M%c%c.", &c0, &c1) == 2) {
       // MESSAGES
@@ -414,7 +422,7 @@ private:
           Buffer t(6, "");
           t.fill("%02d:%02d", h, m);
           notifier->message(0, getInt(c1), t.getBuffer());
-          return true;
+          return Success;
         }
         case 'k': {
           log(CLASS_BODY, Debug, "Msg date");
@@ -422,20 +430,20 @@ private:
           Buffer b(18, "");
           b.fill("%4d-%02d-%02d\n%02d:%02d", GET_YEARS(t), GET_MONTHS(t), GET_DAYS(t), GET_HOURS(t), GET_MINUTES(t));
           notifier->message(0, getInt(c1), b.getBuffer());
-          return true;
+          return Success;
         }
         case 'q': {
           log(CLASS_BODY, Debug, "Msg quote");
           int i = random(NRO_QUOTES);
           notifier->message(0, getInt(c1), quotes->getQuote(i));
-          return true;
+          return Success;
         }
         case 'p': {
           log(CLASS_BODY, Debug, "Msg prediction");
           Buffer pr(200, "");
           Predictions::getPrediction(&pr);
           notifier->message(0, getInt(c1), pr.getBuffer());
-          return true;
+          return Success;
         }
         case '1':
         case '2':
@@ -448,10 +456,10 @@ private:
           msg.replace('.', 0);
           log(CLASS_BODY, Debug, "Msg '%s'", msg.getBuffer());
           notifier->message(0, size, msg.getBuffer());
-          return true;
+          return Success;
         }
         default:
-          return false;
+          return Invalid;
       }
     } else if (sscanf(pose, "N%c", &c0) == 1) {
       // NOTIFICATION
@@ -459,18 +467,18 @@ private:
       msg.replace('.', 0);
       log(CLASS_BODY, Debug, "Not '%s'", msg.getBuffer());
       notifier->notification(msg.getBuffer());
-      return true;
+      return Success;
     } else if (sscanf(pose, "W%c.", &c0) == 1) {
       // WAIT
       int v = getInt(c0);
       log(CLASS_BODY, Debug, "Wait %d s", v);
       sleepInterruptable(now(), v); // TODO catch interruption and stop all the move instead of just the W pose
-      return true;
+      return Success;
     } else if (sscanf(pose, "Z%c", &c0) == 1) {
       // POWER OFF
       return zzz();
     } else {
-      return false;
+      return Invalid;
     }
   }
 
@@ -483,23 +491,32 @@ public:
   const char *performPose(const char *pose) {
 
     int poseLen = poseStrLen(pose);
-    bool goahead = false;
+    PoseExecStatus status = Unknown;
 
     if (poseLen <= 0) { // invalid number of chars poses
-      goahead = false;
+      status = End;
     } else if (poseLen > 0) {
-      goahead = handleCharPoses(pose, poseLen);
+      status = performPoseLen(pose, poseLen);
     }
 
-    if (goahead) {
-      log(CLASS_BODY, Debug, "Done pose '%s'", pose);
-      return pose + poseLen + 1;
-    } else if (!goahead && poseLen > 0) { // there was a message but invalid
-      log(CLASS_BODY, Warn, "Interrupted '%s'", pose);
-      notifier->message(0, 1, "Interrupted: '%s'", pose);
-      return NULL;
-    } else {
-      return NULL;
+    switch (status) {
+    	case Success:
+        log(CLASS_BODY, Debug, "Done pose '%s'", pose);
+        return pose + poseLen + 1;
+    	case Interrupted:
+        log(CLASS_BODY, Warn, "Interrupted '%s'", pose);
+        return NULL;
+    	case Invalid:
+        notifier->message(0, 1, "Invalid: '%s'", pose);
+        return NULL;
+    	case Failed:
+        notifier->message(0, 1, "Failed: '%s'", pose);
+        return NULL;
+    	case End:
+        return NULL;
+    	default:
+        log(CLASS_BODY, Error, "Unexpected status '%s'", pose);
+        return NULL;
     }
   }
 
