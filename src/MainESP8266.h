@@ -771,7 +771,8 @@ bool haveToInterrupt() {
     bool interrupt = m->command(cmdBuffer.getBuffer());
     log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
     return interrupt;
-  } else if (buttonInterrupts > 0) {
+  } else if (buttonInterrupts > 0 || BUTTON_IS_PRESSED) {
+    buttonInterrupts = 0; // clear up right away in case of recursion
     // Handle button commands
     log(CLASS_MAIN, Debug, "Button command (%d)", buttonInterrupts);
     int holds = -1;
@@ -783,11 +784,10 @@ bool haveToInterrupt() {
       LED_INT_TOGGLE;
       delay(m->getSettings()->miniPeriodMsec());
     } while (BUTTON_IS_PRESSED);
-    bool interruptMe = m->sequentialCommand(holds, SHOW_MSG_AND_REACT);
-    buttonInterrupts = 0;
-
+    bool interrupt = m->sequentialCommand(holds, SHOW_MSG_AND_REACT);
+    buttonInterrupts = 0; // clear up at the end in case of button bouncing
     log(CLASS_MAIN, Debug, "Done");
-    return interruptMe;
+    return interrupt;
   } else {
     // Nothing to handle, no reason to interrupt
     return false;
