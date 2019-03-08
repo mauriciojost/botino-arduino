@@ -292,6 +292,7 @@ public:
       log(CLASS_MODULE, Info, "   wifissid <ssid>");
       log(CLASS_MODULE, Info, "   wifipass <password>");
       log(CLASS_MODULE, Info, "   ifttttoken <token>");
+      log(CLASS_MODULE, Info, "   (setup of power consumption settings architecture specific if any)");
       log(CLASS_MODULE, Info, "   store");
       log(CLASS_MODULE, Info, "   ls");
       return true;
