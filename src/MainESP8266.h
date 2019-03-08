@@ -648,7 +648,8 @@ bool commandArchitecture(const char *c) {
     return false;
   } else if (strcmp("freq", c) == 0) {
     uint8 fmhz = (uint8)atoi(strtok(NULL, " "));
-    system_update_cpu_freq(fmhz);
+    bool succ = system_update_cpu_freq(fmhz);
+    log(CLASS_MAIN, Warn, "Freq updated: %d succ %s", (int)fmhz, BOOL(succ));
     return false;
   } else if (strcmp("deepsleep", c) == 0) {
     int s = atoi(strtok(NULL, " "));
