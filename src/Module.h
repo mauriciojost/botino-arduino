@@ -5,7 +5,7 @@
 #include <actors/Body.h>
 #include <actors/Ifttt.h>
 #include <actors/Images.h>
-#include <actors/Moves.h>
+#include <actors/Commands.h>
 #include <actors/Notifier.h>
 #include <actors/Quotes.h>
 #include <actors/Settings.h>
@@ -72,7 +72,7 @@ private:
   Images *images;
   Ifttt *ifttt;
   Notifier *notifier;
-  Moves *moves;
+  Commands *commands;
 
   bool (*initWifiSteadyFunc)();
   void (*clearDeviceFunc)();
@@ -130,7 +130,7 @@ public:
     images = new Images("images");
     ifttt = new Ifttt("ifttt");
     notifier = new Notifier("notifier");
-    moves = new Moves("moves");
+    commands = new Commands("commands");
 
     actors = new Array<Actor *>(10);
     actors->set(0, (Actor *)propSync);
@@ -142,7 +142,7 @@ public:
     actors->set(6, (Actor *)images);
     actors->set(7, (Actor *)ifttt);
     actors->set(8, (Actor *)notifier);
-    actors->set(9, (Actor *)moves);
+    actors->set(9, (Actor *)commands);
 
     bot = new SerBot(clock, actors);
 
@@ -425,8 +425,8 @@ public:
     return settings;
   }
 
-  Moves *getMoves() {
-    return moves;
+  Commands *getCommands() {
+    return commands;
   }
 
   Body *getBody() {
@@ -502,10 +502,10 @@ public:
       case 6:
       case 7: {
         int ind = index - 0;
-        const char *mvName = getMoves()->getMoveName(ind);
+        const char *mvName = getCommands()->getCmdName(ind);
         getNotifier()->message(0, 2, "%s?", mvName);
         if (!dryRun) {
-          command(getMoves()->getMoveValue(ind));
+          command(getCommands()->getCmdValue(ind));
         }
       } break;
       case 8: {
