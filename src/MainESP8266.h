@@ -79,6 +79,7 @@ extern "C" {
 
 volatile unsigned char buttonInterrupts = 0;
 
+Buffer logsBuffer(2048);
 HTTPClient httpClient;
 RemoteDebug telnet;
 Servo servoLeft;
@@ -143,6 +144,11 @@ void logLine(const char *str) {
     lcd.display();
     delay(DELAY_MS_SPI);
     Serial.print("LCD|");
+  }
+  {
+    logsBuffer.append(str);
+    logsBuffer.append("\n");
+    // if full, send over the network
   }
   Serial.print(str);
 }
