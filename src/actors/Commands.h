@@ -18,7 +18,8 @@
 #define COMMAND_NAME_VALUE_SEPARATOR ':'
 
 enum CommandsProps {
-  CommandsCmdNameValue0Prop = 0,
+  CommandsCmd0FreqProp = 0,   // frequency of execution of command 0
+  CommandsCmdNameValue0Prop,
   CommandsCmdNameValue1Prop,
   CommandsCmdNameValue2Prop,
   CommandsCmdNameValue3Prop,
@@ -30,11 +31,13 @@ enum CommandsProps {
 };
 
 /**
- * This actor stores the names of cmds, and the cmds themselves
+ * This actor stores the names of commands, and the commands themselves
  *
- * It is meant to be used to set a predefined set of cmds that
+ * It is meant to be used to set a predefined set of commands that
  * the user often uses. If in Arduino HW, they can be invoked via a
  * button being pressed for instance (1 sec = 1st move, 2 sec = 2nd move, etc.).
+ * It also allows to execute a specific command (cmd0) with a predefined frequency,
+ * which allows for instance to have regular auto-updates of firmware.
  */
 class Commands : public Actor {
 
@@ -55,6 +58,7 @@ public:
   Commands(const char *n) {
     name = n;
     md = new Metadata(n);
+    md->getTiming()->setFreq("never"); // tied to cmd0 execution, often used for auto-update
     for (int i = 0; i < NRO_COMMANDS; i++) {
       cmds[i] = new Buffer(COMMAND_NAME_VALUE_MAX_LENGTH);
       cmds[i]->fill("Cmd %d%cmove Z.", i, COMMAND_NAME_VALUE_SEPARATOR);
@@ -85,7 +89,9 @@ public:
   void act() {}
 
   void getSetPropValue(int propIndex, GetSetMode setMode, const Value *targetValue, Value *actualValue) {
-    if (propIndex >= CommandsCmdNameValue0Prop && propIndex < (NRO_COMMANDS + CommandsCmdNameValue0Prop)) {
+    if (propIndex == CommandsCmd0FreqProp) {
+      setPropTiming(setMode, targetValue, actualValue, md->getTiming());
+    } else if (propIndex >= CommandsCmdNameValue0Prop && propIndex < (NRO_COMMANDS + CommandsCmdNameValue0Prop)) {
       int i = (int)propIndex - (int)CommandsCmdNameValue0Prop;
       setPropValue(setMode, targetValue, actualValue, cmds[i]);
     }
@@ -101,6 +107,8 @@ public:
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
+      case (CommandsCmd0FreqProp):
+        return "cm0freq";
       case (CommandsCmdNameValue0Prop):
         return "cm0";
       case (CommandsCmdNameValue1Prop):
