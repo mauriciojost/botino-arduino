@@ -69,7 +69,7 @@ extern "C" {
   "\n  ls                : list files present in FS "                                                                                      \
   "\n  cat ...           : show content of a file (only if in insecure mode)"                                                              \
   "\n  reset             : reset the device"                                                                                               \
-  "\n  freq ...          : set clock frequency in mhz"                                                                                     \
+  "\n  freq ...          : set clock frequency in MHz (80 or 160 available only, 160 faster but more power consumption)"                   \
   "\n  deepsleep ...     : deep sleep N provided seconds"                                                                                  \
   "\n  lightsleep ...    : light sleep N provided seconds"                                                                                 \
   "\n  clearstack        : clear stack trace "                                                                                             \
@@ -649,7 +649,7 @@ bool commandArchitecture(const char *c) {
   } else if (strcmp("freq", c) == 0) {
     uint8 fmhz = (uint8)atoi(strtok(NULL, " "));
     bool succ = system_update_cpu_freq(fmhz);
-    log(CLASS_MAIN, Warn, "Freq updated: %d succ %s", (int)fmhz, BOOL(succ));
+    log(CLASS_MAIN, Warn, "Freq updated: %dMHz (succ %s)", (int)fmhz, BOOL(succ));
     return false;
   } else if (strcmp("deepsleep", c) == 0) {
     int s = atoi(strtok(NULL, " "));
