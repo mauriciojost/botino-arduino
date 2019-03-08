@@ -69,8 +69,9 @@ extern "C" {
   "\n  ls                : list files present in FS "                                                                                      \
   "\n  cat ...           : show content of a file (only if in insecure mode)"                                                              \
   "\n  reset             : reset the device"                                                                                               \
+  "\n  freq ...          : set clock frequency in mhz"                                                                                     \
   "\n  deepsleep ...     : deep sleep N provided seconds"                                                                                  \
-  "\n  lightsleep ...         : light sleep N provided seconds"                                                                                  \
+  "\n  lightsleep ...    : light sleep N provided seconds"                                                                                 \
   "\n  clearstack        : clear stack trace "                                                                                             \
   "\n"
 
@@ -644,6 +645,10 @@ bool commandArchitecture(const char *c) {
 #endif // INSECURE
   } else if (strcmp("reset", c) == 0) {
     ESP.restart();
+    return false;
+  } else if (strcmp("freq", c) == 0) {
+    uint8 fmhz = (uint8)atoi(strtok(NULL, " "));
+    system_update_cpu_freq(fmhz);
     return false;
   } else if (strcmp("deepsleep", c) == 0) {
     int s = atoi(strtok(NULL, " "));
