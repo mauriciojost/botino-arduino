@@ -65,6 +65,7 @@ extern "C" {
 #define HTTP_TIMEOUT_MS 8000
 
 #define HELP_COMMAND_ARCH_CLI                                                                                                              \
+  "\n  init              : initialize essential settings (wifi connection, logins, etc.)"                                                  \
   "\n  servo             : tune the servo <s> (r|l) and make a test round "                                                                \
   "\n  ls                : list files present in FS "                                                                                      \
   "\n  cat ...           : show content of a file (only if in insecure mode)"                                                              \
@@ -627,6 +628,22 @@ bool commandArchitecture(const char *c) {
       return false;
     }
     return false;
+    } else if (strcmp("init", c) == 0) {
+      log(CLASS_MODULE, Info, "-> Initialize");
+      log(CLASS_MODULE, Info, "Execute:");
+      log(CLASS_MODULE, Info, "   ls");
+      log(CLASS_MODULE, Info, "   save %s <alias>", DEVICE_ALIAS_FILENAME);
+      log(CLASS_MODULE, Info, "   save %s <pwd>", DEVICE_PWD_FILENAME);
+      log(CLASS_MODULE, Info, "   servo l");
+      log(CLASS_MODULE, Info, "   servo r");
+      log(CLASS_MODULE, Info, "   wifissid <ssid>");
+      log(CLASS_MODULE, Info, "   wifissid <ssid>");
+      log(CLASS_MODULE, Info, "   wifipass <password>");
+      log(CLASS_MODULE, Info, "   ifttttoken <token>");
+      log(CLASS_MODULE, Info, "   (setup of power consumption settings architecture specific if any)");
+      log(CLASS_MODULE, Info, "   store");
+      log(CLASS_MODULE, Info, "   ls");
+      return true;
   } else if (strcmp("ls", c) == 0) {
     SPIFFS.begin();
     Dir dir = SPIFFS.openDir("");

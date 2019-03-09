@@ -25,7 +25,6 @@
 #define PERIOD_CONFIGURE_MSEC 4000
 
 #define HELP_COMMAND_CLI                                                                                                                   \
-  "\n  init            : initialize essential settings (wifi connection, logins, etc.)"                                                    \
   "\n  int             : interrupt current ongoing action"                                                                                 \
   "\n  run             : go to run mode"                                                                                                   \
   "\n  conf            : go to conf mode"                                                                                                  \
@@ -285,17 +284,6 @@ public:
       const char *actor = strtok(NULL, " ");
       getProps(actor);
       return false;
-    } else if (strcmp("init", c) == 0) {
-      log(CLASS_MODULE, Info, "-> Initialize");
-      log(CLASS_MODULE, Info, "Execute:");
-      log(CLASS_MODULE, Info, "   ls");
-      log(CLASS_MODULE, Info, "   wifissid <ssid>");
-      log(CLASS_MODULE, Info, "   wifipass <password>");
-      log(CLASS_MODULE, Info, "   ifttttoken <token>");
-      log(CLASS_MODULE, Info, "   (setup of power consumption settings architecture specific if any)");
-      log(CLASS_MODULE, Info, "   store");
-      log(CLASS_MODULE, Info, "   ls");
-      return true;
     } else if (strcmp("int", c) == 0) {
       log(CLASS_MODULE, Info, "Interrupt");
       return true;
