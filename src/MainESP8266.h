@@ -562,7 +562,14 @@ void runModeArchitecture() {
   }
 }
 
-bool askQuestion(const char *question) {
+void askStringQuestion(const char *question, Buffer* answer) {
+  m->getNotifier()->message(0, 1, "%s\n(answer serial and enter)", question);
+  Serial.readBytesUntil('\n', answer->getUnsafeBuffer(), COMMAND_MAX_LENGTH);
+  answer->replace('\n', '\0');
+  answer->replace('\r', '\0');
+}
+
+bool askBoolQuestion(const char *question) {
   m->getNotifier()->message(0, 1, "%s\n(Press if true)", question);
   delay(USER_DELAY_MS);
   int answer = BUTTON_IS_PRESSED;
@@ -592,7 +599,7 @@ void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
     delay(SERVO_PERIOD_REACTION_MS * 10);
   }
 
-  bool inv = askQuestion("Is arm down?");
+  bool inv = askBoolQuestion("Is arm down?");
   m->getNotifier()->message(0, 1, "Done!");
   delay(USER_DELAY_MS);
 
