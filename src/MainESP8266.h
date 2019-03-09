@@ -661,7 +661,7 @@ bool commandArchitecture(const char *c) {
     return false;
 #endif // INSECURE
   } else if (strcmp("reset", c) == 0) {
-    ESP.restart();
+    ESP.restart(); // it is normal that it fails if invoked the first time after firmware is written
     return false;
   } else if (strcmp("freq", c) == 0) {
     uint8 fmhz = (uint8)atoi(strtok(NULL, " "));
@@ -701,7 +701,7 @@ void abort(const char *msg) {
   if (m->getSettings()->inDeepSleepMode()) {
     ESP.deepSleep(m->getSettings()->periodMsec() * 1000L); // boot again in next cycle
   } else {
-    ESP.restart(); // restart right away
+    ESP.restart(); // it is normal that it fails if invoked the first time after firmware is written
   }
 }
 
