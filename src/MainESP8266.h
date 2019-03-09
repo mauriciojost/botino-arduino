@@ -20,10 +20,10 @@
 #define DELAY_MS_SPI 3
 #define ABORT_DELAY_MS 5000
 
-#define DEVICE_ALIAS_FILENAME "/alias.tuning"
-#define DEVICE_PWD_FILENAME "/pass.tuning"
-#define SERVO_0_FILENAME "/servo0.tuning"
-#define SERVO_1_FILENAME "/servo1.tuning"
+#define DEVICE_ALIAS_FILENAME "alias.tuning"
+#define DEVICE_PWD_FILENAME "pass.tuning"
+#define SERVO_0_FILENAME "servo0.tuning"
+#define SERVO_1_FILENAME "servo1.tuning"
 
 #define DEVICE_ALIAS_MAX_LENGTH 16
 #define DEVICE_PWD_MAX_LENGTH 16
