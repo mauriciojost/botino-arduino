@@ -803,7 +803,7 @@ void handleInterrupt() {
     cmdBuffer.replace('\r', '\0');
     bool interrupt = m->command(cmdBuffer.getBuffer());
     log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
-  } else if (BUTTON_IS_PRESSED) {
+  } else if (buttonInterrupts > 0 || BUTTON_IS_PRESSED) {
     int holds = -1;
     do {
       holds++;
@@ -814,6 +814,7 @@ void handleInterrupt() {
       delay(m->getSettings()->miniPeriodMsec());
     } while (BUTTON_IS_PRESSED);
     m->sequentialCommand(holds, SHOW_MSG_AND_REACT);
+    buttonInterrupts = 0;
     log(CLASS_MAIN, Debug, "Done");
   }
 }
@@ -823,7 +824,6 @@ bool haveToInterrupt() {
   if (Serial.available()) {
     return true;
   } else if (buttonInterrupts > 0 || BUTTON_IS_PRESSED) {
-    buttonInterrupts = 0;
     return true;
   } else {
     return false;
