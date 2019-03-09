@@ -106,6 +106,7 @@ bool lightSleepInterruptable(time_t cycleBegin, time_t periodSecs);
 void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs);
 void debugHandle();
 bool haveToInterrupt();
+void handleInterrupt();
 void initializeServoConfigs();
 const char *apiDeviceLogin();
 const char *apiDevicePass();
@@ -173,7 +174,11 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
 
   int attemptsLeft = retries;
   while (true) {
-    lightSleepInterruptable(now(), WIFI_DELAY_MS / 1000);
+    bool interrupt = lightSleepInterruptable(now(), WIFI_DELAY_MS / 1000);
+    if (interrupt) {
+      log(CLASS_MAIN, Info, "Interrupted");
+    	return false; // not connected
+    }
     status = WiFi.status();
     log(CLASS_MAIN, Info, "..'%s'(%d)", ssid, attemptsLeft);
     attemptsLeft--;
@@ -467,7 +472,10 @@ void updateFirmware() {
 bool sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
   if (m->getSettings()->inDeepSleepMode() && periodSecs > 120) { // in deep sleep mode and period big enough
     m->command("move Z.");
-    lightSleepInterruptable(now() /* always do it */, PRE_DEEP_SLEEP_WINDOW_SECS);
+    bool interrupt = lightSleepInterruptable(now() /* always do it */, PRE_DEEP_SLEEP_WINDOW_SECS);
+    if (interrupt) {
+    	return true;
+    }
     m->command("move Z.");
     deepSleepNotInterruptable(cycleBegin, periodSecs);
     return false; // won't be called ever
@@ -539,13 +547,10 @@ BotMode setupArchitecture() {
   log(CLASS_MAIN, Debug, "Setup servos");
   initializeServoConfigs();
 
-  return RunMode;
-}
+  log(CLASS_MAIN, Debug, "Setup debug mode");
+  Serial.setDebugOutput(m->getSettings()->getDebug()); // deep HW logs
 
-void runModeArchitecture() {
-  Settings *s = m->getSettings();
-
-  // Handle stack-traces stored in memory
+  log(CLASS_MAIN, Debug, "Clean up crashes");
   if (SaveCrash.count() > 5) {
     log(CLASS_MAIN, Warn, "Too many Stack-trcs / clearing (!!!)");
     SaveCrash.clear();
@@ -554,10 +559,12 @@ void runModeArchitecture() {
     SaveCrash.print();
   }
 
-  // Handle log level as per settings
-  Serial.setDebugOutput(s->getDebug()); // deep HW logs
+  return RunMode;
+}
 
-  if (s->getDebug()) {
+void runModeArchitecture() {
+  handleInterrupt();
+  if (m->getSettings()->getDebug()) {
     debugHandle();
   }
 }
@@ -681,8 +688,7 @@ bool commandArchitecture(const char *c) {
     return false;
   } else if (strcmp("lightsleep", c) == 0) {
     int s = atoi(strtok(NULL, " "));
-    lightSleepInterruptable(now(), s);
-    return false;
+    return lightSleepInterruptable(now(), s);
   } else if (strcmp("clearstack", c) == 0) {
     SaveCrash.clear();
     return false;
@@ -696,6 +702,7 @@ bool commandArchitecture(const char *c) {
 }
 
 void configureModeArchitecture() {
+  handleInterrupt();
   debugHandle();
   if (m->getBot()->getClock()->currentTime() % 60 == 0) { // every minute
     m->getNotifier()->message(0, 1, "telnet %s", WiFi.localIP().toString().c_str());
@@ -704,8 +711,10 @@ void configureModeArchitecture() {
 
 void abort(const char *msg) {
   log(CLASS_MAIN, Error, "Abort: %s", msg);
-  delay(ABORT_DELAY_MS);
-  if (m->getSettings()->inDeepSleepMode()) {
+  m->getNotifier()->message(0, 1, "Abort: %s", msg);
+  bool interrupt = sleepInterruptable(now(), ABORT_DELAY_MS);
+  if (interrupt) {
+  } else if (m->getSettings()->inDeepSleepMode()) {
     ESP.deepSleep(m->getSettings()->periodMsec() * 1000L); // boot again in next cycle
   } else {
     ESP.restart(); // it is normal that it fails if invoked the first time after firmware is written
@@ -783,7 +792,7 @@ void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs) {
   }
 }
 
-bool haveToInterrupt() {
+void handleInterrupt() {
   if (Serial.available()) {
     // Handle serial commands
     Buffer cmdBuffer(COMMAND_MAX_LENGTH);
@@ -794,11 +803,7 @@ bool haveToInterrupt() {
     cmdBuffer.replace('\r', '\0');
     bool interrupt = m->command(cmdBuffer.getBuffer());
     log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
-    return interrupt;
-  } else if (buttonInterrupts > 0 || BUTTON_IS_PRESSED) {
-    buttonInterrupts = 0; // clear up right away in case of recursion
-    // Handle button commands
-    log(CLASS_MAIN, Debug, "Button command (%d)", buttonInterrupts);
+  } else if (BUTTON_IS_PRESSED) {
     int holds = -1;
     do {
       holds++;
@@ -808,12 +813,19 @@ bool haveToInterrupt() {
       LED_INT_TOGGLE;
       delay(m->getSettings()->miniPeriodMsec());
     } while (BUTTON_IS_PRESSED);
-    bool interrupt = m->sequentialCommand(holds, SHOW_MSG_AND_REACT);
-    buttonInterrupts = 0; // clear up at the end in case of button bouncing
+    m->sequentialCommand(holds, SHOW_MSG_AND_REACT);
     log(CLASS_MAIN, Debug, "Done");
-    return interrupt;
+  }
+}
+
+
+bool haveToInterrupt() {
+  if (Serial.available()) {
+    return true;
+  } else if (buttonInterrupts > 0 || BUTTON_IS_PRESSED) {
+    buttonInterrupts = 0;
+    return true;
   } else {
-    // Nothing to handle, no reason to interrupt
     return false;
   }
 }

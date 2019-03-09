@@ -479,7 +479,7 @@ public:
    * Thought to be used via single button devices, so that
    * a button pressed can execute one of many available commands.
    */
-  bool sequentialCommand(int index, bool dryRun) {
+  void sequentialCommand(int index, bool dryRun) {
     switch (index) {
       case 0:
       case 1:
@@ -531,7 +531,6 @@ public:
         }
       } break;
     }
-    return false;
   }
 
   void getProps(const char *actorN) {
