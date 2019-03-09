@@ -840,8 +840,8 @@ Buffer* initializeTuningVariable(Buffer **var, const char *filename, int maxLeng
     bool succAlias = readFile(filename, *var); // preserve the alias
     if (succAlias) {                           // managed to retrieve the alias
       (*var)->replace('\n', 0);                // content already with the alias
-      return *var;
     } else {
+      (*var)->fill("unknown");
       abort(filename);
     }
   }
