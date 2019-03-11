@@ -91,7 +91,7 @@ void hwTest() {
   m->command("move D2.D3.");
   delay(HARDWARE_TEST_STEP_DELAY_MS);
 
-  m->command("move D/.D\.");
+  m->command("move D/.D\\.");
   delay(HARDWARE_TEST_STEP_DELAY_MS);
 
   m->command("move Du.Dn.");
