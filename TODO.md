@@ -13,6 +13,20 @@ File myFile = SD.open(cocktailDataPath);
 JsonObject& root = jsonBuffer.parseObject(myFile);
 
 
+- Handle transaction failure scenarios:
+DEV     SERVER
+
+boot
+   <<<  
+   risk that some fail -> the device boot fails completely = ok
+   >>>
+   risk that some fail -> some posts were done, and this cannot be undone, a commit should be put in place = KO
+
+regular operation
+   <<< 
+   risk that some fail, load on device cannot be undone
+
+
 
 # DONE
 
