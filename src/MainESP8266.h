@@ -78,6 +78,7 @@ extern "C" {
 
 #define BUTTON_IS_PRESSED ((bool)digitalRead(BUTTON0_PIN))
 
+volatile bool buttonEnabled = true;
 volatile unsigned char buttonInterrupts = 0;
 
 HTTPClient httpClient;
@@ -739,7 +740,9 @@ void debugHandle() {
 
 ICACHE_RAM_ATTR
 void buttonPressed() {
-  buttonInterrupts++;
+  if (buttonEnabled) {
+    buttonInterrupts++;
+  }
   LED_INT_ON;
 }
 
@@ -803,7 +806,9 @@ void handleInterrupt() {
     cmdBuffer.replace('\r', '\0');
     bool interrupt = m->command(cmdBuffer.getBuffer());
     log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
-  } else if (buttonInterrupts > 0 || BUTTON_IS_PRESSED) {
+  } else if (buttonInterrupts > 0) {
+    buttonEnabled = false;
+    buttonInterrupts = 0; // to avoid interrupting whatever is called below
     int holds = -1;
     do {
       holds++;
@@ -814,7 +819,7 @@ void handleInterrupt() {
       delay(m->getSettings()->miniPeriodMsec());
     } while (BUTTON_IS_PRESSED);
     m->sequentialCommand(holds, SHOW_MSG_AND_REACT);
-    buttonInterrupts = 0;
+    buttonEnabled = true;
     log(CLASS_MAIN, Debug, "Done");
   }
 }
@@ -822,8 +827,10 @@ void handleInterrupt() {
 
 bool haveToInterrupt() {
   if (Serial.available()) {
+    log(CLASS_MAIN, Debug, "Serial pinged: int");
     return true;
-  } else if (buttonInterrupts > 0 || BUTTON_IS_PRESSED) {
+  } else if (buttonInterrupts > 0) {
+    log(CLASS_MAIN, Debug, "Button pressed: int");
     return true;
   } else {
     return false;
