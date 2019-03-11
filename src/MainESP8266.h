@@ -600,15 +600,18 @@ void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
   int testRange = 200;
 
   for (int d = 0; d <= testRange; d = d + 2) {
-    log(CLASS_MODULE, Info, "Moves: %d/%d", d, testRange);
-    min = ((d < min) && BUTTON_IS_PRESSED ? d : min);
-    max = ((d > max) && BUTTON_IS_PRESSED ? d : max);
+    bool pressed = BUTTON_IS_PRESSED;
+    log(CLASS_MODULE, Info, "Moves: %d/%d (inrange=%s)", d, testRange, BOOL(pressed));
+    min = ((d < min) && pressed ? d : min);
+    max = ((d > max) && pressed ? d : max);
     servo->write(d);
     delay(SERVO_PERIOD_REACTION_MS * 10);
   }
 
   bool inv = askBoolQuestion("Is arm down?");
-  m->getNotifier()->message(0, 1, "Done!");
+  m->getNotifier()->message(0, 1, "Down: %s", BOOL(inv));
+  delay(USER_DELAY_MS);
+  m->getNotifier()->message(0, 1, "Setup %s done!", name);
   delay(USER_DELAY_MS);
 
   servoConf->setBase(min);
