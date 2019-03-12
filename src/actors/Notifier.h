@@ -25,6 +25,7 @@ enum MsgClearMode { FullClear = 0, LineClear, NoClear };
 #endif // LCD_WIDTH
 
 #include <main4ino/Actor.h>
+#include <main4ino/RichBuffer.h>
 #include <main4ino/Queue.h>
 
 #define EMPTY_NOTIF_REPRESENTATION ""
@@ -142,7 +143,7 @@ public:
     }
   }
 
-  void bufferToQueue(Buffer* b) {
+  void bufferToQueue(RichBuffer* b) {
     const char* p;
     while ((p = b->split(NOTIFS_SEPARATOR)) != NULL) {
     	if (strcmp(p, EMPTY_NOTIF_REPRESENTATION) != 0) { // filter out empty notifs
@@ -151,7 +152,7 @@ public:
     }
   }
 
-  void queueToBuffer(Buffer* b) {
+  void queueToBuffer(RichBuffer* b) {
     b->clear();
     for (int i = 0; i < queue.capacity(); i++) {
       b->append(queue.getAt(i, EMPTY_NOTIF_REPRESENTATION));
@@ -161,7 +162,7 @@ public:
 
   void getSetPropValue(int propIndex, GetSetMode m, const Value *targetValue, Value *actualValue) {
     if (propIndex == NotifierNotifsProp) {
-      Buffer b = Buffer((MAX_NOTIF_LENGTH + 1) * MAX_NRO_NOTIFS);
+      RichBuffer b = RichBuffer((MAX_NOTIF_LENGTH + 1) * MAX_NRO_NOTIFS);
       if (m == SetCustomValue) {
       	b.load(targetValue);
       	bufferToQueue(&b);
