@@ -7,7 +7,7 @@
 #include <main4ino/Misc.h>
 
 #ifndef PROJ_VERSION
-#error "No PROJ_VERSION defined"
+#define PROJ_VERSION "snapshot"
 #endif // PROJ_VERSION
 
 //////////////////////////////////////////////////////////////
