@@ -50,7 +50,7 @@ if [ "$GCOV_ENABLED" == "true" ]
 then
   echo "### Preparing gcovr report"
   export report=gcovr.html
-  gcovr -r . --html -o $report --exclude 'libs/.*' --exclude 'test/.*'
+  gcovr -r . --html --html-details -o $report --exclude 'libs/.*' --exclude 'test/.*'
   readlink -e $report
   rm *.gcda *.gcno
 fi
