@@ -12,22 +12,6 @@ DynamicJsonBuffer jsonBuffer(bufSize);
 File myFile = SD.open(cocktailDataPath);
 JsonObject& root = jsonBuffer.parseObject(myFile);
 
-
-- Handle transaction failure scenarios:
-DEV     SERVER
-
-boot
-   <<<  
-   risk that some fail -> the device boot fails completely = ok
-   >>>
-   risk that some fail -> some posts were done, and this cannot be undone, a commit should be put in place = KO
-
-regular operation
-   <<< 
-   risk that some fail, load on device cannot be undone
-
-
-
 # DONE
 
 - Measure currents: 3.5 mA used only by a connected black LCD, otherwise measurements on deep sleep mode is ~ 0.3 mA, ~130 mA when alive
