@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 PROFILE=$1
+GCOV_ENABLED=$2
 
 set -e
 #set -x
@@ -45,11 +46,14 @@ do
   run_test "$f" "$test_general_flags" "$test_excludes_pattern"
 done
 
-# echo "### Preparing gcovr report"
-# export report=gcovr.html
-# gcovr -r . --html -o $report
-# readlink -e $report
-# rm *.gcda *.gcno
+if [ "$GCOV_ENABLED" == "true" ] 
+then
+  echo "### Preparing gcovr report"
+  export report=gcovr.html
+  gcovr -r . --html -o $report --exclude 'libs/.*' --exclude 'test/.*'
+  readlink -e $report
+  rm *.gcda *.gcno
+fi
 
 echo "### Done"
   
