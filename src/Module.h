@@ -85,11 +85,14 @@ private:
   void (*info)();
   void (*test)();
   void (*update)();
+  const char* (*apiDeviceLogin)();
+  const char* (*apiDevicePass)();
 
   /**
    * Synchronize with the server.
    *
-   * 1. Load properties from the file system (credentials).
+   * 0. Load properties from the file system (credentials related to the framework).
+   * 1. Load properties from the file system (other properties/credentials not related to the framework).
    * 2. Pull/push properties from/to the server
    * 3. Set time of actors with last known time
    * 4. Find out real current time
@@ -97,8 +100,13 @@ private:
    *
    */
   bool sync() {
-    log(CLASS_MODULE, Info, "# Loading credentials stored in FS...");
-    getPropSync()->fsLoadActorsProps(); // load stored properties (most importantly credentials)
+
+    log(CLASS_MODULE, Info, "# Loading tuning credentials stored in FS...");
+    getPropSync()->setLoginPass(apiDeviceLogin(), apiDevicePass());
+    getClockSync()->setLoginPass(apiDeviceLogin(), apiDevicePass());
+
+    log(CLASS_MODULE, Info, "# Loading properties stored in FS...");
+    getPropSync()->fsLoadActorsProps(); // load stored properties (most importantly credentials not considered tuning)
     log(CLASS_MODULE, Info, "# Syncing actors with server...");
     bool serSyncd = getPropSync()->pullPushActors(DEFAULT_PROP_SYNC_ATTEMPTS, false); // sync properties from the server
 
@@ -162,6 +170,8 @@ public:
     info = NULL;
     test = NULL;
     update = NULL;
+    apiDeviceLogin = NULL;
+    apiDevicePass = NULL;
   }
 
   void setup(BotMode (*setupArchitecture)(),
@@ -182,7 +192,10 @@ public:
              bool (*commandArchitectureFunc)(const char *cmd),
              void (*infoFunc)(),
              void (*updateFunc)(),
-             void (*testFunc)()) {
+             void (*testFunc)(),
+             const char* (*apiDeviceLoginFunc)(),
+             const char* (*apiDevicePassFunc)()
+						 ) {
 
     // Unstable situation from now until the end of the function
     // Actors are being initialized, and use callback functions that may trigger
@@ -211,6 +224,8 @@ public:
     info = infoFunc;
     test = testFunc;
     update = updateFunc;
+    apiDeviceLogin = apiDeviceLoginFunc;
+    apiDevicePass = apiDevicePassFunc;
 
     BotMode mode = setupArchitecture(); // module objects initialized, architecture can be initialized now
 

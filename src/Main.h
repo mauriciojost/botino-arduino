@@ -27,6 +27,12 @@ void loop();
 // Callbacks
 ///////////////////
 
+// Allow to retrieve the main4ino API login
+const char* apiDeviceLogin();
+
+// Allow to retrieve the main4ino API password
+const char* apiDevicePass();
+
 // The log function (that will print to screen, Serial, telnet, or whatever wished).
 // It should not include "\n" ending as the log4ino library handles newline addition.
 void logLine(const char *str);

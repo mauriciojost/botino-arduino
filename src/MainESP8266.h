@@ -110,8 +110,7 @@ void debugHandle();
 bool haveToInterrupt();
 void handleInterrupt();
 void initializeServoConfigs();
-const char *apiDeviceLogin();
-const char *apiDevicePass();
+Buffer* initializeTuningVariable(Buffer **var, const char *filename, int maxLength);
 
 ////////////////////////////////////////
 // Functions requested for architecture
@@ -119,6 +118,14 @@ const char *apiDevicePass();
 
 // Callbacks
 ///////////////////
+
+const char *apiDeviceLogin() {
+  return initializeTuningVariable(&apiDeviceId, DEVICE_ALIAS_FILENAME, DEVICE_ALIAS_MAX_LENGTH)->getBuffer();
+}
+
+const char *apiDevicePass() {
+  return initializeTuningVariable(&apiDevicePwd, DEVICE_PWD_FILENAME, DEVICE_PWD_MAX_LENGTH)->getBuffer();
+}
 
 void logLine(const char *str) {
   // serial print
@@ -542,10 +549,6 @@ BotMode setupArchitecture() {
   lcdImg('l', NULL);
   heartbeat();
 
-  log(CLASS_MAIN, Debug, "Setup credentials");
-  m->getPropSync()->setLoginPass(apiDeviceLogin(), apiDevicePass());
-  m->getClockSync()->setLoginPass(apiDeviceLogin(), apiDevicePass());
-
   log(CLASS_MAIN, Debug, "Setup servos");
   initializeServoConfigs();
 
@@ -880,10 +883,3 @@ Buffer* initializeTuningVariable(Buffer **var, const char *filename, int maxLeng
   return *var;
 }
 
-const char *apiDeviceLogin() {
-  return initializeTuningVariable(&apiDeviceId, DEVICE_ALIAS_FILENAME, DEVICE_ALIAS_MAX_LENGTH)->getBuffer();
-}
-
-const char *apiDevicePass() {
-  return initializeTuningVariable(&apiDevicePwd, DEVICE_PWD_FILENAME, DEVICE_PWD_MAX_LENGTH)->getBuffer();
-}

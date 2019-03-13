@@ -10,15 +10,7 @@
 
 #define CLASS_MAIN "ModuleTest"
 
-const char *replyLastPullBody = "{"
-                        "\"config1\":\"3\","
-                        "\"config2\":\"3\""
-                        "}";
-
-const char *replyPullBody = "{"
-                        "\"config1\":\"1\","
-                        "\"config2\":\"77\""
-                        "}";
+const char *replyEmptyBody = "{}";
 
 bool wifiConnected;
 int pullCount;
@@ -48,8 +40,12 @@ bool initWifiSimple() {
   return wifiConnected;
 }
 
-const char *deviceId() {
-  return "PC";
+const char *apiDeviceLogin() {
+  return "testdevice";
+}
+
+const char *apiDevicePass() {
+  return "password";
 }
 
 void logLine(const char *str) {
@@ -62,26 +58,21 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
 }
 
 int httpGet(const char *url, ParamStream *response, Table *headers) {
-  if (strcmp(MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/login/actors/tester/reports/last", url) == 0) {
-    response->contentBuffer()->load(replyLastPullBody);
-    return HTTP_OK;
-  } else if (strcmp(MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/login/actors/clock/reports/last", url) == 0) {
-    response->contentBuffer()->load("{}");
-    return HTTP_OK;
-  } else if (strcmp(MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/login/targets/count?status=C", url) == 0) {
-    response->contentBuffer()->fill("{\"count\":%d}", pullCount);
-    return HTTP_OK;
-  } else if (strcmp(MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/login/actors/clock/targets/summary?consume=true&status=C",
+	char str[128];
+
+  if (sscanf(url, MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/testdevice/actors/%s/reports/last", str) == 1) {
+    response->contentBuffer()->load(replyEmptyBody); return HTTP_OK;
+  } else if (strcmp(MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/testdevice/targets/count?status=C", url) == 0) {
+    response->contentBuffer()->fill("{\"count\":%d}", pullCount); return HTTP_OK;
+  } else if (strcmp(MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/testdevice/actors/clock/targets/summary?consume=true&status=C", url) == 0) {
+    response->contentBuffer()->load("{}"); return HTTP_OK;
+  } else if (sscanf(url, MAIN4INOSERVER_API_HOST_BASE "/api/v1/time?timezone=%s", str) == 1) {
+    response->contentBuffer()->load("{\"formatted\":\"2018-04-26T21:32:30\"}"); return HTTP_OK;
+  } else if (strcmp(MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/testdevice/actors/tester/targets/summary?consume=true&status=C",
                     url) == 0) {
-    response->contentBuffer()->load("{}");
-    return HTTP_OK;
-  } else if (strcmp(MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/login/actors/tester/targets/summary?consume=true&status=C",
-                    url) == 0) {
-    response->contentBuffer()->load(replyPullBody);
-    return HTTP_OK;
+    response->contentBuffer()->load(replyEmptyBody); return HTTP_OK;
   } else {
-    log(CLASS_MAIN, Debug, "Unknown url '%s'", url);
-    return HTTP_BAD_REQUEST;
+    log(CLASS_MAIN, Debug, "Unknown url '%s'", url); return HTTP_BAD_REQUEST;
   }
 }
 
@@ -109,12 +100,14 @@ void lcdImg(char img, uint8_t bitmap[]) {
   log(CLASS_MAIN, Debug, "lcdImg('%c', xxx)", img);
 }
 
-bool readFile(const char *fname, Buffer *content) {
-  log(CLASS_MAIN, Debug, "readFile('%s', xxx)", fname);
+bool readFile(const char *f, Buffer *content) {
+	Buffer fname(64);
+	fname.fill("./test/fs/%s", f);
+  log(CLASS_MAIN, Debug, "readFile('%s', xxx)", fname.getBuffer());
   bool success = false;
   char c;
   int i = 0;
-  FILE *fp = fopen(fname, "r");
+  FILE *fp = fopen(fname.getBuffer(), "r");
   content->clear();
   if (fp != NULL) {
     while ((c = getc(fp)) != EOF) {
@@ -124,7 +117,7 @@ bool readFile(const char *fname, Buffer *content) {
     fclose(fp);
     success = true;
   } else {
-    log(CLASS_MAIN, Warn, "Could not load file: %s", fname);
+    log(CLASS_MAIN, Warn, "Could not load file: %s", fname.getBuffer());
     success = false;
   }
   return success;
@@ -204,7 +197,10 @@ void test_basic_behaviour() {
            commandArchitecture,
            infoArchitecture,
            updateFirmware,
-           testArchitecture);
+           testArchitecture,
+           apiDeviceLogin,
+           apiDevicePass
+					 );
   m->loop();
   m->loop();
   m->loop();

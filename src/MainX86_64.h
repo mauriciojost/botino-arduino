@@ -6,6 +6,14 @@
 #include <time.h>
 #include <unistd.h>
 
+#ifndef SIMULATOR_LOGIN
+#define SIMULATOR_LOGIN "simulator_login"
+#endif // SIMULATOR_LOGIN
+
+#ifndef SIMULATOR_PASS
+#define SIMULATOR_PASS "simulator_pass"
+#endif // SIMULATOR_PASS
+
 #define CL_MAX_LENGTH 5000
 #define HTTP_CODE_KEY "HTTP_CODE:"
 #define CURL_COMMAND_GET "/usr/bin/curl --silent -w '" HTTP_CODE_KEY "%%{http_code}' -XGET '%s'"
@@ -23,8 +31,12 @@ unsigned long millis();
 // Callbacks
 ///////////////////
 
-const char *deviceId() {
-  return "PC";
+const char *apiDeviceLogin() {
+  return SIMULATOR_LOGIN;
+}
+
+const char *apiDevicePass() {
+  return SIMULATOR_PASS;
 }
 
 void logLine(const char *str) {

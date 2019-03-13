@@ -44,7 +44,10 @@ void setup() {
            commandArchitecture,
            infoArchitecture,
            updateFirmware,
-           testArchitecture);
+           testArchitecture,
+           apiDeviceLogin,
+           apiDevicePass
+           );
 }
 
 void loop() {
