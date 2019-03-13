@@ -67,6 +67,7 @@ extern "C" {
 #define HELP_COMMAND_ARCH_CLI                                                                                                              \
   "\n  init              : initialize essential settings (wifi connection, logins, etc.)"                                                  \
   "\n  servo             : tune the servo <s> (r|l) and make a test round "                                                                \
+  "\n  rm ...            : remove file in FS "                                                                                             \
   "\n  ls                : list files present in FS "                                                                                      \
   "\n  cat ...           : show content of a file (only if in insecure mode)"                                                              \
   "\n  reset             : reset the device"                                                                                               \
@@ -675,9 +676,18 @@ bool commandArchitecture(const char *c) {
     const char* f = strtok(NULL, " ");
     Buffer buf(128);
     readFile(f, &buf);
+    log(CLASS_MAIN, Info, "### File: %s", f);
     log(CLASS_MAIN, Info, "%s\n", buf.getBuffer());
+    log(CLASS_MAIN, Info, "###");
     return false;
 #endif // INSECURE
+  } else if (strcmp("rm", c) == 0) {
+    const char* f = strtok(NULL, " ");
+    SPIFFS.begin();
+    bool succ = SPIFFS.remove(f);
+    log(CLASS_MAIN, Info, "### File %s removed (%s)", f, BOOL(succ));
+    SPIFFS.end();
+    return false;
   } else if (strcmp("reset", c) == 0) {
     ESP.restart(); // it is normal that it fails if invoked the first time after firmware is written
     return false;
