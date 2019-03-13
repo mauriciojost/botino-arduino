@@ -198,9 +198,12 @@ public:
 						 ) {
 
     // Unstable situation from now until the end of the function
-    // Actors are being initialized, and use callback functions that may trigger
-    // low level calls, like IO, LCD, arms, fan, etc. but they are not set up yet.
+  	//
+    // Actors are being initialized. When they act, they use callback functions that
+  	// may trigger low level calls (like IO, LCD, arms, fan, etc) which are not set up yet.
+  	// As a good practice, actors should do no low level calls unless they are asked to act.
     // Setup of low level calls happens in setupArchitecture().
+  	// After that actors will be eventually asked for acting.
 
     notifier->setup(lcdImg, messageFunc);
     body->setup(arms, ios, sleepInterruptableFunc);
@@ -234,7 +237,7 @@ public:
     if (mode == RunMode) {
       bool syncSucc = sync();
       if (!syncSucc) {
-        abortFunc("Setup failed");
+        abortFunc("Could not sync");
       }
     }
   }
@@ -584,7 +587,7 @@ public:
   void loop() {
     switch (getBot()->getMode()) {
       case (RunMode):
-        log(CLASS_MODULE, Info, "BEGIN LOOP (ver: %s)\n\n", STRINGIFY(PROJ_VERSION));
+        log(CLASS_MODULE, Info, "\n\nBEGIN LOOP (ver: %s)", STRINGIFY(PROJ_VERSION));
         runMode();
         log(CLASS_MODULE, Info, "END LOOP\n\n");
         break;

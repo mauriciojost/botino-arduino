@@ -179,6 +179,7 @@ void abort(const char *msg) {
 
 void test_basic_behaviour() {
   Module* m = new Module();
+  log(CLASS_MAIN, Debug, "### module->setup(...)");
   m->setup(setupArchitecture,
            lcdImg,
            arms,
@@ -201,8 +202,11 @@ void test_basic_behaviour() {
            apiDeviceLogin,
            apiDevicePass
 					 );
+  log(CLASS_MAIN, Debug, "### module->loop()");
   m->loop();
+  log(CLASS_MAIN, Debug, "### module->loop()");
   m->loop();
+  log(CLASS_MAIN, Debug, "### module->loop()");
   m->loop();
 }
 
