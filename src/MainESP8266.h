@@ -665,7 +665,7 @@ bool commandArchitecture(const char *c) {
       return true;
   } else if (strcmp("ls", c) == 0) {
     SPIFFS.begin();
-    Dir dir = SPIFFS.openDir("");
+    Dir dir = SPIFFS.openDir("/");
     while (dir.next()) {
       log(CLASS_MAIN, Info, "- %s (%d bytes)", dir.fileName().c_str(), (int)dir.fileSize());
     }
