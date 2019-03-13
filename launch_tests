@@ -20,31 +20,39 @@ function run_test() {
   export headers_unity="-I libs/Unity/src"
   export src_unity="libs/Unity/src/*.c"
 
-  rm -f ./simulator.bin
+  rm -f ./tester.bin
+  GCOV="-fprofile-arcs -ftest-coverage -fPIC -O0"
 
-  cmd_l="g++ -Wno-deprecated-declarations -g -ggdb -o simulator.bin $flags "$PLATFORMIO_BUILD_FLAGS" $src_c $src_cpp $src_unity $main_src $headers -I src $headers_unity"
+  cmd_l="g++ $GCOV -Wno-deprecated-declarations -g -ggdb -o tester.bin $flags "$PLATFORMIO_BUILD_FLAGS" $src_c $src_cpp $src_unity $main_src $headers -I src $headers_unity"
   $cmd_l 
 
-  ./simulator.bin
-  #cgdb simulator.bin
+  ./tester.bin
+  #cgdb tester.bin
 
-  rm ./simulator.bin
-
+  rm ./tester.bin
 }
 
-
 source mavarduino.conf
-export PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=`git rev-parse --short HEAD` `cat $PROFILE | grep -v '^#'`"
-
-
+export PLATFORMIO_BUILD_FLAGS="`cat $PROFILE | grep -v '^#'`"
 
 for f in $(find test -name *.cpp)
 do
   echo ""
   echo ""
-  echo "### Running $f"
+  echo "### Running test $f"
   echo ""
   echo ""
   run_test "$f" "$test_general_flags" "$test_excludes_pattern"
 done
+
+echo "### Preparing gcovr report"
+export report=gcovr.html
+gcovr -r . --html -o $report
+readlink -e $report
+rm *.gcda *.gcno
+
+echo "### Done"
+  
+
+
 
