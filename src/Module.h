@@ -101,13 +101,14 @@ private:
    */
   bool sync() {
 
-    log(CLASS_MODULE, Info, "# Loading tuning credentials stored in FS...");
+    log(CLASS_MODULE, Info, "# Loading main4ino properties/creds stored in FS...");
     getPropSync()->setLoginPass(apiDeviceLogin(), apiDevicePass());
     getClockSync()->setLoginPass(apiDeviceLogin(), apiDevicePass());
 
-    log(CLASS_MODULE, Info, "# Loading properties stored in FS...");
-    getPropSync()->fsLoadActorsProps(); // load stored properties (most importantly credentials not considered tuning)
-    log(CLASS_MODULE, Info, "# Syncing actors with server...");
+    log(CLASS_MODULE, Info, "# Loading other properties/creds stored in FS...");
+    getPropSync()->fsLoadActorsProps();
+
+    log(CLASS_MODULE, Info, "# Syncing actors with main4ino server...");
     bool serSyncd = getPropSync()->pullPushActors(DEFAULT_PROP_SYNC_ATTEMPTS, false); // sync properties from the server
 
     if (!serSyncd)
@@ -118,11 +119,14 @@ private:
     Buffer timeAux(19);
     log(CLASS_MODULE, Info, "# Previous actors' times: %s...", Timing::humanize(leftTime, &timeAux));
     getBot()->setActorsTime(leftTime);
+
     log(CLASS_MODULE, Info, "# Syncing clock...");
-    bool clockSyncd = getClockSync()->syncClock(getSettings()->inDeepSleepMode(), DEFAULT_CLOCK_SYNC_ATTEMPTS); // sync real date / time on clock, block if in deep sleep
+    // sync real date / time on clock, block if in deep sleep
+    bool clockSyncd =
+    		getClockSync()->syncClock(getSettings()->inDeepSleepMode(), DEFAULT_CLOCK_SYNC_ATTEMPTS);
     log(CLASS_MODULE, Info, "# Current time: %s", Timing::humanize(getBot()->getClock()->currentTime(), &timeAux));
 
-    return serSyncd && clockSyncd;
+    return clockSyncd;
   }
 
 public:
