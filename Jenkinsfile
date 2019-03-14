@@ -6,7 +6,7 @@ pipeline {
   }
   agent {
     docker { 
-      image 'mauriciojost/arduino-ci:platformio-3.5.3-0.1.0' 
+      image 'mauriciojost/arduino-ci:platformio-3.5.3-0.2.0' 
     }
   }
   stages {
