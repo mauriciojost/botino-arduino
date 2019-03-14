@@ -152,5 +152,5 @@ Even if the current main implementation uses ESP8266, *Botino* is meant to be mu
 ## 3.5. Test
 
 ```
-./launch_tests profiles/test.prof
+./launch_tests
 ```

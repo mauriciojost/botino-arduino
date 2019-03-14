@@ -25,7 +25,7 @@ pipeline {
     stage('Test') {
       steps {
         wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
-          sh './launch_tests profiles/test.prof'
+          sh './launch_tests'
         }
       }
     }

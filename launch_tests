@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-PROFILE=$1
-GCOV_ENABLED=$2
-
 set -e
 #set -x
 
@@ -34,7 +31,8 @@ function run_test() {
 }
 
 source mavarduino.conf
-export PLATFORMIO_BUILD_FLAGS="`cat $PROFILE | grep -v '^#'`"
+
+test_setup # must be present in mavarduino.conf
 
 for f in $(find test -name *.cpp)
 do
@@ -46,12 +44,16 @@ do
   run_test "$f" "$test_general_flags" "$test_excludes_pattern"
 done
 
-if [ "$GCOV_ENABLED" == "true" ] 
+# if gcovr is installed
+if [ -f "/usr/local/bin/gcovr" ]
 then
-  echo "### Preparing gcovr report"
-  export report=gcovr.html
-  gcovr -r . --html --html-details -o $report --exclude 'libs/.*' --exclude 'test/.*'
-  readlink -e $report
+  echo "### Preparing gcovr reports"
+  export report_html=gcovr.html
+  export report_xml=gcovr.xml
+  gcovr -r . --html --html-details -o $report_html --exclude 'libs/.*' --exclude 'test/.*'
+  gcovr -r . --xml --xml-pretty --exclude 'libs/.*' --exclude 'test/.*' > $report_xml
+  readlink -e $report_html
+  readlink -e $report_xml
   rm *.gcda *.gcno
 fi
 
