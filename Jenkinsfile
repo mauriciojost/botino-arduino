@@ -50,7 +50,8 @@ pipeline {
     }  
     success {  
       emailext body: "<b>[JENKINS] Success</b>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> Build URL: ${env.BUILD_URL}", from: '', mimeType: 'text/html', replyTo: '', subject: "SUCCESS CI: ${env.JOB_NAME}", to: "mauriciojostx@gmail.com", attachLog: false, compressLog: false;
-      archiveArtifacts artifacts: 'firmware-*.bin', fingerprint: true
+      archiveArtifacts artifacts: 'firmware-*.bin', fingerprint: true;
+      archiveArtifacts artifacts: 'gcovr*', fingerprint: true;
     }  
   }
 }
