@@ -6,17 +6,25 @@ This is a cool-geek-fully-configurable more-than-an-alarm project.
 
 ![Botino](misc/images/botino-v0.jpg)
 
-What it does:
+Use cases: 
+- you want to be gently reminded to drink water every 30 minutes in your desk TODO show image notifying you
+- you want to be be reminded when to leave work
+- you want to create dances and moves freely to use then to play jokes TODO show image dancing
+- you want to be notified that today will rain (thanks to IFTTT) TODO show image notifying to you
+- you want to keep track of events like when you arrive and when you leave work (thanks to IFTTT) TODO show image of the button
+
+Features:
 - 8 fully configurable alarms
 - alarms can trigger cool moves on the bot (like arm moves, dances, light shows, fan, images, animations, etc.)
 - can provide the random quote of the day (as part of a move)
 - can provide random future reading (as part of a move)
 - can fire IFTTT events (as part of a move)
 - can be fired by IFTTT events
-
-Other features: 
 - firmware auto update
+- command line via telnet and serial port TODO add image
 - power saving deep sleep mode (work in progress, aim at having the device working for months on standard 3xAA batteries)
+
+TODO find a way to explain this all in a simpler manner
 
 ## 1. Get Started
 
