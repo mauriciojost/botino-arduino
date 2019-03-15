@@ -39,10 +39,8 @@ source mavarduino.conf
 
 test_setup # must be present in mavarduino.conf
 
-if [ "$is_library" == "true" ]
+if [ "$build_image" == "true" ]
 then
-  echo "### Testing a library"
-else
   echo "### Testing a final project (not a library)"
   platformio run
 fi
