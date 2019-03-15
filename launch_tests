@@ -18,6 +18,10 @@ function run_test() {
   export headers_unity="-I libs/Unity/src"
   export src_unity="libs/Unity/src/*.c"
 
+  #echo "HEADERS: $headers"
+  #echo "SOURCES C: $src_c"
+  #echo "SOURCES C++: $src_cpp"
+  
   rm -f ./tester.bin
   GCOV="-fprofile-arcs -ftest-coverage -fPIC -O0"
 
@@ -30,9 +34,18 @@ function run_test() {
   rm ./tester.bin
 }
 
+
 source mavarduino.conf
 
 test_setup # must be present in mavarduino.conf
+
+if [ "$is_library" == "true" ]
+then
+  echo "### Testing a library"
+else
+  echo "### Testing a final project (not a library)"
+  platformio run
+fi
 
 for f in $(find test -name *.cpp)
 do
@@ -48,13 +61,12 @@ done
 if [ -f "/usr/local/bin/gcovr" ]
 then
   echo "### Preparing gcovr reports"
-  export report_html=gcovr.html
-  export report_xml=gcovr.xml
+  export report_html=coverage.html
+  export report_xml=coverage.xml
   gcovr -r . --html --html-details -o $report_html --exclude 'libs/.*' --exclude 'test/.*'
-  gcovr -r . --xml --xml-pretty --exclude 'libs/.*' --exclude 'test/.*' > $report_xml
+  gcovr -r . --xml --xml-pretty --exclude 'libs/.*' --exclude 'test/.*' --delete > $report_xml
   readlink -e $report_html
   readlink -e $report_xml
-  rm *.gcda *.gcno
 fi
 
 echo "### Done"
