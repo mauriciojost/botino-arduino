@@ -174,3 +174,5 @@
 /profiles/dev2-custom-tuning/servo1.tuning
 /*.html
 /gcovr.xml
+*.gcno
+/coverage.xml
