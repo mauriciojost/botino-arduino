@@ -18,8 +18,7 @@
 #define COMMAND_NAME_VALUE_SEPARATOR ':'
 
 enum CommandsProps {
-  CommandsCmd0FreqProp = 0,   // frequency of execution of command 0
-  CommandsCmdNameValue0Prop,
+  CommandsCmdNameValue0Prop = 0,
   CommandsCmdNameValue1Prop,
   CommandsCmdNameValue2Prop,
   CommandsCmdNameValue3Prop,
@@ -58,7 +57,7 @@ public:
   Commands(const char *n) {
     name = n;
     md = new Metadata(n);
-    md->getTiming()->setFreq("never"); // tied to cmd0 execution, often used for auto-update
+    md->getTiming()->setFreq("never");
     for (int i = 0; i < NRO_COMMANDS; i++) {
       cmds[i] = new Buffer(COMMAND_NAME_VALUE_MAX_LENGTH);
       cmds[i]->fill("Cmd %d%cmove Z.", i, COMMAND_NAME_VALUE_SEPARATOR);
@@ -89,9 +88,7 @@ public:
   void act() {}
 
   void getSetPropValue(int propIndex, GetSetMode setMode, const Value *targetValue, Value *actualValue) {
-    if (propIndex == CommandsCmd0FreqProp) {
-      setPropTiming(setMode, targetValue, actualValue, md->getTiming());
-    } else if (propIndex >= CommandsCmdNameValue0Prop && propIndex < (NRO_COMMANDS + CommandsCmdNameValue0Prop)) {
+    if (propIndex >= CommandsCmdNameValue0Prop && propIndex < (NRO_COMMANDS + CommandsCmdNameValue0Prop)) {
       int i = (int)propIndex - (int)CommandsCmdNameValue0Prop;
       setPropValue(setMode, targetValue, actualValue, cmds[i]);
     }
@@ -107,8 +104,6 @@ public:
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
-      case (CommandsCmd0FreqProp):
-        return "cm0freq";
       case (CommandsCmdNameValue0Prop):
         return "cm0";
       case (CommandsCmdNameValue1Prop):
