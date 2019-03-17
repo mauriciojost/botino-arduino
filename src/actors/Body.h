@@ -276,15 +276,6 @@ private:
     } else if (sscanf(pose, "F%c.", &c0) == 1) {
       // FACES
       return face(c0);
-    } else if (sscanf(pose, "I%c.", &c0) == 1) {
-      // IFTTT (by index)
-      int i = getInt(c0);
-      log(CLASS_BODY, Debug, "Ifttt %d", i);
-      bool suc = ifttt->triggerEvent(i);
-      if (!suc) {
-        notifier->message(0, 1, "Failed ifttt %d", i);
-      }
-      return Success;
     } else if (sscanf(pose, "I%c", &c0) == 1) {
       // IFTTT (by name)
       Buffer evt(MOVE_STR_LENGTH, pose + 1);

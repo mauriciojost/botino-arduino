@@ -13,7 +13,6 @@
 #define CLASS_IFTTT "IF"
 
 #define IFTTT_API_URL_POS "http://maker.ifttt.com/trigger/%s/with/key/%s"
-#define NRO_EVENTS 4
 #define EVENT_NAME_MAX_LENGTH 32
 
 #define CREDENTIAL_BUFFER_SIZE 64
@@ -23,10 +22,6 @@
 #endif // IFTTT_KEY
 
 enum IftttProps {
-  IftttEvtName0Prop = 0,
-  IftttEvtName1Prop,
-  IftttEvtName2Prop,
-  IftttEvtName3Prop,
   IftttKeyProp,       // ifttt key credential (for webhook, sensitive)
   IftttPropsDelimiter // delimiter of the configuration states
 };
@@ -44,7 +39,6 @@ private:
 
   Buffer *iftttKey;
   Buffer *urlAuxBuffer;
-  Buffer *eventNames[NRO_EVENTS];
   Table *headers;
 
 public:
@@ -57,10 +51,6 @@ public:
     initWifiFunc = NULL;
     httpPost = NULL;
     md = new Metadata(n);
-    for (int i = 0; i < NRO_EVENTS; i++) {
-      eventNames[i] = new Buffer(EVENT_NAME_MAX_LENGTH);
-      eventNames[i]->fill("event_%d", i);
-    }
     headers = new Table(0, 0, 0);
   }
 
@@ -86,11 +76,6 @@ public:
     httpPost = h;
   }
 
-  const char *getEventName(int eventNumber) {
-    int safeEvtNumber = POSIT(eventNumber % NRO_EVENTS);
-    return eventNames[safeEvtNumber]->getBuffer();
-  }
-
   bool triggerEvent(const char *eventName) {
     if (initWifiFunc == NULL || httpPost == NULL) {
       log(CLASS_IFTTT, Error, "Init needed");
@@ -107,17 +92,8 @@ public:
     return false;
   }
 
-  bool triggerEvent(int eventNumber) {
-    int safeEvtNumber = POSIT(eventNumber % NRO_EVENTS);
-    const char *eventName = getEventName(safeEvtNumber);
-    return triggerEvent(eventName);
-  }
-
   void getSetPropValue(int propIndex, GetSetMode setMode, const Value *targetValue, Value *actualValue) {
-    if (propIndex >= IftttEvtName0Prop && propIndex < (NRO_EVENTS + IftttEvtName0Prop)) {
-      int i = (int)propIndex - (int)IftttEvtName0Prop;
-      setPropValue(setMode, targetValue, actualValue, eventNames[i]);
-    } else if (propIndex == IftttKeyProp) {
+    if (propIndex == IftttKeyProp) {
       setPropValue(setMode, targetValue, actualValue, iftttKey);
     }
     if (setMode != GetValue) {
@@ -131,14 +107,6 @@ public:
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
-      case (IftttEvtName0Prop):
-        return "evt0";
-      case (IftttEvtName1Prop):
-        return "evt1";
-      case (IftttEvtName2Prop):
-        return "evt2";
-      case (IftttEvtName3Prop):
-        return "evt3";
       case (IftttKeyProp):
         return "_iftttkey"; // with obfuscation (starts with _)
       default:
