@@ -53,6 +53,8 @@
 #define USER_DELAY_MS 4000
 #endif // USER_DELAY_MS
 
+#define VCC_FLOAT ((float)ESP.getVcc() / 1024)
+
 #define ONLY_SHOW_MSG true
 #define SHOW_MSG_AND_REACT false
 
@@ -133,7 +135,7 @@ void logLine(const char *str) {
   Serial.print(ESP.getFreeHeap());
   Serial.print("|");
   Serial.print("VCC ");
-  Serial.print(ESP.getVcc());
+  Serial.print(VCC_FLOAT);
   Serial.print("|");
   // telnet print
   if (telnet.isActive()) {
@@ -438,7 +440,7 @@ void infoArchitecture() {
                             WiFi.localIP().toString().c_str(),
                             ESP.getFreeHeap(),
                             (millis() / 1000) / 3600,
-                            ((float)ESP.getVcc() / 1024));
+                            VCC_FLOAT);
 }
 
 void testArchitecture() {
@@ -750,6 +752,7 @@ void debugHandle() {
     ArduinoOTA.begin();             // Intialize OTA
     firstTime = false;
   }
+  m->getSettings()->setStatus(VCC_FLOAT, ESP.getFreeHeap());
   telnet.handle();     // Handle telnet log server and commands
   ArduinoOTA.handle(); // Handle on the air firmware load
 }

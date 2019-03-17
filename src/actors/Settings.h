@@ -34,9 +34,11 @@
 #define PERIOD_MSEC (PERIOD_SEC * 1000)
 
 #define CREDENTIAL_BUFFER_SIZE 64
+#define STATUS_BUFFER_SIZE 64
 
 enum SettingsProps {
   SettingsDebugProp = 0,          // boolean, define if the device is in debug mode
+  SettingsStatusProp,             // string, defines the current general status of the device (vcc level, heap, etc)
   SettingsLcdLogsProp,            // boolean, define if the device display logs in LCD
   SettingsDeepSleepProp,          // boolean, define if the device is in deep sleep mode
   SettingsPeriodMsProp,           // period in msec for the device to wait until update clock and make actors catch up with acting (if any)
@@ -57,6 +59,7 @@ private:
   int miniperiodms;
   Buffer *ssid;
   Buffer *pass;
+  Buffer *status;
   Metadata *md;
 
 public:
@@ -67,6 +70,8 @@ public:
 
     pass = new Buffer(CREDENTIAL_BUFFER_SIZE);
     pass->load(WIFI_PASSWORD_STEADY);
+
+    status = new Buffer(STATUS_BUFFER_SIZE);
 
     devDebug = true;
     lcdLogs = false;
@@ -90,6 +95,8 @@ public:
         return SENSITIVE_PROP_PREFIX "wifipass";
       case (SettingsDebugProp):
         return DEBUG_PROP_PREFIX "debug";
+      case (SettingsStatusProp):
+        return STATUS_PROP_PREFIX "status";
       case (SettingsLcdLogsProp):
         return DEBUG_PROP_PREFIX "lcdlogs";
       case (SettingsDeepSleepProp):
@@ -107,6 +114,9 @@ public:
     switch (propIndex) {
       case (SettingsDebugProp):
         setPropBoolean(m, targetValue, actualValue, &devDebug);
+        break;
+      case (SettingsStatusProp):
+        setPropValue(m, targetValue, actualValue, status);
         break;
       case (SettingsLcdLogsProp):
         setPropBoolean(m, targetValue, actualValue, &lcdLogs);
@@ -171,6 +181,11 @@ public:
 
   void setPass(const char *s) {
     pass->load(s);
+  }
+
+  void setStatus(float vcc, int heap) {
+  	status->fill("vcc:%0.2f,heap:%d", vcc, heap);
+    getMetadata()->changed();
   }
 
   bool inDeepSleepMode() {
