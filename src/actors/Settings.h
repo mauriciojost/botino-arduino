@@ -88,19 +88,19 @@ public:
   const char *getPropName(int propIndex) {
     switch (propIndex) {
       case (SettingsWifiSsidProp):
-        return SENSITIVE_PROP_PREFIX "wifissid"; // with obfuscation (starts with _)
+        return SENSITIVE_PROP_PREFIX "wifissid";
       case (SettingsWifiPassProp):
-        return SENSITIVE_PROP_PREFIX "wifipass"; // with obfuscation (starts with _)
+        return SENSITIVE_PROP_PREFIX "wifipass";
       case (SettingsDebugProp):
-        return "debug";
+        return DEBUG_PROP_PREFIX "debug";
       case (SettingsLcdLogsProp):
-        return "lcdlogs";
+        return DEBUG_PROP_PREFIX "lcdlogs";
       case (SettingsDeepSleepProp):
         return "deepsleep";
       case (SettingsPeriodMsProp):
-        return "periodms";
+        return DEBUG_PROP_PREFIX "periodms";
       case (SettingsMiniPeriodMsProp):
-        return "mperiodms";
+        return DEBUG_PROP_PREFIX "mperiodms";
       case (SettingsButtonRoutineLimitProp):
         return "btnrout";
       default:
