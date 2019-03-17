@@ -137,7 +137,7 @@ public:
   const char *getPropName(int propIndex) {
     switch (propIndex) {
       case (NotifierNotifsProp):
-        return "ns";
+        return STATUS_PROP_PREFIX "ns";
       default:
         return "";
     }

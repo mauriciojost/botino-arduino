@@ -88,9 +88,9 @@ public:
   const char *getPropName(int propIndex) {
     switch (propIndex) {
       case (SettingsWifiSsidProp):
-        return "_wifissid"; // with obfuscation (starts with _)
+        return SENSITIVE_PROP_PREFIX "wifissid"; // with obfuscation (starts with _)
       case (SettingsWifiPassProp):
-        return "_wifipass"; // with obfuscation (starts with _)
+        return SENSITIVE_PROP_PREFIX "wifipass"; // with obfuscation (starts with _)
       case (SettingsDebugProp):
         return "debug";
       case (SettingsLcdLogsProp):
