@@ -481,7 +481,7 @@ void updateFirmware() {
 ///////////////////
 
 bool sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
-  if (m->getSettings()->inDeepSleepMode() && periodSecs > 120) { // in deep sleep mode and period big enough
+  if (m->getSettings()->inDeepSleepMode()) { // in deep sleep mode
     m->command("move Z.");
     bool interrupt = lightSleepInterruptable(now() /* always do it */, PRE_DEEP_SLEEP_WINDOW_SECS);
     if (interrupt) {
