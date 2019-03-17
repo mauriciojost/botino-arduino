@@ -108,7 +108,7 @@ public:
   const char *getPropName(int propIndex) {
     switch (propIndex) {
       case (IftttKeyProp):
-        return "_iftttkey"; // with obfuscation (starts with _)
+        return SENSITIVE_PROP_PREFIX "iftttkey"; // with obfuscation (starts with _)
       default:
         return "";
     }
