@@ -117,12 +117,6 @@ public:
     return QuotesPropsDelimiter;
   }
 
-  void getInfo(int infoIndex, Buffer *info) {}
-
-  int getNroInfos() {
-    return 0;
-  }
-
   Metadata *getMetadata() {
     return md;
   }
