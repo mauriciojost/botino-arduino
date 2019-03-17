@@ -39,7 +39,6 @@ enum SettingsProps {
   SettingsDebugProp = 0,          // boolean, define if the device is in debug mode
   SettingsLcdLogsProp,            // boolean, define if the device display logs in LCD
   SettingsDeepSleepProp,          // boolean, define if the device is in deep sleep mode
-  SettingsButtonRoutineLimitProp, // integer, define the first X routines that are randomly executed when the button is pressed
   SettingsPeriodMsProp,           // period in msec for the device to wait until update clock and make actors catch up with acting (if any)
   SettingsMiniPeriodMsProp, // period in msec for the device to got to sleep (and remain unresponsive from user) (only if no deep sleep)
   SettingsWifiSsidProp,     // wifi ssid
@@ -56,7 +55,6 @@ private:
   bool deepSleep;
   int periodms;
   int miniperiodms;
-  int buttonRoutineUntil;
   Buffer *ssid;
   Buffer *pass;
   Metadata *md;
@@ -73,7 +71,6 @@ public:
     devDebug = true;
     lcdLogs = false;
     deepSleep = false;
-    buttonRoutineUntil = 4;
     periodms = PERIOD_MSEC;
     miniperiodms = FRAG_TO_SLEEP_MS_MAX;
     md = new Metadata(n);
@@ -101,8 +98,6 @@ public:
         return DEBUG_PROP_PREFIX "periodms";
       case (SettingsMiniPeriodMsProp):
         return DEBUG_PROP_PREFIX "mperiodms";
-      case (SettingsButtonRoutineLimitProp):
-        return "btnrout";
       default:
         return "";
     }
@@ -125,9 +120,6 @@ public:
       case (SettingsMiniPeriodMsProp):
         setPropInteger(m, targetValue, actualValue, &miniperiodms);
         break;
-      case (SettingsButtonRoutineLimitProp):
-        setPropInteger(m, targetValue, actualValue, &buttonRoutineUntil);
-        break;
       case (SettingsWifiSsidProp):
         setPropValue(m, targetValue, actualValue, ssid);
         break;
@@ -148,10 +140,6 @@ public:
 
   Metadata *getMetadata() {
     return md;
-  }
-
-  int getNroRoutinesForButton() {
-    return buttonRoutineUntil;
   }
 
   bool getDebug() {

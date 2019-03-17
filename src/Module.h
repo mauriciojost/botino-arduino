@@ -41,7 +41,6 @@
   "\n  actall          : all act"                                                                                                          \
   "\n  touchall        : mark actors as 'changed' to force synchronization with the server"                                                \
   "\n  actone ...      : make actor <x> act"                                                                                               \
-  "\n  rnd             : execute random routine"                                                                                           \
   "\n  lcd ...         : write on display <x> <y> <color> <wrap> <clear> <size> <str>"                                                     \
   "\n  wifissid ...    : set wifi ssid"                                                                                                    \
   "\n  wifipass ...    : set wifi pass"                                                                                                    \
@@ -383,11 +382,6 @@ public:
         return false;
       }
       actone(c);
-      return false;
-    } else if (strcmp("rnd", c) == 0) {
-      int routine = (int)random(getSettings()->getNroRoutinesForButton());
-      log(CLASS_MODULE, Debug, "Routine %d...", routine);
-      getBody()->performMove(routine);
       return false;
     } else if (strcmp("store", c) == 0) {
       propSync->fsStoreActorsProps(); // store credentials
