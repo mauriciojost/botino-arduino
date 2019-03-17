@@ -561,7 +561,7 @@ public:
     for (int i = 0; i < actors->size(); i++) {
       Actor *actor = actors->get(i);
       if (actorN == NULL || strcmp(actor->getName(), actorN) == 0) {
-        bot->getPropsJson(&contentAuxBuffer, i, EXCLUSIVE_FILTER_MODE, SENSITIVE_PROP_PREFIX);
+        bot->getPropsJson(&contentAuxBuffer, i, EXCLUSIVE_FILTER_MODE, FIRST_CHAR(SENSITIVE_PROP_PREFIX));
         contentAuxBuffer.replace('{', ' ');
         contentAuxBuffer.replace('}', ' ');
         contentAuxBuffer.replace(',', '\n');
