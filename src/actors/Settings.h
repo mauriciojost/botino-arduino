@@ -35,12 +35,15 @@
 
 #define CREDENTIAL_BUFFER_SIZE 64
 #define STATUS_BUFFER_SIZE 64
+#define VERSION_BUFFER_SIZE 32
 
 enum SettingsProps {
   SettingsDebugProp = 0,          // boolean, define if the device is in debug mode
   SettingsStatusProp,             // string, defines the current general status of the device (vcc level, heap, etc)
+  SettingsVersionProp,             // string, defines the current version
   SettingsLcdLogsProp,            // boolean, define if the device display logs in LCD
   SettingsDeepSleepProp,          // boolean, define if the device is in deep sleep mode
+  SettingsFsLogsProp,             // boolean, define if logs are to be dumped in the file system (only in debug mode)
   SettingsPeriodMsProp,           // period in msec for the device to wait until update clock and make actors catch up with acting (if any)
   SettingsMiniPeriodMsProp, // period in msec for the device to got to sleep (and remain unresponsive from user) (only if no deep sleep)
   SettingsWifiSsidProp,     // wifi ssid
@@ -55,11 +58,13 @@ private:
   bool devDebug;
   bool lcdLogs;
   bool deepSleep;
+  bool fsLogs;
   int periodms;
   int miniperiodms;
   Buffer *ssid;
   Buffer *pass;
   Buffer *status;
+  Buffer *version;
   Metadata *md;
 
 public:
@@ -73,9 +78,12 @@ public:
 
     status = new Buffer(STATUS_BUFFER_SIZE);
 
+    version = new Buffer(VERSION_BUFFER_SIZE);
+
     devDebug = true;
     lcdLogs = false;
     deepSleep = false;
+    fsLogs = false;
     periodms = PERIOD_MSEC;
     miniperiodms = FRAG_TO_SLEEP_MS_MAX;
     md = new Metadata(n);
@@ -97,10 +105,14 @@ public:
         return DEBUG_PROP_PREFIX "debug";
       case (SettingsStatusProp):
         return STATUS_PROP_PREFIX "status";
+      case (SettingsVersionProp):
+        return DEBUG_PROP_PREFIX "version";
       case (SettingsLcdLogsProp):
         return DEBUG_PROP_PREFIX "lcdlogs";
       case (SettingsDeepSleepProp):
         return "deepsleep";
+      case (SettingsFsLogsProp):
+        return DEBUG_PROP_PREFIX "fslogs";
       case (SettingsPeriodMsProp):
         return DEBUG_PROP_PREFIX "periodms";
       case (SettingsMiniPeriodMsProp):
@@ -118,11 +130,17 @@ public:
       case (SettingsStatusProp):
         setPropValue(m, targetValue, actualValue, status);
         break;
+      case (SettingsVersionProp):
+        setPropValue(m, targetValue, actualValue, version);
+        break;
       case (SettingsLcdLogsProp):
         setPropBoolean(m, targetValue, actualValue, &lcdLogs);
         break;
       case (SettingsDeepSleepProp):
         setPropBoolean(m, targetValue, actualValue, &deepSleep);
+        break;
+      case (SettingsFsLogsProp):
+        setPropBoolean(m, targetValue, actualValue, &fsLogs);
         break;
       case (SettingsPeriodMsProp):
         setPropInteger(m, targetValue, actualValue, &periodms);
@@ -183,6 +201,11 @@ public:
     pass->load(s);
   }
 
+  void setVersion(const char* v) {
+    status->load(v);
+    getMetadata()->changed();
+  }
+
   void setStatus(float vcc, int heap) {
   	status->fill("vcc:%0.2f,heap:%d", vcc, heap);
     getMetadata()->changed();
@@ -198,6 +221,10 @@ public:
 
   int miniPeriodMsec() {
     return miniperiodms;
+  }
+
+  bool fsLogsEnabled() {
+    return fsLogs;
   }
 };
 

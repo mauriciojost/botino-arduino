@@ -35,6 +35,8 @@
 #define WIFI_DELAY_MS 4000
 #endif // WIFI_DELAY_MS
 
+#define MAX_ROUND_ROBIN_LOG_FILES 5
+
 #ifndef FIRMWARE_UPDATE_URL
 #define FIRMWARE_UPDATE_URL "http://martinenhome.com:6780/firmwares/botino/latest"
 #endif // FIRMWARE_UPDATE_URL
@@ -44,6 +46,8 @@
 #define SERVO_PERIOD_REACTION_MS 15
 
 #define NEXT_LOG_LINE_ALGORITHM ((currentLogLine + 1)%4)
+
+#define LOG_BUFFER_MAX_LENGTH 2048
 
 #ifndef URL_PRINT_MAX_LENGTH
 #define URL_PRINT_MAX_LENGTH 20
@@ -94,6 +98,7 @@ Buffer *apiDevicePwd = NULL;
 ServoConf *servo0Conf = NULL;
 ServoConf *servo1Conf = NULL;
 int currentLogLine = 0;
+Buffer* logBuffer = NULL;
 
 #define LED_INT_TOGGLE ios('w', IoToggle);
 #define LED_INT_ON ios('w', IoOn);
@@ -113,6 +118,7 @@ bool haveToInterrupt();
 void handleInterrupt();
 void initializeServoConfigs();
 Buffer* initializeTuningVariable(Buffer **var, const char *filename, int maxLength);
+void dumpLogBuffer();
 
 ////////////////////////////////////////
 // Functions requested for architecture
@@ -156,6 +162,14 @@ void logLine(const char *str) {
     lcd.display();
     delay(DELAY_MS_SPI);
     Serial.print("LCD|");
+  }
+  // filesystem logs
+  if (m->getSettings()->fsLogsEnabled()) {
+  	if (logBuffer == NULL) {
+  		logBuffer = new Buffer(LOG_BUFFER_MAX_LENGTH);
+  	}
+    logBuffer->append(str);
+    logBuffer->append("\n");
   }
   Serial.print(str);
 }
@@ -753,6 +767,10 @@ void debugHandle() {
     firstTime = false;
   }
   m->getSettings()->setStatus(VCC_FLOAT, ESP.getFreeHeap());
+  m->getSettings()->setVersion(STRINGIFY(PROJ_VERSION));
+  if (m->getSettings()->fsLogsEnabled()) {
+    dumpLogBuffer();
+  }
   telnet.handle();     // Handle telnet log server and commands
   ArduinoOTA.handle(); // Handle on the air firmware load
 }
@@ -886,3 +904,15 @@ Buffer* initializeTuningVariable(Buffer **var, const char *filename, int maxLeng
   return *var;
 }
 
+void dumpLogBuffer() {
+	if (logBuffer == NULL)
+		return;
+
+	Buffer fname(16);
+	static int rr = 0;
+	rr = (rr + 1) % MAX_ROUND_ROBIN_LOG_FILES;
+	fname.fill("%d.log", rr);
+	bool suc = writeFile(fname.getBuffer(), logBuffer->getBuffer());
+  log(CLASS_MAIN, Warn, "Log stored: %d %s", rr, fname.getBuffer());
+	logBuffer->clear();
+}
