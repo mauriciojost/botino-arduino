@@ -135,11 +135,11 @@ bool inDeepSleepMode();
 ///////////////////
 
 const char *apiDeviceLogin() {
-  return initializeTuningVariable(&apiDeviceId, DEVICE_ALIAS_FILENAME, DEVICE_ALIAS_MAX_LENGTH, "unknownlogin")->getBuffer();
+  return initializeTuningVariable(&apiDeviceId, DEVICE_ALIAS_FILENAME, DEVICE_ALIAS_MAX_LENGTH, NULL)->getBuffer();
 }
 
 const char *apiDevicePass() {
-  return initializeTuningVariable(&apiDevicePwd, DEVICE_PWD_FILENAME, DEVICE_PWD_MAX_LENGTH, "unknownpass")->getBuffer();
+  return initializeTuningVariable(&apiDevicePwd, DEVICE_PWD_FILENAME, DEVICE_PWD_MAX_LENGTH, NULL)->getBuffer();
 }
 
 void logLine(const char *str) {
@@ -913,8 +913,9 @@ Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLeng
     bool succAlias = readFile(filename, *var); // preserve the alias
     if (succAlias) {                           // managed to retrieve the alias
       (*var)->replace('\n', 0);                // content already with the alias
-    } else {
+    } else if (defaultContent != NULL) {
       (*var)->fill(defaultContent);
+    } else {
       abort(filename);
     }
   }
