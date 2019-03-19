@@ -42,7 +42,7 @@ enum SettingsProps {
   SettingsStatusProp,             // string, defines the current general status of the device (vcc level, heap, etc)
   SettingsVersionProp,             // string, defines the current version
   SettingsLcdLogsProp,            // boolean, define if the device display logs in LCD
-  SettingsDeepSleepProp,          // boolean, define if the device is in deep sleep mode
+  SettingsOneRunProp,             // boolean, define if the device is to be launched only once and then reseted (used in deep sleep mode)
   SettingsFsLogsProp,             // boolean, define if logs are to be dumped in the file system (only in debug mode)
   SettingsPeriodMsProp,           // period in msec for the device to wait until update clock and make actors catch up with acting (if any)
   SettingsMiniPeriodMsProp, // period in msec for the device to got to sleep (and remain unresponsive from user) (only if no deep sleep)
@@ -57,7 +57,7 @@ private:
   const char *name;
   bool devDebug;
   bool lcdLogs;
-  bool deepSleep;
+  bool oRun;
   bool fsLogs;
   int periodms;
   int miniperiodms;
@@ -82,7 +82,7 @@ public:
 
     devDebug = true;
     lcdLogs = false;
-    deepSleep = false;
+    oRun = false;
     fsLogs = false;
     periodms = PERIOD_MSEC;
     miniperiodms = FRAG_TO_SLEEP_MS_MAX;
@@ -109,8 +109,8 @@ public:
         return DEBUG_PROP_PREFIX "version";
       case (SettingsLcdLogsProp):
         return DEBUG_PROP_PREFIX "lcdlogs";
-      case (SettingsDeepSleepProp):
-        return "deepsleep";
+      case (SettingsOneRunProp):
+        return ADVANCED_PROP_PREFIX "onerun";
       case (SettingsFsLogsProp):
         return DEBUG_PROP_PREFIX "fslogs";
       case (SettingsPeriodMsProp):
@@ -136,8 +136,8 @@ public:
       case (SettingsLcdLogsProp):
         setPropBoolean(m, targetValue, actualValue, &lcdLogs);
         break;
-      case (SettingsDeepSleepProp):
-        setPropBoolean(m, targetValue, actualValue, &deepSleep);
+      case (SettingsOneRunProp):
+        setPropBoolean(m, targetValue, actualValue, &oRun);
         break;
       case (SettingsFsLogsProp):
         setPropBoolean(m, targetValue, actualValue, &fsLogs);
@@ -211,8 +211,8 @@ public:
     getMetadata()->changed();
   }
 
-  bool inDeepSleepMode() {
-    return deepSleep;
+  bool oneRun() {
+    return oRun;
   }
 
   int periodMsec() {

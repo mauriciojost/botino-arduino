@@ -120,9 +120,9 @@ private:
     getBot()->setActorsTime(leftTime);
 
     log(CLASS_MODULE, Info, "# Syncing clock...");
-    // sync real date / time on clock, block if in deep sleep
+    // sync real date / time on clock, block if a single run is requested
     bool clockSyncd =
-    		getClockSync()->syncClock(getSettings()->inDeepSleepMode(), DEFAULT_CLOCK_SYNC_ATTEMPTS);
+    		getClockSync()->syncClock(getSettings()->oneRun(), DEFAULT_CLOCK_SYNC_ATTEMPTS);
     log(CLASS_MODULE, Info, "# Current time: %s", Timing::humanize(getBot()->getClock()->currentTime(), &timeAux));
 
     return clockSyncd;
@@ -574,8 +574,8 @@ public:
     time_t cycleBegin = now();
     runModeArchitecture();
     cycleBot(false, false, true);
-    if (getSettings()->inDeepSleepMode()) {
-      // before going to deep sleep store in the server the last status of all actors
+    if (getSettings()->oneRun()) {
+      // before finishing store in the server the last status of all actors
       log(CLASS_MODULE, Info, "Syncing actors with server (run)...");
       getPropSync()->pullPushActors(DEFAULT_PROP_SYNC_ATTEMPTS, false); // sync properties from the server (with new props and new clock blocked timing)
     }

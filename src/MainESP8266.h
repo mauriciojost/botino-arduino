@@ -22,12 +22,16 @@
 #define HW_STARTUP_DELAY_MSECS 500
 
 #define DEVICE_ALIAS_FILENAME "alias.tuning"
+#define DEVICE_ALIAS_MAX_LENGTH 16
+
 #define DEVICE_PWD_FILENAME "pass.tuning"
+#define DEVICE_PWD_MAX_LENGTH 16
+
 #define SERVO_0_FILENAME "servo0.tuning"
 #define SERVO_1_FILENAME "servo1.tuning"
 
-#define DEVICE_ALIAS_MAX_LENGTH 16
-#define DEVICE_PWD_MAX_LENGTH 16
+#define DEVICE_DSLEEP_FILENAME "deepsleep.tuning"
+#define DEVICE_DSLEEP_MAX_LENGTH 1
 
 #define LCD_PIXEL_WIDTH 6
 #define LCD_PIXEL_HEIGHT 8
@@ -96,6 +100,7 @@ Servo servoRight;
 Adafruit_SSD1306 *lcd = NULL;
 Buffer *apiDeviceId = NULL;
 Buffer *apiDevicePwd = NULL;
+Buffer *deepSleepMode = NULL;
 ServoConf *servo0Conf = NULL;
 ServoConf *servo1Conf = NULL;
 int currentLogLine = 0;
@@ -118,8 +123,9 @@ void debugHandle();
 bool haveToInterrupt();
 void handleInterrupt();
 void initializeServoConfigs();
-Buffer* initializeTuningVariable(Buffer **var, const char *filename, int maxLength);
+Buffer* initializeTuningVariable(Buffer **var, const char *filename, int maxLength, const char* defaultContent);
 void dumpLogBuffer();
+bool inDeepSleepMode();
 
 ////////////////////////////////////////
 // Functions requested for architecture
@@ -129,11 +135,11 @@ void dumpLogBuffer();
 ///////////////////
 
 const char *apiDeviceLogin() {
-  return initializeTuningVariable(&apiDeviceId, DEVICE_ALIAS_FILENAME, DEVICE_ALIAS_MAX_LENGTH)->getBuffer();
+  return initializeTuningVariable(&apiDeviceId, DEVICE_ALIAS_FILENAME, DEVICE_ALIAS_MAX_LENGTH, "unknownlogin")->getBuffer();
 }
 
 const char *apiDevicePass() {
-  return initializeTuningVariable(&apiDevicePwd, DEVICE_PWD_FILENAME, DEVICE_PWD_MAX_LENGTH)->getBuffer();
+  return initializeTuningVariable(&apiDevicePwd, DEVICE_PWD_FILENAME, DEVICE_PWD_MAX_LENGTH, "unknownpass")->getBuffer();
 }
 
 void logLine(const char *str) {
@@ -496,7 +502,7 @@ void updateFirmware() {
 ///////////////////
 
 bool sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
-  if (m->getSettings()->inDeepSleepMode()) { // in deep sleep mode
+  if (inDeepSleepMode()) { // in deep sleep mode
     m->command("move Z.");
     bool interrupt = lightSleepInterruptable(now() /* always do it */, PRE_DEEP_SLEEP_WINDOW_SECS);
     if (interrupt) {
@@ -751,7 +757,7 @@ void abort(const char *msg) {
   m->getNotifier()->message(0, 1, "Abort: %s", msg);
   bool interrupt = sleepInterruptable(now(), ABORT_DELAY_MS);
   if (interrupt) {
-  } else if (m->getSettings()->inDeepSleepMode()) {
+  } else if (inDeepSleepMode()) {
     ESP.deepSleep(m->getSettings()->periodMsec() * 1000L); // boot again in next cycle
   } else {
     ESP.restart(); // it is normal that it fails if invoked the first time after firmware is written
@@ -894,14 +900,14 @@ void initializeServoConfigs() {
   initializeServoConfig(SERVO_1_FILENAME, &servo1Conf);
 }
 
-Buffer* initializeTuningVariable(Buffer **var, const char *filename, int maxLength) {
+Buffer* initializeTuningVariable(Buffer **var, const char *filename, int maxLength, const char* defaultContent) {
   if (*var == NULL) {
     *var = new Buffer(maxLength);
     bool succAlias = readFile(filename, *var); // preserve the alias
     if (succAlias) {                           // managed to retrieve the alias
       (*var)->replace('\n', 0);                // content already with the alias
     } else {
-      (*var)->fill("unknown");
+      (*var)->fill(defaultContent);
       abort(filename);
     }
   }
@@ -919,4 +925,8 @@ void dumpLogBuffer() {
 	bool suc = writeFile(fname.getBuffer(), logBuffer->getBuffer());
   log(CLASS_MAIN, Warn, "Log stored: %d %s", rr, fname.getBuffer());
 	logBuffer->clear();
+}
+
+bool inDeepSleepMode() {
+  return (bool)atoi(initializeTuningVariable(&deepSleepMode, DEVICE_DSLEEP_FILENAME, DEVICE_DSLEEP_MAX_LENGTH, "0")->getBuffer());
 }
