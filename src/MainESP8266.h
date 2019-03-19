@@ -19,6 +19,7 @@
 
 #define DELAY_MS_SPI 3
 #define ABORT_DELAY_MS 5000
+#define HW_STARTUP_DELAY_MSECS 500
 
 #define DEVICE_ALIAS_FILENAME "alias.tuning"
 #define DEVICE_PWD_FILENAME "pass.tuning"
@@ -512,7 +513,8 @@ bool sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
 BotMode setupArchitecture() {
 
   // Let HW startup
-  delay(2 * 1000);
+  delay(HW_STARTUP_DELAY_MSECS);
+
 
   // Setup pins
   log(CLASS_MAIN, Debug, "Setup pins");
