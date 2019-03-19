@@ -57,6 +57,13 @@ Control your botino via the [Main4ino portal](http://martinenhome.com:6780).
 
 # 2. Extras
 
+## Low Power (a.k.a. Deep Sleep mode)
+
+To set it up: 
+
+- ensure file deepsleep.tuning is set to 1
+- ensure property settings.+onerun is set to true 
+
 ## Telnet
 
 You can telnet the device for debugging purposes. You will get the logs via Wifi. Debug mode must be enabled.
