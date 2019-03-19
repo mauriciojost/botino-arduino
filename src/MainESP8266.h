@@ -524,8 +524,7 @@ BotMode setupArchitecture() {
   log(CLASS_MAIN, Debug, "Setup timing");
   setExternalMillis(millis);
 
-  // Setup pins
-  log(CLASS_MAIN, Debug, "Setup pins");
+  log(CLASS_MAIN, Debug, "Setup pins & deepsleep");
   pinMode(LEDR_PIN, OUTPUT);
   pinMode(LEDW_PIN, OUTPUT);
   pinMode(FAN_PIN, OUTPUT);
