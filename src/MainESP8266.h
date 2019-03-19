@@ -93,7 +93,7 @@ HTTPClient httpClient;
 RemoteDebug telnet;
 Servo servoLeft;
 Servo servoRight;
-Adafruit_SSD1306 lcd(-1);
+Adafruit_SSD1306 *lcd = NULL;
 Buffer *apiDeviceId = NULL;
 Buffer *apiDevicePwd = NULL;
 ServoConf *servo0Conf = NULL;
@@ -152,15 +152,15 @@ void logLine(const char *str) {
     Serial.print("TELNET|");
   }
   // lcd print
-  if (m->getSettings()->getLcdLogs()) {
+  if (lcd != NULL && m->getSettings()->getLcdLogs()) { // can be called before LCD initialization
   	currentLogLine = NEXT_LOG_LINE_ALGORITHM;
-    lcd.setTextWrap(false);
-    lcd.fillRect(0, currentLogLine * LCD_PIXEL_HEIGHT, 128, LCD_PIXEL_HEIGHT, BLACK);
-    lcd.setTextSize(1);
-    lcd.setTextColor(WHITE);
-    lcd.setCursor(0, currentLogLine * LCD_PIXEL_HEIGHT);
-    lcd.print(str);
-    lcd.display();
+    lcd->setTextWrap(false);
+    lcd->fillRect(0, currentLogLine * LCD_PIXEL_HEIGHT, 128, LCD_PIXEL_HEIGHT, BLACK);
+    lcd->setTextSize(1);
+    lcd->setTextColor(WHITE);
+    lcd->setCursor(0, currentLogLine * LCD_PIXEL_HEIGHT);
+    lcd->print(str);
+    lcd->display();
     delay(DELAY_MS_SPI);
     Serial.print("LCD|");
   }
@@ -278,21 +278,21 @@ int httpPost(const char *url, const char *body, ParamStream *response, Table *he
 void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clearMode, int size, const char *str) {
   switch (clearMode) {
     case FullClear:
-      lcd.clearDisplay();
+      lcd->clearDisplay();
       break;
     case LineClear:
-      lcd.fillRect(x * size * LCD_PIXEL_WIDTH, y * size * LCD_PIXEL_HEIGHT, 128, size * LCD_PIXEL_HEIGHT, !color);
+      lcd->fillRect(x * size * LCD_PIXEL_WIDTH, y * size * LCD_PIXEL_HEIGHT, 128, size * LCD_PIXEL_HEIGHT, !color);
       wrap = false;
       break;
     case NoClear:
       break;
   }
-  lcd.setTextWrap(wrap);
-  lcd.setTextSize(size);
-  lcd.setTextColor(color);
-  lcd.setCursor(x * size * LCD_PIXEL_WIDTH, y * size * LCD_PIXEL_HEIGHT);
-  lcd.print(str);
-  lcd.display();
+  lcd->setTextWrap(wrap);
+  lcd->setTextSize(size);
+  lcd->setTextColor(color);
+  lcd->setCursor(x * size * LCD_PIXEL_WIDTH, y * size * LCD_PIXEL_HEIGHT);
+  lcd->print(str);
+  lcd->display();
   log(CLASS_MAIN, Debug, "Msg: (%d,%d)'%s'", x, y, str);
   delay(DELAY_MS_SPI);
 }
@@ -376,24 +376,24 @@ void lcdImg(char img, uint8_t bitmap[]) {
   switch (img) {
     case '_': // dim
       log(CLASS_MAIN, Debug, "Dim face");
-      lcd.dim(true);
+      lcd->dim(true);
       break;
     case '-': // bright
       log(CLASS_MAIN, Debug, "Bright face");
-      lcd.dim(false);
+      lcd->dim(false);
       break;
     case 'w': // white
       log(CLASS_MAIN, Debug, "White face");
-      lcd.invertDisplay(true);
+      lcd->invertDisplay(true);
       break;
     case 'b': // black
       log(CLASS_MAIN, Debug, "Black face");
-      lcd.invertDisplay(false);
+      lcd->invertDisplay(false);
       break;
     case 'l': // clear
       log(CLASS_MAIN, Debug, "Clear face");
-      lcd.invertDisplay(false);
-      lcd.clearDisplay();
+      lcd->invertDisplay(false);
+      lcd->clearDisplay();
       break;
     case 'c': // custom
       log(CLASS_MAIN, Debug, "Custom face", img);
@@ -406,7 +406,7 @@ void lcdImg(char img, uint8_t bitmap[]) {
       log(CLASS_MAIN, Debug, "Face?: %c", img);
       break;
   }
-  lcd.display();
+  lcd->display();
   delay(DELAY_MS_SPI);
 }
 
@@ -515,6 +515,14 @@ BotMode setupArchitecture() {
   // Let HW startup
   delay(HW_STARTUP_DELAY_MSECS);
 
+  // Intialize the logging framework
+  Serial.begin(115200);     // Initialize serial port
+  Serial.setTimeout(10000); // Timeout for read
+  setupLog(logLine);
+  log(CLASS_MAIN, Info, "Log initialized");
+
+  log(CLASS_MAIN, Debug, "Setup timing");
+  setExternalMillis(millis);
 
   // Setup pins
   log(CLASS_MAIN, Debug, "Setup pins");
@@ -525,16 +533,11 @@ BotMode setupArchitecture() {
   pinMode(SERVO1_PIN, OUTPUT);
   pinMode(BUTTON0_PIN, INPUT);
 
-  // Intialize the logging framework
-  Serial.begin(115200);     // Initialize serial port
-  Serial.setTimeout(10000); // Timeout for read
-  lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  delay(DELAY_MS_SPI); // Initialize LCD
-  setupLog(logLine);   // Initialize log callback
+  log(CLASS_MAIN, Debug, "Setup LCD");
+  lcd = new Adafruit_SSD1306(-1);
+  lcd->begin(SSD1306_SWITCHCAPVCC, 0x3C); // Initialize LCD
+  delay(DELAY_MS_SPI);
   heartbeat();
-
-  log(CLASS_MAIN, Debug, "Setup timing");
-  setExternalMillis(millis);
 
   log(CLASS_MAIN, Debug, "Setup wdt");
   ESP.wdtEnable(1); // argument not used
@@ -794,7 +797,7 @@ void bitmapToLcd(uint8_t bitmap[]) {
         int16_t xl = (int16_t)xi * 64 + (int16_t)b * 8;
         int16_t yl = (int16_t)yi * 8;
         uint16_t cl = color == 0 ? BLACK : WHITE;
-        lcd.fillRect(xl, yl, 8, 8, cl);
+        lcd->fillRect(xl, yl, 8, 8, cl);
       }
     }
   }
