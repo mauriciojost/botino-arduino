@@ -40,7 +40,7 @@
 enum SettingsProps {
   SettingsDebugProp = 0,          // boolean, define if the device is in debug mode
   SettingsStatusProp,             // string, defines the current general status of the device (vcc level, heap, etc)
-  SettingsVersionProp,             // string, defines the current version
+  SettingsVersionProp,            // string, defines the current version
   SettingsLcdLogsProp,            // boolean, define if the device display logs in LCD
   SettingsOneRunProp,             // boolean, define if the device is to be launched only once and then reseted (used in deep sleep mode)
   SettingsFsLogsProp,             // boolean, define if logs are to be dumped in the file system (only in debug mode)
