@@ -84,8 +84,8 @@ private:
   void (*info)();
   void (*test)();
   void (*update)();
-  const char* (*apiDeviceLogin)();
-  const char* (*apiDevicePass)();
+  const char *(*apiDeviceLogin)();
+  const char *(*apiDevicePass)();
 
   /**
    * Synchronize with the server.
@@ -111,7 +111,7 @@ private:
     bool serSyncd = getPropSync()->pullPushActors(DEFAULT_PROP_SYNC_ATTEMPTS, false); // sync properties from the server
 
     if (!serSyncd)
-    	return false; // fail fast
+      return false; // fail fast
 
     time_t leftTime = getBot()->getClock()->currentTime();
 
@@ -121,8 +121,7 @@ private:
 
     log(CLASS_MODULE, Info, "# Syncing clock...");
     // sync real date / time on clock, block if a single run is requested
-    bool clockSyncd =
-    		getClockSync()->syncClock(getSettings()->oneRun(), DEFAULT_CLOCK_SYNC_ATTEMPTS);
+    bool clockSyncd = getClockSync()->syncClock(getSettings()->oneRun(), DEFAULT_CLOCK_SYNC_ATTEMPTS);
     log(CLASS_MODULE, Info, "# Current time: %s", Timing::humanize(getBot()->getClock()->currentTime(), &timeAux));
 
     return clockSyncd;
@@ -196,17 +195,16 @@ public:
              void (*infoFunc)(),
              void (*updateFunc)(),
              void (*testFunc)(),
-             const char* (*apiDeviceLoginFunc)(),
-             const char* (*apiDevicePassFunc)()
-						 ) {
+             const char *(*apiDeviceLoginFunc)(),
+             const char *(*apiDevicePassFunc)()) {
 
     // Unstable situation from now until the end of the function
-  	//
+    //
     // Actors are being initialized. When they act, they use callback functions that
-  	// may trigger low level calls (like IO, LCD, arms, fan, etc) which are not set up yet.
-  	// As a good practice, actors should do no low level calls unless they are asked to act.
+    // may trigger low level calls (like IO, LCD, arms, fan, etc) which are not set up yet.
+    // As a good practice, actors should do no low level calls unless they are asked to act.
     // Setup of low level calls happens in setupArchitecture().
-  	// After that actors will be eventually asked for acting.
+    // After that actors will be eventually asked for acting.
 
     notifier->setup(lcdImg, messageFunc);
     body->setup(arms, ios, sleepInterruptableFunc);
@@ -577,7 +575,8 @@ public:
     if (getSettings()->oneRun()) {
       // before finishing store in the server the last status of all actors
       log(CLASS_MODULE, Info, "Syncing actors with server (run)...");
-      getPropSync()->pullPushActors(DEFAULT_PROP_SYNC_ATTEMPTS, false); // sync properties from the server (with new props and new clock blocked timing)
+      getPropSync()->pullPushActors(DEFAULT_PROP_SYNC_ATTEMPTS,
+                                    false); // sync properties from the server (with new props and new clock blocked timing)
     }
     sleepInterruptable(cycleBegin, getSettings()->periodMsec() / 1000);
   }

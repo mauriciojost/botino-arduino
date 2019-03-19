@@ -10,13 +10,13 @@ char message[64];
 char image;
 
 void setUp() {
-	image = 'U'; // not initialized
+  image = 'U'; // not initialized
 }
 
 void tearDown() {}
 
 void lcdImg(char img, uint8_t bitmap[]) {
-	image = img;
+  image = img;
 }
 
 void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str) {
@@ -34,7 +34,6 @@ void test_basic_behaviour() {
   n.notificationRead();
   TEST_ASSERT_EQUAL_STRING("         <>         ", message);
   TEST_ASSERT_EQUAL('U', image); // not initialized
-
 }
 
 void test_serialization_deserialization() {
@@ -55,8 +54,6 @@ void test_serialization_deserialization() {
   TEST_ASSERT_EQUAL(1, n.notificationRead());
   TEST_ASSERT_EQUAL_STRING("notif2", n.getNotification());
   TEST_ASSERT_EQUAL(0, n.notificationRead());
-
-
 }
 
 int main() {

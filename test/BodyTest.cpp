@@ -31,7 +31,7 @@ void setUp() {
 void tearDown() {}
 
 bool sleepInt(time_t base, time_t secs) {
-	return false;
+  return false;
 }
 
 void lcdImg(char img, uint8_t bitmap[]) {

@@ -19,7 +19,7 @@
 #define URL_QUOTES "http://api.forismatic.com/api/1.0/POST?method=getQuote&format=text&lang=en"
 
 enum QuotesProps {
-  QuotesFreqProp = 0,   // frequency of synchronization
+  QuotesFreqProp = 0,  // frequency of synchronization
   QuotesPropsDelimiter // count of properties
 };
 

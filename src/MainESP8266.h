@@ -50,7 +50,7 @@
 
 #define SERVO_PERIOD_REACTION_MS 15
 
-#define NEXT_LOG_LINE_ALGORITHM ((currentLogLine + 1)%4)
+#define NEXT_LOG_LINE_ALGORITHM ((currentLogLine + 1) % 4)
 
 #define LOG_BUFFER_MAX_LENGTH 2048
 
@@ -104,7 +104,7 @@ Buffer *deepSleepMode = NULL;
 ServoConf *servo0Conf = NULL;
 ServoConf *servo1Conf = NULL;
 int currentLogLine = 0;
-Buffer* logBuffer = NULL;
+Buffer *logBuffer = NULL;
 
 #define LED_INT_TOGGLE ios('w', IoToggle);
 #define LED_INT_ON ios('w', IoOn);
@@ -123,7 +123,7 @@ void debugHandle();
 bool haveToInterrupt();
 void handleInterrupt();
 void initializeServoConfigs();
-Buffer* initializeTuningVariable(Buffer **var, const char *filename, int maxLength, const char* defaultContent);
+Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLength, const char *defaultContent);
 void dumpLogBuffer();
 bool inDeepSleepMode();
 
@@ -159,7 +159,7 @@ void logLine(const char *str) {
   }
   // lcd print
   if (lcd != NULL && m->getSettings()->getLcdLogs()) { // can be called before LCD initialization
-  	currentLogLine = NEXT_LOG_LINE_ALGORITHM;
+    currentLogLine = NEXT_LOG_LINE_ALGORITHM;
     lcd->setTextWrap(false);
     lcd->fillRect(0, currentLogLine * LCD_PIXEL_HEIGHT, 128, LCD_PIXEL_HEIGHT, BLACK);
     lcd->setTextSize(1);
@@ -172,9 +172,9 @@ void logLine(const char *str) {
   }
   // filesystem logs
   if (m->getSettings()->fsLogsEnabled()) {
-  	if (logBuffer == NULL) {
-  		logBuffer = new Buffer(LOG_BUFFER_MAX_LENGTH);
-  	}
+    if (logBuffer == NULL) {
+      logBuffer = new Buffer(LOG_BUFFER_MAX_LENGTH);
+    }
     logBuffer->append(str);
     logBuffer->append("\n");
   }
@@ -209,7 +209,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
     bool interrupt = lightSleepInterruptable(now(), WIFI_DELAY_MS / 1000);
     if (interrupt) {
       log(CLASS_MAIN, Info, "Interrupted");
-    	return false; // not connected
+      return false; // not connected
     }
     status = WiFi.status();
     log(CLASS_MAIN, Info, "..'%s'(%d)", ssid, attemptsLeft);
@@ -350,9 +350,9 @@ void ios(char led, IoMode value) {
       pin = LEDW_PIN;
       break;
     case 'y':
-    	if (!inDeepSleepMode()) { // pin cannot be used in deep sleep
+      if (!inDeepSleepMode()) { // pin cannot be used in deep sleep
         pin = LEDY_PIN;
-    	}
+      }
       break;
     case 'f':
       pin = FAN_PIN;
@@ -511,7 +511,7 @@ bool sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
     m->command("move Z.");
     bool interrupt = lightSleepInterruptable(now() /* always do it */, PRE_DEEP_SLEEP_WINDOW_SECS);
     if (interrupt) {
-    	return true;
+      return true;
     }
     m->command("move Z.");
     deepSleepNotInterruptable(cycleBegin, periodSecs);
@@ -608,7 +608,7 @@ void runModeArchitecture() {
   }
 }
 
-void askStringQuestion(const char *question, Buffer* answer) {
+void askStringQuestion(const char *question, Buffer *answer) {
   m->getNotifier()->message(0, 1, "%s\n(answer serial and enter)", question);
   Serial.readBytesUntil('\n', answer->getUnsafeBuffer(), COMMAND_MAX_LENGTH);
   answer->replace('\n', '\0');
@@ -684,22 +684,22 @@ bool commandArchitecture(const char *c) {
       return false;
     }
     return false;
-    } else if (strcmp("init", c) == 0) {
-      log(CLASS_MODULE, Info, "-> Initialize");
-      log(CLASS_MODULE, Info, "Execute:");
-      log(CLASS_MODULE, Info, "   ls");
-      log(CLASS_MODULE, Info, "   save %s <alias>", DEVICE_ALIAS_FILENAME);
-      log(CLASS_MODULE, Info, "   save %s <pwd>", DEVICE_PWD_FILENAME);
-      log(CLASS_MODULE, Info, "   servo l");
-      log(CLASS_MODULE, Info, "   servo r");
-      log(CLASS_MODULE, Info, "   wifissid <ssid>");
-      log(CLASS_MODULE, Info, "   wifissid <ssid>");
-      log(CLASS_MODULE, Info, "   wifipass <password>");
-      log(CLASS_MODULE, Info, "   ifttttoken <token>");
-      log(CLASS_MODULE, Info, "   (setup of power consumption settings architecture specific if any)");
-      log(CLASS_MODULE, Info, "   store");
-      log(CLASS_MODULE, Info, "   ls");
-      return true;
+  } else if (strcmp("init", c) == 0) {
+    log(CLASS_MODULE, Info, "-> Initialize");
+    log(CLASS_MODULE, Info, "Execute:");
+    log(CLASS_MODULE, Info, "   ls");
+    log(CLASS_MODULE, Info, "   save %s <alias>", DEVICE_ALIAS_FILENAME);
+    log(CLASS_MODULE, Info, "   save %s <pwd>", DEVICE_PWD_FILENAME);
+    log(CLASS_MODULE, Info, "   servo l");
+    log(CLASS_MODULE, Info, "   servo r");
+    log(CLASS_MODULE, Info, "   wifissid <ssid>");
+    log(CLASS_MODULE, Info, "   wifissid <ssid>");
+    log(CLASS_MODULE, Info, "   wifipass <password>");
+    log(CLASS_MODULE, Info, "   ifttttoken <token>");
+    log(CLASS_MODULE, Info, "   (setup of power consumption settings architecture specific if any)");
+    log(CLASS_MODULE, Info, "   store");
+    log(CLASS_MODULE, Info, "   ls");
+    return true;
   } else if (strcmp("ls", c) == 0) {
     SPIFFS.begin();
     Dir dir = SPIFFS.openDir("/");
@@ -710,7 +710,7 @@ bool commandArchitecture(const char *c) {
     return false;
 #ifdef INSECURE
   } else if (strcmp("cat", c) == 0) { // could be potentially used to display credentials
-    const char* f = strtok(NULL, " ");
+    const char *f = strtok(NULL, " ");
     Buffer buf(128);
     readFile(f, &buf);
     log(CLASS_MAIN, Info, "### File: %s", f);
@@ -719,7 +719,7 @@ bool commandArchitecture(const char *c) {
     return false;
 #endif // INSECURE
   } else if (strcmp("rm", c) == 0) {
-    const char* f = strtok(NULL, " ");
+    const char *f = strtok(NULL, " ");
     SPIFFS.begin();
     bool succ = SPIFFS.remove(f);
     log(CLASS_MAIN, Info, "### File %s removed (%s)", f, BOOL(succ));
@@ -879,7 +879,6 @@ void handleInterrupt() {
   }
 }
 
-
 bool haveToInterrupt() {
   if (Serial.available()) {
     log(CLASS_MAIN, Debug, "Serial pinged: int");
@@ -908,7 +907,7 @@ void initializeServoConfigs() {
   initializeServoConfig(SERVO_1_FILENAME, &servo1Conf);
 }
 
-Buffer* initializeTuningVariable(Buffer **var, const char *filename, int maxLength, const char* defaultContent) {
+Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLength, const char *defaultContent) {
   if (*var == NULL) {
     *var = new Buffer(maxLength);
     bool succAlias = readFile(filename, *var); // preserve the alias
@@ -923,16 +922,16 @@ Buffer* initializeTuningVariable(Buffer **var, const char *filename, int maxLeng
 }
 
 void dumpLogBuffer() {
-	if (logBuffer == NULL)
-		return;
+  if (logBuffer == NULL)
+    return;
 
-	Buffer fname(16);
-	static int rr = 0;
-	rr = (rr + 1) % MAX_ROUND_ROBIN_LOG_FILES;
-	fname.fill("%d.log", rr);
-	bool suc = writeFile(fname.getBuffer(), logBuffer->getBuffer());
+  Buffer fname(16);
+  static int rr = 0;
+  rr = (rr + 1) % MAX_ROUND_ROBIN_LOG_FILES;
+  fname.fill("%d.log", rr);
+  bool suc = writeFile(fname.getBuffer(), logBuffer->getBuffer());
   log(CLASS_MAIN, Warn, "Log stored: %d %s", rr, fname.getBuffer());
-	logBuffer->clear();
+  logBuffer->clear();
 }
 
 bool inDeepSleepMode() {

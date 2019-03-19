@@ -46,8 +46,7 @@ void setup() {
            updateFirmware,
            testArchitecture,
            apiDeviceLogin,
-           apiDevicePass
-           );
+           apiDevicePass);
 }
 
 void loop() {

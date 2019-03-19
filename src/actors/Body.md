@@ -1,4 +1,4 @@
-# POSES
+#POSES
 
 ## Arms poses
 
@@ -128,6 +128,3 @@ Codes:
   D2. : dance 2
   D3. : dance 3
 ```
-
-
-

@@ -58,21 +58,28 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
 }
 
 int httpGet(const char *url, ParamStream *response, Table *headers) {
-	char str[128];
+  char str[128];
 
   if (sscanf(url, MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/testdevice/actors/%s/reports/last", str) == 1) {
-    response->contentBuffer()->load(replyEmptyBody); return HTTP_OK;
+    response->contentBuffer()->load(replyEmptyBody);
+    return HTTP_OK;
   } else if (strcmp(MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/testdevice/targets/count?status=C", url) == 0) {
-    response->contentBuffer()->fill("{\"count\":%d}", pullCount); return HTTP_OK;
-  } else if (strcmp(MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/testdevice/actors/clock/targets/summary?consume=true&status=C", url) == 0) {
-    response->contentBuffer()->load("{}"); return HTTP_OK;
+    response->contentBuffer()->fill("{\"count\":%d}", pullCount);
+    return HTTP_OK;
+  } else if (strcmp(MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/testdevice/actors/clock/targets/summary?consume=true&status=C", url) ==
+             0) {
+    response->contentBuffer()->load("{}");
+    return HTTP_OK;
   } else if (sscanf(url, MAIN4INOSERVER_API_HOST_BASE "/api/v1/time?timezone=%s", str) == 1) {
-    response->contentBuffer()->load("{\"formatted\":\"2018-04-26T21:32:30\"}"); return HTTP_OK;
-  } else if (strcmp(MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/testdevice/actors/tester/targets/summary?consume=true&status=C",
-                    url) == 0) {
-    response->contentBuffer()->load(replyEmptyBody); return HTTP_OK;
+    response->contentBuffer()->load("{\"formatted\":\"2018-04-26T21:32:30\"}");
+    return HTTP_OK;
+  } else if (strcmp(MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/testdevice/actors/tester/targets/summary?consume=true&status=C", url) ==
+             0) {
+    response->contentBuffer()->load(replyEmptyBody);
+    return HTTP_OK;
   } else {
-    log(CLASS_MAIN, Debug, "Unknown url '%s'", url); return HTTP_BAD_REQUEST;
+    log(CLASS_MAIN, Debug, "Unknown url '%s'", url);
+    return HTTP_BAD_REQUEST;
   }
 }
 
@@ -101,8 +108,8 @@ void lcdImg(char img, uint8_t bitmap[]) {
 }
 
 bool readFile(const char *f, Buffer *content) {
-	Buffer fname(64);
-	fname.fill("./test/fs/%s", f);
+  Buffer fname(64);
+  fname.fill("./test/fs/%s", f);
   log(CLASS_MAIN, Debug, "readFile('%s', xxx)", fname.getBuffer());
   bool success = false;
   char c;
@@ -178,7 +185,7 @@ void abort(const char *msg) {
 }
 
 void test_basic_behaviour() {
-  Module* m = new Module();
+  Module *m = new Module();
   log(CLASS_MAIN, Debug, "### module->setup(...)");
   m->setup(setupArchitecture,
            lcdImg,
@@ -200,8 +207,7 @@ void test_basic_behaviour() {
            updateFirmware,
            testArchitecture,
            apiDeviceLogin,
-           apiDevicePass
-					 );
+           apiDevicePass);
   log(CLASS_MAIN, Debug, "### module->loop()");
   m->loop();
   log(CLASS_MAIN, Debug, "### module->loop()");

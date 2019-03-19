@@ -58,10 +58,10 @@ private:
       msg.fill("(%d) %s", queue.size(), currentNotif);
       messageFunc(0, NOTIF_LINE, WHITE, DO_NOT_WRAP, LineClear, NOTIF_SIZE, msg.center(' ', LCD_WIDTH));
     } else {
-    	if (forceClean) {
+      if (forceClean) {
         msg.fill("<>");
         messageFunc(0, NOTIF_LINE, WHITE, DO_NOT_WRAP, LineClear, NOTIF_SIZE, msg.center(' ', LCD_WIDTH));
-    	}
+      }
       log(CLASS_NOTIFIER, Debug, "No notifs");
     }
   }
@@ -79,10 +79,8 @@ public:
     return name;
   }
 
-  void setup(
-  		void (*i)(char img, uint8_t bitmap[]),
-  		void (*m)(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str)
-  ) {
+  void setup(void (*i)(char img, uint8_t bitmap[]),
+             void (*m)(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str)) {
     lcdImgFunc = i;
     messageFunc = m;
   }
@@ -93,7 +91,7 @@ public:
   }
 
   void clearLcd() {
-  	lcdImg('l', NULL);
+    lcdImg('l', NULL);
   }
 
   void message(int line, int size, const char *format, ...) {
@@ -143,16 +141,16 @@ public:
     }
   }
 
-  void bufferToQueue(RichBuffer* b) {
-    const char* p;
+  void bufferToQueue(RichBuffer *b) {
+    const char *p;
     while ((p = b->split(NOTIFS_SEPARATOR)) != NULL) {
-    	if (strcmp(p, EMPTY_NOTIF_REPRESENTATION) != 0) { // filter out empty notifs
-        queue.pushUnique(p); // add to the existent ones, does not remove
-    	}
+      if (strcmp(p, EMPTY_NOTIF_REPRESENTATION) != 0) { // filter out empty notifs
+        queue.pushUnique(p);                            // add to the existent ones, does not remove
+      }
     }
   }
 
-  void queueToBuffer(RichBuffer* b) {
+  void queueToBuffer(RichBuffer *b) {
     b->clear();
     for (int i = 0; i < queue.capacity(); i++) {
       b->append(queue.getAt(i, EMPTY_NOTIF_REPRESENTATION));
@@ -164,11 +162,11 @@ public:
     if (propIndex == NotifierNotifsProp) {
       RichBuffer b = RichBuffer((MAX_NOTIF_LENGTH + 1) * MAX_NRO_NOTIFS);
       if (m == SetCustomValue) {
-      	b.load(targetValue);
-      	bufferToQueue(&b);
+        b.load(targetValue);
+        bufferToQueue(&b);
       }
       if (actualValue != NULL) {
-      	queueToBuffer(&b);
+        queueToBuffer(&b);
         actualValue->load(&b);
       }
     }

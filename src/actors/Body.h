@@ -43,14 +43,7 @@
 #define ARM_NORMAL_STEPS 40
 #define ARM_FAST_STEPS 20
 
-enum PoseExecStatus {
-  Unknown = 0,
-  Interrupted,
-  Failed,
-  Invalid,
-  Success,
-  End
-};
+enum PoseExecStatus { Unknown = 0, Interrupted, Failed, Invalid, Success, End };
 
 enum BodyProps {
   BodyRoutine0Prop = 0, // string, routine for the routine 0
@@ -207,7 +200,8 @@ private:
   }
 
   bool isInitialized() {
-    bool init = arms != NULL && sleepInterruptable != NULL && iosFunc != NULL && notifier != NULL && quotes != NULL && images != NULL && ifttt != NULL;
+    bool init = arms != NULL && sleepInterruptable != NULL && iosFunc != NULL && notifier != NULL && quotes != NULL && images != NULL &&
+                ifttt != NULL;
     return init;
   }
 
@@ -364,7 +358,7 @@ private:
       int v = getInt(c0);
       log(CLASS_BODY, Debug, "Wait %d s", v);
       if (sleepInterruptable(now(), v)) {
-      	return Interrupted;
+        return Interrupted;
       } else {
         return Success;
       }
@@ -394,21 +388,21 @@ public:
     }
 
     switch (status) {
-    	case Success:
+      case Success:
         log(CLASS_BODY, Debug, "Done pose '%s'", pose);
         return pose + poseLen + 1;
-    	case Interrupted:
+      case Interrupted:
         log(CLASS_BODY, Warn, "Interrupted '%s'", pose);
         return NULL;
-    	case Invalid:
+      case Invalid:
         notifier->message(0, 1, "Invalid: '%s'", pose);
         return NULL;
-    	case Failed:
+      case Failed:
         notifier->message(0, 1, "Failed: '%s'", pose);
         return NULL;
-    	case End:
+      case End:
         return NULL;
-    	default:
+      default:
         log(CLASS_BODY, Error, "Unexpected status '%s'", pose);
         return NULL;
     }

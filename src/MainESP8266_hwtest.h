@@ -114,5 +114,4 @@ void hwTest() {
 
   m->command("move Mp2.");
   delay(HARDWARE_TEST_STEP_DELAY_MS);
-
 }

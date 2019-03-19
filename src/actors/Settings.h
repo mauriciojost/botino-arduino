@@ -38,13 +38,13 @@
 #define VERSION_BUFFER_SIZE 32
 
 enum SettingsProps {
-  SettingsDebugProp = 0,          // boolean, define if the device is in debug mode
-  SettingsStatusProp,             // string, defines the current general status of the device (vcc level, heap, etc)
-  SettingsVersionProp,            // string, defines the current version
-  SettingsLcdLogsProp,            // boolean, define if the device display logs in LCD
-  SettingsOneRunProp,             // boolean, define if the device is to be launched only once and then reseted (used in deep sleep mode)
-  SettingsFsLogsProp,             // boolean, define if logs are to be dumped in the file system (only in debug mode)
-  SettingsPeriodMsProp,           // period in msec for the device to wait until update clock and make actors catch up with acting (if any)
+  SettingsDebugProp = 0,    // boolean, define if the device is in debug mode
+  SettingsStatusProp,       // string, defines the current general status of the device (vcc level, heap, etc)
+  SettingsVersionProp,      // string, defines the current version
+  SettingsLcdLogsProp,      // boolean, define if the device display logs in LCD
+  SettingsOneRunProp,       // boolean, define if the device is to be launched only once and then reseted (used in deep sleep mode)
+  SettingsFsLogsProp,       // boolean, define if logs are to be dumped in the file system (only in debug mode)
+  SettingsPeriodMsProp,     // period in msec for the device to wait until update clock and make actors catch up with acting (if any)
   SettingsMiniPeriodMsProp, // period in msec for the device to got to sleep (and remain unresponsive from user) (only if no deep sleep)
   SettingsWifiSsidProp,     // wifi ssid
   SettingsWifiPassProp,     // wifi pass
@@ -201,13 +201,13 @@ public:
     pass->load(s);
   }
 
-  void setVersion(const char* v) {
+  void setVersion(const char *v) {
     status->load(v);
     getMetadata()->changed();
   }
 
   void setStatus(float vcc, int heap) {
-  	status->fill("vcc:%0.2f,heap:%d", vcc, heap);
+    status->fill("vcc:%0.2f,heap:%d", vcc, heap);
     getMetadata()->changed();
   }
 
