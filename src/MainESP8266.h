@@ -349,6 +349,11 @@ void ios(char led, IoMode value) {
     case 'w':
       pin = LEDW_PIN;
       break;
+    case 'y':
+    	if (!inDeepSleepMode()) { // pin cannot be used in deep sleep
+        pin = LEDY_PIN;
+    	}
+      break;
     case 'f':
       pin = FAN_PIN;
       value = invert(value);
@@ -533,6 +538,9 @@ BotMode setupArchitecture() {
   log(CLASS_MAIN, Debug, "Setup pins & deepsleep");
   pinMode(LEDR_PIN, OUTPUT);
   pinMode(LEDW_PIN, OUTPUT);
+  if (!inDeepSleepMode()) {
+    pinMode(LEDY_PIN, OUTPUT);
+  }
   pinMode(FAN_PIN, OUTPUT);
   pinMode(SERVO0_PIN, OUTPUT);
   pinMode(SERVO1_PIN, OUTPUT);

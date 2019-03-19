@@ -46,6 +46,11 @@
 #define LCD_SDA_PIN PIN_D2 // same as above
 
 // LEDS
+
+#ifndef LEDY_PIN        // 1 off, 0 on
+#define LEDY_PIN PIN_D0 // YELLOW LED // used differently in deep sleep mode
+#endif                  // LEDY_PIN
+
 #ifndef LEDW_PIN        // 1 off, 0 on
 #define LEDW_PIN PIN_D3 // WHITE LED
 #endif                  // LEDW_PIN
