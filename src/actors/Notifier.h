@@ -25,8 +25,8 @@ enum MsgClearMode { FullClear = 0, LineClear, NoClear };
 #endif // LCD_WIDTH
 
 #include <main4ino/Actor.h>
-#include <main4ino/RichBuffer.h>
 #include <main4ino/Queue.h>
+#include <main4ino/RichBuffer.h>
 
 #define EMPTY_NOTIF_REPRESENTATION ""
 #define NOTIFS_SEPARATOR ':'

@@ -3,9 +3,9 @@
 
 #include <Pinout.h>
 #include <actors/Body.h>
+#include <actors/Commands.h>
 #include <actors/Ifttt.h>
 #include <actors/Images.h>
-#include <actors/Commands.h>
 #include <actors/Notifier.h>
 #include <actors/Quotes.h>
 #include <actors/Settings.h>

@@ -19,14 +19,10 @@
  *
  */
 
-#include <utils/Hexer.h>
-#include <utils/Io.h>
 #include <actors/Ifttt.h>
 #include <actors/Images.h>
 #include <actors/Notifier.h>
-#include <utils/Predictions.h>
 #include <actors/Quotes.h>
-#include <utils/Routine.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <main4ino/Boolean.h>
@@ -34,6 +30,10 @@
 #include <main4ino/Integer.h>
 #include <main4ino/Misc.h>
 #include <main4ino/Timing.h>
+#include <utils/Hexer.h>
+#include <utils/Io.h>
+#include <utils/Predictions.h>
+#include <utils/Routine.h>
 
 #define CLASS_BODY "BO"
 
