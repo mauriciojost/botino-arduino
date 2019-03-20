@@ -9,7 +9,7 @@
 
 #include <Main.h>
 
-Module *m;
+ModuleBotino *m;
 
 #ifdef ARDUINO // on ESP8266
 #include <MainESP8266.h>
@@ -25,7 +25,7 @@ bool initWifiSimple() {
 }
 
 void setup() {
-  m = new Module();
+  m = new ModuleBotino();
   m->setup(setupArchitecture,
            lcdImg,
            arms,

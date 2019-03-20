@@ -2,12 +2,6 @@
 #define MODULE_INC
 
 #include <Pinout.h>
-#include <actors/Body.h>
-#include <actors/Commands.h>
-#include <actors/Ifttt.h>
-#include <actors/Images.h>
-#include <actors/Notifier.h>
-#include <actors/Quotes.h>
 #include <actors/Settings.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
@@ -17,6 +11,8 @@
 #include <main4ino/PropSync.h>
 #include <main4ino/SerBot.h>
 #include <main4ino/Table.h>
+#include <utils/MsgClearMode.h>
+#include <utils/Io.h>
 
 #define CLASS_MODULE "MD"
 
@@ -35,20 +31,16 @@
   "\n  get             : display actors properties"                                                                                        \
   "\n  get ...         : display actor <actor> properties"                                                                                 \
   "\n  set ...         : set an actor property (example: 'set body msg0 HELLO')"                                                           \
-  "\n  move ...        : execute a move (example: 'move A00C55')"                                                                          \
   "\n  logl [...]      : get / change log level to <x> (0 is more verbose, to 3 least verbose)"                                            \
   "\n  clear           : clear device (filesystem, crashes stacktrace, etc.)"                                                              \
   "\n  actall          : all act"                                                                                                          \
   "\n  touchall        : mark actors as 'changed' to force synchronization with the server"                                                \
   "\n  actone ...      : make actor <x> act"                                                                                               \
-  "\n  lcd ...         : write on display <x> <y> <color> <wrap> <clear> <size> <str>"                                                     \
   "\n  wifissid ...    : set wifi ssid"                                                                                                    \
   "\n  wifipass ...    : set wifi pass"                                                                                                    \
-  "\n  ifttttoken ...  : set ifttt token"                                                                                                  \
   "\n  load            : load properties in persistent fs (mainly for credentials)"                                                        \
   "\n  store           : save properties in persistent fs (mainly for credentials)"                                                        \
   "\n  save ...        : save a file <f> with content <y> in persistent fs (mainly for tuning) "                                           \
-  "\n  ack             : notification read"                                                                                                \
   "\n  help            : show this help"                                                                                                   \
   "\n  (all messages are shown as info log level)"                                                                                         \
   "\n"
@@ -65,16 +57,9 @@ private:
   Clock *clock;
   Settings *settings;
   SerBot *bot;
-  Body *body;
-  Quotes *quotes;
-  Images *images;
-  Ifttt *ifttt;
-  Notifier *notifier;
-  Commands *commands;
 
-  bool (*initWifiSteadyFunc)();
-  void (*clearDeviceFunc)();
-  void (*messageFunct)(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str);
+  bool (*initWifi)();
+  void (*clearDevice)();
   bool (*sleepInterruptable)(time_t cycleBegin, time_t periodSec);
   void (*configureModeArchitecture)();
   void (*runModeArchitecture)();
@@ -86,6 +71,8 @@ private:
   void (*update)();
   const char *(*apiDeviceLogin)();
   const char *(*apiDevicePass)();
+  int (*httpPost)(const char *url, const char *body, ParamStream *response, Table *headers);
+  int (*httpGet)(const char *url, ParamStream *response, Table *headers);
 
   /**
    * Synchronize with the server.
@@ -129,40 +116,26 @@ private:
 
 public:
   Module() {
+    actors = new Array<Actor *>;
 
+    settings = new Settings("settings");
     propSync = new PropSync("propsync");
     clockSync = new ClockSync("clocksync");
     clock = new Clock("clock");
-    settings = new Settings("settings");
-    quotes = new Quotes("quotes");
-    body = new Body("body");
-    images = new Images("images");
-    ifttt = new Ifttt("ifttt");
-    notifier = new Notifier("notifier");
-    commands = new Commands("commands");
 
-    actors = new Array<Actor *>(10);
-    actors->set(0, (Actor *)propSync);
-    actors->set(1, (Actor *)clockSync);
-    actors->set(2, (Actor *)clock);
-    actors->set(3, (Actor *)settings);
-    actors->set(4, (Actor *)quotes);
-    actors->set(5, (Actor *)body);
-    actors->set(6, (Actor *)images);
-    actors->set(7, (Actor *)ifttt);
-    actors->set(8, (Actor *)notifier);
-    actors->set(9, (Actor *)commands);
+    actors->add(4,
+      (Actor *)settings,
+      (Actor *)propSync,
+      (Actor *)clockSync,
+      (Actor *)clock
+		);
 
     bot = new SerBot(clock, actors);
 
-    body->setQuotes(quotes);
-    body->setImages(images);
-    body->setIfttt(ifttt);
-    body->setNotifier(notifier);
-
-    initWifiSteadyFunc = NULL;
-    clearDeviceFunc = NULL;
-    messageFunct = NULL;
+    initWifi = NULL;
+    clearDevice = NULL;
+    httpGet = NULL;
+    httpPost = NULL;
     sleepInterruptable = NULL;
     configureModeArchitecture = NULL;
     runModeArchitecture = NULL;
@@ -177,14 +150,10 @@ public:
   }
 
   void setup(BotMode (*setupArchitecture)(),
-             void (*lcdImg)(char img, uint8_t bitmap[]),
-             void (*arms)(int left, int right, int steps),
-             void (*messageFunc)(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str),
-             void (*ios)(char led, IoMode v),
-             bool (*initWifiSteady)(),
-             int (*httpPost)(const char *url, const char *body, ParamStream *response, Table *headers),
-             int (*httpGet)(const char *url, ParamStream *response, Table *headers),
-             void (*clearDevice)(),
+             bool (*initWifiFunc)(),
+             int (*httpPostFunc)(const char *url, const char *body, ParamStream *response, Table *headers),
+             int (*httpGetFunc)(const char *url, ParamStream *response, Table *headers),
+             void (*clearDeviceFunc)(),
              bool (*fileReadFunc)(const char *fname, Buffer *content),
              bool (*fileWriteFunc)(const char *fname, const char *content),
              void (*abortFunc)(const char *msg),
@@ -201,24 +170,13 @@ public:
     // Unstable situation from now until the end of the function
     //
     // Actors are being initialized. When they act, they use callback functions that
-    // may trigger low level calls (like IO, LCD, arms, fan, etc) which are not set up yet.
+    // may trigger low level calls (like IO, LCD, etc) which are not set up yet.
     // As a good practice, actors should do no low level calls unless they are asked to act.
     // Setup of low level calls happens in setupArchitecture().
     // After that actors will be eventually asked for acting.
 
-    notifier->setup(lcdImg, messageFunc);
-    body->setup(arms, ios, sleepInterruptableFunc);
-
-    propSync->setup(bot, initWifiSteady, httpGet, httpPost, fileReadFunc, fileWriteFunc);
-    clockSync->setup(bot->getClock(), initWifiSteady, httpGet);
-    quotes->setHttpGet(httpGet);
-    quotes->setInitWifi(initWifiSteady);
-    ifttt->setInitWifi(initWifiSteady);
-    ifttt->setHttpPost(httpPost);
-
-    initWifiSteadyFunc = initWifiSteady;
-    clearDeviceFunc = clearDevice;
-    messageFunct = messageFunc;
+    initWifi = initWifiFunc;
+    clearDevice = clearDeviceFunc;
     sleepInterruptable = sleepInterruptableFunc;
     configureModeArchitecture = configureModeArchitectureFunc;
     runModeArchitecture = runModeArchitectureFunc;
@@ -230,6 +188,11 @@ public:
     update = updateFunc;
     apiDeviceLogin = apiDeviceLoginFunc;
     apiDevicePass = apiDevicePassFunc;
+    httpGet = httpGetFunc;
+    httpPost = httpPostFunc;
+
+    propSync->setup(bot, initWifi, httpGet, httpPost, fileRead, fileWrite);
+    clockSync->setup(bot->getClock(), initWifi, httpGet);
 
     BotMode mode = setupArchitecture(); // module objects initialized, architecture can be initialized now
 
@@ -262,31 +225,7 @@ public:
 
     char *c = strtok(b->getUnsafeBuffer(), " ");
 
-    if (strcmp("move", c) == 0) {
-      c = strtok(NULL, " ");
-      if (c == NULL) {
-        logRaw(CLASS_MODULE, Info, "Argument needed:\n  move <move>");
-        return false;
-      }
-      log(CLASS_MODULE, Info, "-> Move %s", c);
-      body->performMove(c);
-      return false;
-    } else if (strcmp("lcd", c) == 0) {
-      const char *x = strtok(NULL, " ");
-      const char *y = strtok(NULL, " ");
-      const char *color = strtok(NULL, " ");
-      const char *wrap = strtok(NULL, " ");
-      const char *clear = strtok(NULL, " ");
-      const char *size = strtok(NULL, " ");
-      const char *str = strtok(NULL, " ");
-      if (x == NULL || y == NULL || color == NULL || wrap == NULL || clear == NULL || size == NULL || str == NULL) {
-        logRaw(CLASS_MODULE, Info, "Arguments needed:\n  lcd <x> <y> <color> <wrap> <clear> <size> <str>");
-        return false;
-      }
-      log(CLASS_MODULE, Info, "-> Lcd %s", str);
-      messageFunct(atoi(x), atoi(y), atoi(color), atoi(wrap), (MsgClearMode)atoi(clear), atoi(size), str);
-      return false;
-    } else if (strcmp("set", c) == 0) {
+    if (strcmp("set", c) == 0) {
       const char *actor = strtok(NULL, " ");
       const char *prop = strtok(NULL, " ");
       const char *v = strtok(NULL, " ");
@@ -324,7 +263,7 @@ public:
       update();
       return false;
     } else if (strcmp("clear", c) == 0) {
-      clearDeviceFunc();
+      clearDevice();
       return false;
     } else if (strcmp("logl", c) == 0) {
       c = strtok(NULL, " ");
@@ -356,16 +295,7 @@ public:
       log(CLASS_MODULE, Info, "Wifi pass: %s", settings->getPass());
       return false;
     } else if (strcmp("wifi", c) == 0) {
-      initWifiSteadyFunc();
-      return false;
-    } else if (strcmp("ifttttoken", c) == 0) {
-      c = strtok(NULL, " ");
-      if (c == NULL) {
-        logRaw(CLASS_MODULE, Info, "Argument needed:\n  ifttttoken <token>");
-        return false;
-      }
-      ifttt->setKey(c);
-      log(CLASS_MODULE, Info, "Ifttt token: %s", ifttt->getKey());
+      initWifi();
       return false;
     } else if (strcmp("actall", c) == 0) {
       actall();
@@ -395,14 +325,10 @@ public:
       propSync->fsLoadActorsProps(); // load mainly credentials already set
       log(CLASS_MODULE, Info, "Properties loaded from local copy");
       return false;
-    } else if (strcmp("ack", c) == 0) {
-      notifier->notificationRead();
-      body->performMove("Z.");
-      log(CLASS_MODULE, Info, "Notification read");
-      return false;
     } else if (strcmp("help", c) == 0 || strcmp("?", c) == 0) {
       logRaw(CLASS_MODULE, Warn, HELP_COMMAND_CLI);
-      return commandArchitecture(c);
+      commandArchitecture(c);
+      return false;
     } else {
       return commandArchitecture(c);
     }
@@ -419,25 +345,10 @@ public:
 
   // All getters should be removed, and initialization of these instances below should
   // be done in Module itself. This should help decrease the size of
-  Bot *getBot() {
+  SerBot *getBot() {
     return bot;
   }
 
-  Settings *getSettings() {
-    return settings;
-  }
-
-  Commands *getCommands() {
-    return commands;
-  }
-
-  Body *getBody() {
-    return body;
-  }
-
-  Ifttt *getIfttt() {
-    return ifttt;
-  }
 
   ClockSync *getClockSync() {
     return clockSync;
@@ -447,8 +358,8 @@ public:
     return propSync;
   }
 
-  Notifier *getNotifier() {
-    return notifier;
+  Settings *getSettings() {
+    return settings;
   }
 
   /**
@@ -487,66 +398,6 @@ public:
     }
   }
 
-  /**
-   * Execute a command given an index
-   *
-   * Thought to be used via single button devices, so that
-   * a button pressed can execute one of many available commands.
-   */
-  void sequentialCommand(int index, bool dryRun) {
-    switch (index) {
-      case 0:
-      case 1:
-      case 2:
-      case 3:
-      case 4:
-      case 5:
-      case 6:
-      case 7: {
-        int ind = index - 0;
-        const char *mvName = getCommands()->getCmdName(ind);
-        getNotifier()->message(0, 2, "%s?", mvName);
-        if (!dryRun) {
-          command(getCommands()->getCmdValue(ind));
-        }
-      } break;
-      case 8: {
-        getNotifier()->message(0, 2, "All act?");
-        if (!dryRun) {
-          command("actall");
-          command("run");
-          getNotifier()->message(0, 1, "All act one-off");
-        }
-      } break;
-      case 9: {
-        getNotifier()->message(0, 2, "Config mode?");
-        if (!dryRun) {
-          command("conf");
-          getNotifier()->message(0, 1, "In config mode");
-        }
-      } break;
-      case 10: {
-        getNotifier()->message(0, 2, "Run mode?");
-        if (!dryRun) {
-          command("run");
-          getNotifier()->message(0, 1, "In run mode");
-        }
-      } break;
-      case 11: {
-        getNotifier()->message(0, 2, "Show info?");
-        if (!dryRun) {
-          command("info");
-        }
-      } break;
-      default: {
-        getNotifier()->message(0, 2, "Abort?");
-        if (!dryRun) {
-          command("move Z.");
-        }
-      } break;
-    }
-  }
-
   void getProps(const char *actorN) {
     Buffer contentAuxBuffer(256);
     Array<Actor *> *actors = bot->getActors();
@@ -579,6 +430,10 @@ public:
                                     false); // sync properties from the server (with new props and new clock blocked timing)
     }
     sleepInterruptable(cycleBegin, getSettings()->periodMsec() / 1000);
+  }
+
+  Array<Actor *> *getActors() {
+    return actors;
   }
 
   void loop() {

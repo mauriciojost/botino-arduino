@@ -713,7 +713,7 @@ bool commandArchitecture(const char *c) {
     Buffer buf(128);
     readFile(f, &buf);
     log(CLASS_MAIN, Info, "### File: %s", f);
-    logRaw(CLASS_MAIN, Info, "%s\n", buf.getBuffer());
+    logRaw(CLASS_MAIN, Info, buf.getBuffer());
     log(CLASS_MAIN, Info, "###");
     return false;
 #endif // INSECURE

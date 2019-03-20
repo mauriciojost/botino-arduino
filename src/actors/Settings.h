@@ -202,8 +202,10 @@ public:
   }
 
   void setVersion(const char *v) {
-    status->load(v);
-    getMetadata()->changed();
+    if (!version->equals(v)){
+      version->load(v);
+      getMetadata()->changed();
+    }
   }
 
   void setStatus(float vcc, int heap) {

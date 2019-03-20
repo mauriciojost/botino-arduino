@@ -3,7 +3,7 @@
 
 #define CLASS_MAIN "MA"
 
-#include <Module.h>
+#include <ModuleBotino.h>
 #include <main4ino/Misc.h>
 
 #ifndef PROJ_VERSION

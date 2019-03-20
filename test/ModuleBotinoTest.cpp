@@ -1,14 +1,14 @@
 #ifdef UNIT_TEST
 
 // Being tested
-#include <Module.h>
+#include <ModuleBotino.h>
 
 // Extra libraries needed
 #include <main4ino/Misc.h>
 #include <string.h>
 #include <unity.h>
 
-#define CLASS_MAIN "ModuleTest"
+#define CLASS_MAIN "ModuleBotinoTest"
 
 const char *replyEmptyBody = "{}";
 
@@ -58,24 +58,31 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
 }
 
 int httpGet(const char *url, ParamStream *response, Table *headers) {
-  char str[128];
+  char str1[128];
+  char str2[128];
 
-  if (sscanf(url, MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/testdevice/actors/%s/reports/last", str) == 1) {
-    response->contentBuffer()->load(replyEmptyBody);
+  if (sscanf(url, MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/testdevice/actors/%[a-z]/%[a-z]/last", str1, str2) == 2 && strcmp(str2, "reports") == 0) {
+  	if (strcmp(str1, "commands") == 0) {
+      log(CLASS_MAIN, Info, "Commands loaded last '%s'", str1);
+      response->contentBuffer()->load("{\"cm0\":\"Restored:ack\"}");
+  	} else {
+      response->contentBuffer()->load(replyEmptyBody);
+  	}
     return HTTP_OK;
   } else if (strcmp(MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/testdevice/targets/count?status=C", url) == 0) {
     response->contentBuffer()->fill("{\"count\":%d}", pullCount);
     return HTTP_OK;
-  } else if (strcmp(MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/testdevice/actors/clock/targets/summary?consume=true&status=C", url) ==
-             0) {
-    response->contentBuffer()->load("{}");
+  } else if (sscanf(url, MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/testdevice/actors/%[a-z]/%[a-z]/summary?consume=true&status=C", str1, str2) ==
+             2 && strcmp(str2, "targets") == 0) {
+  	if (strcmp(str1, "commands") == 0) {
+      log(CLASS_MAIN, Info, "Commands loaded target '%s'", str1);
+      response->contentBuffer()->load("{\"cm0\":\"Target:ack\"}");
+  	} else {
+      response->contentBuffer()->load(replyEmptyBody);
+  	}
     return HTTP_OK;
-  } else if (sscanf(url, MAIN4INOSERVER_API_HOST_BASE "/api/v1/time?timezone=%s", str) == 1) {
-    response->contentBuffer()->load("{\"formatted\":\"2018-04-26T21:32:30\"}");
-    return HTTP_OK;
-  } else if (strcmp(MAIN4INOSERVER_API_HOST_BASE "/api/v1/devices/testdevice/actors/tester/targets/summary?consume=true&status=C", url) ==
-             0) {
-    response->contentBuffer()->load(replyEmptyBody);
+  } else if (sscanf(url, MAIN4INOSERVER_API_HOST_BASE "/api/v1/time?timezone=%s", str1) == 1) {
+    response->contentBuffer()->load("{\"formatted\":\"1970-01-01T00:00:01\"}");
     return HTTP_OK;
   } else {
     log(CLASS_MAIN, Debug, "Unknown url '%s'", url);
@@ -185,7 +192,9 @@ void abort(const char *msg) {
 }
 
 void test_basic_behaviour() {
-  Module *m = new Module();
+  ModuleBotino *m = new ModuleBotino();
+  TEST_ASSERT_EQUAL(0, (int)m->getBot()->getClock()->currentTime());
+
   log(CLASS_MAIN, Debug, "### module->setup(...)");
   m->setup(setupArchitecture,
            lcdImg,
@@ -208,12 +217,19 @@ void test_basic_behaviour() {
            testArchitecture,
            apiDeviceLogin,
            apiDevicePass);
+
+  TEST_ASSERT_EQUAL(1, (int)m->getBot()->getClock()->currentTime()); // remote clock sync took place
+  TEST_ASSERT_EQUAL_STRING("Restored:ack", m->getCommands()->getCmdNameValue(0)); // loaded previous value
+
+  log(CLASS_MAIN, Debug, "### module->loop()");
+  m->getModule()->getPropSync()->getTiming()->setFreq("~1s");
+  m->loop();
+  TEST_ASSERT_EQUAL_STRING("Target:ack", m->getCommands()->getCmdNameValue(0)); // loaded targets
+
   log(CLASS_MAIN, Debug, "### module->loop()");
   m->loop();
-  log(CLASS_MAIN, Debug, "### module->loop()");
-  m->loop();
-  log(CLASS_MAIN, Debug, "### module->loop()");
-  m->loop();
+  TEST_ASSERT_EQUAL_STRING("Target:ack", m->getCommands()->getCmdNameValue(0)); // no change
+
 }
 
 int main() {
