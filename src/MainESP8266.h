@@ -931,7 +931,7 @@ void dumpLogBuffer() {
   rr = (rr + 1) % MAX_ROUND_ROBIN_LOG_FILES;
   fname.fill("%d.log", rr);
   bool suc = writeFile(fname.getBuffer(), logBuffer->getBuffer());
-  log(CLASS_MAIN, Warn, "Log stored: %d %s", rr, fname.getBuffer());
+  log(CLASS_MAIN, Warn, "Log stored: %d %s %s", rr, fname.getBuffer(), BOOL(suc));
   logBuffer->clear();
 }
 
