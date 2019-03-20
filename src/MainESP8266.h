@@ -144,18 +144,18 @@ const char *apiDevicePass() {
 
 void logLine(const char *str) {
   // serial print
-  Serial.print("HEAP ");
+  Serial.print("HEA:");
   Serial.print(ESP.getFreeHeap());
   Serial.print("|");
-  Serial.print("VCC ");
+  Serial.print("VCC:");
   Serial.print(VCC_FLOAT);
   Serial.print("|");
+  Serial.print(str);
   // telnet print
   if (telnet.isActive()) {
     for (unsigned int i = 0; i < strlen(str); i++) {
       telnet.write(str[i]);
     }
-    Serial.print("TELNET|");
   }
   // lcd print
   if (lcd != NULL && m->getSettings()->getLcdLogs()) { // can be called before LCD initialization
@@ -168,7 +168,6 @@ void logLine(const char *str) {
     lcd->print(str);
     lcd->display();
     delay(DELAY_MS_SPI);
-    Serial.print("LCD|");
   }
   // filesystem logs
   if (m->getSettings()->fsLogsEnabled()) {
@@ -178,7 +177,6 @@ void logLine(const char *str) {
     logBuffer->append(str);
     logBuffer->append("\n");
   }
-  Serial.print(str);
 }
 
 bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries) {
@@ -714,7 +712,7 @@ bool commandArchitecture(const char *c) {
     Buffer buf(128);
     readFile(f, &buf);
     log(CLASS_MAIN, Info, "### File: %s", f);
-    log(CLASS_MAIN, Info, "%s\n", buf.getBuffer());
+    logRaw(CLASS_MAIN, Info, "%s\n", buf.getBuffer());
     log(CLASS_MAIN, Info, "###");
     return false;
 #endif // INSECURE
