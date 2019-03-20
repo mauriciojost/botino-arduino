@@ -20,10 +20,12 @@
 #define PERIOD_CONFIGURE_MSEC 4000
 
 #define HELP_COMMAND_CLI_PROJECT                                                                                                           \
+  "\n  BOTINO HELP"                                                                                                                        \
   "\n  move ...        : execute a move (example: 'move A00C55')"                                                                          \
   "\n  lcd ...         : write on display <x> <y> <color> <wrap> <clear> <size> <str>"                                                     \
   "\n  ifttttoken ...  : set ifttt token"                                                                                                  \
   "\n  ack             : notification read"                                                                                                \
+  "\n  help            : show this help"                                                                                                   \
   "\n"
 
 /**
@@ -159,11 +161,12 @@ public:
       ifttt->setKey(c);
       log(CLASS_MODULEB, Info, "Ifttt token: %s", ifttt->getKey());
       return false;
-    } else if (strcmp("help", c) == 0) {
+    } else if (strcmp("help", c) == 0 || strcmp("?", c) == 0) {
       logRaw(CLASS_MODULE, Warn, HELP_COMMAND_CLI_PROJECT);
       module->command(c);
       return false;
     } else {
+      log(CLASS_MODULE, Warn, "Not found in Botino: '%s'", c);
       return module->command(c);
     }
   }

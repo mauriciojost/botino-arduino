@@ -76,6 +76,7 @@ extern "C" {
 #define HTTP_TIMEOUT_MS 8000
 
 #define HELP_COMMAND_ARCH_CLI                                                                                                              \
+  "\n  ESP8266 HELP"                                                                                                                        \
   "\n  init              : initialize essential settings (wifi connection, logins, etc.)"                                                  \
   "\n  servo             : tune the servo <s> (r|l) and make a test round "                                                                \
   "\n  rm ...            : remove file in FS "                                                                                             \
@@ -742,11 +743,11 @@ bool commandArchitecture(const char *c) {
   } else if (strcmp("clearstack", c) == 0) {
     SaveCrash.clear();
     return false;
-  } else if (strcmp("help", c) == 0) {
+  } else if (strcmp("help", c) == 0 || strcmp("?", c) == 0) {
     logRaw(CLASS_MODULE, Warn, HELP_COMMAND_ARCH_CLI);
     return false;
   } else {
-    log(CLASS_MAIN, Warn, "???");
+    log(CLASS_MODULE, Warn, "Not found in ESP8266: '%s'", c);
     return false;
   }
 }
@@ -856,8 +857,8 @@ void handleInterrupt() {
     log(CLASS_MAIN, Info, "Listening...");
     cmdBuffer.clear();
     Serial.readBytesUntil('\n', cmdBuffer.getUnsafeBuffer(), COMMAND_MAX_LENGTH);
-    cmdBuffer.replace('\n', '\0');
-    cmdBuffer.replace('\r', '\0');
+    cmdBuffer.replace('\n', 0);
+    cmdBuffer.replace('\r', 0);
     bool interrupt = m->command(cmdBuffer.getBuffer());
     log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
   } else if (buttonInterrupts > 0) {

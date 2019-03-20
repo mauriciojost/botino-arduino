@@ -21,6 +21,7 @@
 #define PERIOD_CONFIGURE_MSEC 4000
 
 #define HELP_COMMAND_CLI                                                                                                                   \
+  "\n  MODULE HELP"                                                                                                                        \
   "\n  int             : interrupt current ongoing action"                                                                                 \
   "\n  run             : go to run mode"                                                                                                   \
   "\n  conf            : go to conf mode"                                                                                                  \
@@ -213,17 +214,14 @@ public:
    */
   bool command(const char *cmd) {
 
-    Buffer *b = new Buffer(COMMAND_MAX_LENGTH);
+    Buffer b(cmd);
+    log(CLASS_MODULE, Info, "\n> %s\n", b.getBuffer());
 
-    b->load(cmd);
-    b->replace('\n', 0);
-    log(CLASS_MODULE, Info, "\n> %s\n", b->getBuffer());
-
-    if (b->getLength() == 0) {
+    if (b.getLength() == 0) {
       return false;
     }
 
-    char *c = strtok(b->getUnsafeBuffer(), " ");
+    char *c = strtok(b.getUnsafeBuffer(), " ");
 
     if (strcmp("set", c) == 0) {
       const char *actor = strtok(NULL, " ");
@@ -330,6 +328,7 @@ public:
       commandArchitecture(c);
       return false;
     } else {
+      log(CLASS_MODULE, Info, "Not found in Module: '%s'", c);
       return commandArchitecture(c);
     }
   }

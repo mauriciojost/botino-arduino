@@ -190,12 +190,16 @@ void runModeArchitecture() {
     printf("Waiting for input: \n   ");
     fgets(str, 100, stdin);
     if (strlen(str) != 0) {
-      m->command(str);
+      Buffer cmdBuffer(str);
+      cmdBuffer.replace('\n', 0);
+      cmdBuffer.replace('\r', 0);
+      m->command(cmdBuffer.getBuffer());
     }
   }
 }
 
-bool commandArchitecture(const char *command) {
+bool commandArchitecture(const char *c) {
+  log(CLASS_MODULE, Warn, "Not found in X86_64: '%s'", c);
   return false;
 }
 
