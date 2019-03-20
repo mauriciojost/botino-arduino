@@ -339,6 +339,7 @@ void ios(char led, IoMode value) {
     case '*':
       ios('r', value);
       ios('w', value);
+      ios('y', value);
       ios('f', value);
       return;
     case 'r':
