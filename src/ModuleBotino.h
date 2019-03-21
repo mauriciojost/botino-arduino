@@ -191,13 +191,13 @@ public:
         const char *mvName = getCommands()->getCmdName(ind);
         getNotifier()->message(0, 2, "%s?", mvName);
         if (!dryRun) {
-          module->command(getCommands()->getCmdValue(ind));
+          command(getCommands()->getCmdValue(ind));
         }
       } break;
       case 8: {
         getNotifier()->message(0, 2, "All act?");
         if (!dryRun) {
-          module->command("actall");
+          module->command("actall"); // TODO call API instead of requiring parsing
           module->command("run");
           getNotifier()->message(0, 1, "All act one-off");
         }
