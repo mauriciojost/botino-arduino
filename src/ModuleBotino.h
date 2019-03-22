@@ -80,7 +80,7 @@ public:
              void (*runModeArchitectureFunc)(),
              bool (*commandArchitectureFunc)(const char *cmd),
              void (*infoFunc)(),
-             void (*updateFunc)(),
+             void (*updateFunc)(const char*),
              void (*testFunc)(),
              const char *(*apiDeviceLoginFunc)(),
              const char *(*apiDevicePassFunc)()) {
