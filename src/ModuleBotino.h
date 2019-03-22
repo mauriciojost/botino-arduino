@@ -118,6 +118,15 @@ public:
     body->setup(armsFunc, iosFunc, sleepInterruptableFunc);
   }
 
+  void ackCmd() {
+    notifier->notificationRead();
+    zCmd();
+  }
+
+  void zCmd() {
+    body->performMove("Z.");
+  }
+
   /**
    * Handle a user command.
    * Returns true if the command requires the current wait batch to be interrupted (normally true with change of bot mode)
@@ -133,8 +142,7 @@ public:
       body->performMove(c);
       return false;
     } else if (strcmp("ack", c) == 0) {
-      notifier->notificationRead();
-      body->performMove("Z.");
+    	ackCmd();
       log(CLASS_MODULEB, Info, "Notification read");
       return false;
     } else if (strcmp("lcd", c) == 0) {
@@ -197,35 +205,34 @@ public:
       case 8: {
         getNotifier()->message(0, 2, "All act?");
         if (!dryRun) {
-          module->command("actall"); // TODO call API instead of requiring parsing
-          module->command("run");
+          module->actall();
           getNotifier()->message(0, 1, "All act one-off");
         }
       } break;
       case 9: {
         getNotifier()->message(0, 2, "Config mode?");
         if (!dryRun) {
-          module->command("conf");
+          module->confCmd();
           getNotifier()->message(0, 1, "In config mode");
         }
       } break;
       case 10: {
         getNotifier()->message(0, 2, "Run mode?");
         if (!dryRun) {
-          module->command("run");
+          module->runCmd();
           getNotifier()->message(0, 1, "In run mode");
         }
       } break;
       case 11: {
         getNotifier()->message(0, 2, "Show info?");
         if (!dryRun) {
-          module->command("info");
+          module->infoCmd();
         }
       } break;
       default: {
         getNotifier()->message(0, 2, "Abort?");
         if (!dryRun) {
-          command("move Z.");
+        	zCmd();
         }
       } break;
     }

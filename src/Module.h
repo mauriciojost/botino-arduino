@@ -245,14 +245,14 @@ public:
       return true;
     } else if (strcmp("run", c) == 0) {
       log(CLASS_MODULE, Info, "-> Run mode");
-      bot->setMode(RunMode);
+      runCmd();
       return true;
     } else if (strcmp("conf", c) == 0) {
       log(CLASS_MODULE, Info, "-> Configure mode");
-      bot->setMode(ConfigureMode);
+      confCmd();
       return true;
     } else if (strcmp("info", c) == 0) {
-      info();
+      infoCmd();
       return false;
     } else if (strcmp("test", c) == 0) {
       test();
@@ -400,6 +400,18 @@ public:
         a->oneOff();
       }
     }
+  }
+
+  void runCmd() {
+    bot->setMode(RunMode);
+  }
+
+  void confCmd() {
+    bot->setMode(ConfigureMode);
+  }
+
+  void infoCmd() {
+  	info();
   }
 
   void getProps(const char *actorN) {
