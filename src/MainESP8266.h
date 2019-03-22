@@ -43,7 +43,7 @@
 #define MAX_ROUND_ROBIN_LOG_FILES 5
 
 #ifndef FIRMWARE_UPDATE_URL
-#define FIRMWARE_UPDATE_URL "http://martinenhome.com:6780/firmwares/botino/latest"
+#define FIRMWARE_UPDATE_URL MAIN4INOSERVER_API_HOST_BASE "/firmwares/botino/%s"
 #endif // FIRMWARE_UPDATE_URL
 
 #define PRE_DEEP_SLEEP_WINDOW_SECS 5
@@ -473,19 +473,23 @@ void testArchitecture() {
   hwTest();
 }
 
-void updateFirmware() {
+void updateFirmware(const char* descriptor) {
   ESP8266HTTPUpdate updater;
+  Buffer url(64);
+  url.fill(FIRMWARE_UPDATE_URL, descriptor);
 
   Settings *s = m->getSettings();
   bool connected = initWifi(s->getSsid(), s->getPass(), false, 10);
   if (!connected) {
     log(CLASS_MAIN, Error, "Cannot connect to wifi");
+    m->getNotifier()->message(0, 1, "Cannot connect to wifi: %s", s->getSsid());
+    return; // fail fast
   }
 
-  log(CLASS_MAIN, Info, "Updating firmware from '%s'...", FIRMWARE_UPDATE_URL);
-  m->getNotifier()->message(0, 1, "Updating: %s", FIRMWARE_UPDATE_URL);
+  log(CLASS_MAIN, Info, "Updating firmware from '%s'...", url.getBuffer());
+  m->getNotifier()->message(0, 1, "Updating: %s", url.getBuffer());
 
-  t_httpUpdate_return ret = updater.update(FIRMWARE_UPDATE_URL);
+  t_httpUpdate_return ret = updater.update(url.getBuffer());
   switch (ret) {
     case HTTP_UPDATE_FAILED:
       log(CLASS_MAIN,

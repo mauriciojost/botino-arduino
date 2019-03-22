@@ -27,7 +27,7 @@
   "\n  conf            : go to conf mode"                                                                                                  \
   "\n  info            : show info about the device"                                                                                       \
   "\n  test            : test the architecture/hardware"                                                                                   \
-  "\n  update          : update the firmware"                                                                                              \
+  "\n  update ...      : update the firmware with the given descriptor"                                                                                              \
   "\n  wifi            : init steady wifi"                                                                                                 \
   "\n  get             : display actors properties"                                                                                        \
   "\n  get ...         : display actor <actor> properties"                                                                                 \
@@ -69,7 +69,7 @@ private:
   bool (*fileWrite)(const char *fname, const char *content);
   void (*info)();
   void (*test)();
-  void (*update)();
+  void (*update)(const char* descriptor);
   const char *(*apiDeviceLogin)();
   const char *(*apiDevicePass)();
   int (*httpPost)(const char *url, const char *body, ParamStream *response, Table *headers);
@@ -163,7 +163,7 @@ public:
              void (*runModeArchitectureFunc)(),
              bool (*commandArchitectureFunc)(const char *cmd),
              void (*infoFunc)(),
-             void (*updateFunc)(),
+             void (*updateFunc)(const char* descriptor),
              void (*testFunc)(),
              const char *(*apiDeviceLoginFunc)(),
              const char *(*apiDevicePassFunc)()) {
@@ -258,7 +258,12 @@ public:
       test();
       return false;
     } else if (strcmp("update", c) == 0) {
-      update();
+      const char *descriptor = strtok(NULL, " ");
+      if (descriptor == NULL) {
+        logRaw(CLASS_MODULE, Warn, "Arguments needed:\n  update <descriptor>");
+        return false;
+      }
+      update(descriptor);
       return false;
     } else if (strcmp("clear", c) == 0) {
       clearDevice();
