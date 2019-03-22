@@ -159,8 +159,8 @@ void testArchitecture() {
   log(CLASS_MAIN, Debug, "testArchitecture()");
 }
 
-void updateFirmware() {
-  log(CLASS_MAIN, Debug, "updateFirmware()");
+void updateFirmware(const char* d) {
+  log(CLASS_MAIN, Debug, "updateFirmware(%s)", d);
 }
 
 bool sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
