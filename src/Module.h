@@ -228,7 +228,7 @@ public:
       const char *prop = strtok(NULL, " ");
       const char *v = strtok(NULL, " ");
       if (actor == NULL || prop == NULL || v == NULL) {
-        logRaw(CLASS_MODULE, Info, "Arguments needed:\n  set <actor> <prop> <value>");
+        logRaw(CLASS_MODULE, Warn, "Arguments needed:\n  set <actor> <prop> <value>");
         return false;
       }
       log(CLASS_MODULE, Info, "-> Set %s.%s = %s", actor, prop, v);
@@ -277,7 +277,7 @@ public:
     } else if (strcmp("wifissid", c) == 0) {
       c = strtok(NULL, " ");
       if (c == NULL) {
-        logRaw(CLASS_MODULE, Info, "Argument needed:\n  wifissid <ssid>");
+        logRaw(CLASS_MODULE, Warn, "Argument needed:\n  wifissid <ssid>");
         return false;
       }
       settings->setSsid(c);
@@ -286,7 +286,7 @@ public:
     } else if (strcmp("wifipass", c) == 0) {
       c = strtok(NULL, " ");
       if (c == NULL) {
-        logRaw(CLASS_MODULE, Info, "Argument needed:\n  wifipass <pass>");
+        logRaw(CLASS_MODULE, Warn, "Argument needed:\n  wifipass <pass>");
         return false;
       }
       settings->setPass(c);
@@ -304,7 +304,7 @@ public:
     } else if (strcmp("actone", c) == 0) {
       c = strtok(NULL, " ");
       if (c == NULL) {
-        logRaw(CLASS_MODULE, Info, "Argument needed:\n  actone <actorname>");
+        logRaw(CLASS_MODULE, Warn, "Argument needed:\n  actone <actorname>");
         return false;
       }
       actone(c);

@@ -126,7 +126,7 @@ public:
     if (strcmp("move", c) == 0) {
       c = strtok(NULL, " ");
       if (c == NULL) {
-        logRaw(CLASS_MODULEB, Info, "Argument needed:\n  move <move>");
+        logRaw(CLASS_MODULEB, Warn, "Argument needed:\n  move <move>");
         return false;
       }
       log(CLASS_MODULEB, Info, "-> Move %s", c);
@@ -146,7 +146,7 @@ public:
       const char *size = strtok(NULL, " ");
       const char *str = strtok(NULL, " ");
       if (x == NULL || y == NULL || color == NULL || wrap == NULL || clear == NULL || size == NULL || str == NULL) {
-        logRaw(CLASS_MODULEB, Info, "Arguments needed:\n  lcd <x> <y> <color> <wrap> <clear> <size> <str>");
+        logRaw(CLASS_MODULEB, Warn, "Arguments needed:\n  lcd <x> <y> <color> <wrap> <clear> <size> <str>");
         return false;
       }
       log(CLASS_MODULEB, Info, "-> Lcd %s", str);
@@ -155,7 +155,7 @@ public:
     } else if (strcmp("ifttttoken", c) == 0) {
       c = strtok(NULL, " ");
       if (c == NULL) {
-        logRaw(CLASS_MODULEB, Info, "Argument needed:\n  ifttttoken <token>");
+        logRaw(CLASS_MODULEB, Warn, "Argument needed:\n  ifttttoken <token>");
         return false;
       }
       ifttt->setKey(c);
