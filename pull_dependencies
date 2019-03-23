@@ -23,13 +23,12 @@
 set -x
 set -e
 
-while getopts c:plu option
+while getopts c:pl option
 do
   case "${option}"
   in
-    p) SKIP_PULL=true;;
-    l) SKIP_LINK=true;;
-    u) SKIP_CLEANUP=true;;
+    p) DO_PULL=true;;
+    l) DO_LINK=true;;
     c) CONFIG_FILE=${OPTARG};;
   esac
 done
@@ -60,26 +59,30 @@ function pull_dependency() {
     echo "Unkown syntax, discarding: $d"
   fi
 
-  if [ -z "$SKIP_PULL" ]
+  if [ -n "$DO_PULL" ]
   then
     echo "Pulling: $giturl / $gitbranch (files: $gitfiles)"
     cd $libs_dir
     git clone "$giturl"
     cd $gitproject
     git checkout "$gitbranch"
-    cd ..
+    cd $root_dir
   fi
 
-  if [ -z "$SKIP_LINK" ]
+  if [ -n "$DO_LINK" ]
   then
     local dep_dir="$gitproject"
+    cd $libs_dir/$gitproject
     if [ "$gitfiles" == "none" ]
     then
       echo "Linking no file"
     else
-      echo "Linking $dep_dir/$gitfiles to $src_dir/..."
-      ln -svf `readlink -e $dep_dir/$gitfiles` $src_dir/
+      echo "Linking $libs_dir/$gitproject/$gitfiles to $src_dir/..."
+      readlink -e ./$gitfiles > files
+      cat files | xargs -t -I% ln -svf % $src_dir/
+      rm files
     fi
+    cd $root_dir
   fi
 
 }
@@ -89,10 +92,10 @@ echo "### Reading configuration file $config_file ..."
 source $config_file
 
 echo "### Performing cleanup ..."
-if [ -z "$SKIP_CLEANUP" ]
+find ./src -type l -delete # delete symlinks
+if [ -n "$DO_PULL" ]
 then
   rm -fr "$libs_dir"
-  find ./src -type l -delete # delete symlinks
   mkdir -p "$libs_dir"
 fi
 
