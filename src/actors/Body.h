@@ -191,14 +191,6 @@ private:
     }
   }
 
-  PoseExecStatus zzz() {
-    log(CLASS_BODY, Debug, "ZzZ...");
-    notifier->clearLcd();
-    iosFunc('*', IoOff);
-    arms(0, 0, ARM_NORMAL_STEPS);
-    return Success;
-  }
-
   bool isInitialized() {
     bool init = arms != NULL && sleepInterruptable != NULL && iosFunc != NULL && notifier != NULL && quotes != NULL && images != NULL &&
                 ifttt != NULL;
@@ -364,7 +356,7 @@ private:
       }
     } else if (sscanf(pose, "Z%c", &c0) == 1) {
       // POWER OFF
-      return zzz();
+      return z();
     } else {
       return Invalid;
     }
@@ -537,6 +529,15 @@ public:
     }
     log(CLASS_BODY, Debug, "Move '%s': %d poses executed", move, i);
   }
+
+  PoseExecStatus z() {
+    log(CLASS_BODY, Debug, "ZzZ...");
+    notifier->clearLcd();
+    iosFunc('*', IoOff);
+    arms(0, 0, ARM_NORMAL_STEPS);
+    return Success;
+  }
+
 };
 
 #endif // BODY_INC

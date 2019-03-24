@@ -124,7 +124,7 @@ public:
   }
 
   void zCmd() {
-    body->performMove("Z.");
+    body->z();
   }
 
   /**
