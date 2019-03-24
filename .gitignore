@@ -176,3 +176,5 @@
 /gcovr.xml
 *.gcno
 /coverage.xml
+/libs/mod4ino/
+/src/mod4ino

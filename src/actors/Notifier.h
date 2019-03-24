@@ -25,7 +25,7 @@
 #include <main4ino/Actor.h>
 #include <main4ino/Queue.h>
 #include <main4ino/RichBuffer.h>
-#include <utils/MsgClearMode.h>
+#include <mod4ino/MsgClearMode.h>
 
 #define EMPTY_NOTIF_REPRESENTATION ""
 #define NOTIFS_SEPARATOR ':'

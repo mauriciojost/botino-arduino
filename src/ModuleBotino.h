@@ -5,7 +5,7 @@
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 
-#include <Module.h>
+#include <mod4ino/Module.h>
 #include <actors/Body.h>
 #include <actors/Commands.h>
 #include <actors/Ifttt.h>
