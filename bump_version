@@ -32,8 +32,7 @@ then
   export NEW_MAJOR=$MAJOR
   export NEW_MINOR=`inc $MINOR`
   export NEW_PATCH=0
-elif [ "$BUMP" == "PATCH" ]
-then
+else
   export NEW_MAJOR=$MAJOR
   export NEW_MINOR=$MINOR
   export NEW_PATCH=`inc $PATCH`
