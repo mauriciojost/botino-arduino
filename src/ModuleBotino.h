@@ -12,6 +12,7 @@
 #include <actors/Images.h>
 #include <actors/Notifier.h>
 #include <actors/Quotes.h>
+#include <actors/BotinoSettings.h>
 
 #define CLASS_MODULEB "MB"
 
@@ -34,14 +35,17 @@
 class ModuleBotino {
 
 private:
+  // Main4ino Module
   Module *module;
 
+  // Actors
   Body *body;
   Quotes *quotes;
   Images *images;
   Ifttt *ifttt;
   Notifier *notifier;
   Commands *commands;
+  BotinoSettings *bsettings;
 
   void (*message)(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str);
 
@@ -50,6 +54,7 @@ public:
 
     module = new Module();
 
+    bsettings = new BotinoSettings("botino");
     quotes = new Quotes("quotes");
     body = new Body("body");
     images = new Images("images");
@@ -57,7 +62,7 @@ public:
     notifier = new Notifier("notifier");
     commands = new Commands("commands");
 
-    module->getActors()->add(6, (Actor *)quotes, (Actor *)body, (Actor *)images, (Actor *)ifttt, (Actor *)notifier, (Actor *)commands);
+    module->getActors()->add(7, (Actor *)bsettings, (Actor *)quotes, (Actor *)body, (Actor *)images, (Actor *)ifttt, (Actor *)notifier, (Actor *)commands);
 
     message = NULL;
 
@@ -254,8 +259,12 @@ public:
     return notifier;
   }
 
-  Settings *getSettings() {
+  Settings *getModuleSettings() {
     return module->getSettings();
+  }
+
+  BotinoSettings *getBotinoSettings() {
+    return bsettings;
   }
 
   Module *getModule() {

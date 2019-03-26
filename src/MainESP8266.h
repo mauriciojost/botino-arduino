@@ -159,7 +159,7 @@ void logLine(const char *str) {
     }
   }
   // lcd print
-  if (lcd != NULL && m->getSettings()->getLcdLogs()) { // can be called before LCD initialization
+  if (lcd != NULL && m->getBotinoSettings()->getLcdLogs()) { // can be called before LCD initialization
     currentLogLine = NEXT_LOG_LINE_ALGORITHM;
     lcd->setTextWrap(false);
     lcd->fillRect(0, currentLogLine * LCD_PIXEL_HEIGHT, 128, LCD_PIXEL_HEIGHT, BLACK);
@@ -171,7 +171,7 @@ void logLine(const char *str) {
     delay(DELAY_MS_SPI);
   }
   // filesystem logs
-  if (m->getSettings()->fsLogsEnabled()) {
+  if (m->getBotinoSettings()->fsLogsEnabled()) {
     if (logBuffer == NULL) {
       logBuffer = new Buffer(LOG_BUFFER_MAX_LENGTH);
     }
@@ -478,7 +478,7 @@ void updateFirmware(const char* descriptor) {
   Buffer url(64);
   url.fill(FIRMWARE_UPDATE_URL, descriptor);
 
-  Settings *s = m->getSettings();
+  Settings *s = m->getModuleSettings();
   bool connected = initWifi(s->getSsid(), s->getPass(), false, 10);
   if (!connected) {
     log(CLASS_MAIN, Error, "Cannot connect to wifi");
@@ -591,7 +591,7 @@ BotMode setupArchitecture() {
   initializeServoConfigs();
 
   log(CLASS_MAIN, Debug, "Setup debug mode");
-  Serial.setDebugOutput(m->getSettings()->getDebug()); // deep HW logs
+  Serial.setDebugOutput(m->getModuleSettings()->getDebug()); // deep HW logs
 
   log(CLASS_MAIN, Debug, "Clean up crashes");
   if (SaveCrash.count() > 5) {
@@ -607,7 +607,7 @@ BotMode setupArchitecture() {
 
 void runModeArchitecture() {
   handleInterrupt();
-  if (m->getSettings()->getDebug()) {
+  if (m->getModuleSettings()->getDebug()) {
     debugHandle();
   }
 }
@@ -770,7 +770,7 @@ void abort(const char *msg) {
   bool interrupt = sleepInterruptable(now(), ABORT_DELAY_MS);
   if (interrupt) {
   } else if (inDeepSleepMode()) {
-    ESP.deepSleep(m->getSettings()->periodMsec() * 1000L); // boot again in next cycle
+    ESP.deepSleep(m->getModuleSettings()->periodMsec() * 1000L); // boot again in next cycle
   } else {
     ESP.restart(); // it is normal that it fails if invoked the first time after firmware is written
   }
@@ -788,9 +788,11 @@ void debugHandle() {
     ArduinoOTA.begin();             // Intialize OTA
     firstTime = false;
   }
-  m->getSettings()->setStatus(VCC_FLOAT, ESP.getFreeHeap());
-  m->getSettings()->setVersion(STRINGIFY(PROJ_VERSION));
-  if (m->getSettings()->fsLogsEnabled()) {
+
+  m->getBotinoSettings()->getStatus()->fill("vcc:%0.2f,heap:%d", VCC_FLOAT, ESP.getFreeHeap());
+  m->getBotinoSettings()->getMetadata()->changed();
+
+  if (m->getBotinoSettings()->fsLogsEnabled()) {
     dumpLogBuffer();
   }
   telnet.handle();     // Handle telnet log server and commands
@@ -840,7 +842,7 @@ bool lightSleepInterruptable(time_t cycleBegin, time_t periodSecs) {
       return true;
     }
     heartbeat();
-    delay(m->getSettings()->miniPeriodMsec());
+    delay(m->getModuleSettings()->miniPeriodMsec());
   }
   return false;
 }
@@ -875,7 +877,7 @@ void handleInterrupt() {
       LED_INT_TOGGLE;
       m->sequentialCommand(holds, ONLY_SHOW_MSG);
       LED_INT_TOGGLE;
-      delay(m->getSettings()->miniPeriodMsec());
+      delay(m->getModuleSettings()->miniPeriodMsec());
     } while (BUTTON_IS_PRESSED);
     m->sequentialCommand(holds, SHOW_MSG_AND_REACT);
     buttonEnabled = true;

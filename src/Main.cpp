@@ -18,7 +18,7 @@ ModuleBotino *m;
 #endif // ARDUINO
 
 bool initWifiSimple() {
-  Settings *s = m->getSettings();
+  Settings *s = m->getModuleSettings();
   log(CLASS_MAIN, Info, "W.steady");
   bool connected = initWifi(s->getSsid(), s->getPass(), true, 10);
   return connected;
