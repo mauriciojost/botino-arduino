@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -e
+set -x
+
+hostname
+whoami
+groups
+pwd
+ls
+
+export EXPO=/var/lib/main4ino/httpexposed/botino
+
+find . -name 'firmware-*.bin' | xargs -I% mv -f % $EXPO
+
+# Rules
+cd $EXPO
+ls -t | grep firmware | head -1 | xargs -I% ln -sf % latest

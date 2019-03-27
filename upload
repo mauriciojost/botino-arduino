@@ -21,7 +21,8 @@ done
 VERSION=`cat library.json | python -c 'import sys, json; print json.load(sys.stdin)["version"]'`
 COMMIT_ID="`git rev-parse --short HEAD`"
 PROJ_VERSION_ID="$VERSION-$COMMIT_ID" 
-LOG_DIR=images
+LOG_SUBDIR=images
+EXPORT_SUBDIR=exports
 
 if [ -z "$PROFILE" ]
 then
@@ -38,7 +39,9 @@ platformio run $PLATFORMIO_RUN_PARAMS
 if [ -n "$EXPORT_FIRMWARE_FILE" ]
 then
   echo "### Exporting firmware file..."
-  cp .pioenvs/main/firmware.bin firmware-$PROJ_VERSION_ID.bin
+  rm -fr $EXPORT_SUBDIR/
+  mkdir -p $EXPORT_SUBDIR/
+  cp .pioenvs/main/firmware.bin $EXPORT_SUBDIR/firmware-$PROJ_VERSION_ID.bin
 fi
 
 if [ -n "$UPLOAD_FIRMWARE" ]
@@ -60,9 +63,9 @@ then
   platformio run --target upload $UPLOAD_COMMAND_SUFFIX
 
   echo "### Backing up image..."
-  mkdir -p $LOG_DIR/$PROJ_VERSION_ID/
-  rm -f $LOG_DIR/$PROJ_VERSION_ID/*
-  find . -name *.elf | xargs -I% cp -f % $LOG_DIR/$PROJ_VERSION_ID/
+  mkdir -p $LOG_SUBDIR/$PROJ_VERSION_ID/
+  rm -f $LOG_SUBDIR/$PROJ_VERSION_ID/*
+  find . -name *.elf | xargs -I% cp -f % $LOG_SUBDIR/$PROJ_VERSION_ID/
 
 fi
 
@@ -81,9 +84,9 @@ fi
 if [ -n "$MONITOR" ]
 then
   echo "### Backing up logs..."
-  mkdir -p $LOG_DIR/$PROJ_VERSION_ID/
+  mkdir -p $LOG_SUBDIR/$PROJ_VERSION_ID/
   echo "### Monitoring..."
-  { ./serial_monitor 0 > >(tee $LOG_DIR/$PROJ_VERSION_ID/stdout.txt ); } 2> >(tee $LOG_DIR/$PROJ_VERSION_ID/stderr.txt )
+  { ./serial_monitor 0 > >(tee $LOG_SUBDIR/$PROJ_VERSION_ID/stdout.txt ); } 2> >(tee $LOG_SUBDIR/$PROJ_VERSION_ID/stderr.txt )
 fi
 
 echo "Done."
