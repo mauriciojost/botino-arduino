@@ -5,8 +5,6 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '10'))
   }
 
-  agent any
-
   stages {
     stage('Build, test, deliver') {
       agent { docker 'mauriciojost/arduino-ci:platformio-3.5.3-0.2.0' }
@@ -66,6 +64,9 @@ pipeline {
       }
     }
   }
+
+  agent any
+
   post {  
     failure {  
       emailext body: "<b>[JENKINS] Failure</b>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> Build URL: ${env.BUILD_URL}", from: '', mimeType: 'text/html', replyTo: '', subject: "ERROR CI: ${env.JOB_NAME}", to: "mauriciojostx@gmail.com", attachLog: true, compressLog: false;
