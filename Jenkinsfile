@@ -6,16 +6,15 @@ pipeline {
   }
 
   stages {
-    stage('Build, test, deliver') {
+    stage('Build & deliver') {
       agent { docker 'mauriciojost/arduino-ci:platformio-3.5.3-0.2.0' }
       stages {
-        stage('Build') {
+        stage('Pull dependencies') {
           steps {
             script {
               sshagent(['bitbucket_key']) {
                 wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
                   sh 'export GIT_COMMITTER_NAME=jenkinsbot && export GIT_COMMITTER_EMAIL=mauriciojostx@gmail.com && set && ./pull_dependencies -p -l'
-                  sh './upload -p profiles/build.prof'
                 }
               }
             }
