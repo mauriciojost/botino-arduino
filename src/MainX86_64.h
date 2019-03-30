@@ -198,9 +198,8 @@ void runModeArchitecture() {
   }
 }
 
-bool commandArchitecture(const char *c) {
-  log(CLASS_MODULE, Warn, "Not found in X86_64: '%s'", c);
-  return false;
+CmdExecStatus commandArchitecture(const char *c) {
+  return NotFound;
 }
 
 void configureModeArchitecture() {

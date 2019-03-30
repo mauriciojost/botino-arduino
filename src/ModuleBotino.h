@@ -83,7 +83,7 @@ public:
              bool (*sleepInterruptableFunc)(time_t cycleBegin, time_t periodSec),
              void (*configureModeArchitectureFunc)(),
              void (*runModeArchitectureFunc)(),
-             bool (*commandArchitectureFunc)(const char *cmd),
+             CmdExecStatus (*commandArchitectureFunc)(const char *cmd),
              void (*infoFunc)(),
              void (*updateFunc)(const char*),
              void (*testFunc)(),
@@ -134,22 +134,21 @@ public:
 
   /**
    * Handle a user command.
-   * Returns true if the command requires the current wait batch to be interrupted (normally true with change of bot mode)
    */
-  bool command(const char *c) {
+  CmdExecStatus command(const char *c) {
     if (strcmp("move", c) == 0) {
       c = strtok(NULL, " ");
       if (c == NULL) {
         logRaw(CLASS_MODULEB, Warn, "Argument needed:\n  move <move>");
-        return false;
+        return InvalidArgs;
       }
       log(CLASS_MODULEB, Info, "-> Move %s", c);
       body->performMove(c);
-      return false;
+      return Executed;
     } else if (strcmp("ack", c) == 0) {
     	ackCmd();
       log(CLASS_MODULEB, Info, "Notification read");
-      return false;
+      return Executed;
     } else if (strcmp("lcd", c) == 0) {
       const char *x = strtok(NULL, " ");
       const char *y = strtok(NULL, " ");
@@ -160,24 +159,24 @@ public:
       const char *str = strtok(NULL, " ");
       if (x == NULL || y == NULL || color == NULL || wrap == NULL || clear == NULL || size == NULL || str == NULL) {
         logRaw(CLASS_MODULEB, Warn, "Arguments needed:\n  lcd <x> <y> <color> <wrap> <clear> <size> <str>");
-        return false;
+        return InvalidArgs;
       }
       log(CLASS_MODULEB, Info, "-> Lcd %s", str);
       message(atoi(x), atoi(y), atoi(color), atoi(wrap), (MsgClearMode)atoi(clear), atoi(size), str);
-      return false;
+      return Executed;
     } else if (strcmp("ifttttoken", c) == 0) {
       c = strtok(NULL, " ");
       if (c == NULL) {
         logRaw(CLASS_MODULEB, Warn, "Argument needed:\n  ifttttoken <token>");
-        return false;
+        return InvalidArgs;
       }
       ifttt->setKey(c);
       log(CLASS_MODULEB, Info, "Ifttt token: %s", ifttt->getKey());
-      return false;
+      return Executed;
     } else if (strcmp("help", c) == 0 || strcmp("?", c) == 0) {
       logRaw(CLASS_MODULE, Warn, HELP_COMMAND_CLI_PROJECT);
       module->command(c);
-      return false;
+      return Executed;
     } else {
       log(CLASS_MODULE, Warn, "Not found in Botino: '%s'", c);
       return module->command(c);

@@ -663,7 +663,7 @@ void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
   servo->detach();
 }
 
-bool commandArchitecture(const char *c) {
+CmdExecStatus commandArchitecture(const char *c) {
   if (strcmp("servo", c) == 0) {
     char servo = strtok(NULL, " ")[0];
     Buffer serialized(16);
@@ -675,6 +675,7 @@ bool commandArchitecture(const char *c) {
       arms(0, 0, 100);
       arms(0, 9, 100);
       arms(0, 0, 100);
+      return Executed;
     } else if (servo == 'l' || servo == 'L') {
       tuneServo("left servo", SERVO0_PIN, &servoLeft, servo0Conf);
       servo0Conf->serialize(&serialized); // left servo0
@@ -683,11 +684,11 @@ bool commandArchitecture(const char *c) {
       arms(0, 0, 100);
       arms(9, 0, 100);
       arms(0, 0, 100);
+      return Executed;
     } else {
       log(CLASS_MAIN, Warn, "Invalid servo (l|r)");
-      return false;
+      return InvalidArgs;
     }
-    return false;
   } else if (strcmp("init", c) == 0) {
     log(CLASS_MODULE, Info, "-> Initialize");
     log(CLASS_MODULE, Info, "Execute:");
@@ -703,7 +704,7 @@ bool commandArchitecture(const char *c) {
     log(CLASS_MODULE, Info, "   (setup of power consumption settings architecture specific if any)");
     log(CLASS_MODULE, Info, "   store");
     log(CLASS_MODULE, Info, "   ls");
-    return true;
+    return Executed;
   } else if (strcmp("ls", c) == 0) {
     SPIFFS.begin();
     Dir dir = SPIFFS.openDir("/");
@@ -711,7 +712,7 @@ bool commandArchitecture(const char *c) {
       log(CLASS_MAIN, Info, "- %s (%d bytes)", dir.fileName().c_str(), (int)dir.fileSize());
     }
     SPIFFS.end();
-    return false;
+    return Executed;
 #ifdef INSECURE
   } else if (strcmp("cat", c) == 0) { // could be potentially used to display credentials
     const char *f = strtok(NULL, " ");
@@ -720,7 +721,7 @@ bool commandArchitecture(const char *c) {
     log(CLASS_MAIN, Info, "### File: %s", f);
     logRaw(CLASS_MAIN, Info, buf.getBuffer());
     log(CLASS_MAIN, Info, "###");
-    return false;
+    return Executed;
 #endif // INSECURE
   } else if (strcmp("rm", c) == 0) {
     const char *f = strtok(NULL, " ");
@@ -728,31 +729,30 @@ bool commandArchitecture(const char *c) {
     bool succ = SPIFFS.remove(f);
     log(CLASS_MAIN, Info, "### File %s removed (%s)", f, BOOL(succ));
     SPIFFS.end();
-    return false;
+    return Executed;
   } else if (strcmp("reset", c) == 0) {
     ESP.restart(); // it is normal that it fails if invoked the first time after firmware is written
-    return false;
+    return Executed;
   } else if (strcmp("freq", c) == 0) {
     uint8 fmhz = (uint8)atoi(strtok(NULL, " "));
     bool succ = system_update_cpu_freq(fmhz);
     log(CLASS_MAIN, Warn, "Freq updated: %dMHz (succ %s)", (int)fmhz, BOOL(succ));
-    return false;
+    return Executed;
   } else if (strcmp("deepsleep", c) == 0) {
     int s = atoi(strtok(NULL, " "));
     deepSleepNotInterruptable(now(), s);
-    return false;
+    return Executed;
   } else if (strcmp("lightsleep", c) == 0) {
     int s = atoi(strtok(NULL, " "));
-    return lightSleepInterruptable(now(), s);
+    return (lightSleepInterruptable(now(), s)? ExecutedInterrupt: Executed);
   } else if (strcmp("clearstack", c) == 0) {
     SaveCrash.clear();
-    return false;
+    return Executed;
   } else if (strcmp("help", c) == 0 || strcmp("?", c) == 0) {
     logRaw(CLASS_MODULE, Warn, HELP_COMMAND_ARCH_CLI);
-    return false;
+    return Executed;
   } else {
-    log(CLASS_MODULE, Warn, "Not found in ESP8266: '%s'", c);
-    return false;
+    return NotFound;
   }
 }
 
