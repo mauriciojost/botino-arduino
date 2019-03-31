@@ -861,12 +861,12 @@ void handleInterrupt() {
     // Handle serial commands
     Buffer cmdBuffer(COMMAND_MAX_LENGTH);
     log(CLASS_MAIN, Info, "Listening...");
-    cmdBuffer.clear();
     Serial.readBytesUntil('\n', cmdBuffer.getUnsafeBuffer(), COMMAND_MAX_LENGTH);
     cmdBuffer.replace('\n', 0);
     cmdBuffer.replace('\r', 0);
-    bool interrupt = m->command(cmdBuffer.getBuffer());
-    log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
+    CmdExecStatus execStatus = m->command(cmdBuffer.getBuffer());
+    bool interrupt = (execStatus == ExecutedInterrupt);
+    log(CLASS_MAIN, Debug, "Status: %s", CMD_EXEC_STATUS(interrupt));
   } else if (buttonInterrupts > 0) {
     buttonEnabled = false;
     buttonInterrupts = 0; // to avoid interrupting whatever is called below
