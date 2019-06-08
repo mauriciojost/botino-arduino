@@ -135,52 +135,65 @@ public:
   /**
    * Handle a user command.
    */
-  CmdExecStatus command(const char *c) {
-    if (strcmp("move", c) == 0) {
-      c = strtok(NULL, " ");
-      if (c == NULL) {
-        logRaw(CLASS_MODULEB, Warn, "Argument needed:\n  move <move>");
-        return InvalidArgs;
+  CmdExecStatus command(const char *cmd) {
+
+  	{
+      Buffer b(cmd);
+      log(CLASS_MODULE, Info, "\n> %s\n", b.getBuffer());
+
+      if (b.getLength() == 0) {
+        return NotFound;
       }
-      log(CLASS_MODULEB, Info, "-> Move %s", c);
-      body->performMove(c);
-      return Executed;
-    } else if (strcmp("ack", c) == 0) {
-    	ackCmd();
-      log(CLASS_MODULEB, Info, "Notification read");
-      return Executed;
-    } else if (strcmp("lcd", c) == 0) {
-      const char *x = strtok(NULL, " ");
-      const char *y = strtok(NULL, " ");
-      const char *color = strtok(NULL, " ");
-      const char *wrap = strtok(NULL, " ");
-      const char *clear = strtok(NULL, " ");
-      const char *size = strtok(NULL, " ");
-      const char *str = strtok(NULL, " ");
-      if (x == NULL || y == NULL || color == NULL || wrap == NULL || clear == NULL || size == NULL || str == NULL) {
-        logRaw(CLASS_MODULEB, Warn, "Arguments needed:\n  lcd <x> <y> <color> <wrap> <clear> <size> <str>");
-        return InvalidArgs;
+
+      char *c = strtok(b.getUnsafeBuffer(), " ");
+
+      if (strcmp("move", c) == 0) {
+        c = strtok(NULL, " ");
+        if (c == NULL) {
+          logRaw(CLASS_MODULEB, Warn, "Argument needed:\n  move <move>");
+          return InvalidArgs;
+        }
+        log(CLASS_MODULEB, Info, "-> Move %s", c);
+        body->performMove(c);
+        return Executed;
+      } else if (strcmp("ack", c) == 0) {
+        ackCmd();
+        log(CLASS_MODULEB, Info, "Notification read");
+        return Executed;
+      } else if (strcmp("lcd", c) == 0) {
+        const char *x = strtok(NULL, " ");
+        const char *y = strtok(NULL, " ");
+        const char *color = strtok(NULL, " ");
+        const char *wrap = strtok(NULL, " ");
+        const char *clear = strtok(NULL, " ");
+        const char *size = strtok(NULL, " ");
+        const char *str = strtok(NULL, " ");
+        if (x == NULL || y == NULL || color == NULL || wrap == NULL || clear == NULL || size == NULL || str == NULL) {
+          logRaw(CLASS_MODULEB, Warn, "Arguments needed:\n  lcd <x> <y> <color> <wrap> <clear> <size> <str>");
+          return InvalidArgs;
+        }
+        log(CLASS_MODULEB, Info, "-> Lcd %s", str);
+        message(atoi(x), atoi(y), atoi(color), atoi(wrap), (MsgClearMode)atoi(clear), atoi(size), str);
+        return Executed;
+      } else if (strcmp("ifttttoken", c) == 0) {
+        c = strtok(NULL, " ");
+        if (c == NULL) {
+          logRaw(CLASS_MODULEB, Warn, "Argument needed:\n  ifttttoken <token>");
+          return InvalidArgs;
+        }
+        ifttt->setKey(c);
+        log(CLASS_MODULEB, Info, "Ifttt token: %s", ifttt->getKey());
+        return Executed;
+      } else if (strcmp("help", c) == 0 || strcmp("?", c) == 0) {
+        logRaw(CLASS_MODULE, Warn, HELP_COMMAND_CLI_PROJECT);
+        module->command(c);
+        return Executed;
       }
-      log(CLASS_MODULEB, Info, "-> Lcd %s", str);
-      message(atoi(x), atoi(y), atoi(color), atoi(wrap), (MsgClearMode)atoi(clear), atoi(size), str);
-      return Executed;
-    } else if (strcmp("ifttttoken", c) == 0) {
-      c = strtok(NULL, " ");
-      if (c == NULL) {
-        logRaw(CLASS_MODULEB, Warn, "Argument needed:\n  ifttttoken <token>");
-        return InvalidArgs;
-      }
-      ifttt->setKey(c);
-      log(CLASS_MODULEB, Info, "Ifttt token: %s", ifttt->getKey());
-      return Executed;
-    } else if (strcmp("help", c) == 0 || strcmp("?", c) == 0) {
-      logRaw(CLASS_MODULE, Warn, HELP_COMMAND_CLI_PROJECT);
-      module->command(c);
-      return Executed;
-    } else {
-      log(CLASS_MODULE, Warn, "Not found in Botino: '%s'", c);
-      return module->command(c);
-    }
+      // deallocate buffer memory
+  	}
+
+    log(CLASS_MODULE, Info, "Command not handled by botino: '%s'", cmd);
+    return module->command(cmd);
   }
 
   /**
