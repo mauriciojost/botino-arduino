@@ -38,10 +38,14 @@ then
   export NEW_MAJOR=$MAJOR
   export NEW_MINOR=`inc $MINOR`
   export NEW_PATCH=0
-else
+elif [ "$BUMP" == "PATCH" ]
+then
   export NEW_MAJOR=$MAJOR
   export NEW_MINOR=$MINOR
   export NEW_PATCH=`inc $PATCH`
+else
+  echo "Must choose between MAJOR, MINOR or PATCH bump"
+  exit 1
 fi
 
 export NEW_VERSION="$NEW_MAJOR.$NEW_MINOR.$NEW_PATCH"
