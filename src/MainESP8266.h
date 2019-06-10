@@ -18,7 +18,7 @@
 #include <utils/ServoConf.h>
 
 #define DELAY_MS_SPI 3
-#define ABORT_DELAY_MS 5000
+#define ABORT_DELAY_SECS 5
 #define HW_STARTUP_DELAY_MSECS 500
 
 #define DEVICE_ALIAS_FILENAME "/alias.tuning"
@@ -756,7 +756,7 @@ void configureModeArchitecture() {
 void abort(const char *msg) {
   log(CLASS_MAIN, Error, "Abort: %s", msg);
   m->getNotifier()->message(0, 1, "Abort: %s", msg);
-  bool interrupt = sleepInterruptable(now(), ABORT_DELAY_MS);
+  bool interrupt = sleepInterruptable(now(), ABORT_DELAY_SECS);
   if (interrupt) {
   } else if (inDeepSleepMode()) {
     ESP.deepSleep(m->getModuleSettings()->periodMsec() * 1000L); // boot again in next cycle
