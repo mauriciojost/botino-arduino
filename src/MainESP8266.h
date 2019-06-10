@@ -21,16 +21,16 @@
 #define ABORT_DELAY_MS 5000
 #define HW_STARTUP_DELAY_MSECS 500
 
-#define DEVICE_ALIAS_FILENAME "alias.tuning"
+#define DEVICE_ALIAS_FILENAME "/alias.tuning"
 #define DEVICE_ALIAS_MAX_LENGTH 16
 
-#define DEVICE_PWD_FILENAME "pass.tuning"
+#define DEVICE_PWD_FILENAME "/pass.tuning"
 #define DEVICE_PWD_MAX_LENGTH 16
 
-#define SERVO_0_FILENAME "servo0.tuning"
-#define SERVO_1_FILENAME "servo1.tuning"
+#define SERVO_0_FILENAME "/servo0.tuning"
+#define SERVO_1_FILENAME "/servo1.tuning"
 
-#define DEVICE_DSLEEP_FILENAME "deepsleep.tuning"
+#define DEVICE_DSLEEP_FILENAME "/deepsleep.tuning"
 #define DEVICE_DSLEEP_MAX_LENGTH 1
 
 #define LCD_PIXEL_WIDTH 6
