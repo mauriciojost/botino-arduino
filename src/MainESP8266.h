@@ -143,6 +143,7 @@ const char *apiDevicePass() {
 }
 
 void logLine(const char *str) {
+  Serial.setDebugOutput(getLogLevel() == Debug); // deep HW logs
   // serial print
 	/*
   Serial.print("HEA:");
@@ -590,9 +591,6 @@ BotMode setupArchitecture() {
 
   log(CLASS_MAIN, Debug, "Setup servos");
   initializeServoConfigs();
-
-  log(CLASS_MAIN, Debug, "Setup debug mode");
-  Serial.setDebugOutput(m->getModuleSettings()->getDebug()); // deep HW logs
 
   log(CLASS_MAIN, Debug, "Clean up crashes");
   if (SaveCrash.count() > 5) {
