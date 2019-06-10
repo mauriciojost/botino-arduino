@@ -9,6 +9,8 @@
 
 export BUMP=${1:-PATCH} # can be MAJOR, MINOR or PATCH
 
+set -e
+
 CURR_BRANCH=`git rev-parse --abbrev-ref HEAD`
 if [ "$CURR_BRANCH" != "master" ]
 then
@@ -43,9 +45,6 @@ then
   export NEW_MAJOR=$MAJOR
   export NEW_MINOR=$MINOR
   export NEW_PATCH=`inc $PATCH`
-else
-  echo "Must choose between MAJOR, MINOR or PATCH bump"
-  exit 1
 fi
 
 export NEW_VERSION="$NEW_MAJOR.$NEW_MINOR.$NEW_PATCH"
