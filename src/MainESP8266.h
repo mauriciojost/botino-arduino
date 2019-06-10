@@ -81,7 +81,6 @@ extern "C" {
   "\n  servo             : tune the servo <s> (r|l) and make a test round "                                                                \
   "\n  rm ...            : remove file in FS "                                                                                             \
   "\n  ls                : list files present in FS "                                                                                      \
-  "\n  cat ...           : show content of a file (only if in insecure mode)"                                                              \
   "\n  reset             : reset the device"                                                                                               \
   "\n  freq ...          : set clock frequency in MHz (80 or 160 available only, 160 faster but more power consumption)"                   \
   "\n  deepsleep ...     : deep sleep N provided seconds"                                                                                  \
@@ -145,12 +144,14 @@ const char *apiDevicePass() {
 
 void logLine(const char *str) {
   // serial print
+	/*
   Serial.print("HEA:");
   Serial.print(ESP.getFreeHeap());
   Serial.print("|");
   Serial.print("VCC:");
   Serial.print(VCC_FLOAT);
   Serial.print("|");
+  */
   Serial.print(str);
   // telnet print
   if (telnet.isActive()) {
@@ -713,16 +714,6 @@ CmdExecStatus commandArchitecture(const char *c) {
     }
     SPIFFS.end();
     return Executed;
-#ifdef INSECURE
-  } else if (strcmp("cat", c) == 0) { // could be potentially used to display credentials
-    const char *f = strtok(NULL, " ");
-    Buffer buf(128);
-    readFile(f, &buf);
-    log(CLASS_MAIN, Info, "### File: %s", f);
-    logRaw(CLASS_MAIN, Info, buf.getBuffer());
-    log(CLASS_MAIN, Info, "###");
-    return Executed;
-#endif // INSECURE
   } else if (strcmp("rm", c) == 0) {
     const char *f = strtok(NULL, " ");
     SPIFFS.begin();

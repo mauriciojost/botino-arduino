@@ -139,7 +139,7 @@ public:
 
   	{
       Buffer b(cmd);
-      log(CLASS_MODULE, Info, "\n> %s\n", b.getBuffer());
+      logUser("\n> %s\n", b.getBuffer());
 
       if (b.getLength() == 0) {
         return NotFound;
@@ -150,7 +150,7 @@ public:
       if (strcmp("move", c) == 0) {
         c = strtok(NULL, " ");
         if (c == NULL) {
-          logRaw(CLASS_MODULEB, Warn, "Argument needed:\n  move <move>");
+          logRawUser("Argument needed:\n  move <move>");
           return InvalidArgs;
         }
         log(CLASS_MODULEB, Info, "-> Move %s", c);
@@ -172,27 +172,25 @@ public:
           logRaw(CLASS_MODULEB, Warn, "Arguments needed:\n  lcd <x> <y> <color> <wrap> <clear> <size> <str>");
           return InvalidArgs;
         }
-        log(CLASS_MODULEB, Info, "-> Lcd %s", str);
+        logUser("-> Lcd %s", str);
         message(atoi(x), atoi(y), atoi(color), atoi(wrap), (MsgClearMode)atoi(clear), atoi(size), str);
         return Executed;
       } else if (strcmp("ifttttoken", c) == 0) {
         c = strtok(NULL, " ");
         if (c == NULL) {
-          logRaw(CLASS_MODULEB, Warn, "Argument needed:\n  ifttttoken <token>");
+          logRawUser("Argument needed:\n  ifttttoken <token>");
           return InvalidArgs;
         }
         ifttt->setKey(c);
         log(CLASS_MODULEB, Info, "Ifttt token: %s", ifttt->getKey());
         return Executed;
       } else if (strcmp("help", c) == 0 || strcmp("?", c) == 0) {
-        logRaw(CLASS_MODULE, Warn, HELP_COMMAND_CLI_PROJECT);
+        logRawUser(HELP_COMMAND_CLI_PROJECT);
         module->command(c);
         return Executed;
       }
       // deallocate buffer memory
   	}
-
-    log(CLASS_MODULE, Info, "Command not handled by botino: '%s'", cmd);
     return module->command(cmd);
   }
 
