@@ -670,7 +670,7 @@ CmdExecStatus commandArchitecture(const char *c) {
       tuneServo("right servo", SERVO1_PIN, &servoRight, servo1Conf);
       servo1Conf->serialize(&serialized); // right servo1
       writeFile(SERVO_1_FILENAME, serialized.getBuffer());
-      log(CLASS_MAIN, Info, "Stored tuning right servo");
+      logUser("Stored tuning right servo");
       arms(0, 0, 100);
       arms(0, 9, 100);
       arms(0, 0, 100);
@@ -679,36 +679,36 @@ CmdExecStatus commandArchitecture(const char *c) {
       tuneServo("left servo", SERVO0_PIN, &servoLeft, servo0Conf);
       servo0Conf->serialize(&serialized); // left servo0
       writeFile(SERVO_0_FILENAME, serialized.getBuffer());
-      log(CLASS_MAIN, Info, "Stored tuning left servo");
+      logUser("Stored tuning left servo");
       arms(0, 0, 100);
       arms(9, 0, 100);
       arms(0, 0, 100);
       return Executed;
     } else {
-      log(CLASS_MAIN, Warn, "Invalid servo (l|r)");
+      logUser("Invalid servo (l|r)");
       return InvalidArgs;
     }
   } else if (strcmp("init", c) == 0) {
-    log(CLASS_MODULE, Info, "-> Initialize");
-    log(CLASS_MODULE, Info, "Execute:");
-    log(CLASS_MODULE, Info, "   ls");
-    log(CLASS_MODULE, Info, "   save %s <alias>", DEVICE_ALIAS_FILENAME);
-    log(CLASS_MODULE, Info, "   save %s <pwd>", DEVICE_PWD_FILENAME);
-    log(CLASS_MODULE, Info, "   servo l");
-    log(CLASS_MODULE, Info, "   servo r");
-    log(CLASS_MODULE, Info, "   wifissid <ssid>");
-    log(CLASS_MODULE, Info, "   wifissid <ssid>");
-    log(CLASS_MODULE, Info, "   wifipass <password>");
-    log(CLASS_MODULE, Info, "   ifttttoken <token>");
-    log(CLASS_MODULE, Info, "   (setup of power consumption settings architecture specific if any)");
-    log(CLASS_MODULE, Info, "   store");
-    log(CLASS_MODULE, Info, "   ls");
+    logRawUser("-> Initialize");
+    logRawUser("Execute:");
+    logRawUser("   ls");
+    logUser("   save %s <alias>", DEVICE_ALIAS_FILENAME);
+    logUser("   save %s <pwd>", DEVICE_PWD_FILENAME);
+    logRawUser("   servo l");
+    logRawUser("   servo r");
+    logRawUser("   wifissid <ssid>");
+    logRawUser("   wifissid <ssid>");
+    logRawUser("   wifipass <password>");
+    logRawUser("   ifttttoken <token>");
+    logRawUser("   (setup of power consumption settings architecture specific if any)");
+    logRawUser("   store");
+    logRawUser("   ls");
     return Executed;
   } else if (strcmp("ls", c) == 0) {
     SPIFFS.begin();
     Dir dir = SPIFFS.openDir("/");
     while (dir.next()) {
-      log(CLASS_MAIN, Info, "- %s (%d bytes)", dir.fileName().c_str(), (int)dir.fileSize());
+      logUser("- %s (%d bytes)", dir.fileName().c_str(), (int)dir.fileSize());
     }
     SPIFFS.end();
     return Executed;
@@ -716,7 +716,7 @@ CmdExecStatus commandArchitecture(const char *c) {
     const char *f = strtok(NULL, " ");
     SPIFFS.begin();
     bool succ = SPIFFS.remove(f);
-    log(CLASS_MAIN, Info, "### File %s removed (%s)", f, BOOL(succ));
+    logUser("### File %s removed (%s)", f, BOOL(succ));
     SPIFFS.end();
     return Executed;
   } else if (strcmp("reset", c) == 0) {
@@ -725,7 +725,7 @@ CmdExecStatus commandArchitecture(const char *c) {
   } else if (strcmp("freq", c) == 0) {
     uint8 fmhz = (uint8)atoi(strtok(NULL, " "));
     bool succ = system_update_cpu_freq(fmhz);
-    log(CLASS_MAIN, Warn, "Freq updated: %dMHz (succ %s)", (int)fmhz, BOOL(succ));
+    logUser("Freq updated: %dMHz (succ %s)", (int)fmhz, BOOL(succ));
     return Executed;
   } else if (strcmp("deepsleep", c) == 0) {
     int s = atoi(strtok(NULL, " "));
@@ -738,7 +738,7 @@ CmdExecStatus commandArchitecture(const char *c) {
     SaveCrash.clear();
     return Executed;
   } else if (strcmp("help", c) == 0 || strcmp("?", c) == 0) {
-    logRaw(CLASS_MODULE, Warn, HELP_COMMAND_ARCH_CLI);
+    logRawUser(HELP_COMMAND_ARCH_CLI);
     return Executed;
   } else {
     return NotFound;
