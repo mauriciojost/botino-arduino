@@ -530,8 +530,17 @@ public:
     log(CLASS_BODY, Debug, "Move '%s': %d poses executed", move, i);
   }
 
+  /**
+   * Sleep method (low power consumption).
+   *
+   * Initialization safe.
+   */
   PoseExecStatus z() {
     log(CLASS_BODY, Debug, "ZzZ...");
+    if (!isInitialized()) {
+      log(CLASS_BODY, Warn, "No init!");
+      return Failed;
+    }
     notifier->clearLcd();
     iosFunc('*', IoOff);
     arms(0, 0, ARM_NORMAL_STEPS);
