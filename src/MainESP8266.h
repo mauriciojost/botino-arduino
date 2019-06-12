@@ -123,7 +123,7 @@ void debugHandle();
 bool haveToInterrupt();
 void handleInterrupt();
 void initializeServoConfigs();
-Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLength, const char *defaultContent);
+Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLength, const char *defaultContent, bool obfuscate);
 void dumpLogBuffer();
 bool inDeepSleepMode();
 
@@ -135,11 +135,11 @@ bool inDeepSleepMode();
 ///////////////////
 
 const char *apiDeviceLogin() {
-  return initializeTuningVariable(&apiDeviceId, DEVICE_ALIAS_FILENAME, DEVICE_ALIAS_MAX_LENGTH, NULL)->getBuffer();
+  return initializeTuningVariable(&apiDeviceId, DEVICE_ALIAS_FILENAME, DEVICE_ALIAS_MAX_LENGTH, NULL, false)->getBuffer();
 }
 
 const char *apiDevicePass() {
-  return initializeTuningVariable(&apiDevicePwd, DEVICE_PWD_FILENAME, DEVICE_PWD_MAX_LENGTH, NULL)->getBuffer();
+  return initializeTuningVariable(&apiDevicePwd, DEVICE_PWD_FILENAME, DEVICE_PWD_MAX_LENGTH, NULL, true)->getBuffer();
 }
 
 void logLine(const char *str) {
@@ -903,7 +903,7 @@ void initializeServoConfigs() {
   initializeServoConfig(SERVO_1_FILENAME, &servo1Conf);
 }
 
-Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLength, const char *defaultContent) {
+Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLength, const char *defaultContent, bool obfuscate) {
   if (*var == NULL) {
     *var = new Buffer(maxLength);
     bool succAlias = readFile(filename, *var); // preserve the alias
@@ -914,6 +914,11 @@ Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLeng
     } else {
       abort(filename);
     }
+  }
+  if (obfuscate) {
+    log(CLASS_MAIN, Info, "Tuning: %s=***", filename);
+  } else {
+    log(CLASS_MAIN, Info, "Tuning: %s=%s", filename, (*var)->getBuffer());
   }
   return *var;
 }
@@ -932,5 +937,5 @@ void dumpLogBuffer() {
 }
 
 bool inDeepSleepMode() {
-  return (bool)atoi(initializeTuningVariable(&deepSleepMode, DEVICE_DSLEEP_FILENAME, DEVICE_DSLEEP_MAX_LENGTH, "0")->getBuffer());
+  return (bool)atoi(initializeTuningVariable(&deepSleepMode, DEVICE_DSLEEP_FILENAME, DEVICE_DSLEEP_MAX_LENGTH, "0", false)->getBuffer());
 }
