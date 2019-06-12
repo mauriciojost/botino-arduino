@@ -540,7 +540,7 @@ BotMode setupArchitecture() {
   log(CLASS_MAIN, Debug, "Setup timing");
   setExternalMillis(millis);
 
-  log(CLASS_MAIN, Debug, "Setup pins & deepsleep");
+  log(CLASS_MAIN, Debug, "Setup pins & deepsleep (if failure think of activating deep sleep mode?)");
   pinMode(LEDR_PIN, OUTPUT);
   pinMode(LEDW_PIN, OUTPUT);
   if (!inDeepSleepMode()) {
