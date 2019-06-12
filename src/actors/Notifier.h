@@ -84,7 +84,16 @@ public:
     messageFunc = m;
   }
 
+  /**
+   * Display an LCD image.
+   *
+   * Initialization safe.
+   */
   void lcdImg(char img, uint8_t bitmap[]) {
+    if (!isInitialized()) {
+      log(CLASS_NOTIFIER, Warn, "No init!");
+      return;
+    }
     lcdImgFunc(img, bitmap);
     notify(false); // apart from the image, also notify if notifications are available
   }
@@ -93,6 +102,11 @@ public:
     lcdImg('l', NULL);
   }
 
+  /**
+   * Show a message.
+   *
+   * Initialization safe.
+   */
   void message(int line, int size, const char *format, ...) {
     if (!isInitialized()) {
       log(CLASS_NOTIFIER, Warn, "No init!");
