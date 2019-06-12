@@ -715,7 +715,7 @@ CmdExecStatus commandArchitecture(const char *c) {
     const char *f = strtok(NULL, " ");
     SPIFFS.begin();
     bool succ = SPIFFS.remove(f);
-    logUser("### File %s removed (%s)", f, BOOL(succ));
+    logUser("### File '%s' %s removed", f, (succ?"":"NOT"));
     SPIFFS.end();
     return Executed;
   } else if (strcmp("reset", c) == 0) {
@@ -904,7 +904,9 @@ void initializeServoConfigs() {
 }
 
 Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLength, const char *defaultContent, bool obfuscate) {
+	bool first;
   if (*var == NULL) {
+  	first = true;
     *var = new Buffer(maxLength);
     bool succAlias = readFile(filename, *var); // preserve the alias
     if (succAlias) {                           // managed to retrieve the alias
@@ -915,10 +917,12 @@ Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLeng
       abort(filename);
     }
   }
-  if (obfuscate) {
-    log(CLASS_MAIN, Info, "Tuning: %s=***", filename);
-  } else {
-    log(CLASS_MAIN, Info, "Tuning: %s=%s", filename, (*var)->getBuffer());
+  if (first) {
+    if (obfuscate) {
+      log(CLASS_MAIN, Info, "Tuning: %s=***", filename);
+    } else {
+      log(CLASS_MAIN, Info, "Tuning: %s=%s", filename, (*var)->getBuffer());
+    }
   }
   return *var;
 }
