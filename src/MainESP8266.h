@@ -855,7 +855,9 @@ void handleInterrupt() {
     cmdBuffer.replace('\r', 0);
     CmdExecStatus execStatus = m->command(cmdBuffer.getBuffer());
     bool interrupt = (execStatus == ExecutedInterrupt);
-    log(CLASS_MAIN, Debug, "Status: %s", CMD_EXEC_STATUS(interrupt));
+    log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
+    log(CLASS_MAIN, Debug, "Cmd status: %s", CMD_EXEC_STATUS(execStatus));
+    logUser("(%s => %s)", cmdBuffer.getBuffer(), CMD_EXEC_STATUS(execStatus));
   } else if (buttonInterrupts > 0) {
     buttonEnabled = false;
     buttonInterrupts = 0; // to avoid interrupting whatever is called below
