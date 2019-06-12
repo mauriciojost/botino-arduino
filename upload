@@ -34,8 +34,12 @@ fi
 echo "### Using profile $PROFILE..."
 export PLATFORMIO_BUILD_FLAGS="-D PROJ_VERSION=$PROJ_VERSION_ID `cat $PROFILE | grep -v '^#'`" 
 
-echo "### Compiling..."
-platformio run $PLATFORMIO_RUN_PARAMS
+# For uploading a compilation is required, so no need to force it here
+if [ -z "$UPLOAD_FIRMWARE" ]
+then
+  echo "### Compiling..."
+  platformio run $PLATFORMIO_RUN_PARAMS
+fi
 
 if [ -n "$EXPORT_FIRMWARE_FILE" ]
 then
