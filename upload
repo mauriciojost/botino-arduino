@@ -3,7 +3,7 @@
 set -e
 set -x
 
-while getopts p:fms:vyeo: option
+while getopts p:fms:vyebo: option
 do
   case "${option}"
   in
@@ -14,6 +14,7 @@ do
     v) PLATFORMIO_RUN_PARAMS="-v";;
     y) IGNORE_UNCOMMITED_CHANGES=true;;
     e) EXPORT_FIRMWARE_FILE=true;;
+    b) BACKUP_IMAGE=true;;
     o) UPLOAD_OTA_IP=${OPTARG};;
   esac
 done
@@ -62,10 +63,13 @@ then
   echo "### Uploading..."
   platformio run --target upload $UPLOAD_COMMAND_SUFFIX
 
-  echo "### Backing up image..."
-  mkdir -p $LOG_SUBDIR/$PROJ_VERSION_ID/
-  rm -f $LOG_SUBDIR/$PROJ_VERSION_ID/*
-  find . -name *.elf | xargs -I% cp -f % $LOG_SUBDIR/$PROJ_VERSION_ID/
+  if [ -n "$BACKUP_IMAGE" ]
+  then
+    echo "### Backing up image..."
+    mkdir -p $LOG_SUBDIR/$PROJ_VERSION_ID/
+    rm -f $LOG_SUBDIR/$PROJ_VERSION_ID/*
+    find . -name *.elf | xargs -I% cp -f % $LOG_SUBDIR/$PROJ_VERSION_ID/
+  fi
 
 fi
 
