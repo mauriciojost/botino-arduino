@@ -518,7 +518,7 @@ bool sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
     if (interrupt) {
       return true;
     }
-    m->command("move Z.");
+    m->zCmd();
     deepSleepNotInterruptable(cycleBegin, periodSecs);
     return false; // won't be called ever
   } else {

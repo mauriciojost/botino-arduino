@@ -186,11 +186,11 @@ public:
         return Executed;
       } else if (strcmp("help", c) == 0 || strcmp("?", c) == 0) {
         logRawUser(HELP_COMMAND_CLI_PROJECT);
-        module->command(c);
-        return Executed;
+        return module->command("?");
       }
       // deallocate buffer memory
   	}
+  	// if none of the above went through
     return module->command(cmd);
   }
 
