@@ -513,8 +513,7 @@ void updateFirmware(const char* descriptor) {
 ///////////////////
 
 bool sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
-  if (inDeepSleepMode()) { // in deep sleep mode
-    m->command("move Z.");
+  if (inDeepSleepMode() && m->getBot()->getMode() == RunMode) { // in deep sleep mode and running
     bool interrupt = lightSleepInterruptable(now() /* always do it */, PRE_DEEP_SLEEP_WINDOW_SECS);
     if (interrupt) {
       return true;
