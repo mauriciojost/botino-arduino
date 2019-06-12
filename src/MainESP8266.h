@@ -904,7 +904,7 @@ void initializeServoConfigs() {
 }
 
 Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLength, const char *defaultContent, bool obfuscate) {
-	bool first;
+	bool first = false;
   if (*var == NULL) {
   	first = true;
     *var = new Buffer(maxLength);
