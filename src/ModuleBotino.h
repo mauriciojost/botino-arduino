@@ -123,6 +123,11 @@ public:
     body->setup(armsFunc, iosFunc, sleepInterruptableFunc);
   }
 
+
+  bool startupProperties() {
+    return module->startupProperties();
+  }
+
   void ackCmd() {
     notifier->notificationRead();
     zCmd();

@@ -47,6 +47,7 @@ void setup() {
            testArchitecture,
            apiDeviceLogin,
            apiDevicePass);
+  m->startupProperties();
 }
 
 void loop() {
