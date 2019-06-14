@@ -47,7 +47,10 @@ void setup() {
            testArchitecture,
            apiDeviceLogin,
            apiDevicePass);
-  m->startupProperties();
+  bool succ = m->startupProperties();
+  if (!succ) {
+  	abort("Could not startup");
+  }
 }
 
 void loop() {
