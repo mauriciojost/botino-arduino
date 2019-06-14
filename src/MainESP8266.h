@@ -759,10 +759,19 @@ void abort(const char *msg) {
   m->getNotifier()->message(0, 1, "Abort: %s", msg);
   bool interrupt = sleepInterruptable(now(), ABORT_DELAY_SECS);
   if (interrupt) {
+    log(CLASS_MAIN, Debug, "Abort sleep interrupted");
   } else if (inDeepSleepMode()) {
-    ESP.deepSleep(m->getModuleSettings()->periodMsec() * 1000L); // boot again in next cycle
+    log(CLASS_MAIN, Warn, "Will deep sleep upon abort...");
+    deepSleepNotInterruptable(now(), m->getModuleSettings()->periodMsec() / 1000);
   } else {
-    ESP.restart(); // it is normal that it fails if invoked the first time after firmware is written
+    log(CLASS_MAIN, Warn, "Will light sleep and restart upon abort...");
+    bool i = sleepInterruptable(now(), m->getModuleSettings()->periodMsec() / 1000L);
+    if (!i) {
+      ESP.restart();
+    } else {
+      log(CLASS_MAIN, Warn, "Restart skipped because of interrupt.");
+      log(CLASS_MAIN, Warn, "System ready for exploration.");
+    }
   }
 }
 
