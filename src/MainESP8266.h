@@ -33,6 +33,8 @@
 #define DEVICE_DSLEEP_FILENAME "/deepsleep.tuning"
 #define DEVICE_DSLEEP_MAX_LENGTH 1
 
+#define MAX_DEEP_SLEEP_PERIOD_SECS 1800
+
 #define LCD_PIXEL_WIDTH 6
 #define LCD_PIXEL_HEIGHT 8
 
@@ -836,9 +838,10 @@ bool lightSleepInterruptable(time_t cycleBegin, time_t periodSecs) {
 }
 
 void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs) {
-  log(CLASS_MAIN, Debug, "Deep Sleep(%ds)...", (int)periodSecs);
+	time_t p = (periodSecs > MAX_DEEP_SLEEP_PERIOD_SECS? MAX_DEEP_SLEEP_PERIOD_SECS: periodSecs);
+  log(CLASS_MAIN, Debug, "Deep Sleep(%ds)...", (int)p);
   time_t spentSecs = now() - cycleBegin;
-  time_t leftSecs = periodSecs - spentSecs;
+  time_t leftSecs = p - spentSecs;
   if (leftSecs > 0) {
     ESP.deepSleep(leftSecs * 1000000L);
   }
