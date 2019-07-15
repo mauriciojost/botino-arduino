@@ -120,7 +120,6 @@ void reactCommandCustom();
 void buttonPressed();
 void heartbeat();
 bool lightSleepInterruptable(time_t cycleBegin, time_t periodSecs);
-void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs);
 void debugHandle();
 bool haveToInterrupt();
 void handleInterrupt();
@@ -184,6 +183,14 @@ void logLine(const char *str) {
   }
 }
 
+void stopWifi() {
+  log(CLASS_MAIN, Info, "W.Off.");
+  WiFi.disconnect();
+  delay(WIFI_DELAY_MS);
+  WiFi.mode(WIFI_OFF); // to be removed after SDK update to 1.5.4
+  delay(WIFI_DELAY_MS);
+}
+
 bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries) {
   wl_status_t status;
   log(CLASS_MAIN, Info, "To '%s'...", ssid);
@@ -196,11 +203,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
       return true; // connected
     }
   } else { // force disconnection
-    log(CLASS_MAIN, Info, "W.Off.");
-    WiFi.disconnect();
-    delay(WIFI_DELAY_MS);
-    WiFi.mode(WIFI_OFF); // to be removed after SDK update to 1.5.4
-    delay(WIFI_DELAY_MS);
+  	stopWifi();
   }
 
   WiFi.mode(WIFI_STA);

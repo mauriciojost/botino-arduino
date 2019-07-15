@@ -32,13 +32,14 @@ void setup() {
            messageFunc,
            ios,
            initWifiSimple,
+           stopWifi,
            httpPost,
            httpGet,
            clearDevice,
            readFile,
            writeFile,
-           abort,
            sleepInterruptable,
+           deepSleepNotInterruptable,
            configureModeArchitecture,
            runModeArchitecture,
            commandArchitecture,
@@ -46,7 +47,9 @@ void setup() {
            updateFirmware,
            testArchitecture,
            apiDeviceLogin,
-           apiDevicePass);
+           apiDevicePass,
+           NULL
+					 );
   bool succ = m->startupProperties();
   if (!succ) {
   	abort("Could not startup");

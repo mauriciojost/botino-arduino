@@ -40,6 +40,9 @@ void logLine(const char *str);
 // Setup wifi using provided parameters.
 bool initWifi(const char *ssid, const char *pass, bool skipIfAlreadyConnected, int retries);
 
+// Stop wifi connection to reduce power consumption.
+void stopWifi();
+
 // HTTP GET function.
 int httpGet(const char *url, ParamStream *response, Table *headers);
 
@@ -85,6 +88,10 @@ void updateFirmware(const char* descriptor);
 // Interruptable sleep function (haveToInterrupt called within).
 // Returns true if it was interrupted.
 bool sleepInterruptable(time_t cycleBegin, time_t periodSec);
+
+// Non-interruptable sleep function.
+// Returns true if it was interrupted.
+void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSec);
 
 // Setup step specific to the architecture, tell bot mode to go to
 BotMode setupArchitecture();

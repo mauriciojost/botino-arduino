@@ -48,6 +48,10 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
   return true;
 }
 
+void stopWifi() {
+  log(CLASS_MAIN, Debug, "stopWifi()");
+}
+
 int httpGet(const char *url, ParamStream *response, Table *headers) {
   Buffer aux(CL_MAX_LENGTH);
   int httpCode = HTTP_BAD_REQUEST;
@@ -176,6 +180,11 @@ bool sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
   log(CLASS_MAIN, Info, "Sleep(%ds)...", (int)periodSecs);
   sleep(1);
   return false;
+}
+
+void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs) {
+  log(CLASS_MAIN, Info, "DeepSleep(%ds)...", (int)periodSecs);
+  sleep(1);
 }
 
 BotMode setupArchitecture() {

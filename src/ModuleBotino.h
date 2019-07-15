@@ -74,13 +74,14 @@ public:
              void (*messageFunc)(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str),
              void (*iosFunc)(char led, IoMode v),
              bool (*initWifiFunc)(),
+             void (*stopWifiFunc)(),
              int (*httpPostFunc)(const char *url, const char *body, ParamStream *response, Table *headers),
              int (*httpGetFunc)(const char *url, ParamStream *response, Table *headers),
              void (*clearDeviceFunc)(),
              bool (*fileReadFunc)(const char *fname, Buffer *content),
              bool (*fileWriteFunc)(const char *fname, const char *content),
-             void (*abortFunc)(const char *msg),
              bool (*sleepInterruptableFunc)(time_t cycleBegin, time_t periodSec),
+             void (*deepSleepNotInterruptableFunc)(time_t cycleBegin, time_t periodSec),
              void (*configureModeArchitectureFunc)(),
              void (*runModeArchitectureFunc)(),
              CmdExecStatus (*commandArchitectureFunc)(const char *cmd),
@@ -88,17 +89,20 @@ public:
              void (*updateFunc)(const char*),
              void (*testFunc)(),
              const char *(*apiDeviceLoginFunc)(),
-             const char *(*apiDevicePassFunc)()) {
+             const char *(*apiDevicePassFunc)(),
+             bool (*oneRunModeFunc)()
+						 ) {
 
     module->setup(setupArchitectureFunc,
                   initWifiFunc,
+                  stopWifiFunc,
                   httpPostFunc,
                   httpGetFunc,
                   clearDeviceFunc,
                   fileReadFunc,
                   fileWriteFunc,
-                  abortFunc,
                   sleepInterruptableFunc,
+                  deepSleepNotInterruptableFunc,
                   configureModeArchitectureFunc,
                   runModeArchitectureFunc,
                   commandArchitectureFunc,
@@ -106,7 +110,9 @@ public:
                   updateFunc,
                   testFunc,
                   apiDeviceLoginFunc,
-                  apiDevicePassFunc);
+                  apiDevicePassFunc,
+                  oneRunModeFunc
+									);
 
     message = messageFunc;
 
