@@ -130,7 +130,7 @@ public:
   }
 
 
-  bool startupProperties() {
+  ModuleStartupPropertiesCode startupProperties() {
     return module->startupProperties();
   }
 

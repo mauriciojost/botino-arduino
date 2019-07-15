@@ -30,11 +30,6 @@
 #define SERVO_0_FILENAME "/servo0.tuning"
 #define SERVO_1_FILENAME "/servo1.tuning"
 
-#define DEVICE_DSLEEP_FILENAME "/deepsleep.tuning"
-#define DEVICE_DSLEEP_MAX_LENGTH 1
-
-#define MAX_DEEP_SLEEP_PERIOD_SECS 1800
-
 #define LCD_PIXEL_WIDTH 6
 #define LCD_PIXEL_HEIGHT 8
 
@@ -126,7 +121,6 @@ void handleInterrupt();
 void initializeServoConfigs();
 Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLength, const char *defaultContent, bool obfuscate);
 void dumpLogBuffer();
-bool inDeepSleepMode();
 
 ////////////////////////////////////////
 // Functions requested for architecture
@@ -357,9 +351,7 @@ void ios(char led, IoMode value) {
       pin = LEDW_PIN;
       break;
     case 'y':
-      if (!inDeepSleepMode()) { // pin cannot be used in deep sleep
-        pin = LEDY_PIN;
-      }
+      pin = LEDY_PIN;
       break;
     case 'f':
       pin = FAN_PIN;
@@ -518,17 +510,7 @@ void updateFirmware(const char* descriptor) {
 ///////////////////
 
 bool sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
-  if (inDeepSleepMode() && m->getBot()->getMode() == RunMode) { // in deep sleep mode and running
-    bool interrupt = lightSleepInterruptable(now() /* always do it */, PRE_DEEP_SLEEP_WINDOW_SECS);
-    if (interrupt) {
-      return true;
-    }
-    m->zCmd();
-    deepSleepNotInterruptable(cycleBegin, periodSecs);
-    return false; // won't be called ever
-  } else {
-    return lightSleepInterruptable(cycleBegin, periodSecs);
-  }
+  return lightSleepInterruptable(cycleBegin, periodSecs);
 }
 
 BotMode setupArchitecture() {
@@ -548,9 +530,7 @@ BotMode setupArchitecture() {
   log(CLASS_MAIN, Debug, "Setup pins & deepsleep (if failure think of activating deep sleep mode?)");
   pinMode(LEDR_PIN, OUTPUT);
   pinMode(LEDW_PIN, OUTPUT);
-  if (!inDeepSleepMode()) {
-    pinMode(LEDY_PIN, OUTPUT);
-  }
+  pinMode(LEDY_PIN, OUTPUT);
   pinMode(FAN_PIN, OUTPUT);
   pinMode(SERVO0_PIN, OUTPUT);
   pinMode(SERVO1_PIN, OUTPUT);
@@ -763,9 +743,6 @@ void abort(const char *msg) {
   bool interrupt = sleepInterruptable(now(), ABORT_DELAY_SECS);
   if (interrupt) {
     log(CLASS_MAIN, Debug, "Abort sleep interrupted");
-  } else if (inDeepSleepMode()) {
-    log(CLASS_MAIN, Warn, "Will deep sleep upon abort...");
-    deepSleepNotInterruptable(now(), m->getModuleSettings()->periodMsec() / 1000);
   } else {
     log(CLASS_MAIN, Warn, "Will light sleep and restart upon abort...");
     bool i = sleepInterruptable(now(), m->getModuleSettings()->periodMsec() / 1000L);
@@ -850,13 +827,7 @@ bool lightSleepInterruptable(time_t cycleBegin, time_t periodSecs) {
 }
 
 void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs) {
-	time_t p = (periodSecs > MAX_DEEP_SLEEP_PERIOD_SECS? MAX_DEEP_SLEEP_PERIOD_SECS: periodSecs);
-  log(CLASS_MAIN, Debug, "Deep Sleep(%ds)...", (int)p);
-  time_t spentSecs = now() - cycleBegin;
-  time_t leftSecs = p - spentSecs;
-  if (leftSecs > 0) {
-    ESP.deepSleep(leftSecs * 1000000L);
-  }
+	lightSleepInterruptable(cycleBegin, periodSecs);
 }
 
 void handleInterrupt() {
@@ -953,8 +924,4 @@ void dumpLogBuffer() {
   bool suc = writeFile(fname.getBuffer(), logBuffer->getBuffer());
   log(CLASS_MAIN, Warn, "Log: %s %s", fname.getBuffer(), BOOL(suc));
   logBuffer->clear();
-}
-
-bool inDeepSleepMode() {
-  return (bool)atoi(initializeTuningVariable(&deepSleepMode, DEVICE_DSLEEP_FILENAME, DEVICE_DSLEEP_MAX_LENGTH, "0", false)->getBuffer());
 }

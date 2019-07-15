@@ -50,9 +50,10 @@ void setup() {
            apiDevicePass,
            NULL
 					 );
-  bool succ = m->startupProperties();
-  if (!succ) {
-  	abort("Could not startup");
+  ModuleStartupPropertiesCode ec = m->startupProperties();
+  if (ec != ModuleStartupPropertiesCodeSuccess) {
+    log(CLASS_MAIN, Error, "Failure: %d", (int)ec);
+    abort("Could not startup");
   }
 }
 
