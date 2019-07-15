@@ -17,6 +17,13 @@ ModuleBotino *m;
 #include <MainX86_64.h>
 #endif // ARDUINO
 
+
+#define VERSION_DESCRIPTION_JSON "{"\
+	"\"version\":\"" STRINGIFY(PROJ_VERSION) "\","\
+	"\"json\":\"["\
+   "{\\\"patterns\\\": [\\\"^actor1.p1$\\\"], \\\"descriptions\\\": [\\\"Property 1\\\"], \\\"examples\\\": [\\\"1\\\", \\\"2\\\"]}"\
+	 "]\"}"
+
 bool initWifiSimple() {
   Settings *s = m->getModuleSettings();
   log(CLASS_MAIN, Info, "W.steady");
@@ -51,6 +58,10 @@ void setup() {
            NULL
 					 );
   ModuleStartupPropertiesCode ec = m->startupProperties();
+
+  initWifiSimple();
+  logRaw(CLASS_MAIN, Info, VERSION_DESCRIPTION_JSON);
+  m->getModule()->getPropSync()->pushDescription(VERSION_DESCRIPTION_JSON);
   if (ec != ModuleStartupPropertiesCodeSuccess) {
     log(CLASS_MAIN, Error, "Failure: %d", (int)ec);
     abort("Could not startup");
