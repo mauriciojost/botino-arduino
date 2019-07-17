@@ -35,6 +35,20 @@ ModuleBotino *m;
       "]"\
     "},"\
     "{"\
+      "\"patterns\": [\"^body\\\\.r\\\\d{1,2}$\"],"\
+      "\"descriptions\": [\"Routine i-th of the body (format: frequency:pose1.pose2...poseN. . See <a href=\\\"https://github.com/mauriciojost/botino-arduino/blob/master/src/actors/Body.md\\\" target=\\\"_blank\\\">all pose codes here</a>.\"],"\
+      "\"examples\": ["\
+        "\"@12h00:M2Message at midday.A99. -> Tell message Lunch! at 12 every day and put arms up quickly\","\
+        "\"never:D0. -> Dance 0 never (to disable the routine)\","\
+        "\"oneoff:D0. -> Dance 0 just once\","\
+        "\"@20h00:Lry.W2.Lrn. -> Turn on RED led at 20h00 for 2 seconds and turn it off\","\
+        "\"~30m:M1Drink water!. -> Tell to Drink water! every 30 minutes\","\
+        "\"[smTWtfs]~30mf6t18:M1Water!. -> Tell Water! with font size 1 every 30 minutes from 6 until 18 on Tuesdays and Wednesdays\","\
+        "\"[SMtwtfs]@15h00:NBaby%eats!. -> Notify Baby eats! at 15h00 on Sundays and Mondays\","\
+        "\"~10s:L?. -> Turn randomly all leds every 10 seconds\""\
+      "]"\
+    "},"\
+    "{"\
       "\"patterns\": [\"^clocksync\\\\.zone$\"],"\
       "\"descriptions\": [\"Zone to pick up the current date-time from. See <a href=\\\"https://timezonedb.com/\\\" target=\\\"_blank\\\">here</a>.\"],"\
       "\"examples\": ["\
