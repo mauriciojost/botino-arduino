@@ -14,7 +14,7 @@
 #define SIMULATOR_PASS "simulator_pass"
 #endif // SIMULATOR_PASS
 
-#define CL_MAX_LENGTH 5000
+#define CL_MAX_LENGTH 65000
 #define HTTP_CODE_KEY "HTTP_CODE:"
 #define CURL_COMMAND_GET "/usr/bin/curl --silent -w '" HTTP_CODE_KEY "%%{http_code}' -XGET '%s'"
 #define CURL_COMMAND_POST "/usr/bin/curl --silent -w '" HTTP_CODE_KEY "%%{http_code}' -XPOST '%s' -d '%s'"
