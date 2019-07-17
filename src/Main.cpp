@@ -22,7 +22,7 @@ ModuleBotino *m;
   "\"version\":\"" STRINGIFY(PROJ_VERSION) "\","\
   "\"json\":["\
     "{"\
-      "\"patterns\": [\"^.*\\\\.freq$\"],"\
+      "\"patterns\": [\"^.*.freq$\"],"\
       "\"descriptions\": [\"Frequency at which the actor will act and perform its duty. See <a href=\\\"https://bitbucket.org/mauriciojost/main4ino-arduino/src/master/README.md\\\" target=\\\"_blank\\\">here</a>.\"],"\
       "\"examples\": ["\
         "\"never     -> Never\","\
@@ -35,7 +35,7 @@ ModuleBotino *m;
       "]"\
     "},"\
     "{"\
-      "\"patterns\": [\"^body\\\\.r\\\\d{1,2}$\"],"\
+      "\"patterns\": [\"^body.r\\\\d{1,2}$\"],"\
       "\"descriptions\": [\"Routine i-th of the body (format: frequency:pose1.pose2...poseN. . See <a href=\\\"https://github.com/mauriciojost/botino-arduino/blob/master/src/actors/Body.md\\\" target=\\\"_blank\\\">all pose codes here</a>.\"],"\
       "\"examples\": ["\
         "\"@12h00:M2Message at midday.A99. -> Tell message Lunch! at 12 every day and put arms up quickly\","\
@@ -49,7 +49,7 @@ ModuleBotino *m;
       "]"\
     "},"\
     "{"\
-      "\"patterns\": [\"^clocksync\\\\.zone$\"],"\
+      "\"patterns\": [\"^clocksync..zone$\"],"\
       "\"descriptions\": [\"Zone to pick up the current date-time from. See <a href=\\\"https://timezonedb.com/\\\" target=\\\"_blank\\\">here</a>.\"],"\
       "\"examples\": ["\
         "\"Europe/Paris\","\
@@ -59,13 +59,13 @@ ModuleBotino *m;
       "]"\
       "},"\
       "{"\
-      "\"patterns\": [\"^notifier\\\\.n\\\\d{1,2}\"],"\
+      "\"patterns\": [\"^notifier.n\\\\d{1,2}\"],"\
       "\"descriptions\": [\"Notification item i-th.\"],"\
       "\"examples\": [\"Drink water\"]"\
     "},"\
     "{"\
-      "\"patterns\": [\"^moves\\\\.mv\\\\d{1,2}\"],"\
-      "\"descriptions\": [\"Move pattern i-th: move name, : character, and command to execute.\"],"\
+      "\"patterns\": [\"^commands.cm\\\\d{1,2}\"],"\
+      "\"descriptions\": [\"Command i-th: name of the command, : character, and command to execute in i-th turn while pressing button.\"],"\
       "\"examples\": ["\
         "\"Arms up:move C99.\","\
         "\"Update:update\","\
@@ -74,16 +74,17 @@ ModuleBotino *m;
       "]"\
     "},"\
     "{"\
-      "\"patterns\": [\"^images\\\\.im\\\\d{1,2}\"],"\
+      "\"patterns\": [\"^images.im\\\\d{1,2}\"],"\
+    	"\"descriptions\": [\"Bitmap of custom image i-th, represented in base 64. See <a href=\\\"https://docs.google.com/spreadsheets/d/1jXa9mFxeiN_bUji_WiCPKO_gB6pxQUeQ5QxgoSINqdc/edit\\\" target=\\\"_blank\\\">here</a>.\"],"\
       "\"examples\": [\"00002814100828140000000003C00000 -> dead\"]"\
     "},"\
     "{"\
-      "\"patterns\": [\"^propsync\\\\.forcesyncfreq$\"],"\
+      "\"patterns\": [\"^propsync..forcesyncfreq$\"],"\
       "\"descriptions\": [\"Frequency at which the device performs a full synchronization with the server (required as the server performs regular cleanup on old records).\"],"\
       "\"examples\": [\"~72h\"]"\
     "},"\
     "{"\
-      "\"patterns\": [\"^settings\\\\.lcdlogs$\"],"\
+      "\"patterns\": [\"^settings..lcdlogs$\"],"\
       "\"descriptions\": [\"Flag telling if the LCD shows the logs or not\"],"\
       "\"examples\": ["\
       "\"true -> logs in LCD on\","\
@@ -91,14 +92,14 @@ ModuleBotino *m;
       "]"\
     "},"\
     "{"\
-      "\"patterns\": [\"^settings\\\\.mperiodms$\"],"\
+      "\"patterns\": [\"^settings..mperiodms$\"],"\
       "\"descriptions\": [\"User response time in ms. The lower this value the more power consumption.\"],"\
       "\"examples\": ["\
         "\"1000 -> 1 second of response timelogs in LCD on\""\
       "]"\
     "},"\
     "{"\
-      "\"patterns\": [\"^settings\\\\.periodms$\"],"\
+      "\"patterns\": [\"^settings..periodms$\"],"\
       "\"descriptions\": [\"Period (in ms) of wakeup.\"],"\
       "\"examples\": ["\
         "\"10000 -> every 10 seconds\","\
@@ -106,7 +107,7 @@ ModuleBotino *m;
       "]"\
     "},"\
     "{"\
-      "\"patterns\": [\"^settings\\\\.btnrout$\"],"\
+      "\"patterns\": [\"^settings..btnrout$\"],"\
       "\"descriptions\": [\"Determines which first moves will be executed randomly on button press. For instance, if set to 2, only moves 0 and 1 will be executed randomly. \"],"\
       "\"examples\": ["\
         "\"0\","\
@@ -116,7 +117,7 @@ ModuleBotino *m;
       "]"\
     "},"\
     "{"\
-      "\"patterns\": [\"^.*\\\\.debug\"],"\
+      "\"patterns\": [\"^.*.debug\"],"\
       "\"descriptions\": [\"Flag to enable/disable debug mode\"],"\
       "\"examples\": ["\
         "\"true -> debug enabled\","\
