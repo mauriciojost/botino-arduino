@@ -211,14 +211,15 @@ void test_body_parses_moves() {
 
   TEST_ASSERT_EQUAL_STRING("", lastArms);
 
+  PoseExecStatus status = Unknown;
   // Move correctly formed
-  TEST_ASSERT_EQUAL_STRING("Z.", b.performPose("Mp1.Z.")); // consume 1 pose at a time
-  TEST_ASSERT_EQUAL_STRING("", b.performPose("Z."));
-  TEST_ASSERT_EQUAL(NULL, b.performPose(""));
+  TEST_ASSERT_EQUAL_STRING("Z.", b.performPose("Mp1.Z.", &status)); // consume 1 pose at a time
+  TEST_ASSERT_EQUAL_STRING("", b.performPose("Z.", &status));
+  TEST_ASSERT_EQUAL(NULL, b.performPose("", &status));
 
   // Move malformed (does not end in .)
-  TEST_ASSERT_EQUAL_STRING("Z", b.performPose("Mp1.Z")); // consume 1 pose at a time
-  TEST_ASSERT_EQUAL(NULL, b.performPose("Z"));
+  TEST_ASSERT_EQUAL_STRING("Z", b.performPose("Mp1.Z", &status)); // consume 1 pose at a time
+  TEST_ASSERT_EQUAL(NULL, b.performPose("Z", &status));
 }
 
 void test_body_parses_move_timing_alias() {

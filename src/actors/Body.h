@@ -99,41 +99,29 @@ private:
   PoseExecStatus dance(char c0) {
     switch (c0) {
       case '0':
-        performMove(MOVE_DANCE0);
-        return Success;
+        return performMove(MOVE_DANCE0);
       case '1':
-        performMove(MOVE_DANCE1);
-        return Success;
+        return performMove(MOVE_DANCE1);
       case '2':
-        performMove(MOVE_DANCE2);
-        return Success;
+        return performMove(MOVE_DANCE2);
       case '3':
-        performMove(MOVE_DANCE3);
-        return Success;
+        return performMove(MOVE_DANCE3);
       case '4':
-        performMove(MOVE_DANCE4);
-        return Success;
+        return performMove(MOVE_DANCE4);
       case '5':
-        performMove(MOVE_DANCE5);
-        return Success;
+        return performMove(MOVE_DANCE5);
       case '6':
-        performMove(MOVE_DANCE6);
-        return Success;
+        return performMove(MOVE_DANCE6);
       case '7':
-        performMove(MOVE_DANCE7);
-        return Success;
+        return performMove(MOVE_DANCE7);
       case 'n':
-        performMove(MOVE_DANCE_n);
-        return Success;
+        return performMove(MOVE_DANCE_n);
       case 'u':
-        performMove(MOVE_DANCE_U);
-        return Success;
+        return performMove(MOVE_DANCE_U);
       case '\\':
-        performMove(MOVE_DANCE_BACK_SLASH);
-        return Success;
+        return performMove(MOVE_DANCE_BACK_SLASH);
       case '/':
-        performMove(MOVE_DANCE_FORW_SLASH);
-        return Success;
+        return performMove(MOVE_DANCE_FORW_SLASH);
       default:
         return Invalid;
     }
@@ -368,18 +356,18 @@ public:
    *
    * Returns the next pose in the string or NULL if no more poses to perform.
    */
-  const char *performPose(const char *pose) {
+  const char *performPose(const char *pose, PoseExecStatus* status) {
 
     int poseLen = poseStrLen(pose);
-    PoseExecStatus status = Unknown;
+    *status = Unknown;
 
     if (poseLen <= 0) { // invalid number of chars poses
-      status = End;
+      *status = End;
     } else if (poseLen > 0) {
-      status = performPoseLen(pose, poseLen);
+      *status = performPoseLen(pose, poseLen);
     }
 
-    switch (status) {
+    switch (*status) {
       case Success:
         log(CLASS_BODY, Debug, "Done pose '%s'", pose);
         return pose + poseLen + 1;
@@ -519,15 +507,17 @@ public:
     performMove(getMove(moveIndex));
   }
 
-  void performMove(const char *move) {
+  PoseExecStatus performMove(const char *move) {
     int i = 0;
     const char *p = move;
+    PoseExecStatus status;
     log(CLASS_BODY, Debug, "Performing move '%s'", move);
-    while ((p = performPose(p)) != NULL) {
+    while ((p = performPose(p, &status)) != NULL) {
       i++;
       log(CLASS_BODY, Debug, "- pose %d: '%s'...", i, p);
     }
     log(CLASS_BODY, Debug, "Move '%s': %d poses executed", move, i);
+    return status;
   }
 
   /**
