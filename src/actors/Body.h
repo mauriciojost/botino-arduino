@@ -62,7 +62,7 @@ enum BodyProps {
 #define MOVE_DANCE0 "Lwy.B09.B90.Lwn.B09.B90.Lwy.B55."
 #define MOVE_DANCE1 "Lfy.Lyy.Lwy.A50.A05.Lry.Lwn.A00.A99.Lrn.Lwy.A90.A09.Lwn.Lyy.A90.A09."
 #define MOVE_DANCE2 "A87.A78.L?.A87.A78.L?.A12.A21.L?.A12.A21.L?."
-#define MOVE_DANCE3 "Da.D\\.Du.Dn."
+#define MOVE_DANCE3 "D/.D\\.Du.Dn."
 #define MOVE_DANCE4 "S4?"
 #define MOVE_DANCE5 "S5?"
 #define MOVE_DANCE6 "S6?"
@@ -359,12 +359,12 @@ public:
   const char *performPose(const char *pose, PoseExecStatus* status) {
 
     int poseLen = poseStrLen(pose);
-    *status = Unknown;
+    (*status) = Unknown;
 
     if (poseLen <= 0) { // invalid number of chars poses
-      *status = End;
+      (*status) = End;
     } else if (poseLen > 0) {
-      *status = performPoseLen(pose, poseLen);
+      (*status) = performPoseLen(pose, poseLen);
     }
 
     switch (*status) {
@@ -510,7 +510,7 @@ public:
   PoseExecStatus performMove(const char *move) {
     int i = 0;
     const char *p = move;
-    PoseExecStatus status;
+    PoseExecStatus status = Unknown;
     log(CLASS_BODY, Debug, "Performing move '%s'", move);
     while ((p = performPose(p, &status)) != NULL) {
       i++;

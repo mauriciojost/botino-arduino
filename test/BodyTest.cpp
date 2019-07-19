@@ -49,6 +49,7 @@ void lcdImg(char img, uint8_t bitmap[]) {
 
 void messageOnLcd(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str) {
   if (y == 0) { // ignore messages that do not belong to body
+    printf("MESSAGE LCD: %s", str);
     strcpy(lastMsg, str);
   }
 }
@@ -222,6 +223,85 @@ void test_body_parses_moves() {
   TEST_ASSERT_EQUAL(NULL, b.performPose("Z", &status));
 }
 
+void test_body_dances_are_valid() {
+
+  Quotes q("q");
+  Notifier n("n");
+  n.setup(lcdImg, messageOnLcd);
+  Images i("i");
+  Ifttt it("m");
+
+  Body b("b");
+  initBody(&b, &q, &i, &it, &n);
+
+  TEST_ASSERT_EQUAL_STRING("", lastArms);
+
+  PoseExecStatus status;
+
+  // Move correctly formed
+  TEST_ASSERT_EQUAL(End, b.performMove("Mp1.Z."));
+  TEST_ASSERT_EQUAL(End, b.performMove("D1."));
+  TEST_ASSERT_EQUAL(End, b.performMove("A00."));
+  TEST_ASSERT_EQUAL(End, b.performMove("A99."));
+  TEST_ASSERT_EQUAL(End, b.performMove("B00."));
+  TEST_ASSERT_EQUAL(End, b.performMove("B99."));
+  TEST_ASSERT_EQUAL(End, b.performMove("C00."));
+  TEST_ASSERT_EQUAL(End, b.performMove("C99."));
+
+  TEST_ASSERT_EQUAL(End, b.performMove("Fw."));
+  TEST_ASSERT_EQUAL(End, b.performMove("Fb."));
+  TEST_ASSERT_EQUAL(End, b.performMove("Fa."));
+  TEST_ASSERT_EQUAL(End, b.performMove("Fr."));
+  TEST_ASSERT_EQUAL(End, b.performMove("Fl."));
+  TEST_ASSERT_EQUAL(End, b.performMove("Fs."));
+  TEST_ASSERT_EQUAL(End, b.performMove("FS."));
+  TEST_ASSERT_EQUAL(End, b.performMove("Fn."));
+  TEST_ASSERT_EQUAL(End, b.performMove("Fz."));
+  TEST_ASSERT_EQUAL(End, b.performMove("F_."));
+  TEST_ASSERT_EQUAL(End, b.performMove("F-."));
+  TEST_ASSERT_EQUAL(End, b.performMove("F0."));
+  TEST_ASSERT_EQUAL(End, b.performMove("F1."));
+  TEST_ASSERT_EQUAL(End, b.performMove("F2."));
+  TEST_ASSERT_EQUAL(End, b.performMove("F3."));
+
+  TEST_ASSERT_EQUAL(End, b.performMove("Iiftt_action."));
+
+  TEST_ASSERT_EQUAL(End, b.performMove("Lry."));
+  TEST_ASSERT_EQUAL(End, b.performMove("Lrn."));
+  TEST_ASSERT_EQUAL(End, b.performMove("Lrt."));
+  TEST_ASSERT_EQUAL(End, b.performMove("Lwy."));
+  TEST_ASSERT_EQUAL(End, b.performMove("Lyy."));
+  TEST_ASSERT_EQUAL(End, b.performMove("Lyt."));
+  TEST_ASSERT_EQUAL(End, b.performMove("L*y."));
+  TEST_ASSERT_EQUAL(End, b.performMove("L*n."));
+  TEST_ASSERT_EQUAL(End, b.performMove("Lfy."));
+  TEST_ASSERT_EQUAL(End, b.performMove("L?."));
+
+  TEST_ASSERT_EQUAL(End, b.performMove("Mc4."));
+  TEST_ASSERT_EQUAL(End, b.performMove("Mk3."));
+  TEST_ASSERT_EQUAL(End, b.performMove("Mp1."));
+  TEST_ASSERT_EQUAL(End, b.performMove("Mq1."));
+  TEST_ASSERT_EQUAL(End, b.performMove("M1onemessage."));
+
+  TEST_ASSERT_EQUAL(End, b.performMove("W1."));
+
+  TEST_ASSERT_EQUAL(End, b.performMove("Nnotification."));
+
+  TEST_ASSERT_EQUAL(End, b.performMove("Z."));
+
+  TEST_ASSERT_EQUAL(End, b.performMove("Dn."));
+  TEST_ASSERT_EQUAL(End, b.performMove("Du."));
+  TEST_ASSERT_EQUAL(End, b.performMove("D\\."));
+  TEST_ASSERT_EQUAL(End, b.performMove("D/."));
+
+  TEST_ASSERT_EQUAL(End, b.performMove("D0."));
+  TEST_ASSERT_EQUAL(End, b.performMove("D1."));
+  TEST_ASSERT_EQUAL(End, b.performMove("D2."));
+  TEST_ASSERT_EQUAL(End, b.performMove("D3."));
+
+}
+
+
 void test_body_parses_move_timing_alias() {
 
   Quotes q("q");
@@ -249,6 +329,7 @@ int main() {
   RUN_TEST(test_body_creates_predictions);
   RUN_TEST(test_body_parses_moves);
   RUN_TEST(test_body_parses_move_timing_alias);
+  RUN_TEST(test_body_dances_are_valid);
   return (UNITY_END());
 }
 
