@@ -503,8 +503,8 @@ public:
     return routines[POSIT(moveIndex % NRO_ROUTINES)]->getMove();
   }
 
-  void performMove(int moveIndex) {
-    performMove(getMove(moveIndex));
+  PoseExecStatus performMove(int moveIndex) {
+    return performMove(getMove(moveIndex));
   }
 
   PoseExecStatus performMove(const char *move) {
@@ -515,6 +515,10 @@ public:
     while ((p = performPose(p, &status)) != NULL) {
       i++;
       log(CLASS_BODY, Debug, "- pose %d: '%s'...", i, p);
+      if (status != Success || status != End) {
+        log(CLASS_BODY, Warn, "Bad move: '%s'", p);
+      	break;
+      }
     }
     log(CLASS_BODY, Debug, "Move '%s': %d poses executed", move, i);
     return status;
