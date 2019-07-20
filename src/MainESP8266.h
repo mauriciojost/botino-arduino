@@ -625,11 +625,6 @@ void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
   int max = 100;
   int testRange = 200;
 
-  for (int d = 0; d <= testRange; d = d + 4) {
-    servo->write(d);
-    delay(SERVO_PERIOD_STEP_MS * SERVO_BASE_STEPS);
-  }
-
   m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Press\nbutton\nif arm\nmoves...");
   delay(SERVO_PERIOD_STEP_MS * SERVO_BASE_STEPS);
   delay(USER_DELAY_MS);
@@ -661,22 +656,28 @@ CmdExecStatus commandArchitecture(const char *c) {
     char servo = strtok(NULL, " ")[0];
     Buffer serialized(16);
     if (servo == 'r' || servo == 'R') {
+      arms(2, 2, 1);
+      arms(2, 7, 1);
+      arms(2, 2, 1);
       tuneServo("right servo", SERVO1_PIN, &servoRight, servo1Conf);
       servo1Conf->serialize(&serialized); // right servo1
       writeFile(SERVO_1_FILENAME, serialized.getBuffer());
       logUser("Stored tuning right servo");
-      arms(0, 0, 100);
-      arms(0, 9, 100);
-      arms(0, 0, 100);
+      arms(0, 0, 1);
+      arms(0, 9, 1);
+      arms(0, 0, 1);
       return Executed;
     } else if (servo == 'l' || servo == 'L') {
+      arms(2, 2, 1);
+      arms(7, 2, 1);
+      arms(2, 2, 1);
       tuneServo("left servo", SERVO0_PIN, &servoLeft, servo0Conf);
       servo0Conf->serialize(&serialized); // left servo0
       writeFile(SERVO_0_FILENAME, serialized.getBuffer());
       logUser("Stored tuning left servo");
-      arms(0, 0, 100);
-      arms(9, 0, 100);
-      arms(0, 0, 100);
+      arms(0, 0, 1);
+      arms(9, 0, 1);
+      arms(0, 0, 1);
       return Executed;
     } else {
       logUser("Invalid servo (l|r)");
