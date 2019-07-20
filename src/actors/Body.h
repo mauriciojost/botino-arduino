@@ -97,34 +97,54 @@ private:
   Routine *routines[NRO_ROUTINES];
 
   PoseExecStatus dance(char c0) {
+    log(CLASS_BODY, Debug, "Dance '%c'", c0);
+    PoseExecStatus s = Unknown;
     switch (c0) {
       case '0':
-        return performMove(MOVE_DANCE0);
+        s = performMove(MOVE_DANCE0);
+        break;
       case '1':
-        return performMove(MOVE_DANCE1);
+        s = performMove(MOVE_DANCE1);
+        break;
       case '2':
-        return performMove(MOVE_DANCE2);
+        s = performMove(MOVE_DANCE2);
+        break;
       case '3':
-        return performMove(MOVE_DANCE3);
+        s = performMove(MOVE_DANCE3);
+        break;
       case '4':
-        return performMove(MOVE_DANCE4);
+        s = performMove(MOVE_DANCE4);
+        break;
       case '5':
-        return performMove(MOVE_DANCE5);
+        s = performMove(MOVE_DANCE5);
+        break;
       case '6':
-        return performMove(MOVE_DANCE6);
+        s = performMove(MOVE_DANCE6);
+        break;
       case '7':
-        return performMove(MOVE_DANCE7);
+        s = performMove(MOVE_DANCE7);
+        break;
       case 'n':
-        return performMove(MOVE_DANCE_n);
+        s = performMove(MOVE_DANCE_n);
+        break;
       case 'u':
-        return performMove(MOVE_DANCE_U);
+        s = performMove(MOVE_DANCE_U);
+        break;
       case '\\':
-        return performMove(MOVE_DANCE_BACK_SLASH);
+        s = performMove(MOVE_DANCE_BACK_SLASH);
+        break;
       case '/':
-        return performMove(MOVE_DANCE_FORW_SLASH);
+        s = performMove(MOVE_DANCE_FORW_SLASH);
+        break;
       default:
-        return Invalid;
+        s = Invalid;
+        break;
     }
+    // this pose belongs to a move
+    // this pose executes a sub move
+    // the end of the sub move (variable s) does not mean that this
+    // pose is the end of the outer move, that's why the line below
+    return (s == End? Success: s);
   }
 
   PoseExecStatus face(char c0) {
@@ -202,7 +222,7 @@ private:
     }
   }
 
-  int poseStrLen(const char *p) {
+  int nextPoseStrLen(const char *p) {
     if (p == NULL) { // no string
       return -1;
     } else {
@@ -358,10 +378,10 @@ public:
    */
   const char *performPose(const char *pose, PoseExecStatus* status) {
 
-    int poseLen = poseStrLen(pose);
+    int poseLen = nextPoseStrLen(pose);
     (*status) = Unknown;
 
-    if (poseLen <= 0) { // invalid number of chars poses
+    if (poseLen <= 0) { // invalid number of chars for next pose
       (*status) = End;
     } else if (poseLen > 0) {
       (*status) = performPoseLen(pose, poseLen);
@@ -508,6 +528,7 @@ public:
   }
 
   PoseExecStatus performMove(const char *move) {
+    log(CLASS_BODY, Debug, "Move '%s' started", move);
     int i = 0;
     const char *p = move;
     PoseExecStatus status = Unknown;
@@ -520,7 +541,7 @@ public:
       	break;
       }
     }
-    log(CLASS_BODY, Debug, "Move '%s': %d poses executed", move, i);
+    log(CLASS_BODY, Debug, "Move '%s' finished: %d poses executed (s=%d)", move, i, status);
     return status;
   }
 
