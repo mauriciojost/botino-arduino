@@ -162,7 +162,7 @@ public:
           logRawUser("Argument needed:\n  move <move>");
           return InvalidArgs;
         }
-        log(CLASS_MODULEB, Info, "-> Move %s", c);
+        log(CLASS_MODULEB, Info, "-> move %s", c);
         body->performMove(c);
         return Executed;
       } else if (strcmp("freq", c) == 0) {

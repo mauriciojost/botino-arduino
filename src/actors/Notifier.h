@@ -118,6 +118,7 @@ public:
     vsnprintf(buffer.getUnsafeBuffer(), MAX_MSG_LENGTH, format, args);
     buffer.getUnsafeBuffer()[MAX_MSG_LENGTH - 1] = 0;
     messageFunc(0, line, WHITE, DO_WRAP, FullClear, size, buffer.getBuffer());
+    log(CLASS_NOTIFIER, Debug, "Message: '%s'", buffer.getBuffer());
     va_end(args);
 
     notify(false); // apart from the message, also notify if notifications are available
