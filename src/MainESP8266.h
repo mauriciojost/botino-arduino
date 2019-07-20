@@ -34,7 +34,7 @@
 #define LCD_PIXEL_HEIGHT 8
 
 #ifndef WIFI_DELAY_MS
-#define WIFI_DELAY_MS 1000
+#define WIFI_DELAY_MS 2000
 #endif // WIFI_DELAY_MS
 
 #define MAX_ROUND_ROBIN_LOG_FILES 5

@@ -17,6 +17,7 @@ ModuleBotino *m;
 #include <MainX86_64.h>
 #endif // ARDUINO
 
+#define WIFI_CONNECTION_RETRIES 6
 
 #define VERSION_DESCRIPTION_JSON "{"\
   "\"version\":\"" STRINGIFY(PROJ_VERSION) "\","\
@@ -131,7 +132,7 @@ ModuleBotino *m;
 bool initWifiSimple() {
   Settings *s = m->getModuleSettings();
   log(CLASS_MAIN, Info, "W.steady");
-  bool connected = initWifi(s->getSsid(), s->getPass(), true, 10);
+  bool connected = initWifi(s->getSsid(), s->getPass(), true, WIFI_CONNECTION_RETRIES);
   return connected;
 }
 
