@@ -156,7 +156,7 @@ void test_body_performs_basic_moves() {
   TEST_ASSERT_EQUAL_STRING("left:5,right:6,steps:40", lastArms);
 
   executeMove(&b, "~1s:C13.");
-  TEST_ASSERT_EQUAL_STRING("left:1,right:3,steps:100", lastArms);
+  TEST_ASSERT_EQUAL_STRING("left:1,right:3,steps:80", lastArms);
 
   executeMove(&b, "~1s:Fs.");
   TEST_ASSERT_EQUAL(1, faceCustom);

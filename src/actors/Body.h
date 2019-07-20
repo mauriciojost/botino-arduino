@@ -39,7 +39,7 @@
 
 #define NRO_ROUTINES 8
 
-#define ARM_SLOW_STEPS 100
+#define ARM_SLOW_STEPS 80
 #define ARM_NORMAL_STEPS 40
 #define ARM_FAST_STEPS 20
 
