@@ -165,6 +165,10 @@ public:
         log(CLASS_MODULEB, Info, "-> Move %s", c);
         body->performMove(c);
         return Executed;
+      } else if (strcmp("freq", c) == 0) {
+        log(CLASS_MODULEB, Warn, "Intercepted: interferes with servo");
+        // changing the frequency to 160 MHz makes the servo module work unpredictably.
+        return CmdFailed;
       } else if (strcmp("ack", c) == 0) {
         ackCmd();
         log(CLASS_MODULEB, Info, "Notification read");
