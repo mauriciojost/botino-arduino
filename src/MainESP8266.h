@@ -56,7 +56,7 @@
 #endif // URL_PRINT_MAX_LENGTH
 
 #ifndef USER_DELAY_MS
-#define USER_DELAY_MS 4000
+#define USER_DELAY_MS 5000
 #endif // USER_DELAY_MS
 
 #define VCC_FLOAT ((float)ESP.getVcc() / 1024)
