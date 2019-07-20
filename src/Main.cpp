@@ -165,7 +165,6 @@ void setup() {
   ModuleStartupPropertiesCode ec = m->startupProperties();
 
   initWifiSimple();
-  logRaw(CLASS_MAIN, Info, VERSION_DESCRIPTION_JSON);
   m->getModule()->getPropSync()->pushDescription(VERSION_DESCRIPTION_JSON);
   if (ec != ModuleStartupPropertiesCodeSuccess) {
     log(CLASS_MAIN, Error, "Failure: %d", (int)ec);
