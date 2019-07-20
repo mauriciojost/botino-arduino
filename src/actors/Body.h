@@ -239,6 +239,7 @@ private:
 
     char c0 = 'x', c1 = 'x';
 
+    log(CLASS_BODY, Debug, "Performing pose: '%.*s'", len, pose);
     if (sleepInterruptable(now(), 0)) { // check if this pose's execution has to be interrupted
       return Interrupted;
     }
@@ -389,21 +390,22 @@ public:
 
     switch (*status) {
       case Success:
-        log(CLASS_BODY, Debug, "Done pose '%s'", pose);
+        log(CLASS_BODY, Debug, "Done pose (first '%.*s')", poseLen, pose);
         return pose + poseLen + 1;
       case Interrupted:
-        log(CLASS_BODY, Warn, "Interrupted '%s'", pose);
+        log(CLASS_BODY, Warn, "Interrupted pose '%s'", pose);
         return NULL;
       case Invalid:
-        notifier->message(0, 1, "Invalid: '%s'", pose);
+        notifier->message(0, 1, "Invalid pose '%s'", pose);
         return NULL;
       case Failed:
-        notifier->message(0, 1, "Failed: '%s'", pose);
+        notifier->message(0, 1, "Failed pose: '%s'", pose);
         return NULL;
       case End:
+        log(CLASS_BODY, Debug, "No more poses");
         return NULL;
       default:
-        log(CLASS_BODY, Error, "Unexpected status '%s'", pose);
+        log(CLASS_BODY, Error, "Unexpected pose status '%s'", pose);
         return NULL;
     }
   }
@@ -535,9 +537,9 @@ public:
     log(CLASS_BODY, Debug, "Performing move '%s'", move);
     while ((p = performPose(p, &status)) != NULL) {
       i++;
-      log(CLASS_BODY, Debug, "- pose %d: '%s'...", i, p);
-      if (status != Success || status != End) {
-        log(CLASS_BODY, Warn, "Bad move: '%s'", p);
+      log(CLASS_BODY, Debug, "- pose %d: (first of)'%s'...", i, p);
+      if (status != Success && status != End) {
+        log(CLASS_BODY, Warn, "Bad move: %d '%s'", (int)status, p);
       	break;
       }
     }
