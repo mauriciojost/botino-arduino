@@ -39,9 +39,9 @@
 
 #define NRO_ROUTINES 8
 
-#define ARM_SLOW_STEPS 80
-#define ARM_NORMAL_STEPS 40
-#define ARM_FAST_STEPS 20
+#define ARM_SLOW_FACTOR 4
+#define ARM_NORMAL_FACTOR 2
+#define ARM_FAST_FACTOR 1
 
 enum PoseExecStatus { Unknown = 0, Interrupted, Failed, Invalid, Success, End };
 
@@ -87,7 +87,7 @@ class Body : public Actor {
 private:
   const char *name;
   Metadata *md;
-  void (*arms)(int left, int right, int steps);
+  void (*arms)(int left, int right, int perFactor);
   bool (*sleepInterruptable)(time_t cycleBegin, time_t periodSec);
   Notifier *notifier;
   void (*iosFunc)(char led, IoMode v);
@@ -249,21 +249,21 @@ private:
       int l = getInt(c0);
       int r = getInt(c1);
       log(CLASS_BODY, Debug, "Armsf %d&%d", l, r);
-      arms(l, r, ARM_FAST_STEPS);
+      arms(l, r, ARM_FAST_FACTOR);
       return Success;
     } else if (sscanf(pose, "B%c%c.", &c0, &c1) == 2) {
       // ARMS MEDIUM
       int l = getInt(c0);
       int r = getInt(c1);
       log(CLASS_BODY, Debug, "Armsn %d&%d", l, r);
-      arms(l, r, ARM_NORMAL_STEPS);
+      arms(l, r, ARM_NORMAL_FACTOR);
       return Success;
     } else if (sscanf(pose, "C%c%c.", &c0, &c1) == 2) {
       // ARMS SLOW
       int l = getInt(c0);
       int r = getInt(c1);
       log(CLASS_BODY, Debug, "Armss %d&%d", l, r);
-      arms(l, r, ARM_SLOW_STEPS);
+      arms(l, r, ARM_SLOW_FACTOR);
       return Success;
     } else if (sscanf(pose, "D%c.", &c0) == 1) {
       // DANCE
@@ -450,7 +450,7 @@ public:
     ifttt = i;
   }
 
-  void setup(void (*a)(int left, int right, int steps), void (*f)(char led, IoMode v), bool (*i)(time_t cycleBegin, time_t periodSec)) {
+  void setup(void (*a)(int left, int right, int f), void (*f)(char led, IoMode v), bool (*i)(time_t cycleBegin, time_t periodSec)) {
     arms = a;
     iosFunc = f;
     sleepInterruptable = i;
@@ -560,7 +560,7 @@ public:
     }
     notifier->clearLcd();
     iosFunc('*', IoOff);
-    arms(0, 0, ARM_NORMAL_STEPS);
+    arms(0, 0, ARM_NORMAL_FACTOR);
     return Success;
   }
 

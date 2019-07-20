@@ -54,8 +54,8 @@ void messageOnLcd(int x, int y, int color, bool wrap, MsgClearMode clear, int si
   }
 }
 
-void arms(int left, int right, int steps) {
-  sprintf(lastArms, "left:%d,right:%d,steps:%d", left, right, steps);
+void arms(int left, int right, int factor) {
+  sprintf(lastArms, "left:%d,right:%d,factor:%d", left, right, factor);
 }
 
 void led(char led, IoMode v) {
@@ -150,13 +150,13 @@ void test_body_performs_basic_moves() {
   TEST_ASSERT_EQUAL_STRING("", lastArms);
 
   executeMove(&b, "~1s:A91.");
-  TEST_ASSERT_EQUAL_STRING("left:9,right:1,steps:20", lastArms);
+  TEST_ASSERT_EQUAL_STRING("left:9,right:1,factor:1", lastArms);
 
   executeMove(&b, "~1s:B56.");
-  TEST_ASSERT_EQUAL_STRING("left:5,right:6,steps:40", lastArms);
+  TEST_ASSERT_EQUAL_STRING("left:5,right:6,factor:2", lastArms);
 
   executeMove(&b, "~1s:C13.");
-  TEST_ASSERT_EQUAL_STRING("left:1,right:3,steps:80", lastArms);
+  TEST_ASSERT_EQUAL_STRING("left:1,right:3,factor:4", lastArms);
 
   executeMove(&b, "~1s:Fs.");
   TEST_ASSERT_EQUAL(1, faceCustom);
@@ -174,7 +174,7 @@ void test_body_performs_basic_moves() {
   TEST_ASSERT_EQUAL(1, fan);
 
   executeMove(&b, "~1s:Z.");
-  TEST_ASSERT_EQUAL_STRING("left:0,right:0,steps:40", lastArms);
+  TEST_ASSERT_EQUAL_STRING("left:0,right:0,factor:2", lastArms);
   TEST_ASSERT_EQUAL(0, ledY);
   TEST_ASSERT_EQUAL(0, ledR);
   TEST_ASSERT_EQUAL(0, ledW);

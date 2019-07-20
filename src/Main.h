@@ -55,8 +55,9 @@ void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clear, int siz
 
 // Arms control function.
 // Parameters left/right are from 0 to 9 included, 0 being down, 9 being up.
-// Parameter steps defines how slow the movement is (1 being the fastest).
-void arms(int left, int right, int steps);
+// Parameter periodFactor defines how slow the movement is (multiplicative factor of a period,
+// 1 gives the fastest movement, 2 medium, 3 the slowest).
+void arms(int left, int right, int periodFactor);
 
 // IO control function.
 void ios(char led, IoMode m);

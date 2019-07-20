@@ -45,7 +45,8 @@
 
 #define PRE_DEEP_SLEEP_WINDOW_SECS 5
 
-#define SERVO_PERIOD_REACTION_MS 20
+#define SERVO_BASE_STEPS 120
+#define SERVO_PERIOD_STEP_MS 2
 
 #define NEXT_LOG_LINE_ALGORITHM ((currentLogLine + 1) % 4)
 
@@ -305,9 +306,11 @@ void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clearMode, int
   delay(DELAY_MS_SPI);
 }
 
-void arms(int left, int right, int steps) {
+void arms(int left, int right, int periodFactor) {
   static int lastDegL = -1;
   static int lastDegR = -1;
+
+  int steps = periodFactor * SERVO_BASE_STEPS;
 
   log(CLASS_MAIN, Debug, "Arms>%d&%d", left, right);
 
@@ -329,7 +332,7 @@ void arms(int left, int right, int steps) {
     int vR = lastDegR + ((targetDegR - lastDegR) * factor);
     servoLeft.write(vL);
     servoRight.write(vR);
-    delay(SERVO_PERIOD_REACTION_MS);
+    delay(SERVO_PERIOD_STEP_MS);
   }
   lastDegL = targetDegL;
   lastDegR = targetDegR;
@@ -615,16 +618,21 @@ void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
   servo->attach(pin);
   servo->write(0);
 
-  m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Tuning %s", name);
-  delay(USER_DELAY_MS);
-
-  m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Press if arm moves...");
-  delay(SERVO_PERIOD_REACTION_MS * 10);
+  m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Tuning\n%s", name);
   delay(USER_DELAY_MS);
 
   int min = 100;
   int max = 100;
   int testRange = 200;
+
+  for (int d = 0; d <= testRange; d = d + 4) {
+    servo->write(d);
+    delay(SERVO_PERIOD_STEP_MS * SERVO_BASE_STEPS);
+  }
+
+  m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Press\nbutton\nif arm\nmoves...");
+  delay(SERVO_PERIOD_STEP_MS * SERVO_BASE_STEPS);
+  delay(USER_DELAY_MS);
 
   for (int d = 0; d <= testRange; d = d + 2) {
     bool pressed = BUTTON_IS_PRESSED;
@@ -632,13 +640,13 @@ void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
     min = ((d < min) && pressed ? d : min);
     max = ((d > max) && pressed ? d : max);
     servo->write(d);
-    delay(SERVO_PERIOD_REACTION_MS * 10);
+    delay(SERVO_PERIOD_STEP_MS * SERVO_BASE_STEPS);
   }
 
-  bool dwn = askBoolQuestion("Is the arm down now?");
-  m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Arm now: %s", (dwn?"DOWN":"UP"));
+  bool dwn = askBoolQuestion("Is the arm\ndown now?");
+  m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Arm now:\n%s", (dwn?"DOWN":"UP"));
   delay(USER_DELAY_MS);
-  m->getNotifier()->message(0, 2, "Setup %s done!", name);
+  m->getNotifier()->message(0, 2, "Setup\n%s\ndone!", name);
   delay(USER_DELAY_MS);
 
   servoConf->setBase(min);
