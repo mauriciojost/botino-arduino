@@ -59,6 +59,8 @@
 #define USER_DELAY_MS 5000
 #endif // USER_DELAY_MS
 
+#define USER_LCD_FONT_SIZE 2
+
 #define VCC_FLOAT ((float)ESP.getVcc() / 1024)
 
 #define ONLY_SHOW_MSG true
@@ -75,7 +77,7 @@ extern "C" {
 #define HELP_COMMAND_ARCH_CLI                                                                                                              \
   "\n  ESP8266 HELP"                                                                                                                        \
   "\n  init              : initialize essential settings (wifi connection, logins, etc.)"                                                  \
-  "\n  servo             : tune the servo <s> (r|l) and make a test round "                                                                \
+  "\n  servo ...         : tune the servo <s> (r|l) and make a test round "                                                                \
   "\n  rm ...            : remove file in FS "                                                                                             \
   "\n  ls                : list files present in FS "                                                                                      \
   "\n  reset             : reset the device"                                                                                               \
@@ -481,12 +483,12 @@ void updateFirmware(const char* descriptor) {
   bool connected = initWifi(s->getSsid(), s->getPass(), false, 10);
   if (!connected) {
     log(CLASS_MAIN, Error, "Cannot connect to wifi");
-    m->getNotifier()->message(0, 1, "Cannot connect to wifi: %s", s->getSsid());
+    m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Cannot connect to wifi: %s", s->getSsid());
     return; // fail fast
   }
 
   log(CLASS_MAIN, Info, "Updating firmware from '%s'...", url.getBuffer());
-  m->getNotifier()->message(0, 1, "Updating: %s", url.getBuffer());
+  m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Updating: %s", url.getBuffer());
 
   t_httpUpdate_return ret = updater.update(url.getBuffer());
   switch (ret) {
@@ -596,14 +598,14 @@ void runModeArchitecture() {
 }
 
 void askStringQuestion(const char *question, Buffer *answer) {
-  m->getNotifier()->message(0, 1, "%s\n(answer serial and enter)", question);
+  m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "%s\n(answer serial and enter)", question);
   Serial.readBytesUntil('\n', answer->getUnsafeBuffer(), COMMAND_MAX_LENGTH);
   answer->replace('\n', '\0');
   answer->replace('\r', '\0');
 }
 
 bool askBoolQuestion(const char *question) {
-  m->getNotifier()->message(0, 1, "%s\n(Press if true)", question);
+  m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "%s\n(Press if true)", question);
   delay(USER_DELAY_MS);
   int answer = BUTTON_IS_PRESSED;
   return (bool)answer;
@@ -613,10 +615,10 @@ void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
   servo->attach(pin);
   servo->write(0);
 
-  m->getNotifier()->message(0, 1, "Tuning %s", name);
+  m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Tuning %s", name);
   delay(USER_DELAY_MS);
 
-  m->getNotifier()->message(0, 1, "Press if arm moves...");
+  m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Press if arm moves...");
   delay(SERVO_PERIOD_REACTION_MS * 10);
   delay(USER_DELAY_MS);
 
@@ -626,22 +628,22 @@ void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
 
   for (int d = 0; d <= testRange; d = d + 2) {
     bool pressed = BUTTON_IS_PRESSED;
-    log(CLASS_MODULE, Info, "Moves: %d/%d (inrange=%s)", d, testRange, BOOL(pressed));
+    log(CLASS_MODULE, Info, "Moves: %d/%d %s", d, testRange, (pressed?"<= IN RANGE":""));
     min = ((d < min) && pressed ? d : min);
     max = ((d > max) && pressed ? d : max);
     servo->write(d);
     delay(SERVO_PERIOD_REACTION_MS * 10);
   }
 
-  bool inv = askBoolQuestion("Is arm down?");
-  m->getNotifier()->message(0, 1, "Down: %s", BOOL(inv));
+  bool dwn = askBoolQuestion("Is the arm down now?");
+  m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Arm now: %s", (dwn?"DOWN":"UP"));
   delay(USER_DELAY_MS);
-  m->getNotifier()->message(0, 1, "Setup %s done!", name);
+  m->getNotifier()->message(0, 2, "Setup %s done!", name);
   delay(USER_DELAY_MS);
 
   servoConf->setBase(min);
   servoConf->setRange(max - min);
-  servoConf->setInvert(inv);
+  servoConf->setInvert(dwn);
 
   servo->detach();
 }
@@ -733,13 +735,13 @@ void configureModeArchitecture() {
   handleInterrupt();
   debugHandle();
   if (m->getBot()->getClock()->currentTime() % 60 == 0) { // every minute
-    m->getNotifier()->message(0, 1, "telnet %s", WiFi.localIP().toString().c_str());
+    m->getNotifier()->message(0, 2, "telnet %s", WiFi.localIP().toString().c_str());
   }
 }
 
 void abort(const char *msg) {
   log(CLASS_MAIN, Error, "Abort: %s", msg);
-  m->getNotifier()->message(0, 1, "Abort: %s", msg);
+  m->getNotifier()->message(0, 2, "Abort: %s", msg);
   bool interrupt = sleepInterruptable(now(), ABORT_DELAY_SECS);
   if (interrupt) {
     log(CLASS_MAIN, Debug, "Abort sleep interrupted");
