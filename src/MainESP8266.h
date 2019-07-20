@@ -34,7 +34,7 @@
 #define LCD_PIXEL_HEIGHT 8
 
 #ifndef WIFI_DELAY_MS
-#define WIFI_DELAY_MS 4000
+#define WIFI_DELAY_MS 1000
 #endif // WIFI_DELAY_MS
 
 #define MAX_ROUND_ROBIN_LOG_FILES 5
@@ -45,7 +45,7 @@
 
 #define PRE_DEEP_SLEEP_WINDOW_SECS 5
 
-#define SERVO_PERIOD_REACTION_MS 15
+#define SERVO_PERIOD_REACTION_MS 25
 
 #define NEXT_LOG_LINE_ALGORITHM ((currentLogLine + 1) % 4)
 
@@ -56,7 +56,7 @@
 #endif // URL_PRINT_MAX_LENGTH
 
 #ifndef USER_DELAY_MS
-#define USER_DELAY_MS 5000
+#define USER_DELAY_MS 8000
 #endif // USER_DELAY_MS
 
 #define USER_LCD_FONT_SIZE 2
