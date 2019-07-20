@@ -87,8 +87,7 @@ public:
              void (*updateFunc)(const char*),
              void (*testFunc)(),
              const char *(*apiDeviceLoginFunc)(),
-             const char *(*apiDevicePassFunc)(),
-             bool (*oneRunModeFunc)()
+             const char *(*apiDevicePassFunc)()
 						 ) {
 
     module->setup(setupArchitectureFunc,
@@ -109,7 +108,7 @@ public:
                   testFunc,
                   apiDeviceLoginFunc,
                   apiDevicePassFunc,
-                  oneRunModeFunc
+									NULL
 									);
 
     message = messageFunc;

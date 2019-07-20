@@ -159,13 +159,10 @@ void setup() {
            updateFirmware,
            testArchitecture,
            apiDeviceLogin,
-           apiDevicePass,
-           NULL
+           apiDevicePass
 					 );
   ModuleStartupPropertiesCode ec = m->startupProperties();
-
-  initWifiSimple();
-  m->getModule()->getPropSync()->pushDescription(VERSION_DESCRIPTION_JSON);
+  m->getModule()->setDescription(VERSION_DESCRIPTION_JSON);
   if (ec != ModuleStartupPropertiesCodeSuccess) {
     log(CLASS_MAIN, Error, "Failure: %d", (int)ec);
     abort("Could not startup");
