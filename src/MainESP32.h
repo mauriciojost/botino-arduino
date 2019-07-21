@@ -62,7 +62,7 @@
 
 #define USER_LCD_FONT_SIZE 2
 
-#define VCC_FLOAT ((float)ESP.getVcc() / 1024)
+//#define VCC_FLOAT ((float)ESP.getVcc() / 1024)
 
 #define ONLY_SHOW_MSG true
 #define SHOW_MSG_AND_REACT false
@@ -110,7 +110,7 @@ Buffer *logBuffer = NULL;
 #define LED_INT_ON ios('w', IoOn);
 #define LED_ALIVE_TOGGLE ios('r', IoToggle);
 
-ADC_MODE(ADC_VCC);
+//ADC_MODE(ADC_VCC);
 
 void bitmapToLcd(uint8_t bitmap[]);
 void reactCommandCustom();
@@ -449,6 +449,7 @@ bool readFile(const char *fname, Buffer *content) {
 
 bool writeFile(const char *fname, const char *content) {
   bool success = false;
+  /*
   SPIFFS.begin();
   File f = SPIFFS.open(fname, "w+");
   if (!f) {
@@ -460,6 +461,7 @@ bool writeFile(const char *fname, const char *content) {
     success = true;
   }
   SPIFFS.end();
+  */
   return success;
 }
 
@@ -467,14 +469,12 @@ void infoArchitecture() {
 
   m->getNotifier()->message(0,
                             1,
-                            "ID:%s\nV:%s\nCrashes:%d\nIP: %s\nMemory:%lu\nUptime:%luh\nVcc: %0.2f",
+                            "ID:%s\nV:%s\nIP: %s\nMemory:%lu\nUptime:%luh\n",
                             apiDeviceLogin(),
                             STRINGIFY(PROJ_VERSION),
-                            SaveCrash.count(),
                             WiFi.localIP().toString().c_str(),
                             ESP.getFreeHeap(),
-                            (millis() / 1000) / 3600,
-                            VCC_FLOAT);
+                            (millis() / 1000) / 3600);
 }
 
 void testArchitecture() {
@@ -554,12 +554,14 @@ BotMode setupArchitecture() {
   heartbeat();
 
   log(CLASS_MAIN, Debug, "Setup wdt");
-  ESP.wdtEnable(1); // argument not used
+  //ESP.wdtEnable(1); // argument not used
 
+  /*
   log(CLASS_MAIN, Debug, "Setup wifi");
   WiFi.persistent(false);
   WiFi.hostname(apiDeviceLogin());
   heartbeat();
+  */
 
   log(CLASS_MAIN, Debug, "Setup http");
   httpClient.setTimeout(HTTP_TIMEOUT_MS);
@@ -587,6 +589,7 @@ BotMode setupArchitecture() {
   //log(CLASS_MAIN, Debug, "Setup servos");
   //initializeServoConfigs();
 
+  /*
   log(CLASS_MAIN, Debug, "Clean up crashes");
   if (SaveCrash.count() > 5) {
     log(CLASS_MAIN, Warn, "Too many Stack-trcs / clearing (!!!)");
@@ -595,6 +598,7 @@ BotMode setupArchitecture() {
     log(CLASS_MAIN, Warn, "Stack-trcs (!!!)");
     SaveCrash.print();
   }
+  */
 
   return RunMode;
 }
@@ -711,19 +715,23 @@ CmdExecStatus commandArchitecture(const char *c) {
     logRawUser("   ls");
     return Executed;
   } else if (strcmp("ls", c) == 0) {
+  	/*
     SPIFFS.begin();
     Dir dir = SPIFFS.openDir("/");
     while (dir.next()) {
       logUser("- %s (%d bytes)", dir.fileName().c_str(), (int)dir.fileSize());
     }
     SPIFFS.end();
+    */
     return Executed;
   } else if (strcmp("rm", c) == 0) {
     const char *f = strtok(NULL, " ");
+    /*
     SPIFFS.begin();
     bool succ = SPIFFS.remove(f);
     logUser("### File '%s' %s removed", f, (succ?"":"NOT"));
     SPIFFS.end();
+    */
     return Executed;
   } else if (strcmp("reset", c) == 0) {
     ESP.restart(); // it is normal that it fails if invoked the first time after firmware is written
@@ -743,7 +751,7 @@ CmdExecStatus commandArchitecture(const char *c) {
     int s = atoi(strtok(NULL, " "));
     return (lightSleepInterruptable(now(), s)? ExecutedInterrupt: Executed);
   } else if (strcmp("clearstack", c) == 0) {
-    SaveCrash.clear();
+    //SaveCrash.clear();
     return Executed;
   } else if (strcmp("help", c) == 0 || strcmp("?", c) == 0) {
     logRawUser(HELP_COMMAND_ARCH_CLI);
@@ -792,7 +800,7 @@ void debugHandle() {
     firstTime = false;
   }
 
-  m->getBotinoSettings()->getStatus()->fill("vcc:%0.2f,heap:%d", VCC_FLOAT, ESP.getFreeHeap());
+  m->getBotinoSettings()->getStatus()->fill("heap:%d", ESP.getFreeHeap());
   m->getBotinoSettings()->getMetadata()->changed();
 
   if (m->getBotinoSettings()->fsLogsEnabled()) {
