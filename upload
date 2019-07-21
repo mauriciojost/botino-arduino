@@ -47,7 +47,7 @@ then
   echo "### Exporting firmware file..."
   rm -fr $EXPORT_SUBDIR/
   mkdir -p $EXPORT_SUBDIR/
-  cp .pioenvs/main/firmware.bin $EXPORT_SUBDIR/firmware-$PROJ_VERSION_ID.bin
+  cp .pioenvs/$PIO_ENVIRONMENT/firmware.bin $EXPORT_SUBDIR/firmware-$PROJ_VERSION_ID.$PIO_ENVIRONMENT.bin
 fi
 
 if [ -n "$UPLOAD_FIRMWARE" ]
