@@ -6,7 +6,7 @@
 #include <HTTPClient.h>
 #include <SPIFFS.h>
 //#include <ESP32WiFi.h>
-//#include <ESP32httpUpdate.h>
+#include <HTTPUpdate.h>
 //#include <EspSaveCrash.h>
 #include <FS.h>
 #include <Main.h>
@@ -477,8 +477,7 @@ void testArchitecture() {
 }
 
 void updateFirmware(const char* descriptor) {
-	/*
-  ESP32HTTPUpdate updater;
+  HTTPUpdate updater;
   Buffer url(64);
   url.fill(FIRMWARE_UPDATE_URL, descriptor);
 
@@ -493,14 +492,14 @@ void updateFirmware(const char* descriptor) {
   log(CLASS_MAIN, Info, "Updating firmware from '%s'...", url.getBuffer());
   m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Updating: %s", url.getBuffer());
 
-  t_httpUpdate_return ret = updater.update(url.getBuffer());
+  t_httpUpdate_return ret = updater.update(httpClient.getStream(), url.getBuffer(), STRINGIFY(PROJ_VERSION));
   switch (ret) {
     case HTTP_UPDATE_FAILED:
       log(CLASS_MAIN,
           Error,
           "HTTP_UPDATE_FAILD Error (%d): %s\n",
-          ESPhttpUpdate.getLastError(),
-          ESPhttpUpdate.getLastErrorString().c_str());
+          updater.getLastError(),
+          updater.getLastErrorString().c_str());
       break;
     case HTTP_UPDATE_NO_UPDATES:
       log(CLASS_MAIN, Info, "No updates.");
@@ -509,7 +508,6 @@ void updateFirmware(const char* descriptor) {
       log(CLASS_MAIN, Info, "Done!");
       break;
   }
-  */
 }
 
 // Execution
