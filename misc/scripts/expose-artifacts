@@ -14,10 +14,13 @@ export EXPO=/var/lib/main4ino/httpexposed/botino
 function export_firmware_for_platform() {
   local platform=$1
 
+  echo "Exporting files for $platform..."
+
   find . -name 'firmware-*.bin' | grep $platform > files.list
 
   for f in `cat files.list`
   do
+    echo "Moving $f..."
     mv -f $f $EXPO
   done
 
@@ -25,6 +28,7 @@ function export_firmware_for_platform() {
   cd $EXPO
   ls -t | grep firmware | grep $platform | head -1 | xargs -I% ln -sf % $platform.latest.bin
   ls -t | grep firmware | grep $platform | grep -v SNAPSHOT | head -1 | xargs -I% ln -sf % $platform.latest-stable.bin
+  cd -
 
 }
 
