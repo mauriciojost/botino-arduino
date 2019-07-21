@@ -105,6 +105,7 @@ ServoConf *servo0Conf = NULL;
 ServoConf *servo1Conf = NULL;
 int currentLogLine = 0;
 Buffer *logBuffer = NULL;
+EspSaveCrash espSaveCrash;
 
 #define LED_INT_TOGGLE ios('w', IoToggle);
 #define LED_INT_ON ios('w', IoOn);
@@ -383,7 +384,7 @@ void ios(char led, IoMode value) {
 
 void clearDevice() {
   SPIFFS.format();
-  SaveCrash.clear();
+  espSaveCrash.clear();
 }
 
 void lcdImg(char img, uint8_t bitmap[]) {
@@ -466,7 +467,7 @@ void infoArchitecture() {
                             "ID:%s\nV:%s\nCrashes:%d\nIP: %s\nMemory:%lu\nUptime:%luh\nVcc: %0.2f",
                             apiDeviceLogin(),
                             STRINGIFY(PROJ_VERSION),
-                            SaveCrash.count(),
+                            espSaveCrash.count(),
                             WiFi.localIP().toString().c_str(),
                             ESP.getFreeHeap(),
                             (millis() / 1000) / 3600,
@@ -582,12 +583,12 @@ BotMode setupArchitecture() {
   initializeServoConfigs();
 
   log(CLASS_MAIN, Debug, "Clean up crashes");
-  if (SaveCrash.count() > 5) {
+  if (espSaveCrash.count() > 5) {
     log(CLASS_MAIN, Warn, "Too many Stack-trcs / clearing (!!!)");
-    SaveCrash.clear();
-  } else if (SaveCrash.count() > 0) {
+    espSaveCrash.clear();
+  } else if (espSaveCrash.count() > 0) {
     log(CLASS_MAIN, Warn, "Stack-trcs (!!!)");
-    SaveCrash.print();
+    espSaveCrash.print();
   }
 
   return RunMode;
@@ -730,7 +731,7 @@ CmdExecStatus commandArchitecture(const char *c) {
     int s = atoi(strtok(NULL, " "));
     return (lightSleepInterruptable(now(), s)? ExecutedInterrupt: Executed);
   } else if (strcmp("clearstack", c) == 0) {
-    SaveCrash.clear();
+    espSaveCrash.clear();
     return Executed;
   } else if (strcmp("help", c) == 0 || strcmp("?", c) == 0) {
     logRawUser(HELP_COMMAND_ARCH_CLI);
