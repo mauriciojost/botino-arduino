@@ -24,7 +24,7 @@ VERSION=`cat library.json | python -c 'import sys, json; print json.load(sys.std
 COMMIT_ID="`git rev-parse --short HEAD`"
 PROJ_VERSION_ID="$VERSION-$COMMIT_ID" 
 LOG_SUBDIR=images
-EXPORT_SUBDIR=exports
+EXPORT_SUBDIR=exports/$PIO_ENVIRONMENT/
 
 if [ -z "$PROFILE" ]
 then
