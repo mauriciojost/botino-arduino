@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <ArduinoOTA.h>
 #include <HTTPClient.h>
+#include <SPIFFS.h>
 //#include <ESP32WiFi.h>
 //#include <ESP32httpUpdate.h>
 //#include <EspSaveCrash.h>
@@ -16,6 +17,8 @@
 #include <Wire.h>
 #include <utils/Io.h>
 //#include <utils/ServoConf.h>
+
+#define FORMAT_SPIFFS_IF_FAILED true
 
 #define DELAY_MS_SPI 3
 #define ABORT_DELAY_SECS 5
@@ -429,8 +432,6 @@ void lcdImg(char img, uint8_t bitmap[]) {
 
 bool readFile(const char *fname, Buffer *content) {
   bool success = false;
-	/*
-  SPIFFS.begin();
   File f = SPIFFS.open(fname, "r");
   if (!f) {
     log(CLASS_MAIN, Warn, "File reading failed: %s", fname);
@@ -442,26 +443,21 @@ bool readFile(const char *fname, Buffer *content) {
     log(CLASS_MAIN, Info, "File read: %s", fname);
     success = true;
   }
-  SPIFFS.end();
-  */
   return success;
 }
 
 bool writeFile(const char *fname, const char *content) {
   bool success = false;
-  /*
-  SPIFFS.begin();
   File f = SPIFFS.open(fname, "w+");
   if (!f) {
     log(CLASS_MAIN, Warn, "File writing failed: %s", fname);
     success = false;
   } else {
-    f.write((const uint8_t *)content, strlen(content));
+    f.print(content);
+    f.close();
     log(CLASS_MAIN, Info, "File written: %s", fname);
     success = true;
   }
-  SPIFFS.end();
-  */
   return success;
 }
 
@@ -538,6 +534,9 @@ BotMode setupArchitecture() {
   log(CLASS_MAIN, Debug, "Setup timing");
   setExternalMillis(millis);
 
+  log(CLASS_MAIN, Debug, "Setup SPIFFS");
+  SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED);
+
   log(CLASS_MAIN, Debug, "Setup pins & deepsleep (if failure think of activating deep sleep mode?)");
   pinMode(LEDR_PIN, OUTPUT);
   pinMode(LEDW_PIN, OUTPUT);
@@ -553,7 +552,7 @@ BotMode setupArchitecture() {
   delay(DELAY_MS_SPI);
   heartbeat();
 
-  log(CLASS_MAIN, Debug, "Setup wdt");
+  //log(CLASS_MAIN, Debug, "Setup wdt");
   //ESP.wdtEnable(1); // argument not used
 
   /*
@@ -715,23 +714,17 @@ CmdExecStatus commandArchitecture(const char *c) {
     logRawUser("   ls");
     return Executed;
   } else if (strcmp("ls", c) == 0) {
-  	/*
-    SPIFFS.begin();
-    Dir dir = SPIFFS.openDir("/");
-    while (dir.next()) {
-      logUser("- %s (%d bytes)", dir.fileName().c_str(), (int)dir.fileSize());
+    File root = SPIFFS.open("/");
+    File file = root.openNextFile();
+    while(file) {
+      logUser("- %s (%d bytes)", file.name(), (int)file.size());
+      file = root.openNextFile();
     }
-    SPIFFS.end();
-    */
     return Executed;
   } else if (strcmp("rm", c) == 0) {
     const char *f = strtok(NULL, " ");
-    /*
-    SPIFFS.begin();
     bool succ = SPIFFS.remove(f);
     logUser("### File '%s' %s removed", f, (succ?"":"NOT"));
-    SPIFFS.end();
-    */
     return Executed;
   } else if (strcmp("reset", c) == 0) {
     ESP.restart(); // it is normal that it fails if invoked the first time after firmware is written
