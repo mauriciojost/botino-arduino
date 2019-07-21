@@ -584,6 +584,7 @@ BotMode setupArchitecture() {
   lcdImg('l', NULL);
   heartbeat();
 
+
   //log(CLASS_MAIN, Debug, "Setup servos");
   //initializeServoConfigs();
 
@@ -882,9 +883,9 @@ bool haveToInterrupt() {
   if (Serial.available()) {
     log(CLASS_MAIN, Debug, "Serial pinged: int");
     return true;
-  } else if (buttonInterrupts > 0) {
-    log(CLASS_MAIN, Debug, "Button pressed: int");
-    return true;
+  //} else if (buttonInterrupts > 0) {
+  //  log(CLASS_MAIN, Debug, "Button pressed: int");
+  //  return true;
   } else {
     return false;
   }
