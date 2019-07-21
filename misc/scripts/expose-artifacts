@@ -9,6 +9,8 @@ groups
 pwd
 ls
 
+ls exports
+
 export EXPO=/var/lib/main4ino/httpexposed/botino
 
 function export_firmware_for_platform() {
@@ -16,7 +18,7 @@ function export_firmware_for_platform() {
 
   echo "Exporting files for $platform..."
 
-  find . -name 'firmware-*-'$platform'.bin' > files.list
+  find . -name 'firmware-*.'$platform'.bin' > files.list
 
   for f in `cat files.list`
   do
