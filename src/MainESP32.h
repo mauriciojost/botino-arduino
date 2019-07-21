@@ -386,7 +386,7 @@ void ios(char led, IoMode value) {
 }
 
 void clearDevice() {
-  //SPIFFS.format();
+  SPIFFS.format();
   //SaveCrash.clear();
 }
 
