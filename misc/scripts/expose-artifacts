@@ -11,9 +11,24 @@ ls
 
 export EXPO=/var/lib/main4ino/httpexposed/botino
 
-find . -name 'firmware-*.bin' | xargs -I% mv -f % $EXPO
+function export_firmware_for_platform() {
+  local platform=$1
 
-# Rules
-cd $EXPO
-ls -t | grep firmware | head -1 | xargs -I% ln -sf % latest
-ls -t | grep firmware | grep -v SNAPSHOT | head -1 | xargs -I% ln -sf % latest-stable
+  find . -name 'firmware-*.bin' | grep $platform > files.list
+
+  for f in `cat files.list`
+  do
+    b=`basename $f`
+    d=`dirname $f`
+    mv -f $d/$b $EXPO/$b.$platform.bin
+  done
+
+  # Rules
+  cd $EXPO
+  ls -t | grep firmware | grep $platform | head -1 | xargs -I% ln -sf % $platform.latest
+  ls -t | grep firmware | grep $platform | grep -v SNAPSHOT | head -1 | xargs -I% ln -sf % $platform.latest-stable
+
+}
+
+export_firmware_for_platform esp8266
+export_firmware_for_platform esp32
