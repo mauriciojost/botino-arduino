@@ -5,7 +5,6 @@
 #include <ArduinoOTA.h>
 #include <HTTPClient.h>
 #include <SPIFFS.h>
-//#include <ESP32WiFi.h>
 #include <HTTPUpdate.h>
 //#include <EspSaveCrash.h>
 #include <FS.h>
@@ -551,13 +550,10 @@ BotMode setupArchitecture() {
 
   //log(CLASS_MAIN, Debug, "Setup wdt");
   //ESP.wdtEnable(1); // argument not used
-
-  /*
   log(CLASS_MAIN, Debug, "Setup wifi");
   WiFi.persistent(false);
-  WiFi.hostname(apiDeviceLogin());
+  WiFi.setHostname(apiDeviceLogin());
   heartbeat();
-  */
 
   log(CLASS_MAIN, Debug, "Setup http");
   httpClient.setTimeout(HTTP_TIMEOUT_MS);
