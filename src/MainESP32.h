@@ -3,19 +3,22 @@
 #include <Adafruit_SSD1306.h>
 #include <Arduino.h>
 #include <ArduinoOTA.h>
-#include <ESP8266HTTPClient.h>
-#include <ESP8266WiFi.h>
-#include <ESP8266httpUpdate.h>
-#include <EspSaveCrash.h>
+#include <HTTPClient.h>
+#include <SPIFFS.h>
+//#include <ESP32WiFi.h>
+#include <HTTPUpdate.h>
+//#include <EspSaveCrash.h>
 #include <FS.h>
 #include <Main.h>
 #include <Pinout.h>
 #include <RemoteDebug.h>
 #include <SPI.h>
-#include <Servo.h>
+//#include <Servo.h>
 #include <Wire.h>
 #include <utils/Io.h>
-#include <utils/ServoConf.h>
+//#include <utils/ServoConf.h>
+
+#define FORMAT_SPIFFS_IF_FAILED true
 
 #define DELAY_MS_SPI 3
 #define ABORT_DELAY_SECS 5
@@ -27,8 +30,8 @@
 #define DEVICE_PWD_FILENAME "/pass.tuning"
 #define DEVICE_PWD_MAX_LENGTH 16
 
-#define SERVO_0_FILENAME "/servo0.tuning"
-#define SERVO_1_FILENAME "/servo1.tuning"
+//#define SERVO_0_FILENAME "/servo0.tuning"
+//#define SERVO_1_FILENAME "/servo1.tuning"
 
 #define LCD_PIXEL_WIDTH 6
 #define LCD_PIXEL_HEIGHT 8
@@ -62,27 +65,26 @@
 
 #define USER_LCD_FONT_SIZE 2
 
-#define VCC_FLOAT ((float)ESP.getVcc() / 1024)
+//#define VCC_FLOAT ((float)ESP.getVcc() / 1024)
 
 #define ONLY_SHOW_MSG true
 #define SHOW_MSG_AND_REACT false
 
 #define WAIT_BEFORE_HTTP_MS 100
 
-extern "C" {
-#include "user_interface.h"
-}
+//extern "C" {
+//#include "user_interface.h"
+//}
 
 #define HTTP_TIMEOUT_MS 8000
 
 #define HELP_COMMAND_ARCH_CLI                                                                                                              \
-  "\n  ESP8266 HELP"                                                                                                                        \
+  "\n  ESP32 HELP"                                                                                                                        \
   "\n  init              : initialize essential settings (wifi connection, logins, etc.)"                                                  \
   "\n  servo ...         : tune the servo <s> (r|l) and make a test round "                                                                \
   "\n  rm ...            : remove file in FS "                                                                                             \
   "\n  ls                : list files present in FS "                                                                                      \
   "\n  reset             : reset the device"                                                                                               \
-  "\n  freq ...          : set clock frequency in MHz (80 or 160 available only, 160 faster but more power consumption)"                   \
   "\n  deepsleep ...     : deep sleep N provided seconds"                                                                                  \
   "\n  lightsleep ...    : light sleep N provided seconds"                                                                                 \
   "\n  clearstack        : clear stack trace "                                                                                             \
@@ -95,23 +97,22 @@ volatile unsigned char buttonInterrupts = 0;
 
 HTTPClient httpClient;
 RemoteDebug telnet;
-Servo servoLeft;
-Servo servoRight;
+//Servo servoLeft;
+//Servo servoRight;
 Adafruit_SSD1306 *lcd = NULL;
 Buffer *apiDeviceId = NULL;
 Buffer *apiDevicePwd = NULL;
 Buffer *deepSleepMode = NULL;
-ServoConf *servo0Conf = NULL;
-ServoConf *servo1Conf = NULL;
+//ServoConf *servo0Conf = NULL;
+//ServoConf *servo1Conf = NULL;
 int currentLogLine = 0;
 Buffer *logBuffer = NULL;
-EspSaveCrash espSaveCrash;
 
 #define LED_INT_TOGGLE ios('w', IoToggle);
 #define LED_INT_ON ios('w', IoOn);
 #define LED_ALIVE_TOGGLE ios('r', IoToggle);
 
-ADC_MODE(ADC_VCC);
+//ADC_MODE(ADC_VCC);
 
 void bitmapToLcd(uint8_t bitmap[]);
 void reactCommandCustom();
@@ -122,7 +123,7 @@ bool lightSleepInterruptable(time_t cycleBegin, time_t periodSecs);
 void debugHandle();
 bool haveToInterrupt();
 void handleInterrupt();
-void initializeServoConfigs();
+//void initializeServoConfigs();
 Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLength, const char *defaultContent, bool obfuscate);
 void dumpLogBuffer();
 
@@ -308,6 +309,7 @@ void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clearMode, int
 }
 
 void arms(int left, int right, int periodFactor) {
+	/*
   static int lastDegL = -1;
   static int lastDegR = -1;
 
@@ -339,6 +341,7 @@ void arms(int left, int right, int periodFactor) {
   lastDegR = targetDegR;
   servoLeft.detach();
   servoRight.detach();
+  */
 }
 
 void ios(char led, IoMode value) {
@@ -384,7 +387,7 @@ void ios(char led, IoMode value) {
 
 void clearDevice() {
   SPIFFS.format();
-  espSaveCrash.clear();
+  //SaveCrash.clear();
 }
 
 void lcdImg(char img, uint8_t bitmap[]) {
@@ -428,7 +431,6 @@ void lcdImg(char img, uint8_t bitmap[]) {
 
 bool readFile(const char *fname, Buffer *content) {
   bool success = false;
-  SPIFFS.begin();
   File f = SPIFFS.open(fname, "r");
   if (!f) {
     log(CLASS_MAIN, Warn, "File reading failed: %s", fname);
@@ -440,23 +442,21 @@ bool readFile(const char *fname, Buffer *content) {
     log(CLASS_MAIN, Info, "File read: %s", fname);
     success = true;
   }
-  SPIFFS.end();
   return success;
 }
 
 bool writeFile(const char *fname, const char *content) {
   bool success = false;
-  SPIFFS.begin();
   File f = SPIFFS.open(fname, "w+");
   if (!f) {
     log(CLASS_MAIN, Warn, "File writing failed: %s", fname);
     success = false;
   } else {
-    f.write((const uint8_t *)content, strlen(content));
+    f.print(content);
+    f.close();
     log(CLASS_MAIN, Info, "File written: %s", fname);
     success = true;
   }
-  SPIFFS.end();
   return success;
 }
 
@@ -464,14 +464,12 @@ void infoArchitecture() {
 
   m->getNotifier()->message(0,
                             1,
-                            "ID:%s\nV:%s\nCrashes:%d\nIP: %s\nMemory:%lu\nUptime:%luh\nVcc: %0.2f",
+                            "ID:%s\nV:%s\nIP: %s\nMemory:%lu\nUptime:%luh\n",
                             apiDeviceLogin(),
                             STRINGIFY(PROJ_VERSION),
-                            espSaveCrash.count(),
                             WiFi.localIP().toString().c_str(),
                             ESP.getFreeHeap(),
-                            (millis() / 1000) / 3600,
-                            VCC_FLOAT);
+                            (millis() / 1000) / 3600);
 }
 
 void testArchitecture() {
@@ -479,7 +477,7 @@ void testArchitecture() {
 }
 
 void updateFirmware(const char* descriptor) {
-  ESP8266HTTPUpdate updater;
+  HTTPUpdate updater;
   Buffer url(64);
   url.fill(FIRMWARE_UPDATE_URL, descriptor);
 
@@ -494,14 +492,14 @@ void updateFirmware(const char* descriptor) {
   log(CLASS_MAIN, Info, "Updating firmware from '%s'...", url.getBuffer());
   m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Updating: %s", url.getBuffer());
 
-  t_httpUpdate_return ret = updater.update(url.getBuffer());
+  t_httpUpdate_return ret = updater.update(httpClient.getStream(), url.getBuffer(), STRINGIFY(PROJ_VERSION));
   switch (ret) {
     case HTTP_UPDATE_FAILED:
       log(CLASS_MAIN,
           Error,
           "HTTP_UPDATE_FAILD Error (%d): %s\n",
-          ESPhttpUpdate.getLastError(),
-          ESPhttpUpdate.getLastErrorString().c_str());
+          updater.getLastError(),
+          updater.getLastErrorString().c_str());
       break;
     case HTTP_UPDATE_NO_UPDATES:
       log(CLASS_MAIN, Info, "No updates.");
@@ -533,6 +531,9 @@ BotMode setupArchitecture() {
   log(CLASS_MAIN, Debug, "Setup timing");
   setExternalMillis(millis);
 
+  log(CLASS_MAIN, Debug, "Setup SPIFFS");
+  SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED);
+
   log(CLASS_MAIN, Debug, "Setup pins & deepsleep (if failure think of activating deep sleep mode?)");
   pinMode(LEDR_PIN, OUTPUT);
   pinMode(LEDW_PIN, OUTPUT);
@@ -548,13 +549,15 @@ BotMode setupArchitecture() {
   delay(DELAY_MS_SPI);
   heartbeat();
 
-  log(CLASS_MAIN, Debug, "Setup wdt");
-  ESP.wdtEnable(1); // argument not used
+  //log(CLASS_MAIN, Debug, "Setup wdt");
+  //ESP.wdtEnable(1); // argument not used
 
+  /*
   log(CLASS_MAIN, Debug, "Setup wifi");
   WiFi.persistent(false);
   WiFi.hostname(apiDeviceLogin());
   heartbeat();
+  */
 
   log(CLASS_MAIN, Debug, "Setup http");
   httpClient.setTimeout(HTTP_TIMEOUT_MS);
@@ -579,17 +582,20 @@ BotMode setupArchitecture() {
   lcdImg('l', NULL);
   heartbeat();
 
-  log(CLASS_MAIN, Debug, "Setup servos");
-  initializeServoConfigs();
 
+  //log(CLASS_MAIN, Debug, "Setup servos");
+  //initializeServoConfigs();
+
+  /*
   log(CLASS_MAIN, Debug, "Clean up crashes");
-  if (espSaveCrash.count() > 5) {
+  if (SaveCrash.count() > 5) {
     log(CLASS_MAIN, Warn, "Too many Stack-trcs / clearing (!!!)");
-    espSaveCrash.clear();
-  } else if (espSaveCrash.count() > 0) {
+    SaveCrash.clear();
+  } else if (SaveCrash.count() > 0) {
     log(CLASS_MAIN, Warn, "Stack-trcs (!!!)");
-    espSaveCrash.print();
+    SaveCrash.print();
   }
+  */
 
   return RunMode;
 }
@@ -615,6 +621,7 @@ bool askBoolQuestion(const char *question) {
   return (bool)answer;
 }
 
+/*
 void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
   servo->attach(pin);
   servo->write(0);
@@ -651,9 +658,11 @@ void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
 
   servo->detach();
 }
+*/
 
 CmdExecStatus commandArchitecture(const char *c) {
   if (strcmp("servo", c) == 0) {
+  	/*
     char servo = strtok(NULL, " ")[0];
     Buffer serialized(16);
     if (servo == 'r' || servo == 'R') {
@@ -684,14 +693,16 @@ CmdExecStatus commandArchitecture(const char *c) {
       logUser("Invalid servo (l|r)");
       return InvalidArgs;
     }
+      */
+  	return InvalidArgs;
   } else if (strcmp("init", c) == 0) {
     logRawUser("-> Initialize");
     logRawUser("Execute:");
     logRawUser("   ls");
     logUser("   save %s <alias>", DEVICE_ALIAS_FILENAME);
     logUser("   save %s <pwd>", DEVICE_PWD_FILENAME);
-    logRawUser("   servo l");
-    logRawUser("   servo r");
+    //logRawUser("   servo l");
+    //logRawUser("   servo r");
     logRawUser("   wifissid <ssid>");
     logRawUser("   wifissid <ssid>");
     logRawUser("   wifipass <password>");
@@ -701,27 +712,20 @@ CmdExecStatus commandArchitecture(const char *c) {
     logRawUser("   ls");
     return Executed;
   } else if (strcmp("ls", c) == 0) {
-    SPIFFS.begin();
-    Dir dir = SPIFFS.openDir("/");
-    while (dir.next()) {
-      logUser("- %s (%d bytes)", dir.fileName().c_str(), (int)dir.fileSize());
+    File root = SPIFFS.open("/");
+    File file = root.openNextFile();
+    while(file) {
+      logUser("- %s (%d bytes)", file.name(), (int)file.size());
+      file = root.openNextFile();
     }
-    SPIFFS.end();
     return Executed;
   } else if (strcmp("rm", c) == 0) {
     const char *f = strtok(NULL, " ");
-    SPIFFS.begin();
     bool succ = SPIFFS.remove(f);
     logUser("### File '%s' %s removed", f, (succ?"":"NOT"));
-    SPIFFS.end();
     return Executed;
   } else if (strcmp("reset", c) == 0) {
     ESP.restart(); // it is normal that it fails if invoked the first time after firmware is written
-    return Executed;
-  } else if (strcmp("freq", c) == 0) {
-    uint8 fmhz = (uint8)atoi(strtok(NULL, " "));
-    bool succ = system_update_cpu_freq(fmhz);
-    logUser("Freq updated: %dMHz (succ %s)", (int)fmhz, BOOL(succ));
     return Executed;
   } else if (strcmp("deepsleep", c) == 0) {
     int s = atoi(strtok(NULL, " "));
@@ -731,7 +735,7 @@ CmdExecStatus commandArchitecture(const char *c) {
     int s = atoi(strtok(NULL, " "));
     return (lightSleepInterruptable(now(), s)? ExecutedInterrupt: Executed);
   } else if (strcmp("clearstack", c) == 0) {
-    espSaveCrash.clear();
+    //SaveCrash.clear();
     return Executed;
   } else if (strcmp("help", c) == 0 || strcmp("?", c) == 0) {
     logRawUser(HELP_COMMAND_ARCH_CLI);
@@ -780,7 +784,7 @@ void debugHandle() {
     firstTime = false;
   }
 
-  m->getBotinoSettings()->getStatus()->fill("vcc:%0.2f,heap:%d", VCC_FLOAT, ESP.getFreeHeap());
+  m->getBotinoSettings()->getStatus()->fill("heap:%d", ESP.getFreeHeap());
   m->getBotinoSettings()->getMetadata()->changed();
 
   if (m->getBotinoSettings()->fsLogsEnabled()) {
@@ -877,14 +881,15 @@ bool haveToInterrupt() {
   if (Serial.available()) {
     log(CLASS_MAIN, Debug, "Serial pinged: int");
     return true;
-  } else if (buttonInterrupts > 0) {
-    log(CLASS_MAIN, Debug, "Button pressed: int");
-    return true;
+  //} else if (buttonInterrupts > 0) {
+  //  log(CLASS_MAIN, Debug, "Button pressed: int");
+  //  return true;
   } else {
     return false;
   }
 }
 
+/*
 void initializeServoConfig(const char *tuningFilename, ServoConf **conf) {
   Buffer aux(SERVO_CONF_SERIALIZED_MAX_LENGTH);
   bool succServo0 = readFile(tuningFilename, &aux);
@@ -900,6 +905,7 @@ void initializeServoConfigs() {
   initializeServoConfig(SERVO_0_FILENAME, &servo0Conf);
   initializeServoConfig(SERVO_1_FILENAME, &servo1Conf);
 }
+*/
 
 Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLength, const char *defaultContent, bool obfuscate) {
 	bool first = false;
