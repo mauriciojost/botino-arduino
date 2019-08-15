@@ -5,12 +5,21 @@
 #include <main4ino/Actor.h>
 
 #define STATUS_BUFFER_SIZE 64
+#define TARGET_BUFFER_SIZE 32
+
+#define CLASS_BOTINO_SETTINGS "SS"
+#define SKIP_UPDATES_CODE "skip"
+#define UPDATE_COMMAND "update %s"
+
 
 enum BotinoSettingsProps {
   BotinoSettingsLcdLogsProp = 0,  // boolean, define if the device display logs in LCD
   BotinoSettingsStatusProp,       // string, defines the current general status of the device (vcc level, heap, etc)
   BotinoSettingsFsLogsProp,       // boolean, define if logs are to be dumped in the file system (only in debug mode)
-	BotinoSettingsPropsDelimiter
+  BotinoSettingsUpdateTargetProp,  // string, target version of firmware to update to
+  BotinoSettingsWifiSsidBackupProp,// string, ssid for backup wifi network
+  BotinoSettingsWifiPassBackupProp,// string, pass for backup wifi network
+  BotinoSettingsPropsDelimiter
 };
 
 class BotinoSettings : public Actor {
@@ -20,7 +29,11 @@ private:
   bool lcdLogs;
   Buffer *status;
   bool fsLogs;
+  Buffer *target;
+  Buffer *ssidb;
+  Buffer *passb;
   Metadata *md;
+  void (*command)(const char*);
 
 public:
   BotinoSettings(const char* n) {
@@ -28,7 +41,19 @@ public:
     lcdLogs = false;
     status = new Buffer(STATUS_BUFFER_SIZE);
     fsLogs = false;
+    target = new Buffer(TARGET_BUFFER_SIZE);
+    target->load(SKIP_UPDATES_CODE);
+    ssidb = new Buffer(20);
+    ssidb->load("defaultssid");
+    passb = new Buffer(20);
+    passb->load("defaultssid");
     md = new Metadata(n);
+    md->getTiming()->setFreq("~24h");
+    command = NULL;
+  }
+
+  void setup(void(*cmd)(const char*)){
+  	command = cmd;
   }
 
   const char* getName() {
@@ -39,7 +64,18 @@ public:
   	return BotinoSettingsPropsDelimiter;
   }
 
-  void act() {}
+  void act() {
+    if (getTiming()->matches()) {
+      const char* currVersion = STRINGIFY(PROJ_VERSION);
+      if (!target->equals(currVersion) && !target->equals(SKIP_UPDATES_CODE)) {
+        log(CLASS_BOTINO_SETTINGS, Warn, "Have to update '%s'->'%s'", currVersion, target->getBuffer());
+        if (command != NULL) {
+        	Buffer aux(64);
+          command(aux.fill(UPDATE_COMMAND, target->getBuffer()));
+        }
+      }
+    }
+  }
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
@@ -49,6 +85,12 @@ public:
         return STATUS_PROP_PREFIX "status";
       case (BotinoSettingsFsLogsProp):
         return DEBUG_PROP_PREFIX "fslogs";
+      case (BotinoSettingsUpdateTargetProp):
+        return ADVANCED_PROP_PREFIX "target";
+      case (BotinoSettingsWifiSsidBackupProp):
+        return SENSITIVE_PROP_PREFIX "ssidb";
+      case (BotinoSettingsWifiPassBackupProp):
+        return SENSITIVE_PROP_PREFIX "passb";
       default:
         return "";
     }
@@ -64,6 +106,15 @@ public:
         break;
       case (BotinoSettingsFsLogsProp):
         setPropBoolean(m, targetValue, actualValue, &fsLogs);
+        break;
+      case (BotinoSettingsUpdateTargetProp):
+        setPropValue(m, targetValue, actualValue, target);
+        break;
+      case (BotinoSettingsWifiSsidBackupProp):
+        setPropValue(m, targetValue, actualValue, ssidb);
+        break;
+      case (BotinoSettingsWifiPassBackupProp):
+        setPropValue(m, targetValue, actualValue, passb);
         break;
       default:
         break;
@@ -89,6 +140,13 @@ public:
     return lcdLogs;
   }
 
+  Buffer *getBackupWifiSsid() {
+    return ssidb;
+  }
+
+  Buffer *getBackupWifiPass() {
+    return passb;
+  }
 };
 
 #endif // MODULE_SETTINGS_INC
