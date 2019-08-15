@@ -79,7 +79,7 @@ extern "C" {
 #define HTTP_TIMEOUT_MS 8000
 
 #define HELP_COMMAND_ARCH_CLI                                                                                                              \
-  "\n  ESP8266 HELP"                                                                                                                        \
+  "\n  ESP8266 HELP"                                                                                                                       \
   "\n  init              : initialize essential settings (wifi connection, logins, etc.)"                                                  \
   "\n  servo ...         : tune the servo <s> (r|l) and make a test round "                                                                \
   "\n  rm ...            : remove file in FS "                                                                                             \
@@ -148,14 +148,14 @@ const char *apiDevicePass() {
 void logLine(const char *str) {
   Serial.setDebugOutput(getLogLevel() == Debug); // deep HW logs
   // serial print
-	/*
-  Serial.print("HEA:");
-  Serial.print(ESP.getFreeHeap());
-  Serial.print("|");
-  Serial.print("VCC:");
-  Serial.print(VCC_FLOAT);
-  Serial.print("|");
-  */
+  /*
+Serial.print("HEA:");
+Serial.print(ESP.getFreeHeap());
+Serial.print("|");
+Serial.print("VCC:");
+Serial.print(VCC_FLOAT);
+Serial.print("|");
+*/
   Serial.print(str);
   // telnet print
   if (telnet.isActive()) {
@@ -193,16 +193,16 @@ void stopWifi() {
   delay(WIFI_DELAY_MS);
 }
 
-WifiNetwork chooseWifi(const char* ssid, const char* ssidb) {
+WifiNetwork chooseWifi(const char *ssid, const char *ssidb) {
   int n = WiFi.scanNetworks();
   for (int i = 0; i < n; ++i) {
     String s = WiFi.SSID(i);
     if (strcmp(s.c_str(), ssid) == 0) {
       log(CLASS_MAIN, Info, "Wifi found '%s'", ssid);
-    	return WifiMainNetwork;
-    } else if  (strcmp(s.c_str(), ssidb) == 0) {
+      return WifiMainNetwork;
+    } else if (strcmp(s.c_str(), ssidb) == 0) {
       log(CLASS_MAIN, Info, "Wifi found '%s'", ssidb);
-    	return WifiBackupNetwork;
+      return WifiBackupNetwork;
     }
   }
   return WifiNoNetwork;
@@ -211,11 +211,10 @@ WifiNetwork chooseWifi(const char* ssid, const char* ssidb) {
 bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries) {
   wl_status_t status;
 
-  const char* ssidb = m->getBotinoSettings()->getBackupWifiSsid()->getBuffer();
-  const char* passb = m->getBotinoSettings()->getBackupWifiPass()->getBuffer();
+  const char *ssidb = m->getBotinoSettings()->getBackupWifiSsid()->getBuffer();
+  const char *passb = m->getBotinoSettings()->getBackupWifiPass()->getBuffer();
 
   log(CLASS_MAIN, Info, "Init wifi '%s' (or '%s')...", ssid, ssidb);
-
 
   if (skipIfConnected) { // check if connected
     log(CLASS_MAIN, Debug, "Already connected?");
@@ -225,7 +224,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
       return true; // connected
     }
   } else {
-  	stopWifi();
+    stopWifi();
   }
 
   log(CLASS_MAIN, Debug, "Scanning...");
@@ -235,14 +234,14 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retr
   WiFi.mode(WIFI_STA);
   delay(WIFI_DELAY_MS);
   switch (w) {
-  	case WifiMainNetwork:
+    case WifiMainNetwork:
       WiFi.begin(ssid, pass);
       break;
-  	case WifiBackupNetwork:
+    case WifiBackupNetwork:
       WiFi.begin(ssidb, passb);
       break;
-  	default:
-  		return false;
+    default:
+      return false;
   }
 
   int attemptsLeft = retries;
@@ -475,7 +474,7 @@ bool readFile(const char *fname, Buffer *content) {
     content->clear();
     success = false;
   } else {
-  File f = SPIFFS.open(fname, "r");
+    File f = SPIFFS.open(fname, "r");
     if (!f) {
       log(CLASS_MAIN, Warn, "File reading failed: %s", fname);
       content->clear();
@@ -490,7 +489,6 @@ bool readFile(const char *fname, Buffer *content) {
   SPIFFS.end();
   return success;
 }
-
 
 bool writeFile(const char *fname, const char *content) {
   bool success = false;
@@ -527,7 +525,7 @@ void testArchitecture() {
   hwTest();
 }
 
-void updateFirmware(const char* descriptor) {
+void updateFirmware(const char *descriptor) {
   ESP8266HTTPUpdate updater;
   Buffer url(FIRMWARE_UPDATE_URL_MAX_LENGTH);
   url.fill(FIRMWARE_UPDATE_URL, descriptor);
@@ -651,7 +649,6 @@ BotMode setupArchitecture() {
   } else {
     return RunMode;
   }
-
 }
 
 void runModeArchitecture() {
@@ -692,7 +689,7 @@ void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
 
   for (int d = 0; d <= testRange; d = d + 2) {
     bool pressed = BUTTON_IS_PRESSED;
-    log(CLASS_MODULE, Info, "Moves: %d/%d %s", d, testRange, (pressed?"<= IN RANGE":""));
+    log(CLASS_MODULE, Info, "Moves: %d/%d %s", d, testRange, (pressed ? "<= IN RANGE" : ""));
     min = ((d < min) && pressed ? d : min);
     max = ((d > max) && pressed ? d : max);
     servo->write(d);
@@ -700,7 +697,7 @@ void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
   }
 
   bool dwn = askBoolQuestion("Is the arm\ndown now?");
-  m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Arm now:\n%s", (dwn?"DOWN":"UP"));
+  m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Arm now:\n%s", (dwn ? "DOWN" : "UP"));
   delay(USER_DELAY_MS);
   m->getNotifier()->message(0, 2, "Setup\n%s\ndone!", name);
   delay(USER_DELAY_MS);
@@ -772,7 +769,7 @@ CmdExecStatus commandArchitecture(const char *c) {
     const char *f = strtok(NULL, " ");
     SPIFFS.begin();
     bool succ = SPIFFS.remove(f);
-    logUser("### File '%s' %s removed", f, (succ?"":"NOT"));
+    logUser("### File '%s' %s removed", f, (succ ? "" : "NOT"));
     SPIFFS.end();
     return Executed;
   } else if (strcmp("reset", c) == 0) {
@@ -789,7 +786,7 @@ CmdExecStatus commandArchitecture(const char *c) {
     return Executed;
   } else if (strcmp("lightsleep", c) == 0) {
     int s = atoi(strtok(NULL, " "));
-    return (lightSleepInterruptable(now(), s)? ExecutedInterrupt: Executed);
+    return (lightSleepInterruptable(now(), s) ? ExecutedInterrupt : Executed);
   } else if (strcmp("clearstack", c) == 0) {
     espSaveCrash.clear();
     return Executed;
@@ -899,15 +896,15 @@ bool lightSleepInterruptable(time_t cycleBegin, time_t periodSecs) {
 }
 
 void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs) {
-	lightSleepInterruptable(cycleBegin, periodSecs);
+  lightSleepInterruptable(cycleBegin, periodSecs);
 }
 
 void handleInterrupt() {
   if (Serial.available()) {
     // Handle serial commands
-  	uint8_t c;
+    uint8_t c;
 
-  	while (true) {
+    while (true) {
       size_t n = Serial.readBytes(&c, 1);
 
       if (c == 0x08 && n == 1) { // backspace
@@ -932,16 +929,17 @@ void handleInterrupt() {
           cmdBuffer->clear();
         }
         break;
-      } else if (n == 1){
+      } else if (n == 1) {
         cmdBuffer->append(c);
       }
       // echo
       logUser("> %s", cmdBuffer->getBuffer());
-      while(!Serial.available()) {delay(100);}
-  	}
+      while (!Serial.available()) {
+        delay(100);
+      }
+    }
     log(CLASS_MAIN, Debug, "Done with interrupt");
-    
-    
+
   } else if (buttonInterrupts > 0) {
     buttonEnabled = false;
     buttonInterrupts = 0; // to avoid interrupting whatever is called below

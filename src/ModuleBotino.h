@@ -60,10 +60,10 @@ public:
     notifier = new Notifier("notifier");
     commands = new Commands("commands");
 
-    module->getActors()->add(7, (Actor *)bsettings, (Actor *)quotes, (Actor *)body, (Actor *)images, (Actor *)ifttt, (Actor *)notifier, (Actor *)commands);
+    module->getActors()->add(
+        7, (Actor *)bsettings, (Actor *)quotes, (Actor *)body, (Actor *)images, (Actor *)ifttt, (Actor *)notifier, (Actor *)commands);
 
     message = NULL;
-
   }
 
   void setup(BotMode (*setupArchitectureFunc)(),
@@ -84,11 +84,10 @@ public:
              void (*runModeArchitectureFunc)(),
              CmdExecStatus (*commandArchitectureFunc)(const char *cmd),
              void (*infoFunc)(),
-             void (*updateFunc)(const char*),
+             void (*updateFunc)(const char *),
              void (*testFunc)(),
              const char *(*apiDeviceLoginFunc)(),
-             const char *(*apiDevicePassFunc)()
-						 ) {
+             const char *(*apiDevicePassFunc)()) {
 
     module->setup(setupArchitectureFunc,
                   initWifiFunc,
@@ -108,8 +107,7 @@ public:
                   testFunc,
                   apiDeviceLoginFunc,
                   apiDevicePassFunc,
-									NULL
-									);
+                  NULL);
 
     message = messageFunc;
 
@@ -125,7 +123,6 @@ public:
     ifttt->setHttpPost(httpPostFunc);
     body->setup(armsFunc, iosFunc, sleepInterruptableFunc);
   }
-
 
   ModuleStartupPropertiesCode startupProperties() {
     return module->startupProperties();
@@ -145,7 +142,7 @@ public:
    */
   CmdExecStatus command(const char *cmd) {
 
-  	{
+    {
       Buffer b(cmd);
       logUser("\n> %s\n", b.getBuffer());
 
@@ -201,8 +198,8 @@ public:
         return module->command("?");
       }
       // deallocate buffer memory
-  	}
-  	// if none of the above went through
+    }
+    // if none of the above went through
     return module->command(cmd);
   }
 
@@ -259,7 +256,7 @@ public:
       default: {
         getNotifier()->message(0, 2, "Abort?");
         if (!dryRun) {
-        	zCmd();
+          zCmd();
         }
       } break;
     }
@@ -298,7 +295,7 @@ public:
   }
 
   void loop() {
-  	module->loop();
+    module->loop();
   }
 };
 

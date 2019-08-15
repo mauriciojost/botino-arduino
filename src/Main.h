@@ -10,11 +10,7 @@
 #define PROJ_VERSION "snapshot"
 #endif // PROJ_VERSION
 
-enum WifiNetwork {
-  WifiNoNetwork = 0,
-  WifiMainNetwork,
-  WifiBackupNetwork
-};
+enum WifiNetwork { WifiNoNetwork = 0, WifiMainNetwork, WifiBackupNetwork };
 
 //////////////////////////////////////////////////////////////
 // Provided by generic Main
@@ -87,7 +83,7 @@ void infoArchitecture();
 void testArchitecture();
 
 // Update the firmware and restart the device
-void updateFirmware(const char* descriptor);
+void updateFirmware(const char *descriptor);
 
 // Execution
 ///////////////////
@@ -121,15 +117,15 @@ void abort(const char *msg);
 ///////////////////
 
 Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLength, const char *defaultContent, bool obfuscate) {
-	bool first = false;
+  bool first = false;
   if (*var == NULL) {
-  	first = true;
+    first = true;
     *var = new Buffer(maxLength);
     bool succValue = readFile(filename, *var); // read value from file
     if (succValue) {                           // managed to retrieve the value
       log(CLASS_MAIN, Debug, "Read %s: OK", filename);
-      (*var)->replace('\n', 0);                // minor formatting
-    } else if (defaultContent != NULL) {       // failed to retrieve value, use default content if provided
+      (*var)->replace('\n', 0);          // minor formatting
+    } else if (defaultContent != NULL) { // failed to retrieve value, use default content if provided
       log(CLASS_MAIN, Debug, "Read %s: KO", filename);
       log(CLASS_MAIN, Debug, "Using default: %s", defaultContent);
       (*var)->fill(defaultContent);
@@ -146,6 +142,5 @@ Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLeng
   }
   return *var;
 }
-
 
 #endif // MAIN_INC

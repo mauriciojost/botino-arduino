@@ -11,21 +11,20 @@
 #define SKIP_UPDATES_CODE "skip"
 #define UPDATE_COMMAND "update %s"
 
-
 enum BotinoSettingsProps {
-  BotinoSettingsLcdLogsProp = 0,  // boolean, define if the device display logs in LCD
-  BotinoSettingsStatusProp,       // string, defines the current general status of the device (vcc level, heap, etc)
-  BotinoSettingsFsLogsProp,       // boolean, define if logs are to be dumped in the file system (only in debug mode)
-  BotinoSettingsUpdateTargetProp,  // string, target version of firmware to update to
-  BotinoSettingsWifiSsidBackupProp,// string, ssid for backup wifi network
-  BotinoSettingsWifiPassBackupProp,// string, pass for backup wifi network
+  BotinoSettingsLcdLogsProp = 0,    // boolean, define if the device display logs in LCD
+  BotinoSettingsStatusProp,         // string, defines the current general status of the device (vcc level, heap, etc)
+  BotinoSettingsFsLogsProp,         // boolean, define if logs are to be dumped in the file system (only in debug mode)
+  BotinoSettingsUpdateTargetProp,   // string, target version of firmware to update to
+  BotinoSettingsWifiSsidBackupProp, // string, ssid for backup wifi network
+  BotinoSettingsWifiPassBackupProp, // string, pass for backup wifi network
   BotinoSettingsPropsDelimiter
 };
 
 class BotinoSettings : public Actor {
 
 private:
-	const char* name;
+  const char *name;
   bool lcdLogs;
   Buffer *status;
   bool fsLogs;
@@ -33,11 +32,11 @@ private:
   Buffer *ssidb;
   Buffer *passb;
   Metadata *md;
-  void (*command)(const char*);
+  void (*command)(const char *);
 
 public:
-  BotinoSettings(const char* n) {
-  	name = n;
+  BotinoSettings(const char *n) {
+    name = n;
     lcdLogs = false;
     status = new Buffer(STATUS_BUFFER_SIZE);
     fsLogs = false;
@@ -52,25 +51,25 @@ public:
     command = NULL;
   }
 
-  void setup(void(*cmd)(const char*)){
-  	command = cmd;
+  void setup(void (*cmd)(const char *)) {
+    command = cmd;
   }
 
-  const char* getName() {
-  	return name;
+  const char *getName() {
+    return name;
   }
 
   int getNroProps() {
-  	return BotinoSettingsPropsDelimiter;
+    return BotinoSettingsPropsDelimiter;
   }
 
   void act() {
     if (getTiming()->matches()) {
-      const char* currVersion = STRINGIFY(PROJ_VERSION);
+      const char *currVersion = STRINGIFY(PROJ_VERSION);
       if (!target->equals(currVersion) && !target->equals(SKIP_UPDATES_CODE)) {
         log(CLASS_BOTINO_SETTINGS, Warn, "Have to update '%s'->'%s'", currVersion, target->getBuffer());
         if (command != NULL) {
-        	Buffer aux(64);
+          Buffer aux(64);
           command(aux.fill(UPDATE_COMMAND, target->getBuffer()));
         }
       }
@@ -128,8 +127,8 @@ public:
     return md;
   }
 
-  Buffer* getStatus() {
-  	return status;
+  Buffer *getStatus() {
+    return status;
   }
 
   bool fsLogsEnabled() {

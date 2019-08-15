@@ -298,9 +298,7 @@ void test_body_dances_are_valid() {
   TEST_ASSERT_EQUAL(End, b.performMove("D1."));
   TEST_ASSERT_EQUAL(End, b.performMove("D2."));
   TEST_ASSERT_EQUAL(End, b.performMove("D3."));
-
 }
-
 
 void test_body_parses_move_timing_alias() {
 

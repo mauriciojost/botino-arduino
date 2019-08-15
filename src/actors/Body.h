@@ -144,7 +144,7 @@ private:
     // this pose executes a sub move
     // the end of the sub move (variable s) does not mean that this
     // pose is the end of the outer move, that's why the line below
-    return (s == End? Success: s);
+    return (s == End ? Success : s);
   }
 
   PoseExecStatus face(char c0) {
@@ -377,7 +377,7 @@ public:
    *
    * Returns the next pose in the string or NULL if no more poses to perform.
    */
-  const char *performPose(const char *pose, PoseExecStatus* status) {
+  const char *performPose(const char *pose, PoseExecStatus *status) {
 
     int poseLen = nextPoseStrLen(pose);
     (*status) = Unknown;
@@ -540,7 +540,7 @@ public:
       log(CLASS_BODY, Debug, "- pose %d: (first of)'%s'...", i, p);
       if (status != Success && status != End) {
         log(CLASS_BODY, Warn, "Bad move: %d '%s'", (int)status, p);
-      	break;
+        break;
       }
     }
     log(CLASS_BODY, Debug, "Move '%s' finished: %d poses executed (s=%d)", move, i, status);
@@ -563,7 +563,6 @@ public:
     arms(0, 0, ARM_NORMAL_FACTOR);
     return Success;
   }
-
 };
 
 #endif // BODY_INC

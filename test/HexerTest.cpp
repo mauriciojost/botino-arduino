@@ -6,11 +6,9 @@
 // Being tested
 #include <utils/Hexer.h>
 
-void setUp() {
-}
+void setUp() {}
 
 void tearDown() {}
-
 
 void test_hexing() {
   uint8_t b[10];
@@ -34,7 +32,6 @@ void test_hexing() {
   Hexer::hexToByte(b, "100a");
   TEST_ASSERT_EQUAL(16, b[0]);
   TEST_ASSERT_EQUAL(10, b[1]);
-
 }
 
 int main() {

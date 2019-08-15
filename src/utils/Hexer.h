@@ -31,7 +31,7 @@ public:
    * For example the string "0000" will be transformed into 2 bytes with value 0 each.
    */
   static void hexToByte(uint8_t *outputBytes, const char *inputHex) {
-  	unsigned int inputLen = strlen(inputHex);
+    unsigned int inputLen = strlen(inputHex);
     if (inputLen % 2 != 0) {
       log(CLASS_HEXER, Error, "Bad hexa string (odd %u)", inputLen);
     } else {

@@ -174,8 +174,7 @@ void setup() {
            updateFirmware,
            testArchitecture,
            apiDeviceLogin,
-           apiDevicePass
-					 );
+           apiDevicePass);
   ModuleStartupPropertiesCode ec = m->startupProperties();
   m->getModule()->setDescription(VERSION_DESCRIPTION_JSON);
   if (ec != ModuleStartupPropertiesCodeSuccess) {

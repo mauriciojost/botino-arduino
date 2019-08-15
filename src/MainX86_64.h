@@ -171,7 +171,7 @@ void infoArchitecture() {}
 
 void testArchitecture() {}
 
-void updateFirmware(const char* descriptor) {}
+void updateFirmware(const char *descriptor) {}
 
 // Execution
 ///////////////////
