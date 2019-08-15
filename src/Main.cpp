@@ -86,12 +86,12 @@ ModuleBotino *m;
       "\"patterns\": [\"^images.im\\\\d{1,2}\"],"\
     	"\"descriptions\": [\"Bitmap of custom image i-th, represented in base 64. See <a href=\\\"https://docs.google.com/spreadsheets/d/1jXa9mFxeiN_bUji_WiCPKO_gB6pxQUeQ5QxgoSINqdc/edit\\\" target=\\\"_blank\\\">here</a>.\"],"\
       "\"examples\": ["\
-        \"00002814100828140000000003C00000 -> dead\","\
-        \"1FF820044A524A52481247E220041FF8 -> big smile\","\
-        \"1108081001803A40025C018008201110 -> sun\","\
-        \"448021000C1CD3A21441480197FE2200 -> cloudy\","\
-        \"00000000001C03A20441080107FE0000 -> clouds\","\
-        \"07E008100FF0381028103810081007E0 -> mug\""\
+        "\"00002814100828140000000003C00000 -> dead\","\
+        "\"1FF820044A524A52481247E220041FF8 -> big smile\","\
+        "\"1108081001803A40025C018008201110 -> sun\","\
+        "\"448021000C1CD3A21441480197FE2200 -> cloudy\","\
+        "\"00000000001C03A20441080107FE0000 -> clouds\","\
+        "\"07E008100FF0381028103810081007E0 -> mug\""\
       "]"\
     "},"\
     "{"\
