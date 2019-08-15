@@ -123,7 +123,6 @@ void debugHandle();
 bool haveToInterrupt();
 void handleInterrupt();
 //void initializeServoConfigs();
-Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLength, const char *defaultContent, bool obfuscate);
 void dumpLogBuffer();
 
 ////////////////////////////////////////
@@ -902,30 +901,6 @@ void initializeServoConfigs() {
   initializeServoConfig(SERVO_1_FILENAME, &servo1Conf);
 }
 */
-
-Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLength, const char *defaultContent, bool obfuscate) {
-	bool first = false;
-  if (*var == NULL) {
-  	first = true;
-    *var = new Buffer(maxLength);
-    bool succAlias = readFile(filename, *var); // preserve the alias
-    if (succAlias) {                           // managed to retrieve the alias
-      (*var)->replace('\n', 0);                // content already with the alias
-    } else if (defaultContent != NULL) {
-      (*var)->fill(defaultContent);
-    } else {
-      abort(filename);
-    }
-  }
-  if (first) {
-    if (obfuscate) {
-      log(CLASS_MAIN, Info, "Tuning: %s=***", filename);
-    } else {
-      log(CLASS_MAIN, Info, "Tuning: %s=%s", filename, (*var)->getBuffer());
-    }
-  }
-  return *var;
-}
 
 void dumpLogBuffer() {
   if (logBuffer == NULL)
