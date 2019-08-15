@@ -501,6 +501,7 @@ bool writeFile(const char *fname, const char *content) {
     success = false;
   } else {
     f.write((const uint8_t *)content, strlen(content));
+    f.close();
     log(CLASS_MAIN, Info, "File written: %s", fname);
     success = true;
   }
@@ -584,6 +585,7 @@ BotMode setupArchitecture() {
   log(CLASS_MAIN, Debug, "Setup timing");
   setExternalMillis(millis);
 
+  log(CLASS_MAIN, Debug, "Setup SPIFFS");
   log(CLASS_MAIN, Debug, "Setup pins & deepsleep (if failure think of activating deep sleep mode?)");
   pinMode(LEDR_PIN, OUTPUT);
   pinMode(LEDW_PIN, OUTPUT);

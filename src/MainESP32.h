@@ -31,6 +31,7 @@
 
 //#define SERVO_0_FILENAME "/servo0.tuning"
 //#define SERVO_1_FILENAME "/servo1.tuning"
+#define SLEEP_PERIOD_UPON_BOOT_SEC 2
 
 #define LCD_PIXEL_WIDTH 6
 #define LCD_PIXEL_HEIGHT 8
@@ -44,6 +45,8 @@
 #ifndef FIRMWARE_UPDATE_URL
 #define FIRMWARE_UPDATE_URL MAIN4INOSERVER_API_HOST_BASE "/firmwares/botino/%s.esp32.bin"
 #endif // FIRMWARE_UPDATE_URL
+
+#define FIRMWARE_UPDATE_URL_MAX_LENGTH 128
 
 #define PRE_DEEP_SLEEP_WINDOW_SECS 5
 
@@ -106,6 +109,8 @@ Buffer *deepSleepMode = NULL;
 //ServoConf *servo1Conf = NULL;
 int currentLogLine = 0;
 Buffer *logBuffer = NULL;
+Buffer *cmdBuffer = NULL;
+Buffer *cmdLast = NULL;
 
 #define LED_INT_TOGGLE ios('w', IoToggle);
 #define LED_INT_ON ios('w', IoOn);
@@ -188,41 +193,74 @@ void stopWifi() {
   delay(WIFI_DELAY_MS);
 }
 
+WifiNetwork chooseWifi(const char* ssid, const char* ssidb) {
+  int n = WiFi.scanNetworks();
+  for (int i = 0; i < n; ++i) {
+    String s = WiFi.SSID(i);
+    if (strcmp(s.c_str(), ssid) == 0) {
+      log(CLASS_MAIN, Info, "Wifi found '%s'", ssid);
+    	return WifiMainNetwork;
+    } else if  (strcmp(s.c_str(), ssidb) == 0) {
+      log(CLASS_MAIN, Info, "Wifi found '%s'", ssidb);
+    	return WifiBackupNetwork;
+    }
+  }
+  return WifiNoNetwork;
+}
+
 bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries) {
   wl_status_t status;
-  log(CLASS_MAIN, Info, "To '%s'...", ssid);
+
+  const char* ssidb = m->getBotinoSettings()->getBackupWifiSsid()->getBuffer();
+  const char* passb = m->getBotinoSettings()->getBackupWifiPass()->getBuffer();
+
+  log(CLASS_MAIN, Info, "Init wifi '%s' (or '%s')...", ssid, ssidb);
+
 
   if (skipIfConnected) { // check if connected
-    log(CLASS_MAIN, Info, "Conn. '%s'?", ssid);
+    log(CLASS_MAIN, Debug, "Already connected?");
     status = WiFi.status();
     if (status == WL_CONNECTED) {
       log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
       return true; // connected
     }
-  } else { // force disconnection
+  } else {
   	stopWifi();
   }
 
+  log(CLASS_MAIN, Debug, "Scanning...");
+  WifiNetwork w = chooseWifi(ssid, ssidb);
+
+  log(CLASS_MAIN, Debug, "Connecting...");
   WiFi.mode(WIFI_STA);
   delay(WIFI_DELAY_MS);
-  WiFi.begin(ssid, pass);
+  switch (w) {
+  	case WifiMainNetwork:
+      WiFi.begin(ssid, pass);
+      break;
+  	case WifiBackupNetwork:
+      WiFi.begin(ssidb, passb);
+      break;
+  	default:
+  		return false;
+  }
 
   int attemptsLeft = retries;
   while (true) {
     bool interrupt = lightSleepInterruptable(now(), WIFI_DELAY_MS / 1000);
     if (interrupt) {
-      log(CLASS_MAIN, Info, "Interrupted");
+      log(CLASS_MAIN, Warn, "Wifi init interrupted");
       return false; // not connected
     }
     status = WiFi.status();
-    log(CLASS_MAIN, Info, "..'%s'(%d)", ssid, attemptsLeft);
+    log(CLASS_MAIN, Debug, "..'%s'(%d left)", ssid, attemptsLeft);
     attemptsLeft--;
     if (status == WL_CONNECTED) {
-      log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
+      log(CLASS_MAIN, Debug, "Connected! %s", WiFi.localIP().toString().c_str());
       return true; // connected
     }
     if (attemptsLeft < 0) {
-      log(CLASS_MAIN, Warn, "Conn. to '%s' failed %d", ssid, status);
+      log(CLASS_MAIN, Warn, "Connection to '%s' failed %d", ssid, status);
       return false; // not connected
     }
   }
@@ -384,8 +422,10 @@ void ios(char led, IoMode value) {
 }
 
 void clearDevice() {
-  SPIFFS.format();
-  //SaveCrash.clear();
+  logUser("   rm %s", DEVICE_ALIAS_FILENAME);
+  logUser("   rm %s", DEVICE_PWD_FILENAME);
+  logUser("   ls");
+  logUser("   <remove all .properties>");
 }
 
 void lcdImg(char img, uint8_t bitmap[]) {
@@ -429,16 +469,23 @@ void lcdImg(char img, uint8_t bitmap[]) {
 
 bool readFile(const char *fname, Buffer *content) {
   bool success = false;
-  File f = SPIFFS.open(fname, "r");
-  if (!f) {
-    log(CLASS_MAIN, Warn, "File reading failed: %s", fname);
+  bool exists = SPIFFS.exists(fname);
+  if (!exists) {
+    log(CLASS_MAIN, Warn, "File does not exist: %s", fname);
     content->clear();
     success = false;
   } else {
-    String s = f.readString();
-    content->load(s.c_str());
-    log(CLASS_MAIN, Info, "File read: %s", fname);
-    success = true;
+  File f = SPIFFS.open(fname, "r");
+    if (!f) {
+      log(CLASS_MAIN, Warn, "File reading failed: %s", fname);
+      content->clear();
+      success = false;
+    } else {
+      String s = f.readString();
+      content->load(s.c_str());
+      log(CLASS_MAIN, Debug, "File read: %s", fname);
+      success = true;
+    }
   }
   return success;
 }
@@ -476,7 +523,7 @@ void testArchitecture() {
 
 void updateFirmware(const char* descriptor) {
   HTTPUpdate updater;
-  Buffer url(64);
+  Buffer url(FIRMWARE_UPDATE_URL_MAX_LENGTH);
   url.fill(FIRMWARE_UPDATE_URL, descriptor);
 
   Settings *s = m->getModuleSettings();
@@ -487,8 +534,8 @@ void updateFirmware(const char* descriptor) {
     return; // fail fast
   }
 
-  log(CLASS_MAIN, Info, "Updating firmware from '%s'...", url.getBuffer());
-  m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Updating: %s", url.getBuffer());
+  log(CLASS_MAIN, Warn, "Current firmware '%s'", STRINGIFY(PROJ_VERSION));
+  log(CLASS_MAIN, Warn, "Updating firmware from '%s'...", url.getBuffer());
 
   t_httpUpdate_return ret = updater.update(httpClient.getStream(), url.getBuffer(), STRINGIFY(PROJ_VERSION));
   switch (ret) {
@@ -500,10 +547,10 @@ void updateFirmware(const char* descriptor) {
           updater.getLastErrorString().c_str());
       break;
     case HTTP_UPDATE_NO_UPDATES:
-      log(CLASS_MAIN, Info, "No updates.");
+      log(CLASS_MAIN, Debug, "No updates.");
       break;
     case HTTP_UPDATE_OK:
-      log(CLASS_MAIN, Info, "Done!");
+      log(CLASS_MAIN, Debug, "Done!");
       break;
   }
 }
@@ -526,6 +573,9 @@ BotMode setupArchitecture() {
   setupLog(logLine);
   log(CLASS_MAIN, Info, "Log initialized");
 
+  log(CLASS_MAIN, Debug, "Setup cmds");
+  cmdBuffer = new Buffer(COMMAND_MAX_LENGTH);
+  cmdLast = new Buffer(COMMAND_MAX_LENGTH);
   log(CLASS_MAIN, Debug, "Setup timing");
   setExternalMillis(millis);
 
@@ -592,7 +642,14 @@ BotMode setupArchitecture() {
   }
   */
 
+  log(CLASS_MAIN, Debug, "Letting user interrupt...");
+  bool i = lightSleepInterruptable(now(), SLEEP_PERIOD_UPON_BOOT_SEC);
+  if (i) {
+    return ConfigureMode;
+  } else {
   return RunMode;
+  }
+
 }
 
 void runModeArchitecture() {
@@ -844,16 +901,43 @@ void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs) {
 void handleInterrupt() {
   if (Serial.available()) {
     // Handle serial commands
-    Buffer cmdBuffer(COMMAND_MAX_LENGTH);
-    log(CLASS_MAIN, Info, "Listening...");
-    Serial.readBytesUntil('\n', cmdBuffer.getUnsafeBuffer(), COMMAND_MAX_LENGTH);
-    cmdBuffer.replace('\n', 0);
-    cmdBuffer.replace('\r', 0);
-    CmdExecStatus execStatus = m->command(cmdBuffer.getBuffer());
-    bool interrupt = (execStatus == ExecutedInterrupt);
-    log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
-    log(CLASS_MAIN, Debug, "Cmd status: %s", CMD_EXEC_STATUS(execStatus));
-    logUser("(%s => %s)", cmdBuffer.getBuffer(), CMD_EXEC_STATUS(execStatus));
+  	uint8_t c;
+
+  	while (true) {
+      size_t n = Serial.readBytes(&c, 1);
+
+      if (c == 0x08 && n == 1) { // backspace
+        log(CLASS_MAIN, Debug, "Backspace");
+        if (cmdBuffer->getLength() > 0) {
+          cmdBuffer->getUnsafeBuffer()[cmdBuffer->getLength() - 1] = 0;
+        }
+      } else if (c == 0x1b && n == 1) { // up/down
+        log(CLASS_MAIN, Debug, "Up/down");
+        cmdBuffer->load(cmdLast);
+      } else if ((c == '\r') && n == 1) { // ignore
+        log(CLASS_MAIN, Debug, "\\r pressed (ignored)");
+      } else if (c == '\n' && n == 1) { // if enter is pressed...
+        log(CLASS_MAIN, Debug, "Enter");
+        if (cmdBuffer->getLength() > 0) {
+          CmdExecStatus execStatus = m->command(cmdBuffer->getBuffer());
+          bool interrupt = (execStatus == ExecutedInterrupt);
+          log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
+          log(CLASS_MAIN, Debug, "Cmd status: %s", CMD_EXEC_STATUS(execStatus));
+          logUser("('%s' => %s)", cmdBuffer->getBuffer(), CMD_EXEC_STATUS(execStatus));
+          cmdLast->load(cmdBuffer);
+          cmdBuffer->clear();
+        }
+        break;
+      } else if (n == 1){
+        cmdBuffer->append(c);
+      }
+      // echo
+      logUser("> %s", cmdBuffer->getBuffer());
+      while(!Serial.available()) {delay(100);}
+  	}
+    log(CLASS_MAIN, Debug, "Done with interrupt");
+    
+    
   } else if (buttonInterrupts > 0) {
     buttonEnabled = false;
     buttonInterrupts = 0; // to avoid interrupting whatever is called below
