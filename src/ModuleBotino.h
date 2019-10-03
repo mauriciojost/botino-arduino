@@ -17,6 +17,7 @@
 #define CLASS_MODULEB "MB"
 
 #define COMMAND_MAX_LENGTH 128
+#define PROPSYNC_RETRY_PERIOD_SECS 600
 
 #define HELP_COMMAND_CLI_PROJECT                                                                                                           \
   "\n  BOTINO HELP"                                                                                                                        \
@@ -125,7 +126,12 @@ public:
   }
 
   ModuleStartupPropertiesCode startupProperties() {
-    return module->startupProperties();
+    bool result = module->startupProperties();
+
+    // setup retries
+    module->getPropSync()->getTiming()->setRetryPeriod(PROPSYNC_RETRY_PERIOD_SECS);
+
+    return result;
   }
 
   void ackCmd() {
