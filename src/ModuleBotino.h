@@ -126,7 +126,7 @@ public:
   }
 
   ModuleStartupPropertiesCode startupProperties() {
-    bool result = module->startupProperties();
+    ModuleStartupPropertiesCode result = module->startupProperties();
 
     // setup retries
     module->getPropSync()->getTiming()->setRetryPeriod(PROPSYNC_RETRY_PERIOD_SECS);
