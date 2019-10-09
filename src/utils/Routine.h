@@ -20,7 +20,7 @@ public:
   }
   void set(const Value *v) {
     Buffer aux(MOVE_STR_LENGTH);
-    aux.load(v);
+    aux.deserializeFromValue(v);
     const char *mv = aux.since(TIMING_SEPARATOR);
     aux.replace(TIMING_SEPARATOR, 0);
     const char *tm = aux.getBuffer();

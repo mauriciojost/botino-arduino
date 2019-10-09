@@ -501,7 +501,7 @@ public:
         routines[i]->set(targetValue);
       }
       if (actualValue != NULL) {
-        actualValue->load(routines[i]->timingMove);
+        actualValue->deserializeFromValue(routines[i]->timingMove);
       }
     }
     if (m != GetValue) {

@@ -176,12 +176,12 @@ public:
     if (propIndex == NotifierNotifsProp) {
       RichBuffer b = RichBuffer((MAX_NOTIF_LENGTH + 1) * MAX_NRO_NOTIFS);
       if (m == SetCustomValue) {
-        b.load(targetValue);
+        b.deserializeFromValue(targetValue);
         bufferToQueue(&b);
       }
       if (actualValue != NULL) {
         queueToBuffer(&b);
-        actualValue->load(&b);
+        actualValue->deserializeFromValue(&b);
       }
     }
     if (m != GetValue) {
