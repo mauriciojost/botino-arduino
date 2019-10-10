@@ -35,11 +35,12 @@ ModuleBotino *m;
       "\"descriptions\": [\"Frequency at which the actor will act and perform its duty. See <a href=\\\"https://bitbucket.org/mauriciojost/main4ino-arduino/src/master/README.md\\\" target=\\\"_blank\\\">here</a>.\"],"\
       "\"examples\": ["\
         "\"never     -> Never\","\
-        "\"@08h00   -> At 08h00 every day\","\
-        "\"~30m  -> Every 30 minutes\","\
         "\"~10s  -> Every 10 seconds\","\
-        "\"[smTWtfs]~30mf6t18 -> Every 30 minutes from 06h until 18h on Tuesdays and Wednesdays\","\
+        "\"~30m  -> Every 30 minutes\","\
+        "\"@00h00   -> Everyday at 00h00\","\
+        "\"@08h00   -> Everyday at 8h\","\
         "\"[SMtwtfs]@15h00 -> At 15h00 on Sundays and Mondays\","\
+        "\"[smTWtfs]~30mf6t18 -> Every 30 minutes from 06h until 18h on Tuesdays and Wednesdays\","\
         "\"oneoff    -> Once and go back to previous configuration\""\
       "]"\
     "},"\
