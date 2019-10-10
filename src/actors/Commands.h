@@ -48,7 +48,7 @@ private:
 
   void updateCmdNames() {
     for (int i = 0; i < NRO_COMMANDS; i++) {
-      cmdNames[i]->load(cmds[i]);
+      cmdNames[i]->load(cmds[i]->getBuffer());
       cmdNames[i]->replace(COMMAND_NAME_VALUE_SEPARATOR, 0);
     }
   }
