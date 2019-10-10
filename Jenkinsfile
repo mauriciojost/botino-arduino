@@ -15,6 +15,8 @@ pipeline {
               sshagent(['bitbucket_key']) {
                 wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
                   sh 'export GIT_COMMITTER_NAME=jenkinsbot && export GIT_COMMITTER_EMAIL=mauriciojostx@gmail.com && set && ./pull_dependencies -p -l'
+                    currentBuild.displayName = "Git: $GIT_COMMITTER_NAME"
+                    currentBuild.description = "The best description."
                 }
               }
             }
