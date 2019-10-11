@@ -7,7 +7,7 @@ int httpGet(const char *url, ParamStream *response, Table *headers);
 int httpPost(const char *url, const char *body, ParamStream *response, Table *headers);
 bool readFile(const char *fname, Buffer *content);
 bool writeFile(const char *fname, const char *content);
-void updateFirmware(const char* url, const char* projVersion);
+void updateFirmwareVersion(const char* url, const char* projVersion);
 bool lightSleepInterruptable(time_t cycleBegin, time_t periodSecs);
 bool lightSleepNotInterruptable(time_t cycleBegin, time_t periodSecs);
 void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs);
@@ -187,11 +187,9 @@ bool writeFile(const char *fname, const char *content) {
   return success;
 }
 
-void updateFirmware(const char* url, const char* projVersion) {
+void updateFirmwareVersion(const char* url, const char* projVersion) {
   ESP8266HTTPUpdate updater;
-  //Buffer url(FIRMWARE_UPDATE_URL_MAX_LENGTH);
-  //url.fill(FIRMWARE_UPDATE_URL, descriptor);
-  // projVersion = STRINGIFY(PROJ_VERSION)
+  
 
   Settings *s = m->getModuleSettings();
   bool connected = initWifi(s->getSsid(), s->getPass(), false, 10);
@@ -223,7 +221,7 @@ void updateFirmware(const char* url, const char* projVersion) {
 }
 
 bool lightSleepInterruptable(time_t cycleBegin, time_t periodSecs) {
-  log(CLASS_MAIN, Debug, "Light Sleep(%ds)...", (int)periodSecs);
+  log(CLASS_ESP8266, Debug, "Light Sleep(%ds)...", (int)periodSecs);
   if (haveToInterrupt()) { // first quick check before any time considerations
     return true;
   }
@@ -238,7 +236,7 @@ bool lightSleepInterruptable(time_t cycleBegin, time_t periodSecs) {
 }
 
 bool lightSleepNotInterruptable(time_t cycleBegin, time_t periodSecs) {
-  log(CLASS_MAIN, Debug, "Light Sleep(%ds)...", (int)periodSecs);
+  log(CLASS_ESP8266, Debug, "Light Sleep(%ds)...", (int)periodSecs);
   while (now() < cycleBegin + periodSecs) {
     heartbeat();
     delay(m->getModuleSettings()->miniPeriodMsec());

@@ -358,8 +358,9 @@ void testArchitecture() {
 void updateFirmware(const char *descriptor) {
   Buffer url(FIRMWARE_UPDATE_URL_MAX_LENGTH);
   url.fill(FIRMWARE_UPDATE_URL, descriptor);
-  updateFirmware(url.getBuffer());
+  updateFirmwareVersion(url.getBuffer(), STRINGIFY(PROJ_VERSION));
 }
+
 // Execution
 ///////////////////
 
