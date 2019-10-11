@@ -137,6 +137,11 @@ void dumpLogBuffer();
 // Callbacks
 ///////////////////
 
+bool initWifi(const char *ssid, const char *pass, bool skipIfAlreadyConnected, int retries) {
+  const char *ssidb = m->getBotinoSettings()->getBackupWifiSsid()->getBuffer();
+  const char *passb = m->getBotinoSettings()->getBackupWifiPass()->getBuffer();
+  return initializeWifi(ssid, pass, ssidb, passb, skipIfAlreadyConnected, retries);
+}
 const char *apiDeviceLogin() {
   return initializeTuningVariable(&apiDeviceId, DEVICE_ALIAS_FILENAME, DEVICE_ALIAS_MAX_LENGTH, NULL, false)->getBuffer();
 }
@@ -183,142 +188,6 @@ Serial.print("|");
     logBuffer->append(str);
     logBuffer->append("\n");
   }
-}
-
-void stopWifi() {
-  log(CLASS_MAIN, Info, "W.Off.");
-  WiFi.disconnect();
-  delay(WIFI_DELAY_MS);
-  WiFi.mode(WIFI_OFF); // to be removed after SDK update to 1.5.4
-  delay(WIFI_DELAY_MS);
-}
-
-WifiNetwork chooseWifi(const char *ssid, const char *ssidb) {
-  int n = WiFi.scanNetworks();
-  for (int i = 0; i < n; ++i) {
-    String s = WiFi.SSID(i);
-    if (strcmp(s.c_str(), ssid) == 0) {
-      log(CLASS_MAIN, Info, "Wifi found '%s'", ssid);
-      return WifiMainNetwork;
-    } else if (strcmp(s.c_str(), ssidb) == 0) {
-      log(CLASS_MAIN, Info, "Wifi found '%s'", ssidb);
-      return WifiBackupNetwork;
-    }
-  }
-  return WifiNoNetwork;
-}
-
-bool initWifi(const char *ssid, const char *pass, bool skipIfConnected, int retries) {
-  wl_status_t status;
-
-  const char *ssidb = m->getBotinoSettings()->getBackupWifiSsid()->getBuffer();
-  const char *passb = m->getBotinoSettings()->getBackupWifiPass()->getBuffer();
-
-  log(CLASS_MAIN, Info, "Init wifi '%s' (or '%s')...", ssid, ssidb);
-
-  if (skipIfConnected) { // check if connected
-    log(CLASS_MAIN, Debug, "Already connected?");
-    status = WiFi.status();
-    if (status == WL_CONNECTED) {
-      log(CLASS_MAIN, Info, "IP: %s", WiFi.localIP().toString().c_str());
-      return true; // connected
-    }
-  } else {
-    stopWifi();
-  }
-
-  log(CLASS_MAIN, Debug, "Scanning...");
-  WifiNetwork w = chooseWifi(ssid, ssidb);
-
-  log(CLASS_MAIN, Debug, "Connecting...");
-  WiFi.mode(WIFI_STA);
-  delay(WIFI_DELAY_MS);
-  switch (w) {
-    case WifiMainNetwork:
-      WiFi.begin(ssid, pass);
-      break;
-    case WifiBackupNetwork:
-      WiFi.begin(ssidb, passb);
-      break;
-    default:
-      return false;
-  }
-
-  int attemptsLeft = retries;
-  while (true) {
-    bool interrupt = lightSleepInterruptable(now(), WIFI_DELAY_MS / 1000);
-    if (interrupt) {
-      log(CLASS_MAIN, Warn, "Wifi init interrupted");
-      return false; // not connected
-    }
-    status = WiFi.status();
-    log(CLASS_MAIN, Debug, "..'%s'(%d left)", ssid, attemptsLeft);
-    attemptsLeft--;
-    if (status == WL_CONNECTED) {
-      log(CLASS_MAIN, Debug, "Connected! %s", WiFi.localIP().toString().c_str());
-      return true; // connected
-    }
-    if (attemptsLeft < 0) {
-      log(CLASS_MAIN, Warn, "Connection to '%s' failed %d", ssid, status);
-      return false; // not connected
-    }
-  }
-}
-
-// TODO: add https support, which requires fingerprint of server that can be obtained as follows:
-//  openssl s_client -connect dweet.io:443 < /dev/null 2>/dev/null | openssl x509 -fingerprint -noout -in /dev/stdin
-int httpGet(const char *url, ParamStream *response, Table *headers) {
-  httpClient.begin(url);
-  int i = 0;
-  while ((i = headers->next(i)) != -1) {
-    httpClient.addHeader(headers->getKey(i), headers->getValue(i));
-    i++;
-  }
-  log(CLASS_MAIN, Debug, "> GET:..%s", tailStr(url, URL_PRINT_MAX_LENGTH));
-  int errorCode = httpClient.GET();
-  log(CLASS_MAIN, Debug, "> GET:%d", errorCode);
-
-  if (errorCode == HTTP_OK || errorCode == HTTP_NO_CONTENT) {
-    if (response != NULL) {
-      httpClient.writeToStream(response);
-    }
-  } else {
-    int e = httpClient.writeToStream(&Serial);
-    log(CLASS_MAIN, Error, "> GET(%d):%d %s", e, errorCode, httpClient.errorToString(errorCode).c_str());
-  }
-  httpClient.end();
-
-  delay(WAIT_BEFORE_HTTP_MS);
-
-  return errorCode;
-}
-
-int httpPost(const char *url, const char *body, ParamStream *response, Table *headers) {
-  httpClient.begin(url);
-  int i = 0;
-  while ((i = headers->next(i)) != -1) {
-    httpClient.addHeader(headers->getKey(i), headers->getValue(i));
-    i++;
-  }
-
-  log(CLASS_MAIN, Debug, "> POST:..%s", tailStr(url, URL_PRINT_MAX_LENGTH));
-  log(CLASS_MAIN, Debug, "> POST:'%s'", body);
-  int errorCode = httpClient.POST(body);
-  log(CLASS_MAIN, Debug, "> POST:%d", errorCode);
-
-  if (errorCode == HTTP_OK || errorCode == HTTP_CREATED) {
-    if (response != NULL) {
-      httpClient.writeToStream(response);
-    }
-  } else {
-    int e = httpClient.writeToStream(&Serial);
-    log(CLASS_MAIN, Error, "> POST(%d):%d %s", e, errorCode, httpClient.errorToString(errorCode).c_str());
-  }
-  httpClient.end();
-
-  delay(WAIT_BEFORE_HTTP_MS);
-
-  return errorCode;
 }
 
 void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clearMode, int size, const char *str) {
@@ -466,44 +335,6 @@ void lcdImg(char img, uint8_t bitmap[]) {
   delay(DELAY_MS_SPI);
 }
 
-bool readFile(const char *fname, Buffer *content) {
-  bool success = false;
-  bool exists = SPIFFS.exists(fname);
-  if (!exists) {
-    log(CLASS_MAIN, Warn, "File does not exist: %s", fname);
-    content->clear();
-    success = false;
-  } else {
-    File f = SPIFFS.open(fname, "r");
-    if (!f) {
-      log(CLASS_MAIN, Warn, "File reading failed: %s", fname);
-      content->clear();
-      success = false;
-    } else {
-      String s = f.readString();
-      content->load(s.c_str());
-      log(CLASS_MAIN, Debug, "File read: %s", fname);
-      success = true;
-    }
-  }
-  return success;
-}
-
-bool writeFile(const char *fname, const char *content) {
-  bool success = false;
-  File f = SPIFFS.open(fname, "w+");
-  if (!f) {
-    log(CLASS_MAIN, Warn, "File writing failed: %s", fname);
-    success = false;
-  } else {
-    f.print(content);
-    f.close();
-    log(CLASS_MAIN, Info, "File written: %s", fname);
-    success = true;
-  }
-  return success;
-}
-
 void infoArchitecture() {
 
   m->getNotifier()->message(0,
@@ -521,33 +352,9 @@ void testArchitecture() {
 }
 
 void updateFirmware(const char *descriptor) {
-  HTTPUpdate updater;
   Buffer url(FIRMWARE_UPDATE_URL_MAX_LENGTH);
   url.fill(FIRMWARE_UPDATE_URL, descriptor);
-
-  Settings *s = m->getModuleSettings();
-  bool connected = initWifi(s->getSsid(), s->getPass(), false, 10);
-  if (!connected) {
-    log(CLASS_MAIN, Error, "Cannot connect to wifi");
-    m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Cannot connect to wifi: %s", s->getSsid());
-    return; // fail fast
-  }
-
-  log(CLASS_MAIN, Warn, "Current firmware '%s'", STRINGIFY(PROJ_VERSION));
-  log(CLASS_MAIN, Warn, "Updating firmware from '%s'...", url.getBuffer());
-
-  t_httpUpdate_return ret = updater.update(httpClient.getStream(), url.getBuffer(), STRINGIFY(PROJ_VERSION));
-  switch (ret) {
-    case HTTP_UPDATE_FAILED:
-      log(CLASS_MAIN, Error, "HTTP_UPDATE_FAILD Error (%d): %s\n", updater.getLastError(), updater.getLastErrorString().c_str());
-      break;
-    case HTTP_UPDATE_NO_UPDATES:
-      log(CLASS_MAIN, Debug, "No updates.");
-      break;
-    case HTTP_UPDATE_OK:
-      log(CLASS_MAIN, Debug, "Done!");
-      break;
-  }
+  updateFirmwareVersion(url.getBuffer(), STRINGIFY(PROJ_VERSION));
 }
 
 // Execution
@@ -870,25 +677,6 @@ void heartbeat() {
   LED_ALIVE_TOGGLE
   delay(1);
   LED_ALIVE_TOGGLE
-}
-
-bool lightSleepInterruptable(time_t cycleBegin, time_t periodSecs) {
-  log(CLASS_MAIN, Debug, "Light Sleep(%ds)...", (int)periodSecs);
-  if (haveToInterrupt()) { // first quick check before any time considerations
-    return true;
-  }
-  while (now() < cycleBegin + periodSecs) {
-    if (haveToInterrupt()) {
-      return true;
-    }
-    heartbeat();
-    delay(m->getModuleSettings()->miniPeriodMsec());
-  }
-  return false;
-}
-
-void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSecs) {
-  lightSleepInterruptable(cycleBegin, periodSecs);
 }
 
 void handleInterrupt() {
