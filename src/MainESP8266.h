@@ -123,14 +123,13 @@ void reactCommandCustom();
 #include "Main_hwtest.h" // defines hwTest()
 void buttonPressed();
 void heartbeat();
-bool lightSleepInterruptable(time_t cycleBegin, time_t periodSecs);
 void debugHandle();
 bool haveToInterrupt();
 void handleInterrupt();
 void initializeServoConfigs();
 void dumpLogBuffer();
 
-#include "ESP8266.h" // defines hwTest()
+#include "ESP8266.h"
 
 ////////////////////////////////////////
 // Functions requested for architecture
@@ -365,7 +364,7 @@ void updateFirmware(const char *descriptor) {
 ///////////////////
 
 bool sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
-  return lightSleepInterruptable(cycleBegin, periodSecs);
+  return lightSleepInterruptable(cycleBegin, periodSecs, m->getModuleSettings()->miniPeriodMsec(), haveToInterrupt, heartbeat);
 }
 
 BotMode setupArchitecture() {
@@ -445,7 +444,7 @@ BotMode setupArchitecture() {
   }
 
   log(CLASS_MAIN, Debug, "Letting user interrupt...");
-  bool i = lightSleepInterruptable(now(), SLEEP_PERIOD_UPON_BOOT_SEC);
+  bool i = sleepInterruptable(now(), SLEEP_PERIOD_UPON_BOOT_SEC);
   if (i) {
     return ConfigureMode;
   } else {
@@ -588,7 +587,7 @@ CmdExecStatus commandArchitecture(const char *c) {
     return Executed;
   } else if (strcmp("lightsleep", c) == 0) {
     int s = atoi(strtok(NULL, " "));
-    return (lightSleepInterruptable(now(), s) ? ExecutedInterrupt : Executed);
+    return (lightSleepInterruptable(now(), s, m->getModuleSettings()->miniPeriodMsec(), haveToInterrupt, heartbeat) ? ExecutedInterrupt : Executed);
   } else if (strcmp("clearstack", c) == 0) {
     espSaveCrash.clear();
     return Executed;

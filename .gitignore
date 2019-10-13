@@ -178,3 +178,6 @@
 /coverage.xml
 /libs/mod4ino/
 /src/mod4ino
+/src/ESP8266.h
+/src/ESP32.h
+/libs/arduino-boards-primitives/

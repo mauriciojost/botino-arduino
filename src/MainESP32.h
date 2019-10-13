@@ -123,12 +123,13 @@ void reactCommandCustom();
 #include "Main_hwtest.h" // defines hwTest()
 void buttonPressed();
 void heartbeat();
-bool lightSleepInterruptable(time_t cycleBegin, time_t periodSecs);
 void debugHandle();
 bool haveToInterrupt();
 void handleInterrupt();
 // void initializeServoConfigs();
 void dumpLogBuffer();
+
+#include "ESP32.h"
 
 ////////////////////////////////////////
 // Functions requested for architecture
@@ -142,6 +143,7 @@ bool initWifi(const char *ssid, const char *pass, bool skipIfAlreadyConnected, i
   const char *passb = m->getBotinoSettings()->getBackupWifiPass()->getBuffer();
   return initializeWifi(ssid, pass, ssidb, passb, skipIfAlreadyConnected, retries);
 }
+
 const char *apiDeviceLogin() {
   return initializeTuningVariable(&apiDeviceId, DEVICE_ALIAS_FILENAME, DEVICE_ALIAS_MAX_LENGTH, NULL, false)->getBuffer();
 }
@@ -361,7 +363,7 @@ void updateFirmware(const char *descriptor) {
 ///////////////////
 
 bool sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
-  return lightSleepInterruptable(cycleBegin, periodSecs);
+  return lightSleepInterruptable(cycleBegin, periodSecs, m->getModuleSettings()->miniPeriodMsec(), haveToInterrupt, heartbeat);
 }
 
 BotMode setupArchitecture() {
@@ -444,7 +446,7 @@ BotMode setupArchitecture() {
   */
 
   log(CLASS_MAIN, Debug, "Letting user interrupt...");
-  bool i = lightSleepInterruptable(now(), SLEEP_PERIOD_UPON_BOOT_SEC);
+  bool i = sleepInterruptable(now(), SLEEP_PERIOD_UPON_BOOT_SEC);
   if (i) {
     return ConfigureMode;
   } else {
@@ -585,7 +587,7 @@ if (servo == 'r' || servo == 'R') {
     return Executed;
   } else if (strcmp("lightsleep", c) == 0) {
     int s = atoi(strtok(NULL, " "));
-    return (lightSleepInterruptable(now(), s) ? ExecutedInterrupt : Executed);
+    return (lightSleepInterruptable(now(), s, m->getModuleSettings()->miniPeriodMsec(), haveToInterrupt, heartbeat) ? ExecutedInterrupt : Executed);
   } else if (strcmp("clearstack", c) == 0) {
     // SaveCrash.clear();
     return Executed;
