@@ -10,8 +10,6 @@
 #define PROJ_VERSION "snapshot"
 #endif // PROJ_VERSION
 
-enum WifiNetwork { WifiNoNetwork = 0, WifiMainNetwork, WifiBackupNetwork };
-
 //////////////////////////////////////////////////////////////
 // Provided by generic Main
 //////////////////////////////////////////////////////////////
@@ -142,5 +140,8 @@ Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLeng
   }
   return *var;
 }
+
+bool initWifiSimple();
+
 
 #endif // MAIN_INC

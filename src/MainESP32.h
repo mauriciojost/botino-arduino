@@ -1,13 +1,6 @@
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include <Arduino.h>
-#include <ArduinoOTA.h>
-#include <HTTPClient.h>
-#include <HTTPUpdate.h>
-#include <SPIFFS.h>
-//#include <EspSaveCrash.h>
-#include <FS.h>
 #include <Main.h>
 #include <Pinout.h>
 #include <RemoteDebug.h>
@@ -72,8 +65,6 @@
 #define ONLY_SHOW_MSG true
 #define SHOW_MSG_AND_REACT false
 
-#define WAIT_BEFORE_HTTP_MS 100
-
 // extern "C" {
 //#include "user_interface.h"
 //}
@@ -97,7 +88,6 @@
 volatile bool buttonEnabled = true;
 volatile unsigned char buttonInterrupts = 0;
 
-HTTPClient httpClient;
 RemoteDebug telnet;
 // Servo servoLeft;
 // Servo servoRight;
@@ -356,7 +346,12 @@ void testArchitecture() {
 void updateFirmware(const char *descriptor) {
   Buffer url(FIRMWARE_UPDATE_URL_MAX_LENGTH);
   url.fill(FIRMWARE_UPDATE_URL, descriptor);
-  updateFirmwareVersion(url.getBuffer(), STRINGIFY(PROJ_VERSION));
+  bool c = initWifiSimple();
+  if (c) {
+    updateFirmwareVersion(url.getBuffer(), STRINGIFY(PROJ_VERSION));
+  } else {
+    log(CLASS_MAIN, Error, "Could not connect");
+  }
 }
 
 // Execution

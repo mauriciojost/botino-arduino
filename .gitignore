@@ -181,3 +181,7 @@
 /src/ESP8266.h
 /src/ESP32.h
 /libs/arduino-boards-primitives/
+/src/Common.h
+/src/PinoutESP32.h
+/src/PinoutESP8266.h
+/src/X86_64.h

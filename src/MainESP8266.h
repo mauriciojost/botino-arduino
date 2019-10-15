@@ -1,13 +1,7 @@
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include <Arduino.h>
-#include <ArduinoOTA.h>
-#include <ESP8266HTTPClient.h>
-#include <ESP8266WiFi.h>
-#include <ESP8266httpUpdate.h>
 #include <EspSaveCrash.h>
-#include <FS.h>
 #include <Main.h>
 #include <Pinout.h>
 #include <RemoteDebug.h>
@@ -34,10 +28,6 @@
 #define LCD_PIXEL_WIDTH 6
 #define LCD_PIXEL_HEIGHT 8
 
-#ifndef WIFI_DELAY_MS
-#define WIFI_DELAY_MS 2000
-#endif // WIFI_DELAY_MS
-
 #define MAX_ROUND_ROBIN_LOG_FILES 5
 
 #ifndef FIRMWARE_UPDATE_URL
@@ -55,10 +45,6 @@
 
 #define LOG_BUFFER_MAX_LENGTH 1024
 
-#ifndef URL_PRINT_MAX_LENGTH
-#define URL_PRINT_MAX_LENGTH 20
-#endif // URL_PRINT_MAX_LENGTH
-
 #ifndef USER_DELAY_MS
 #define USER_DELAY_MS 8000
 #endif // USER_DELAY_MS
@@ -69,8 +55,6 @@
 
 #define ONLY_SHOW_MSG true
 #define SHOW_MSG_AND_REACT false
-
-#define WAIT_BEFORE_HTTP_MS 100
 
 extern "C" {
 #include "user_interface.h"
@@ -96,7 +80,6 @@ extern "C" {
 volatile bool buttonEnabled = true;
 volatile unsigned char buttonInterrupts = 0;
 
-HTTPClient httpClient;
 RemoteDebug telnet;
 Servo servoLeft;
 Servo servoRight;
@@ -357,7 +340,12 @@ void testArchitecture() {
 void updateFirmware(const char *descriptor) {
   Buffer url(FIRMWARE_UPDATE_URL_MAX_LENGTH);
   url.fill(FIRMWARE_UPDATE_URL, descriptor);
-  updateFirmwareVersion(url.getBuffer(), STRINGIFY(PROJ_VERSION));
+  bool c = initWifiSimple();
+  if (c) {
+    updateFirmwareVersion(url.getBuffer(), STRINGIFY(PROJ_VERSION));
+  } else {
+    log(CLASS_MAIN, Error, "Could not connect");
+  }
 }
 
 // Execution
