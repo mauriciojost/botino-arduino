@@ -22,7 +22,7 @@
 enum AppMode { Interactive = 0, NonInteractive = 1 };
 AppMode appMode = Interactive;
 
-#include "X86_64.h"
+#include <primitives/BoardX86_64.h>
 
 ////////////////////////////////////////
 // Functions requested for architecture

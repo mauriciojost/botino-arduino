@@ -119,7 +119,7 @@ void handleInterrupt();
 // void initializeServoConfigs();
 void dumpLogBuffer();
 
-#include "ESP32.h"
+#include <primitives/BoardESP32.h>
 
 ////////////////////////////////////////
 // Functions requested for architecture

@@ -112,7 +112,7 @@ void handleInterrupt();
 void initializeServoConfigs();
 void dumpLogBuffer();
 
-#include "ESP8266.h"
+#include <primitives/BoardESP8266.h>
 
 ////////////////////////////////////////
 // Functions requested for architecture
