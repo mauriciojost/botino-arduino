@@ -180,7 +180,12 @@ void setup() {
   m->getModule()->setDescription(VERSION_DESCRIPTION_JSON);
   if (ec != ModuleStartupPropertiesCodeSuccess) {
     log(CLASS_MAIN, Error, "Failure: %d", (int)ec);
-    abort("Could not startup");
+    bool i = sleepInterruptable(now(), 10);
+    if (i) {
+    	m->getBot()->setMode(ConfigureMode);
+    } else {
+      abort("Could not startup");
+    }
   }
 }
 
