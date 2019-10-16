@@ -38,7 +38,7 @@ const char *apiDevicePass();
 void logLine(const char *str);
 
 // Setup wifi using provided parameters.
-bool initWifi(const char *ssid, const char *pass, bool skipIfAlreadyConnected, int retries);
+bool initWifi(const char *ssid, const char *pass, const char *ssidb, const char *passb, bool skipIfAlreadyConnected, int retries);
 
 // Stop wifi connection to reduce power consumption.
 void stopWifi();

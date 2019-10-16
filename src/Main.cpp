@@ -148,7 +148,7 @@ ModuleBotino *m;
 bool initWifiSimple() {
   Settings *s = m->getModuleSettings();
   log(CLASS_MAIN, Info, "W.steady");
-  bool connected = initWifi(s->getSsid(), s->getPass(), true, WIFI_CONNECTION_RETRIES);
+  bool connected = initWifi(s->getSsid(), s->getPass(), s->getSsidBackup(), s->getPassBackup(), true, WIFI_CONNECTION_RETRIES);
   return connected;
 }
 

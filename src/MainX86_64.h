@@ -31,9 +31,7 @@ AppMode appMode = Interactive;
 // Callbacks
 ///////////////////
 
-bool initWifi(const char *ssid, const char *pass, bool skipIfAlreadyConnected, int retries) {
-  const char *ssidb = m->getModuleSettings()->getSsidBackup();
-  const char *passb = m->getModuleSettings()->getPassBackup();
+bool initWifi(const char *ssid, const char *pass, const char *ssidb, const char *passb, bool skipIfAlreadyConnected, int retries) {
   return initializeWifi(ssid, pass, ssidb, passb, skipIfAlreadyConnected, retries);
 }
 
