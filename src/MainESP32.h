@@ -35,12 +35,6 @@
 
 #define MAX_ROUND_ROBIN_LOG_FILES 5
 
-#ifndef FIRMWARE_UPDATE_URL
-#define FIRMWARE_UPDATE_URL MAIN4INOSERVER_API_HOST_BASE "/firmwares/botino/esp32.%s.bin"
-#endif // FIRMWARE_UPDATE_URL
-
-#define FIRMWARE_UPDATE_URL_MAX_LENGTH 128
-
 #define PRE_DEEP_SLEEP_WINDOW_SECS 5
 
 #define SERVO_BASE_STEPS 120
@@ -343,12 +337,10 @@ void testArchitecture() {
   hwTest();
 }
 
-void updateFirmware(const char *descriptor) {
-  Buffer url(FIRMWARE_UPDATE_URL_MAX_LENGTH);
-  url.fill(FIRMWARE_UPDATE_URL, descriptor);
+void updateFirmwareVersion(const char *version) {
   bool c = initWifiSimple();
   if (c) {
-    updateFirmwareVersion(url.getBuffer(), STRINGIFY(PROJ_VERSION));
+    updateFirmware("botino", "esp32", version);
   } else {
     log(CLASS_MAIN, Error, "Could not connect");
   }

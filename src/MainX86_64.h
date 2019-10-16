@@ -75,7 +75,7 @@ void infoArchitecture() {}
 
 void testArchitecture() {}
 
-void updateFirmware(const char *descriptor) {}
+void updateFirmwareVersion(const char *version) {}
 
 // Execution
 ///////////////////

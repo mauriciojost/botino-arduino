@@ -172,7 +172,7 @@ void setup() {
            runModeArchitecture,
            commandArchitecture,
            infoArchitecture,
-           updateFirmware,
+           updateFirmwareVersion,
            testArchitecture,
            apiDeviceLogin,
            apiDevicePass);
