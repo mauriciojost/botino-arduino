@@ -114,8 +114,8 @@ void dumpLogBuffer();
 ///////////////////
 
 bool initWifi(const char *ssid, const char *pass, bool skipIfAlreadyConnected, int retries) {
-  const char *ssidb = m->getBotinoSettings()->getBackupWifiSsid()->getBuffer();
-  const char *passb = m->getBotinoSettings()->getBackupWifiPass()->getBuffer();
+  const char *ssidb = m->getModuleSettings()->getSsidBackup();
+  const char *passb = m->getModuleSettings()->getPassBackup();
   return initializeWifi(ssid, pass, ssidb, passb, skipIfAlreadyConnected, retries);
 }
 

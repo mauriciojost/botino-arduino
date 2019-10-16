@@ -17,8 +17,6 @@ enum BotinoSettingsProps {
   BotinoSettingsFsLogsProp,         // boolean, define if logs are to be dumped in the file system (only in debug mode)
   BotinoSettingsUpdateTargetProp,   // string, target version of firmware to update to
   BotinoSettingsUpdateFreqProp,     // string, frequency of updates of target
-  BotinoSettingsWifiSsidBackupProp, // string, ssid for backup wifi network
-  BotinoSettingsWifiPassBackupProp, // string, pass for backup wifi network
   BotinoSettingsPropsDelimiter
 };
 
@@ -30,8 +28,6 @@ private:
   Buffer *status;
   bool fsLogs;
   Buffer *target;
-  Buffer *ssidb;
-  Buffer *passb;
   Metadata *md;
   void (*command)(const char *);
 
@@ -43,10 +39,6 @@ public:
     fsLogs = false;
     target = new Buffer(TARGET_BUFFER_SIZE);
     target->load(SKIP_UPDATES_CODE);
-    ssidb = new Buffer(20);
-    ssidb->load("defaultssid");
-    passb = new Buffer(20);
-    passb->load("defaultssid");
     md = new Metadata(n);
     md->getTiming()->setFreq("~24h");
     command = NULL;
@@ -89,10 +81,6 @@ public:
         return ADVANCED_PROP_PREFIX "target";
       case (BotinoSettingsUpdateFreqProp):
         return ADVANCED_PROP_PREFIX "freq";
-      case (BotinoSettingsWifiSsidBackupProp):
-        return SENSITIVE_PROP_PREFIX "ssidb";
-      case (BotinoSettingsWifiPassBackupProp):
-        return SENSITIVE_PROP_PREFIX "passb";
       default:
         return "";
     }
@@ -114,12 +102,6 @@ public:
         break;
       case (BotinoSettingsUpdateFreqProp):
         setPropTiming(m, targetValue, actualValue, getTiming());
-        break;
-      case (BotinoSettingsWifiSsidBackupProp):
-        setPropValue(m, targetValue, actualValue, ssidb);
-        break;
-      case (BotinoSettingsWifiPassBackupProp):
-        setPropValue(m, targetValue, actualValue, passb);
         break;
       default:
         break;
@@ -145,13 +127,6 @@ public:
     return lcdLogs;
   }
 
-  Buffer *getBackupWifiSsid() {
-    return ssidb;
-  }
-
-  Buffer *getBackupWifiPass() {
-    return passb;
-  }
 };
 
 #endif // MODULE_SETTINGS_INC
