@@ -527,8 +527,9 @@ CmdExecStatus commandArchitecture(const char *c) {
     logRawUser("   servo l");
     logRawUser("   servo r");
     logRawUser("   wifissid <ssid>");
-    logRawUser("   wifissid <ssid>");
     logRawUser("   wifipass <password>");
+    logRawUser("   wifissidb <ssidb>");
+    logRawUser("   wifipassb <passwordb>");
     logRawUser("   ifttttoken <token>");
     logRawUser("   (setup of power consumption settings architecture specific if any)");
     logRawUser("   store");
