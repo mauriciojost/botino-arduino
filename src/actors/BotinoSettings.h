@@ -16,6 +16,7 @@ enum BotinoSettingsProps {
   BotinoSettingsStatusProp,         // string, defines the current general status of the device (vcc level, heap, etc)
   BotinoSettingsFsLogsProp,         // boolean, define if logs are to be dumped in the file system (only in debug mode)
   BotinoSettingsUpdateTargetProp,   // string, target version of firmware to update to
+  BotinoSettingsUpdateFreqProp,     // string, frequency of updates of target
   BotinoSettingsWifiSsidBackupProp, // string, ssid for backup wifi network
   BotinoSettingsWifiPassBackupProp, // string, pass for backup wifi network
   BotinoSettingsPropsDelimiter
@@ -86,6 +87,8 @@ public:
         return DEBUG_PROP_PREFIX "fslogs";
       case (BotinoSettingsUpdateTargetProp):
         return ADVANCED_PROP_PREFIX "target";
+      case (BotinoSettingsUpdateFreqProp):
+        return ADVANCED_PROP_PREFIX "freq";
       case (BotinoSettingsWifiSsidBackupProp):
         return SENSITIVE_PROP_PREFIX "ssidb";
       case (BotinoSettingsWifiPassBackupProp):
@@ -108,6 +111,9 @@ public:
         break;
       case (BotinoSettingsUpdateTargetProp):
         setPropValue(m, targetValue, actualValue, target);
+        break;
+      case (BotinoSettingsUpdateFreqProp):
+        setPropTiming(m, targetValue, actualValue, getTiming());
         break;
       case (BotinoSettingsWifiSsidBackupProp):
         setPropValue(m, targetValue, actualValue, ssidb);
