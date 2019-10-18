@@ -28,8 +28,8 @@ function export_firmware_for_platform() {
 
   # Rules
   cd $EXPO
-  ls -t | grep firmware | grep $platform | head -1 | xargs -I% ln -sf % $platform.latest.bin
-  ls -t | grep firmware | grep $platform | grep -v SNAPSHOT | head -1 | xargs -I% ln -sf % $platform.latest-stable.bin
+  ls -t | grep firmware | grep $platform | head -1 | xargs -I% ln -sf % firmware-$platform.latest.bin
+  ls -t | grep firmware | grep $platform | grep -v SNAPSHOT | head -1 | xargs -I% ln -sf % firmware-$platform.latest-stable.bin
   cd -
 
 }
