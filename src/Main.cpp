@@ -31,7 +31,7 @@ ModuleBotino *m;
   "\"version\":\"" STRINGIFY(PROJ_VERSION) "\","\
   "\"json\":["\
     "{"\
-      "\"patterns\": [\"^.*.freq$\"],"\
+      "\"patterns\": [\"^.*..freq$\"],"\
       "\"descriptions\": [\"Frequency at which the actor will act and perform its duty. See <a href=\\\"https://bitbucket.org/mauriciojost/main4ino-arduino/src/master/README.md\\\" target=\\\"_blank\\\">here</a>.\"],"\
       "\"examples\": ["\
         "\"never     -> Never\","\
@@ -45,7 +45,16 @@ ModuleBotino *m;
       "]"\
     "},"\
     "{"\
-      "\"patterns\": [\"^body.r\\\\d{1,2}$\"],"\
+      "\"patterns\": [\"^botino.target$\"],"\
+      "\"descriptions\": [\"Target version to perform an upgrade of firmware.\"],"\
+      "\"examples\": ["\
+        "\"SKIP -> No target\","\
+        "\"3.8.12 -> One specific version provided\","\
+        "\"3.8.12-SNAPSHOT-f567c4f -> One specific version provided\""\
+      "]"\
+    "},"\
+    "{"\
+      "\"patterns\": [\"^body..r\\\\d{1,2}$\"],"\
       "\"descriptions\": [\"Routine i-th of the body (format: frequency:pose1.pose2...poseN. . See <a href=\\\"https://github.com/mauriciojost/botino-arduino/blob/master/src/actors/Body.md\\\" target=\\\"_blank\\\">all pose codes here</a>.\"],"\
       "\"examples\": ["\
         "\"@12h00:M2Message at midday.A99. -> Tell message Lunch! at 12 every day and put arms up quickly\","\
