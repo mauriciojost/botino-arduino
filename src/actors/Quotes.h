@@ -81,7 +81,7 @@ public:
   }
 
   void fillQuote(int i) {
-    ParamStream httpBodyResponse(jsonAuxBuffer);
+    ParamStream httpBodyResponse(jsonAuxBuffer, true);
     log(CLASS_QUOTES, Debug, "Filling %d", i);
     int errorCode = httpGet(URL_QUOTES, &httpBodyResponse, headers);
     if (errorCode == HTTP_OK) {
