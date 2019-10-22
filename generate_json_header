@@ -1,0 +1,15 @@
+#!/bin/bash
+
+echo "# Generating header..."
+
+export tmpfile=`mktemp`
+
+echo "#define VERSION_DESCRIPTION_JSON \"" > $tmpfile
+cat src/Description.json | jq -c . | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' >> $tmpfile
+echo "\"" >>  $tmpfile
+
+cat $tmpfile | tr --delete '\n'  > src/Description.json.h 
+
+rm $tmpfile
+
+echo "# Generated"
