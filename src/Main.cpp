@@ -48,7 +48,7 @@ ModuleBotino *m;
       "\"patterns\": [\"^botino.target$\"],"\
       "\"descriptions\": [\"Target version to perform an upgrade of firmware.\"],"\
       "\"examples\": ["\
-        "\"SKIP -> No target\","\
+        "\"skip -> No target\","\
         "\"3.8.12 -> One specific version provided\","\
         "\"3.8.12-SNAPSHOT-f567c4f -> One specific version provided\""\
       "]"\
@@ -185,8 +185,12 @@ void setup() {
            testArchitecture,
            apiDeviceLogin,
            apiDevicePass);
-  ModuleStartupPropertiesCode ec = m->startupProperties();
+
   m->getModule()->setDescription(VERSION_DESCRIPTION_JSON);
+
+  log(CLASS_MAIN, Info, "Startup of properties");
+  ModuleStartupPropertiesCode ec = m->startupProperties();
+
   if (ec != ModuleStartupPropertiesCodeSuccess) {
     log(CLASS_MAIN, Error, "Failure: %d", (int)ec);
     bool i = sleepInterruptable(now(), 10);
