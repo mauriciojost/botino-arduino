@@ -7,7 +7,7 @@ pipeline {
 
   stages {
     stage('Build & deliver') {
-      agent { docker 'mauriciojost/arduino-ci:platformio-3.5.3-0.2.0' }
+      agent { docker 'mauriciojost/arduino-ci:platformio-3.5.3-0.2.1' }
       stages {
 
         stage('Update build refs') {
