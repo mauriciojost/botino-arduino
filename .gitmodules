@@ -1,3 +1,6 @@
 [submodule "libs/main4ino-arduino"]
 	path = libs/main4ino-arduino
 	url = git@bitbucket.org:mauriciojost/main4ino-arduino.git
+[submodule "mavarduino"]
+	path = .mavarduino
+	url = https://github.com/mauriciojost/mavarduino.git
