@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 
+export root_dir=$(dirname `readlink -e $0`)
 echo "# Generating header..."
 
 export tmpfile=`mktemp`
 
 echo "#define VERSION_DESCRIPTION_JSON \"" > $tmpfile
-cat ../../src/Description.json | jq -c . | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' >> $tmpfile
+cat $root_dir/../../src/Description.json | jq -c . | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' >> $tmpfile
 echo "\"" >>  $tmpfile
 
-cat $tmpfile | tr --delete '\n'  > ../../src/Description.json.h 
+cat $tmpfile | tr --delete '\n'  > $root_dir/../../src/Description.json.h 
 
 rm $tmpfile
 
