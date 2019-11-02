@@ -109,7 +109,6 @@ void debugHandle();
 bool haveToInterrupt();
 void handleInterrupt();
 // void initializeServoConfigs();
-void dumpLogBuffer();
 
 #include <primitives/BoardESP32.h>
 
@@ -162,7 +161,7 @@ Serial.print("|");
     lcd->display();
     delay(DELAY_MS_SPI);
   }
-  // filesystem logs
+  // local logs (to be sent via network)
   if (m->getBotinoSettings()->fsLogsEnabled()) {
     if (logBuffer == NULL) {
       logBuffer = new Buffer(LOG_BUFFER_MAX_LENGTH);
@@ -621,7 +620,10 @@ void debugHandle() {
   m->getBotinoSettings()->getMetadata()->changed();
 
   if (m->getBotinoSettings()->fsLogsEnabled()) {
-    dumpLogBuffer();
+    if (logBuffer == NULL)
+      return;
+    PropSyncStatusCode status = m->getModule()->getPropSync()->pushLogMessages(logBuffer->getBuffer());
+    logBuffer->clear();
   }
   telnet.handle();     // Handle telnet log server and commands
   ArduinoOTA.handle(); // Handle on the air firmware load
@@ -749,15 +751,3 @@ void initializeServoConfigs() {
 }
 */
 
-void dumpLogBuffer() {
-  if (logBuffer == NULL)
-    return;
-
-  Buffer fname(16);
-  static int rr = 0;
-  rr = (rr + 1) % MAX_ROUND_ROBIN_LOG_FILES;
-  fname.fill("%d.log", rr);
-  bool suc = writeFile(fname.getBuffer(), logBuffer->getBuffer());
-  log(CLASS_MAIN, Warn, "Log: %s %s", fname.getBuffer(), BOOL(suc));
-  logBuffer->clear();
-}

@@ -28,8 +28,6 @@
 #define LCD_PIXEL_WIDTH 6
 #define LCD_PIXEL_HEIGHT 8
 
-#define MAX_ROUND_ROBIN_LOG_FILES 5
-
 #define SERVO_BASE_STEPS 120
 #define SERVO_PERIOD_STEP_MS 2
 
@@ -100,7 +98,6 @@ void debugHandle();
 bool haveToInterrupt();
 void handleInterrupt();
 void initializeServoConfigs();
-void dumpLogBuffer();
 
 #include <primitives/BoardESP8266.h>
 
@@ -153,7 +150,7 @@ Serial.print("|");
     lcd->display();
     delay(DELAY_MS_SPI);
   }
-  // filesystem logs
+  // local logs (to be sent via network)
   if (m->getBotinoSettings()->fsLogsEnabled()) {
     if (logBuffer == NULL) {
       logBuffer = new Buffer(LOG_BUFFER_MAX_LENGTH);
@@ -613,7 +610,10 @@ void debugHandle() {
   m->getBotinoSettings()->getMetadata()->changed();
 
   if (m->getBotinoSettings()->fsLogsEnabled()) {
-    dumpLogBuffer();
+    if (logBuffer == NULL)
+      return;
+    PropSyncStatusCode status = m->getModule()->getPropSync()->pushLogMessages(logBuffer->getBuffer());
+    logBuffer->clear();
   }
   telnet.handle();     // Handle telnet log server and commands
   ArduinoOTA.handle(); // Handle on the air firmware load
@@ -737,17 +737,4 @@ void initializeServoConfig(const char *tuningFilename, ServoConf **conf) {
 void initializeServoConfigs() {
   initializeServoConfig(SERVO_0_FILENAME, &servo0Conf);
   initializeServoConfig(SERVO_1_FILENAME, &servo1Conf);
-}
-
-void dumpLogBuffer() {
-  if (logBuffer == NULL)
-    return;
-
-  Buffer fname(16);
-  static int rr = 0;
-  rr = (rr + 1) % MAX_ROUND_ROBIN_LOG_FILES;
-  fname.fill("%d.log", rr);
-  bool suc = writeFile(fname.getBuffer(), logBuffer->getBuffer());
-  log(CLASS_MAIN, Warn, "Log: %s %s", fname.getBuffer(), BOOL(suc));
-  logBuffer->clear();
 }
