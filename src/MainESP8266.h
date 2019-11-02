@@ -62,7 +62,6 @@ extern "C" {
   "\n  ls                : list files present in FS "                                                                                      \
   "\n  reset             : reset the device"                                                                                               \
   "\n  freq ...          : set clock frequency in MHz (80 or 160 available only, 160 faster but more power consumption)"                   \
-  "\n  deepsleep ...     : deep sleep N provided seconds"                                                                                  \
   "\n  lightsleep ...    : light sleep N provided seconds"                                                                                 \
   "\n  clearstack        : clear stack trace "                                                                                             \
   "\n"
@@ -78,7 +77,6 @@ Servo servoRight;
 Adafruit_SSD1306 *lcd = NULL;
 Buffer *apiDeviceId = NULL;
 Buffer *apiDevicePwd = NULL;
-Buffer *deepSleepMode = NULL;
 ServoConf *servo0Conf = NULL;
 ServoConf *servo1Conf = NULL;
 int currentLogLine = 0;
@@ -361,7 +359,7 @@ BotMode setupArchitecture() {
   setExternalMillis(millis);
 
   log(CLASS_MAIN, Debug, "Setup SPIFFS");
-  log(CLASS_MAIN, Debug, "Setup pins & deepsleep (if failure think of activating deep sleep mode?)");
+  log(CLASS_MAIN, Debug, "Setup pins");
   pinMode(LEDR_PIN, OUTPUT);
   pinMode(LEDW_PIN, OUTPUT);
   pinMode(LEDY_PIN, OUTPUT);
@@ -557,10 +555,6 @@ CmdExecStatus commandArchitecture(const char *c) {
     uint8 fmhz = (uint8)atoi(strtok(NULL, " "));
     bool succ = system_update_cpu_freq(fmhz);
     logUser("Freq updated: %dMHz (succ %s)", (int)fmhz, BOOL(succ));
-    return Executed;
-  } else if (strcmp("deepsleep", c) == 0) {
-    int s = atoi(strtok(NULL, " "));
-    deepSleepNotInterruptable(now(), s);
     return Executed;
   } else if (strcmp("lightsleep", c) == 0) {
     int s = atoi(strtok(NULL, " "));

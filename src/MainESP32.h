@@ -72,7 +72,6 @@
   "\n  rm ...            : remove file in FS "                                                                                             \
   "\n  ls                : list files present in FS "                                                                                      \
   "\n  reset             : reset the device"                                                                                               \
-  "\n  deepsleep ...     : deep sleep N provided seconds"                                                                                  \
   "\n  lightsleep ...    : light sleep N provided seconds"                                                                                 \
   "\n  clearstack        : clear stack trace "                                                                                             \
   "\n"
@@ -88,7 +87,6 @@ RemoteDebug telnet;
 Adafruit_SSD1306 *lcd = NULL;
 Buffer *apiDeviceId = NULL;
 Buffer *apiDevicePwd = NULL;
-Buffer *deepSleepMode = NULL;
 // ServoConf *servo0Conf = NULL;
 // ServoConf *servo1Conf = NULL;
 int currentLogLine = 0;
@@ -565,10 +563,6 @@ if (servo == 'r' || servo == 'R') {
     return Executed;
   } else if (strcmp("reset", c) == 0) {
     ESP.restart(); // it is normal that it fails if invoked the first time after firmware is written
-    return Executed;
-  } else if (strcmp("deepsleep", c) == 0) {
-    int s = atoi(strtok(NULL, " "));
-    deepSleepNotInterruptable(now(), s);
     return Executed;
   } else if (strcmp("lightsleep", c) == 0) {
     int s = atoi(strtok(NULL, " "));
