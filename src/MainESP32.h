@@ -619,12 +619,16 @@ void debugHandle() {
   m->getBotinoSettings()->getStatus()->fill("heap:%d", ESP.getFreeHeap());
   m->getBotinoSettings()->getMetadata()->changed();
 
-  if (m->getBotinoSettings()->fsLogsEnabled()) {
-    if (logBuffer == NULL)
-      return;
-    PropSyncStatusCode status = m->getModule()->getPropSync()->pushLogMessages(logBuffer->getBuffer());
+  if (logBuffer != NULL && m->getBotinoSettings()->fsLogsEnabled()) {
+    log(CLASS_MAIN, Debug, "Push logs...");
+    PropSync* ps = m->getModule()->getPropSync();
+    PropSyncStatusCode status = ps->pushLogMessages(logBuffer->getBuffer());
+    if (ps->isFailure(status)) {
+      log(CLASS_MAIN, Warn, "Failed to push logs...");
+    }
     logBuffer->clear();
   }
+
   telnet.handle();     // Handle telnet log server and commands
   ArduinoOTA.handle(); // Handle on the air firmware load
 }
