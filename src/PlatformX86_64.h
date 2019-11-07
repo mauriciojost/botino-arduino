@@ -72,7 +72,7 @@ void infoArchitecture() {}
 
 void testArchitecture() {}
 
-void updateFirmwareVersion(const char *version) {}
+void updateFirmwareVersion(const char *targetVersion, const char* currentVersion) {}
 
 // Execution
 ///////////////////

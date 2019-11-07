@@ -76,7 +76,7 @@ void infoArchitecture();
 void testArchitecture();
 
 // Update the firmware and restart the device
-void updateFirmwareVersion(const char *version);
+void updateFirmwareVersion(const char *targetVersion, const char *currentVersion);
 
 // Execution
 ///////////////////

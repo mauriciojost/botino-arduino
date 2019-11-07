@@ -318,10 +318,10 @@ void infoArchitecture() {
 
 void testArchitecture() { }
 
-void updateFirmwareVersion(const char *version) {
+void updateFirmwareVersion(const char *targetVersion, const char *currentVersion) {
   bool c = initWifiSimple();
   if (c) {
-    updateFirmware("botino", "esp8266", version);
+    updateFirmware("botino", "esp8266", targetVersion, currentVersion);
   } else {
     log(CLASS_MAIN, Error, "Could not connect");
   }

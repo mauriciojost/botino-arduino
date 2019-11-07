@@ -85,7 +85,7 @@ public:
              void (*runModeArchitectureFunc)(),
              CmdExecStatus (*commandArchitectureFunc)(const char *cmd),
              void (*infoFunc)(),
-             void (*updateFunc)(const char *),
+             void (*updateFunc)(const char *, const char *),
              void (*testFunc)(),
              const char *(*apiDeviceLoginFunc)(),
              const char *(*apiDevicePassFunc)()) {
