@@ -167,7 +167,6 @@ Serial.print("|");
       logBuffer = new Buffer(LOG_BUFFER_MAX_LENGTH);
     }
     logBuffer->append(str);
-    logBuffer->append("\n");
   }
 }
 
