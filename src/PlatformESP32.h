@@ -326,9 +326,7 @@ void infoArchitecture() {
                             (millis() / 1000) / 3600);
 }
 
-void testArchitecture() {
-  hwTest();
-}
+void testArchitecture() { }
 
 void updateFirmwareVersion(const char *version) {
   bool c = initWifiSimple();
