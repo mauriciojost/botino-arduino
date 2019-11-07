@@ -1,5 +1,4 @@
 #include <Platform.h>
-#include <Main.h>
 #include <cstdio>
 #include <iostream>
 #include <stdio.h>
@@ -123,6 +122,9 @@ void abort(const char *msg) {
 ////////////////////////////////////////
 // Architecture specific functions
 ////////////////////////////////////////
+
+void setup();
+void loop();
 
 int main(int argc, const char *argv[]) {
   setup();
