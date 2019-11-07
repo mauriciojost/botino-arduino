@@ -36,6 +36,8 @@ bool initWifiSimple() {
   return connected;
 }
 
+void nop() {}
+
 void setup() {
   m = new ModuleBotino();
   m->setup(setupArchitecture,
@@ -44,7 +46,7 @@ void setup() {
            messageFunc,
            ios,
            initWifiSimple,
-           stopWifi,
+           nop,
            httpPost,
            httpGet,
            clearDevice,
