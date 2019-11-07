@@ -9,32 +9,9 @@
 
 #include <Main.h>
 
-ModuleBotino *m;
-
-#ifdef ARDUINO
-
-#ifdef ESP8266 // on ESP8266
-#include <MainESP8266.h>
-#endif // ESP8266
-
-#ifdef ESP32 // on ESP8266
-#include <MainESP32.h>
-#endif // ESP8266
-
-#else // on PC
-#include <MainX86_64.h>
-#endif // ARDUINO
-
 #define WIFI_CONNECTION_RETRIES 6
 
 #include <Description.json.h>
-
-bool initWifiSimple() {
-  Settings *s = m->getModuleSettings();
-  log(CLASS_MAIN, Info, "W.steady");
-  bool connected = initWifi(s->getSsid(), s->getPass(), s->getSsidBackup(), s->getPassBackup(), true, WIFI_CONNECTION_RETRIES);
-  return connected;
-}
 
 void nop() {}
 

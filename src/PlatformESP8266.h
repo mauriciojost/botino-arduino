@@ -1,16 +1,15 @@
-
+#include <Platform.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <EspSaveCrash.h>
 #include <Main.h>
 #include <Pinout.h>
 #include <RemoteDebug.h>
 #include <SPI.h>
-//#include <Servo.h>
+#include <Servo.h>
 #include <Wire.h>
 #include <utils/Io.h>
-//#include <utils/ServoConf.h>
-
-#define FORMAT_SPIFFS_IF_FAILED true
+#include <utils/ServoConf.h>
 
 #define DELAY_MS_SPI 3
 #define ABORT_DELAY_SECS 5
@@ -22,20 +21,12 @@
 #define DEVICE_PWD_FILENAME "/pass.tuning"
 #define DEVICE_PWD_MAX_LENGTH 16
 
-//#define SERVO_0_FILENAME "/servo0.tuning"
-//#define SERVO_1_FILENAME "/servo1.tuning"
+#define SERVO_0_FILENAME "/servo0.tuning"
+#define SERVO_1_FILENAME "/servo1.tuning"
 #define SLEEP_PERIOD_UPON_BOOT_SEC 2
 
 #define LCD_PIXEL_WIDTH 6
 #define LCD_PIXEL_HEIGHT 8
-
-#ifndef WIFI_DELAY_MS
-#define WIFI_DELAY_MS 2000
-#endif // WIFI_DELAY_MS
-
-#define MAX_ROUND_ROBIN_LOG_FILES 5
-
-#define PRE_DEEP_SLEEP_WINDOW_SECS 5
 
 #define SERVO_BASE_STEPS 120
 #define SERVO_PERIOD_STEP_MS 2
@@ -44,34 +35,31 @@
 
 #define LOG_BUFFER_MAX_LENGTH 1024
 
-#ifndef URL_PRINT_MAX_LENGTH
-#define URL_PRINT_MAX_LENGTH 20
-#endif // URL_PRINT_MAX_LENGTH
-
 #ifndef USER_DELAY_MS
 #define USER_DELAY_MS 8000
 #endif // USER_DELAY_MS
 
 #define USER_LCD_FONT_SIZE 2
 
-//#define VCC_FLOAT ((float)ESP.getVcc() / 1024)
+#define VCC_FLOAT ((float)ESP.getVcc() / 1024)
 
 #define ONLY_SHOW_MSG true
 #define SHOW_MSG_AND_REACT false
 
-// extern "C" {
-//#include "user_interface.h"
-//}
+extern "C" {
+#include "user_interface.h"
+}
 
 #define HTTP_TIMEOUT_MS 8000
 
 #define HELP_COMMAND_ARCH_CLI                                                                                                              \
-  "\n  ESP32 HELP"                                                                                                                         \
+  "\n  ESP8266 HELP"                                                                                                                       \
   "\n  init              : initialize essential settings (wifi connection, logins, etc.)"                                                  \
   "\n  servo ...         : tune the servo <s> (r|l) and make a test round "                                                                \
   "\n  rm ...            : remove file in FS "                                                                                             \
   "\n  ls                : list files present in FS "                                                                                      \
   "\n  reset             : reset the device"                                                                                               \
+  "\n  freq ...          : set clock frequency in MHz (80 or 160 available only, 160 faster but more power consumption)"                   \
   "\n  lightsleep ...    : light sleep N provided seconds"                                                                                 \
   "\n  clearstack        : clear stack trace "                                                                                             \
   "\n"
@@ -82,35 +70,35 @@ volatile bool buttonEnabled = true;
 volatile unsigned char buttonInterrupts = 0;
 
 RemoteDebug telnet;
-// Servo servoLeft;
-// Servo servoRight;
+Servo servoLeft;
+Servo servoRight;
 Adafruit_SSD1306 *lcd = NULL;
 Buffer *apiDeviceId = NULL;
 Buffer *apiDevicePwd = NULL;
-// ServoConf *servo0Conf = NULL;
-// ServoConf *servo1Conf = NULL;
+ServoConf *servo0Conf = NULL;
+ServoConf *servo1Conf = NULL;
 int currentLogLine = 0;
 Buffer *logBuffer = NULL;
 Buffer *cmdBuffer = NULL;
 Buffer *cmdLast = NULL;
+EspSaveCrash espSaveCrash;
 
 #define LED_INT_TOGGLE ios('w', IoToggle);
 #define LED_INT_ON ios('w', IoOn);
 #define LED_ALIVE_TOGGLE ios('r', IoToggle);
 
-// ADC_MODE(ADC_VCC);
+ADC_MODE(ADC_VCC);
 
 void bitmapToLcd(uint8_t bitmap[]);
 void reactCommandCustom();
-#include "Main_hwtest.h" // defines hwTest()
 void buttonPressed();
 void heartbeat();
 void debugHandle();
 bool haveToInterrupt();
 void handleInterrupt();
-// void initializeServoConfigs();
+void initializeServoConfigs();
 
-#include <primitives/BoardESP32.h>
+#include <primitives/BoardESP8266.h>
 
 ////////////////////////////////////////
 // Functions requested for architecture
@@ -193,39 +181,37 @@ void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clearMode, int
 }
 
 void arms(int left, int right, int periodFactor) {
-  /*
-static int lastDegL = -1;
-static int lastDegR = -1;
+  static int lastDegL = -1;
+  static int lastDegR = -1;
 
-int steps = periodFactor * SERVO_BASE_STEPS;
+  int steps = periodFactor * SERVO_BASE_STEPS;
 
-log(CLASS_MAIN, Debug, "Arms>%d&%d", left, right);
+  log(CLASS_MAIN, Debug, "Arms>%d&%d", left, right);
 
-int targetDegL = servo0Conf->getTargetDegreesFromPosition(left);
-servoLeft.attach(SERVO0_PIN);
+  int targetDegL = servo0Conf->getTargetDegreesFromPosition(left);
+  servoLeft.attach(SERVO0_PIN);
 
-int targetDegR = servo1Conf->getTargetDegreesFromPosition(right);
-servoRight.attach(SERVO1_PIN);
+  int targetDegR = servo1Conf->getTargetDegreesFromPosition(right);
+  servoRight.attach(SERVO1_PIN);
 
-// leave as target if first time
-lastDegL = (lastDegL == -1 ? targetDegL : lastDegL);
-lastDegR = (lastDegR == -1 ? targetDegR : lastDegR);
+  // leave as target if first time
+  lastDegL = (lastDegL == -1 ? targetDegL : lastDegL);
+  lastDegR = (lastDegR == -1 ? targetDegR : lastDegR);
 
-log(CLASS_MAIN, Debug, "Sv.Ldeg%d>deg%d", lastDegL, targetDegL);
-log(CLASS_MAIN, Debug, "Sv.Rdeg%d>deg%d", lastDegR, targetDegR);
-for (int i = 1; i <= steps; i++) {
-float factor = ((float)i) / steps;
-int vL = lastDegL + ((targetDegL - lastDegL) * factor);
-int vR = lastDegR + ((targetDegR - lastDegR) * factor);
-servoLeft.write(vL);
-servoRight.write(vR);
-delay(SERVO_PERIOD_STEP_MS);
-}
-lastDegL = targetDegL;
-lastDegR = targetDegR;
-servoLeft.detach();
-servoRight.detach();
-*/
+  log(CLASS_MAIN, Debug, "Sv.Ldeg%d>deg%d", lastDegL, targetDegL);
+  log(CLASS_MAIN, Debug, "Sv.Rdeg%d>deg%d", lastDegR, targetDegR);
+  for (int i = 1; i <= steps; i++) {
+    float factor = ((float)i) / steps;
+    int vL = lastDegL + ((targetDegL - lastDegL) * factor);
+    int vR = lastDegR + ((targetDegR - lastDegR) * factor);
+    servoLeft.write(vL);
+    servoRight.write(vR);
+    delay(SERVO_PERIOD_STEP_MS);
+  }
+  lastDegL = targetDegL;
+  lastDegR = targetDegR;
+  servoLeft.detach();
+  servoRight.detach();
 }
 
 void ios(char led, IoMode value) {
@@ -274,6 +260,7 @@ void clearDevice() {
   logUser("   rm %s", DEVICE_PWD_FILENAME);
   logUser("   ls");
   logUser("   <remove all .properties>");
+  espSaveCrash.clear();
 }
 
 void lcdImg(char img, uint8_t bitmap[]) {
@@ -319,22 +306,22 @@ void infoArchitecture() {
 
   m->getNotifier()->message(0,
                             1,
-                            "ID:%s\nV:%s\nIP: %s\nMemory:%lu\nUptime:%luh\n",
+                            "ID:%s\nV:%s\nCrashes:%d\nIP: %s\nMemory:%lu\nUptime:%luh\nVcc: %0.2f",
                             apiDeviceLogin(),
                             STRINGIFY(PROJ_VERSION),
+                            espSaveCrash.count(),
                             WiFi.localIP().toString().c_str(),
                             ESP.getFreeHeap(),
-                            (millis() / 1000) / 3600);
+                            (millis() / 1000) / 3600,
+                            VCC_FLOAT);
 }
 
-void testArchitecture() {
-  hwTest();
-}
+void testArchitecture() { }
 
 void updateFirmwareVersion(const char *version) {
   bool c = initWifiSimple();
   if (c) {
-    updateFirmware("botino", "esp32", version);
+    updateFirmware("botino", "esp8266", version);
   } else {
     log(CLASS_MAIN, Error, "Could not connect");
   }
@@ -365,9 +352,7 @@ BotMode setupArchitecture() {
   setExternalMillis(millis);
 
   log(CLASS_MAIN, Debug, "Setup SPIFFS");
-  SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED);
-
-  log(CLASS_MAIN, Debug, "Setup pins & deepsleep (if failure think of activating deep sleep mode?)");
+  log(CLASS_MAIN, Debug, "Setup pins");
   pinMode(LEDR_PIN, OUTPUT);
   pinMode(LEDW_PIN, OUTPUT);
   pinMode(LEDY_PIN, OUTPUT);
@@ -382,11 +367,12 @@ BotMode setupArchitecture() {
   delay(DELAY_MS_SPI);
   heartbeat();
 
-  // log(CLASS_MAIN, Debug, "Setup wdt");
-  // ESP.wdtEnable(1); // argument not used
+  log(CLASS_MAIN, Debug, "Setup wdt");
+  ESP.wdtEnable(1); // argument not used
+
   log(CLASS_MAIN, Debug, "Setup wifi");
   WiFi.persistent(false);
-  WiFi.setHostname(apiDeviceLogin());
+  WiFi.hostname(apiDeviceLogin());
   heartbeat();
 
   log(CLASS_MAIN, Debug, "Setup http");
@@ -412,19 +398,17 @@ BotMode setupArchitecture() {
   lcdImg('l', NULL);
   heartbeat();
 
-  // log(CLASS_MAIN, Debug, "Setup servos");
-  // initializeServoConfigs();
+  log(CLASS_MAIN, Debug, "Setup servos");
+  initializeServoConfigs();
 
-  /*
   log(CLASS_MAIN, Debug, "Clean up crashes");
-  if (SaveCrash.count() > 5) {
+  if (espSaveCrash.count() > 5) {
     log(CLASS_MAIN, Warn, "Too many Stack-trcs / clearing (!!!)");
-    SaveCrash.clear();
-  } else if (SaveCrash.count() > 0) {
+    espSaveCrash.clear();
+  } else if (espSaveCrash.count() > 0) {
     log(CLASS_MAIN, Warn, "Stack-trcs (!!!)");
-    SaveCrash.print();
+    espSaveCrash.print();
   }
-  */
 
   log(CLASS_MAIN, Debug, "Letting user interrupt...");
   bool i = sleepInterruptable(now(), SLEEP_PERIOD_UPON_BOOT_SEC);
@@ -456,7 +440,6 @@ bool askBoolQuestion(const char *question) {
   return (bool)answer;
 }
 
-/*
 void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
   servo->attach(pin);
   servo->write(0);
@@ -474,7 +457,7 @@ void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
 
   for (int d = 0; d <= testRange; d = d + 2) {
     bool pressed = BUTTON_IS_PRESSED;
-    log(CLASS_MODULE, Info, "Moves: %d/%d %s", d, testRange, (pressed?"<= IN RANGE":""));
+    log(CLASS_MODULE, Info, "Moves: %d/%d %s", d, testRange, (pressed ? "<= IN RANGE" : ""));
     min = ((d < min) && pressed ? d : min);
     max = ((d > max) && pressed ? d : max);
     servo->write(d);
@@ -482,7 +465,7 @@ void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
   }
 
   bool dwn = askBoolQuestion("Is the arm\ndown now?");
-  m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Arm now:\n%s", (dwn?"DOWN":"UP"));
+  m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Arm now:\n%s", (dwn ? "DOWN" : "UP"));
   delay(USER_DELAY_MS);
   m->getNotifier()->message(0, 2, "Setup\n%s\ndone!", name);
   delay(USER_DELAY_MS);
@@ -493,80 +476,84 @@ void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
 
   servo->detach();
 }
-*/
 
 CmdExecStatus commandArchitecture(const char *c) {
   if (strcmp("servo", c) == 0) {
-    /*
-char servo = strtok(NULL, " ")[0];
-Buffer serialized(16);
-if (servo == 'r' || servo == 'R') {
-  arms(2, 2, 1);
-  arms(2, 7, 1);
-  arms(2, 2, 1);
-  tuneServo("right servo", SERVO1_PIN, &servoRight, servo1Conf);
-  servo1Conf->serialize(&serialized); // right servo1
-  writeFile(SERVO_1_FILENAME, serialized.getBuffer());
-  logUser("Stored tuning right servo");
-  arms(0, 0, 1);
-  arms(0, 9, 1);
-  arms(0, 0, 1);
-  return Executed;
-} else if (servo == 'l' || servo == 'L') {
-  arms(2, 2, 1);
-  arms(7, 2, 1);
-  arms(2, 2, 1);
-  tuneServo("left servo", SERVO0_PIN, &servoLeft, servo0Conf);
-  servo0Conf->serialize(&serialized); // left servo0
-  writeFile(SERVO_0_FILENAME, serialized.getBuffer());
-  logUser("Stored tuning left servo");
-  arms(0, 0, 1);
-  arms(9, 0, 1);
-  arms(0, 0, 1);
-  return Executed;
-} else {
-  logUser("Invalid servo (l|r)");
-  return InvalidArgs;
-}
-  */
-    return InvalidArgs;
+    char servo = strtok(NULL, " ")[0];
+    Buffer serialized(16);
+    if (servo == 'r' || servo == 'R') {
+      arms(2, 2, 1);
+      arms(2, 7, 1);
+      arms(2, 2, 1);
+      tuneServo("right servo", SERVO1_PIN, &servoRight, servo1Conf);
+      servo1Conf->serialize(&serialized); // right servo1
+      writeFile(SERVO_1_FILENAME, serialized.getBuffer());
+      logUser("Stored tuning right servo");
+      arms(0, 0, 1);
+      arms(0, 9, 1);
+      arms(0, 0, 1);
+      return Executed;
+    } else if (servo == 'l' || servo == 'L') {
+      arms(2, 2, 1);
+      arms(7, 2, 1);
+      arms(2, 2, 1);
+      tuneServo("left servo", SERVO0_PIN, &servoLeft, servo0Conf);
+      servo0Conf->serialize(&serialized); // left servo0
+      writeFile(SERVO_0_FILENAME, serialized.getBuffer());
+      logUser("Stored tuning left servo");
+      arms(0, 0, 1);
+      arms(9, 0, 1);
+      arms(0, 0, 1);
+      return Executed;
+    } else {
+      logUser("Invalid servo (l|r)");
+      return InvalidArgs;
+    }
   } else if (strcmp("init", c) == 0) {
     logRawUser("-> Initialize");
     logRawUser("Execute:");
     logRawUser("   ls");
     logUser("   save %s <alias>", DEVICE_ALIAS_FILENAME);
     logUser("   save %s <pwd>", DEVICE_PWD_FILENAME);
-    // logRawUser("   servo l");
-    // logRawUser("   servo r");
-    logRawUser("   wifissid <ssid>");
+    logRawUser("   servo l");
+    logRawUser("   servo r");
     logRawUser("   wifissid <ssid>");
     logRawUser("   wifipass <password>");
+    logRawUser("   wifissidb <ssidb>");
+    logRawUser("   wifipassb <passwordb>");
     logRawUser("   ifttttoken <token>");
     logRawUser("   (setup of power consumption settings architecture specific if any)");
     logRawUser("   store");
     logRawUser("   ls");
     return Executed;
   } else if (strcmp("ls", c) == 0) {
-    File root = SPIFFS.open("/");
-    File file = root.openNextFile();
-    while (file) {
-      logUser("- %s (%d bytes)", file.name(), (int)file.size());
-      file = root.openNextFile();
+    SPIFFS.begin();
+    Dir dir = SPIFFS.openDir("/");
+    while (dir.next()) {
+      logUser("- %s (%d bytes)", dir.fileName().c_str(), (int)dir.fileSize());
     }
+    SPIFFS.end();
     return Executed;
   } else if (strcmp("rm", c) == 0) {
     const char *f = strtok(NULL, " ");
+    SPIFFS.begin();
     bool succ = SPIFFS.remove(f);
     logUser("### File '%s' %s removed", f, (succ ? "" : "NOT"));
+    SPIFFS.end();
     return Executed;
   } else if (strcmp("reset", c) == 0) {
     ESP.restart(); // it is normal that it fails if invoked the first time after firmware is written
+    return Executed;
+  } else if (strcmp("freq", c) == 0) {
+    uint8 fmhz = (uint8)atoi(strtok(NULL, " "));
+    bool succ = system_update_cpu_freq(fmhz);
+    logUser("Freq updated: %dMHz (succ %s)", (int)fmhz, BOOL(succ));
     return Executed;
   } else if (strcmp("lightsleep", c) == 0) {
     int s = atoi(strtok(NULL, " "));
     return (lightSleepInterruptable(now(), s, m->getModuleSettings()->miniPeriodMsec(), haveToInterrupt, heartbeat) ? ExecutedInterrupt : Executed);
   } else if (strcmp("clearstack", c) == 0) {
-    // SaveCrash.clear();
+    espSaveCrash.clear();
     return Executed;
   } else if (strcmp("help", c) == 0 || strcmp("?", c) == 0) {
     logRawUser(HELP_COMMAND_ARCH_CLI);
@@ -615,7 +602,7 @@ void debugHandle() {
     firstTime = false;
   }
 
-  m->getBotinoSettings()->getStatus()->fill("heap:%d", ESP.getFreeHeap());
+  m->getBotinoSettings()->getStatus()->fill("vcc:%0.2f,heap:%d", VCC_FLOAT, ESP.getFreeHeap());
   m->getBotinoSettings()->getMetadata()->changed();
 
   if (logBuffer != NULL && m->getBotinoSettings()->fsLogsEnabled()) {
@@ -735,15 +722,14 @@ bool haveToInterrupt() {
   if (Serial.available()) {
     log(CLASS_MAIN, Debug, "Serial pinged: int");
     return true;
-    //} else if (buttonInterrupts > 0) {
-    //  log(CLASS_MAIN, Debug, "Button pressed: int");
-    //  return true;
+  } else if (buttonInterrupts > 0) {
+    log(CLASS_MAIN, Debug, "Button pressed: int");
+    return true;
   } else {
     return false;
   }
 }
 
-/*
 void initializeServoConfig(const char *tuningFilename, ServoConf **conf) {
   Buffer aux(SERVO_CONF_SERIALIZED_MAX_LENGTH);
   bool succServo0 = readFile(tuningFilename, &aux);
@@ -759,5 +745,3 @@ void initializeServoConfigs() {
   initializeServoConfig(SERVO_0_FILENAME, &servo0Conf);
   initializeServoConfig(SERVO_1_FILENAME, &servo1Conf);
 }
-*/
-
