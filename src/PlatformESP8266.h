@@ -119,7 +119,7 @@ const char *apiDevicePass() {
   return initializeTuningVariable(&apiDevicePwd, DEVICE_PWD_FILENAME, DEVICE_PWD_MAX_LENGTH, NULL, true)->getBuffer();
 }
 
-void logLine(const char *str) {
+void logLine(const char *str, const char *clz, LogLevel l) {
   Serial.setDebugOutput(getLogLevel() == Debug); // deep HW logs
   // serial print
   /*
@@ -256,10 +256,10 @@ void ios(char led, IoMode value) {
 }
 
 void clearDevice() {
-  logUser("   rm %s", DEVICE_ALIAS_FILENAME);
-  logUser("   rm %s", DEVICE_PWD_FILENAME);
-  logUser("   ls");
-  logUser("   <remove all .properties>");
+  log(CLASS_MAIN, User, "   rm %s", DEVICE_ALIAS_FILENAME);
+  log(CLASS_MAIN, User, "   rm %s", DEVICE_PWD_FILENAME);
+  log(CLASS_MAIN, User, "   ls");
+  log(CLASS_MAIN, User, "   <remove all .properties>");
   espSaveCrash.clear();
 }
 
@@ -488,7 +488,7 @@ CmdExecStatus commandArchitecture(const char *c) {
       tuneServo("right servo", SERVO1_PIN, &servoRight, servo1Conf);
       servo1Conf->serialize(&serialized); // right servo1
       writeFile(SERVO_1_FILENAME, serialized.getBuffer());
-      logUser("Stored tuning right servo");
+      log(CLASS_MAIN, User, "Stored tuning right servo");
       arms(0, 0, 1);
       arms(0, 9, 1);
       arms(0, 0, 1);
@@ -500,37 +500,37 @@ CmdExecStatus commandArchitecture(const char *c) {
       tuneServo("left servo", SERVO0_PIN, &servoLeft, servo0Conf);
       servo0Conf->serialize(&serialized); // left servo0
       writeFile(SERVO_0_FILENAME, serialized.getBuffer());
-      logUser("Stored tuning left servo");
+      log(CLASS_MAIN, User, "Stored tuning left servo");
       arms(0, 0, 1);
       arms(9, 0, 1);
       arms(0, 0, 1);
       return Executed;
     } else {
-      logUser("Invalid servo (l|r)");
+      log(CLASS_MAIN, User, "Invalid servo (l|r)");
       return InvalidArgs;
     }
   } else if (strcmp("init", c) == 0) {
-    logRawUser("-> Initialize");
-    logRawUser("Execute:");
-    logRawUser("   ls");
-    logUser("   save %s <alias>", DEVICE_ALIAS_FILENAME);
-    logUser("   save %s <pwd>", DEVICE_PWD_FILENAME);
-    logRawUser("   servo l");
-    logRawUser("   servo r");
-    logRawUser("   wifissid <ssid>");
-    logRawUser("   wifipass <password>");
-    logRawUser("   wifissidb <ssidb>");
-    logRawUser("   wifipassb <passwordb>");
-    logRawUser("   ifttttoken <token>");
-    logRawUser("   (setup of power consumption settings architecture specific if any)");
-    logRawUser("   store");
-    logRawUser("   ls");
+    logRaw(CLASS_MAIN, User, "-> Initialize");
+    logRaw(CLASS_MAIN, User, "Execute:");
+    logRaw(CLASS_MAIN, User, "   ls");
+    log(CLASS_MAIN, User, "   save %s <alias>", DEVICE_ALIAS_FILENAME);
+    log(CLASS_MAIN, User, "   save %s <pwd>", DEVICE_PWD_FILENAME);
+    logRaw(CLASS_MAIN, User, "   servo l");
+    logRaw(CLASS_MAIN, User, "   servo r");
+    logRaw(CLASS_MAIN, User, "   wifissid <ssid>");
+    logRaw(CLASS_MAIN, User, "   wifipass <password>");
+    logRaw(CLASS_MAIN, User, "   wifissidb <ssidb>");
+    logRaw(CLASS_MAIN, User, "   wifipassb <passwordb>");
+    logRaw(CLASS_MAIN, User, "   ifttttoken <token>");
+    logRaw(CLASS_MAIN, User, "   (setup of power consumption settings architecture specific if any)");
+    logRaw(CLASS_MAIN, User, "   store");
+    logRaw(CLASS_MAIN, User, "   ls");
     return Executed;
   } else if (strcmp("ls", c) == 0) {
     SPIFFS.begin();
     Dir dir = SPIFFS.openDir("/");
     while (dir.next()) {
-      logUser("- %s (%d bytes)", dir.fileName().c_str(), (int)dir.fileSize());
+      log(CLASS_MAIN, User, "- %s (%d bytes)", dir.fileName().c_str(), (int)dir.fileSize());
     }
     SPIFFS.end();
     return Executed;
@@ -538,7 +538,7 @@ CmdExecStatus commandArchitecture(const char *c) {
     const char *f = strtok(NULL, " ");
     SPIFFS.begin();
     bool succ = SPIFFS.remove(f);
-    logUser("### File '%s' %s removed", f, (succ ? "" : "NOT"));
+    log(CLASS_MAIN, User, "### File '%s' %s removed", f, (succ ? "" : "NOT"));
     SPIFFS.end();
     return Executed;
   } else if (strcmp("reset", c) == 0) {
@@ -547,7 +547,7 @@ CmdExecStatus commandArchitecture(const char *c) {
   } else if (strcmp("freq", c) == 0) {
     uint8 fmhz = (uint8)atoi(strtok(NULL, " "));
     bool succ = system_update_cpu_freq(fmhz);
-    logUser("Freq updated: %dMHz (succ %s)", (int)fmhz, BOOL(succ));
+    log(CLASS_MAIN, User, "Freq updated: %dMHz (succ %s)", (int)fmhz, BOOL(succ));
     return Executed;
   } else if (strcmp("lightsleep", c) == 0) {
     int s = atoi(strtok(NULL, " "));
@@ -556,7 +556,7 @@ CmdExecStatus commandArchitecture(const char *c) {
     espSaveCrash.clear();
     return Executed;
   } else if (strcmp("help", c) == 0 || strcmp("?", c) == 0) {
-    logRawUser(HELP_COMMAND_ARCH_CLI);
+    logRaw(CLASS_MAIN, User, HELP_COMMAND_ARCH_CLI);
     return Executed;
   } else {
     return NotFound;
@@ -647,8 +647,8 @@ void reactCommandCustom() { // for the use via telnet
 }
 
 void heartbeat() {
-	int x = 15; // right
-	int y = 7; // bottom
+	int x = 15 * 6; // right
+	int y = 7 * 8; // bottom
 	char c = 0x03; // heart
 	int size = 1; // small
 
@@ -686,7 +686,7 @@ void handleInterrupt() {
           bool interrupt = (execStatus == ExecutedInterrupt);
           log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
           log(CLASS_MAIN, Debug, "Cmd status: %s", CMD_EXEC_STATUS(execStatus));
-          logUser("('%s' => %s)", cmdBuffer->getBuffer(), CMD_EXEC_STATUS(execStatus));
+          log(CLASS_MAIN, User, "('%s' => %s)", cmdBuffer->getBuffer(), CMD_EXEC_STATUS(execStatus));
           cmdLast->load(cmdBuffer->getBuffer());
           cmdBuffer->clear();
         }
@@ -695,7 +695,7 @@ void handleInterrupt() {
         cmdBuffer->append(c);
       }
       // echo
-      logUser("> %s", cmdBuffer->getBuffer());
+      log(CLASS_MAIN, User, "> %s", cmdBuffer->getBuffer());
       while (!Serial.available()) {
         delay(100);
       }

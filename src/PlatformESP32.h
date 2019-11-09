@@ -130,7 +130,7 @@ const char *apiDevicePass() {
   return initializeTuningVariable(&apiDevicePwd, DEVICE_PWD_FILENAME, DEVICE_PWD_MAX_LENGTH, NULL, true)->getBuffer();
 }
 
-void logLine(const char *str) {
+void logLine(const char *str, const char *clz, LogLevel l) {
   Serial.setDebugOutput(getLogLevel() == Debug); // deep HW logs
   // serial print
   /*
@@ -269,10 +269,10 @@ void ios(char led, IoMode value) {
 }
 
 void clearDevice() {
-  logUser("   rm %s", DEVICE_ALIAS_FILENAME);
-  logUser("   rm %s", DEVICE_PWD_FILENAME);
-  logUser("   ls");
-  logUser("   <remove all .properties>");
+  log(CLASS_MAIN, User, "   rm %s", DEVICE_ALIAS_FILENAME);
+  log(CLASS_MAIN, User, "   rm %s", DEVICE_PWD_FILENAME);
+  log(CLASS_MAIN, User, "   ls");
+  log(CLASS_MAIN, User, "   <remove all .properties>");
 }
 
 void lcdImg(char img, uint8_t bitmap[]) {
@@ -504,7 +504,7 @@ if (servo == 'r' || servo == 'R') {
   tuneServo("right servo", SERVO1_PIN, &servoRight, servo1Conf);
   servo1Conf->serialize(&serialized); // right servo1
   writeFile(SERVO_1_FILENAME, serialized.getBuffer());
-  logUser("Stored tuning right servo");
+  log(CLASS_MAIN, User, "Stored tuning right servo");
   arms(0, 0, 1);
   arms(0, 9, 1);
   arms(0, 0, 1);
@@ -516,45 +516,45 @@ if (servo == 'r' || servo == 'R') {
   tuneServo("left servo", SERVO0_PIN, &servoLeft, servo0Conf);
   servo0Conf->serialize(&serialized); // left servo0
   writeFile(SERVO_0_FILENAME, serialized.getBuffer());
-  logUser("Stored tuning left servo");
+  log(CLASS_MAIN, User, "Stored tuning left servo");
   arms(0, 0, 1);
   arms(9, 0, 1);
   arms(0, 0, 1);
   return Executed;
 } else {
-  logUser("Invalid servo (l|r)");
+  log(CLASS_MAIN, User, "Invalid servo (l|r)");
   return InvalidArgs;
 }
   */
     return InvalidArgs;
   } else if (strcmp("init", c) == 0) {
-    logRawUser("-> Initialize");
-    logRawUser("Execute:");
-    logRawUser("   ls");
-    logUser("   save %s <alias>", DEVICE_ALIAS_FILENAME);
-    logUser("   save %s <pwd>", DEVICE_PWD_FILENAME);
-    // logRawUser("   servo l");
-    // logRawUser("   servo r");
-    logRawUser("   wifissid <ssid>");
-    logRawUser("   wifissid <ssid>");
-    logRawUser("   wifipass <password>");
-    logRawUser("   ifttttoken <token>");
-    logRawUser("   (setup of power consumption settings architecture specific if any)");
-    logRawUser("   store");
-    logRawUser("   ls");
+    logRaw(CLASS_MAIN, User, "-> Initialize");
+    logRaw(CLASS_MAIN, User, "Execute:");
+    logRaw(CLASS_MAIN, User, "   ls");
+    log(CLASS_MAIN, User, "   save %s <alias>", DEVICE_ALIAS_FILENAME);
+    log(CLASS_MAIN, User, "   save %s <pwd>", DEVICE_PWD_FILENAME);
+    // logRaw(CLASS_MAIN, User, "   servo l");
+    // logRaw(CLASS_MAIN, User, "   servo r");
+    logRaw(CLASS_MAIN, User, "   wifissid <ssid>");
+    logRaw(CLASS_MAIN, User, "   wifissid <ssid>");
+    logRaw(CLASS_MAIN, User, "   wifipass <password>");
+    logRaw(CLASS_MAIN, User, "   ifttttoken <token>");
+    logRaw(CLASS_MAIN, User, "   (setup of power consumption settings architecture specific if any)");
+    logRaw(CLASS_MAIN, User, "   store");
+    logRaw(CLASS_MAIN, User, "   ls");
     return Executed;
   } else if (strcmp("ls", c) == 0) {
     File root = SPIFFS.open("/");
     File file = root.openNextFile();
     while (file) {
-      logUser("- %s (%d bytes)", file.name(), (int)file.size());
+      log(CLASS_MAIN, User, "- %s (%d bytes)", file.name(), (int)file.size());
       file = root.openNextFile();
     }
     return Executed;
   } else if (strcmp("rm", c) == 0) {
     const char *f = strtok(NULL, " ");
     bool succ = SPIFFS.remove(f);
-    logUser("### File '%s' %s removed", f, (succ ? "" : "NOT"));
+    log(CLASS_MAIN, User, "### File '%s' %s removed", f, (succ ? "" : "NOT"));
     return Executed;
   } else if (strcmp("reset", c) == 0) {
     ESP.restart(); // it is normal that it fails if invoked the first time after firmware is written
@@ -566,7 +566,7 @@ if (servo == 'r' || servo == 'R') {
     // SaveCrash.clear();
     return Executed;
   } else if (strcmp("help", c) == 0 || strcmp("?", c) == 0) {
-    logRawUser(HELP_COMMAND_ARCH_CLI);
+    logRaw(CLASS_MAIN, User, HELP_COMMAND_ARCH_CLI);
     return Executed;
   } else {
     return NotFound;
@@ -694,7 +694,7 @@ void handleInterrupt() {
           bool interrupt = (execStatus == ExecutedInterrupt);
           log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
           log(CLASS_MAIN, Debug, "Cmd status: %s", CMD_EXEC_STATUS(execStatus));
-          logUser("('%s' => %s)", cmdBuffer->getBuffer(), CMD_EXEC_STATUS(execStatus));
+          log(CLASS_MAIN, User, "('%s' => %s)", cmdBuffer->getBuffer(), CMD_EXEC_STATUS(execStatus));
           cmdLast->load(cmdBuffer->getBuffer());
           cmdBuffer->clear();
         }
@@ -703,7 +703,7 @@ void handleInterrupt() {
         cmdBuffer->append(c);
       }
       // echo
-      logUser("> %s", cmdBuffer->getBuffer());
+      log(CLASS_MAIN, User, "> %s", cmdBuffer->getBuffer());
       while (!Serial.available()) {
         delay(100);
       }
