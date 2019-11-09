@@ -647,15 +647,17 @@ void reactCommandCustom() { // for the use via telnet
 }
 
 void heartbeat() {
-	int x = 0;
-	int y = 0;
-	int size = 6;
+	int x = 15; // right
+	int y = 7; // bottom
+	char c = 0x03; // heart
+	int size = 1; // small
+
   LED_ALIVE_TOGGLE
-  lcd->fillRect(x, y, size, size, 1);
+	lcd->drawChar(x, y, c, 1, 0, size);
   lcd->display();
   delay(2);
   LED_ALIVE_TOGGLE
-  lcd->fillRect(x, y, size, size, 0);
+	lcd->drawChar(x, y, c, 0, 0, size);
   lcd->display();
 }
 
