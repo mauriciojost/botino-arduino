@@ -19,8 +19,16 @@
 #define DO_NOT_WRAP false
 
 #ifndef LCD_WIDTH
-#define LCD_WIDTH 21
+#define LCD_WIDTH 128
 #endif // LCD_WIDTH
+
+#ifndef LCD_CHAR_WIDTH
+#define LCD_CHAR_WIDTH 6
+#endif // LCD_CHAR_WIDTH
+
+#ifndef LCD_CHARS_IN_WIDTH
+#define LCD_CHARS_IN_WIDTH (LCD_WIDTH / LCD_CHAR_WIDTH)
+#endif // LCD_CHARS_IN_WIDTH
 
 #include <main4ino/Actor.h>
 #include <main4ino/Queue.h>
@@ -51,15 +59,15 @@ private:
 
   void notify(bool forceClean) {
     const char *currentNotif = getNotification();
-    Buffer msg(LCD_WIDTH);
+    Buffer msg(LCD_CHARS_IN_WIDTH);
     if (currentNotif != NULL) {
       log(CLASS_NOTIFIER, Debug, "Notif(%d): %s", queue.size(), currentNotif);
       msg.fill("(%d) %s", queue.size(), currentNotif);
-      messageFunc(0, NOTIF_LINE, WHITE, DO_NOT_WRAP, LineClear, NOTIF_SIZE, msg.center(' ', LCD_WIDTH));
+      messageFunc(0, NOTIF_LINE, WHITE, DO_NOT_WRAP, LineClear, NOTIF_SIZE, msg.center(' ', LCD_CHARS_IN_WIDTH));
     } else {
       if (forceClean) {
         msg.fill("<>");
-        messageFunc(0, NOTIF_LINE, WHITE, DO_NOT_WRAP, LineClear, NOTIF_SIZE, msg.center(' ', LCD_WIDTH));
+        messageFunc(0, NOTIF_LINE, WHITE, DO_NOT_WRAP, LineClear, NOTIF_SIZE, msg.center(' ', LCD_CHARS_IN_WIDTH));
       }
       log(CLASS_NOTIFIER, Debug, "No notifs");
     }

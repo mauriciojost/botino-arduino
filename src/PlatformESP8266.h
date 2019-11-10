@@ -25,13 +25,16 @@
 #define SERVO_1_FILENAME "/servo1.tuning"
 #define SLEEP_PERIOD_UPON_BOOT_SEC 2
 
-#define LCD_PIXEL_WIDTH 6
-#define LCD_PIXEL_HEIGHT 8
+#define LCD_WIDTH 128
+#define LCD_HEIGHT 64
+
+#define LCD_CHAR_WIDTH 6
+#define LCD_CHAR_HEIGHT 8
 
 #define SERVO_BASE_STEPS 120
 #define SERVO_PERIOD_STEP_MS 2
 
-#define NEXT_LOG_LINE_ALGORITHM ((currentLogLine + 1) % 4)
+#define NEXT_LOG_LINE_ALGORITHM ((currentLogLine + 1) % 1)
 
 #define LOG_BUFFER_MAX_LENGTH 1024
 
@@ -141,10 +144,10 @@ Serial.print("|");
   if (lcd != NULL && m->getBotinoSettings()->getLcdLogs()) { // can be called before LCD initialization
     currentLogLine = NEXT_LOG_LINE_ALGORITHM;
     lcd->setTextWrap(false);
-    lcd->fillRect(0, currentLogLine * LCD_PIXEL_HEIGHT, 128, LCD_PIXEL_HEIGHT, BLACK);
+    lcd->fillRect(0, currentLogLine * LCD_CHAR_HEIGHT, LCD_WIDTH, LCD_CHAR_HEIGHT, BLACK);
     lcd->setTextSize(1);
     lcd->setTextColor(WHITE);
-    lcd->setCursor(0, currentLogLine * LCD_PIXEL_HEIGHT);
+    lcd->setCursor(0, currentLogLine * LCD_CHAR_HEIGHT);
     lcd->print(str);
     lcd->display();
     delay(DELAY_MS_SPI);
@@ -164,7 +167,7 @@ void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clearMode, int
       lcd->clearDisplay();
       break;
     case LineClear:
-      lcd->fillRect(x * size * LCD_PIXEL_WIDTH, y * size * LCD_PIXEL_HEIGHT, 128, size * LCD_PIXEL_HEIGHT, !color);
+      lcd->fillRect(x * size * LCD_CHAR_WIDTH, y * size * LCD_CHAR_HEIGHT, LCD_WIDTH, size * LCD_CHAR_HEIGHT, !color);
       wrap = false;
       break;
     case NoClear:
@@ -173,7 +176,7 @@ void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clearMode, int
   lcd->setTextWrap(wrap);
   lcd->setTextSize(size);
   lcd->setTextColor(color);
-  lcd->setCursor(x * size * LCD_PIXEL_WIDTH, y * size * LCD_PIXEL_HEIGHT);
+  lcd->setCursor(x * size * LCD_CHAR_WIDTH, y * size * LCD_CHAR_HEIGHT);
   lcd->print(str);
   lcd->display();
   log(CLASS_MAIN, Debug, "Msg: (%d,%d)'%s'", x, y, str);
@@ -647,8 +650,9 @@ void reactCommandCustom() { // for the use via telnet
 }
 
 void heartbeat() {
-	int x = 15 * 6; // right
-	int y = 7 * 8; // bottom
+
+	int x = ((LCD_WIDTH / LCD_CHAR_WIDTH) - 1) * LCD_CHAR_WIDTH; // right
+	int y = ((LCD_HEIGHT / LCD_CHAR_HEIGHT) - 1) * LCD_CHAR_HEIGHT; // bottom
 	char c = 0x03; // heart
 	int size = 1; // small
 
