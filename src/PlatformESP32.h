@@ -152,7 +152,7 @@ Serial.print("|");
     delay(DELAY_MS_SPI);
   }
   // local logs (to be sent via network)
-  if (m->getBotinoSettings()->fsLogsEnabled()) {
+  if (m->getBotinoSettings()->fsLogsEnabled() && (l >= Warn)) {
     if (logBuffer == NULL) {
       logBuffer = new Buffer(LOG_BUFFER_MAX_LENGTH);
     }
