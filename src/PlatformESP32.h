@@ -527,8 +527,9 @@ if (servo == 'r' || servo == 'R') {
     // logRaw(CLASS_MAIN, User, "   servo l");
     // logRaw(CLASS_MAIN, User, "   servo r");
     logRaw(CLASS_MAIN, User, "   wifissid <ssid>");
-    logRaw(CLASS_MAIN, User, "   wifissid <ssid>");
     logRaw(CLASS_MAIN, User, "   wifipass <password>");
+    logRaw(CLASS_MAIN, User, "   wifissidb <ssidb>");
+    logRaw(CLASS_MAIN, User, "   wifipassb <passwordb>");
     logRaw(CLASS_MAIN, User, "   ifttttoken <token>");
     logRaw(CLASS_MAIN, User, "   (setup of power consumption settings architecture specific if any)");
     logRaw(CLASS_MAIN, User, "   store");

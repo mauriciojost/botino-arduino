@@ -355,6 +355,7 @@ BotMode setupArchitecture() {
   setExternalMillis(millis);
 
   log(CLASS_MAIN, Debug, "Setup SPIFFS");
+  
   log(CLASS_MAIN, Debug, "Setup pins");
   pinMode(LEDR_PIN, OUTPUT);
   pinMode(LEDW_PIN, OUTPUT);
