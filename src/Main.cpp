@@ -34,7 +34,7 @@ void setup() {
     log(CLASS_MAIN, Error, "Failure: %d", (int)ec);
     bool i = sleepInterruptable(now(), 10);
     if (i) {
-    	m->getBot()->setMode(ConfigureMode);
+      m->getBot()->setMode(ConfigureMode);
     } else {
       abort("Could not startup");
     }

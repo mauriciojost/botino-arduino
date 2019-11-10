@@ -46,7 +46,6 @@ void logLine(const char *str) {
   printf("LOG: %s", str);
 }
 
-
 void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str) {
   printf("\n\n***** LCD (size %d)\n  %s\n*****\n\n", size, str);
 }
@@ -67,17 +66,16 @@ void lcdImg(char img, uint8_t bitmap[]) {
   log(CLASS_MAIN, Debug, "Img '%c'", img);
 }
 
-
 void infoArchitecture() {}
 
 void testArchitecture() {}
 
-void updateFirmwareVersion(const char *targetVersion, const char* currentVersion) {}
+void updateFirmwareVersion(const char *targetVersion, const char *currentVersion) {}
 
 // Execution
 ///////////////////
 
-void heartbeat() { }
+void heartbeat() {}
 
 bool haveToInterrupt() {
   return false;
@@ -150,4 +148,3 @@ int main(int argc, const char *argv[]) {
   log(CLASS_MAIN, Debug, "### DONE");
   return 0;
 }
-

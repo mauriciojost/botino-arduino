@@ -1,9 +1,9 @@
-#include <Platform.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <EspSaveCrash.h>
 #include <Main.h>
 #include <Pinout.h>
+#include <Platform.h>
 #include <RemoteDebug.h>
 #include <SPI.h>
 #include <Servo.h>
@@ -319,7 +319,7 @@ void infoArchitecture() {
                             VCC_FLOAT);
 }
 
-void testArchitecture() { }
+void testArchitecture() {}
 
 void updateFirmwareVersion(const char *targetVersion, const char *currentVersion) {
   bool c = initWifiSimple();
@@ -355,7 +355,7 @@ BotMode setupArchitecture() {
   setExternalMillis(millis);
 
   log(CLASS_MAIN, Debug, "Setup SPIFFS");
-  
+
   log(CLASS_MAIN, Debug, "Setup pins");
   pinMode(LEDR_PIN, OUTPUT);
   pinMode(LEDW_PIN, OUTPUT);
@@ -555,7 +555,8 @@ CmdExecStatus commandArchitecture(const char *c) {
     return Executed;
   } else if (strcmp("lightsleep", c) == 0) {
     int s = atoi(strtok(NULL, " "));
-    return (lightSleepInterruptable(now(), s, m->getModuleSettings()->miniPeriodMsec(), haveToInterrupt, heartbeat) ? ExecutedInterrupt : Executed);
+    return (lightSleepInterruptable(now(), s, m->getModuleSettings()->miniPeriodMsec(), haveToInterrupt, heartbeat) ? ExecutedInterrupt
+                                                                                                                    : Executed);
   } else if (strcmp("clearstack", c) == 0) {
     espSaveCrash.clear();
     return Executed;
@@ -611,7 +612,7 @@ void debugHandle() {
 
   if (logBuffer != NULL && m->getBotinoSettings()->fsLogsEnabled()) {
     log(CLASS_MAIN, Debug, "Push logs...");
-    PropSync* ps = m->getModule()->getPropSync();
+    PropSync *ps = m->getModule()->getPropSync();
     PropSyncStatusCode status = ps->pushLogMessages(logBuffer->getBuffer());
     if (ps->isFailure(status)) {
       log(CLASS_MAIN, Warn, "Failed to push logs...");
@@ -652,17 +653,17 @@ void reactCommandCustom() { // for the use via telnet
 
 void heartbeat() {
 
-	int x = ((LCD_WIDTH / LCD_CHAR_WIDTH) - 1) * LCD_CHAR_WIDTH; // right
-	int y = ((LCD_HEIGHT / LCD_CHAR_HEIGHT) - 1) * LCD_CHAR_HEIGHT; // bottom
-	char c = 0x03; // heart
-	int size = 1; // small
+  int x = ((LCD_WIDTH / LCD_CHAR_WIDTH) - 1) * LCD_CHAR_WIDTH;    // right
+  int y = ((LCD_HEIGHT / LCD_CHAR_HEIGHT) - 1) * LCD_CHAR_HEIGHT; // bottom
+  char c = 0x03;                                                  // heart
+  int size = 1;                                                   // small
 
   LED_ALIVE_TOGGLE
-	lcd->drawChar(x, y, c, 1, 0, size);
+  lcd->drawChar(x, y, c, 1, 0, size);
   lcd->display();
   delay(2);
   LED_ALIVE_TOGGLE
-	lcd->drawChar(x, y, c, 0, 0, size);
+  lcd->drawChar(x, y, c, 0, 0, size);
   lcd->display();
 }
 

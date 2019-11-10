@@ -12,11 +12,11 @@
 #define UPDATE_COMMAND "update %s"
 
 enum BotinoSettingsProps {
-  BotinoSettingsLcdLogsProp = 0,    // boolean, define if the device display logs in LCD
-  BotinoSettingsStatusProp,         // string, defines the current general status of the device (vcc level, heap, etc)
-  BotinoSettingsFsLogsProp,         // boolean, define if logs are to be dumped in the file system (only in debug mode)
-  BotinoSettingsUpdateTargetProp,   // string, target version of firmware to update to
-  BotinoSettingsUpdateFreqProp,     // string, frequency of updates of target
+  BotinoSettingsLcdLogsProp = 0,  // boolean, define if the device display logs in LCD
+  BotinoSettingsStatusProp,       // string, defines the current general status of the device (vcc level, heap, etc)
+  BotinoSettingsFsLogsProp,       // boolean, define if logs are to be dumped in the file system (only in debug mode)
+  BotinoSettingsUpdateTargetProp, // string, target version of firmware to update to
+  BotinoSettingsUpdateFreqProp,   // string, frequency of updates of target
   BotinoSettingsPropsDelimiter
 };
 
@@ -126,7 +126,6 @@ public:
   bool getLcdLogs() {
     return lcdLogs;
   }
-
 };
 
 #endif // MODULE_SETTINGS_INC

@@ -5,14 +5,14 @@
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 
-#include <mod4ino/Module.h>
 #include <actors/Body.h>
+#include <actors/BotinoSettings.h>
 #include <actors/Commands.h>
 #include <actors/Ifttt.h>
 #include <actors/Images.h>
 #include <actors/Notifier.h>
 #include <actors/Quotes.h>
-#include <actors/BotinoSettings.h>
+#include <mod4ino/Module.h>
 
 #define CLASS_MODULEB "MB"
 

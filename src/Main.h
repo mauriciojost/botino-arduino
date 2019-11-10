@@ -4,8 +4,8 @@
 #define CLASS_MAIN "MA"
 
 #include <ModuleBotino.h>
-#include <main4ino/Misc.h>
 #include <Platform.h>
+#include <main4ino/Misc.h>
 
 #ifdef ARDUINO
 
@@ -21,7 +21,6 @@
 #include <PlatformX86_64.h>
 #endif // ARDUINO
 
-
 #ifndef PROJ_VERSION
 #define PROJ_VERSION "snapshot"
 #endif // PROJ_VERSION
@@ -36,8 +35,6 @@ void setup();
 // Standard arduino loop
 void loop();
 
-
 bool initWifiSimple();
-
 
 #endif // MAIN_INC
