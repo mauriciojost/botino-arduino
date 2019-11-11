@@ -54,7 +54,7 @@
 //#include "user_interface.h"
 //}
 
-#define HTTP_TIMEOUT_MS 8000
+#define HTTP_TIMEOUT_MS 60000
 
 #define HELP_COMMAND_ARCH_CLI                                                                                                              \
   "\n  ESP32 HELP"                                                                                                                         \
