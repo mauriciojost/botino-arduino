@@ -659,12 +659,12 @@ void heartbeat() {
   int size = 1;                                                   // small
 
   LED_ALIVE_TOGGLE
-  lcd->drawChar(x, y, c, 1, 0, size);
-  lcd->display();
-  delay(2);
+  //lcd->drawChar(x, y, c, 1, 0, size);
+  //lcd->display();
+  delay(4);
+  //lcd->drawChar(x, y, c, 0, 0, size);
+  //lcd->display();
   LED_ALIVE_TOGGLE
-  lcd->drawChar(x, y, c, 0, 0, size);
-  lcd->display();
 }
 
 void handleInterrupt() {
