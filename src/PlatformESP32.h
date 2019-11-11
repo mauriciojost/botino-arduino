@@ -85,8 +85,8 @@ Buffer *logBuffer = NULL;
 Buffer *cmdBuffer = NULL;
 Buffer *cmdLast = NULL;
 
-#define LED_INT_TOGGLE ios('w', IoToggle);
-#define LED_INT_ON ios('w', IoOn);
+#define LED_INT_TOGGLE ios('y', IoToggle);
+#define LED_INT_ON ios('y', IoOn);
 #define LED_ALIVE_TOGGLE ios('r', IoToggle);
 
 // ADC_MODE(ADC_VCC);
