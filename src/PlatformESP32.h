@@ -56,6 +56,8 @@
 
 #define HTTP_TIMEOUT_MS 60000
 
+#define PLATFORM_ID "esp32"
+
 #define HELP_COMMAND_ARCH_CLI                                                                                                              \
   "\n  ESP32 HELP"                                                                                                                         \
   "\n  init              : initialize essential settings (wifi connection, logins, etc.)"                                                  \
@@ -322,7 +324,7 @@ void testArchitecture() {}
 void updateFirmwareVersion(const char *targetVersion, const char *currentVersion) {
   bool c = initWifiSimple();
   if (c) {
-    updateFirmware("botino", "esp32", targetVersion, currentVersion);
+    updateFirmwareFromMain4ino("botino", PLATFORM_ID, targetVersion, currentVersion);
   } else {
     log(CLASS_MAIN, Error, "Could not connect");
   }

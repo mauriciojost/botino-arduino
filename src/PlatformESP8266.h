@@ -55,6 +55,8 @@ extern "C" {
 
 #define HTTP_TIMEOUT_MS 60000
 
+#define PLATFORM_ID "esp8266"
+
 #define HELP_COMMAND_ARCH_CLI                                                                                                              \
   "\n  ESP8266 HELP"                                                                                                                       \
   "\n  init              : initialize essential settings (wifi connection, logins, etc.)"                                                  \
@@ -324,7 +326,7 @@ void testArchitecture() {}
 void updateFirmwareVersion(const char *targetVersion, const char *currentVersion) {
   bool c = initWifiSimple();
   if (c) {
-    updateFirmware("botino", "esp8266", targetVersion, currentVersion);
+    updateFirmwareFromMain4ino("botino", PLATFORM_ID, targetVersion, currentVersion);
   } else {
     log(CLASS_MAIN, Error, "Could not connect");
   }
