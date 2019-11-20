@@ -1,5 +1,6 @@
 {
-  "version" : "STRINGIFY_PROJ_VERSION", "json" : [
+  "version" : "STRINGIFY_PROJ_VERSION",
+  "json" : [
     {
       "patterns" : ["^.*..freq$"],
       "descriptions" : ["Frequency at which the actor will act and perform its duty. See <a href=\"https://bitbucket.org/mauriciojost/main4ino-arduino/src/master/README.md\" target=\"_blank\">here</a>."],
