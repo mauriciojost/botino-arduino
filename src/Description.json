@@ -2,8 +2,7 @@
   "version" : "STRINGIFY_PROJ_VERSION", "json" : [
     {
       "patterns" : ["^.*..freq$"],
-      "descriptions" : ["Frequency at which the actor will act and perform its duty. See <a "
-                        "href=\"https://bitbucket.org/mauriciojost/main4ino-arduino/src/master/README.md\" target=\"_blank\">here</a>."],
+      "descriptions" : ["Frequency at which the actor will act and perform its duty. See <a href=\"https://bitbucket.org/mauriciojost/main4ino-arduino/src/master/README.md\" target=\"_blank\">here</a>."],
       "examples" : [
         "never     -> Never",
         "~10s  -> Every 10 seconds",
@@ -23,9 +22,7 @@
     },
     {
       "patterns" : ["^body..r\\d{1,2}$"],
-      "descriptions" : ["Routine i-th of the body (format: frequency:pose1.pose2...poseN. . See <a "
-                        "href=\"https://github.com/mauriciojost/botino-arduino/blob/master/src/actors/Body.md\" target=\"_blank\">all pose "
-                        "codes here</a>."],
+      "descriptions" : ["Routine i-th of the body (format: frequency:pose1.pose2...poseN. . See <a href=\"https://github.com/mauriciojost/botino-arduino/blob/master/src/actors/Body.md\" target=\"_blank\">all pose codes here</a>."],
       "examples" : [
         "@12h00:M2Message at midday.A99. -> Tell message Lunch! at 12 every day and put arms up quickly",
         "never:D0. -> Dance 0 never (to disable the routine)",
@@ -51,8 +48,7 @@
     {
       "patterns" : ["^images.im\\d{1,2}"],
       "descriptions" :
-          ["Bitmap of custom image i-th, represented in base 64. See <a "
-           "href=\"https://docs.google.com/spreadsheets/d/1jXa9mFxeiN_bUji_WiCPKO_gB6pxQUeQ5QxgoSINqdc/edit\" target=\"_blank\">here</a>."],
+          ["Bitmap of custom image i-th, represented in base 64. See <a href=\"https://docs.google.com/spreadsheets/d/1jXa9mFxeiN_bUji_WiCPKO_gB6pxQUeQ5QxgoSINqdc/edit\" target=\"_blank\">here</a>."],
       "examples" : [
         "00002814100828140000000003C00000 -> dead",
         "1FF820044A524A52481247E220041FF8 -> big smile",
@@ -64,8 +60,7 @@
     },
     {
       "patterns" : ["^propsync..forcesyncfreq$"],
-      "descriptions" : ["Frequency at which the device performs a full synchronization with the server (required as the server performs "
-                        "regular cleanup on old records)."],
+      "descriptions" : ["Frequency at which the device performs a full synchronization with the server (required as the server performs regular cleanup on old records)."],
       "examples" : ["~72h"]
     },
     {
@@ -85,8 +80,7 @@
     },
     {
       "patterns" : ["^settings..btnrout$"],
-      "descriptions" : ["Determines which first moves will be executed randomly on button press. For instance, if set to 2, only moves 0 "
-                        "and 1 will be executed randomly. "],
+      "descriptions" : ["Determines which first moves will be executed randomly on button press. For instance, if set to 2, only moves 0 and 1 will be executed randomly. "],
       "examples" : [ "0", "1", "2", "3" ]
     },
     {
