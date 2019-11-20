@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -e
+set -x 
+
 export root_dir=$(dirname `readlink -e $0`)
 echo "# Generating header..."
 
