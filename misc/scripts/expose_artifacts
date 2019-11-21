@@ -31,12 +31,6 @@ function export_firmware_for_platform() {
     mv -f $f $EXPO
   done
 
-  # Rules
-  cd $EXPO
-  ls -t | grep firmware | grep $platform | head -1 | xargs -I% ln -sf % firmware-latest.$platform.bin
-  ls -t | grep firmware | grep $platform | grep -v SNAPSHOT | head -1 | xargs -I% ln -sf % firmware-latest-stable.$platform.bin
-  cd -
-
 }
 
 export_firmware_for_platform esp8266
