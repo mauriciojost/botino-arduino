@@ -5,18 +5,13 @@
 #include <main4ino/Actor.h>
 
 #define STATUS_BUFFER_SIZE 64
-#define TARGET_BUFFER_SIZE 32
 
 #define CLASS_BOTINO_SETTINGS "SS"
-#define SKIP_UPDATES_CODE "skip"
-#define UPDATE_COMMAND "update %s"
 
 enum BotinoSettingsProps {
   BotinoSettingsLcdLogsProp = 0,  // boolean, define if the device display logs in LCD
   BotinoSettingsStatusProp,       // string, defines the current general status of the device (vcc level, heap, etc)
   BotinoSettingsFsLogsProp,       // boolean, define if logs are to be dumped in the file system (only in debug mode)
-  BotinoSettingsUpdateTargetProp, // string, target version of firmware to update to
-  BotinoSettingsUpdateFreqProp,   // string, frequency of updates of target
   BotinoSettingsPropsDelimiter
 };
 
@@ -27,7 +22,6 @@ private:
   bool lcdLogs;
   Buffer *status;
   bool fsLogs;
-  Buffer *target;
   Metadata *md;
   void (*command)(const char *);
 
@@ -37,8 +31,6 @@ public:
     lcdLogs = false;
     status = new Buffer(STATUS_BUFFER_SIZE);
     fsLogs = false;
-    target = new Buffer(TARGET_BUFFER_SIZE);
-    target->load(SKIP_UPDATES_CODE);
     md = new Metadata(n);
     md->getTiming()->setFreq("~24h");
     command = NULL;
@@ -56,18 +48,7 @@ public:
     return BotinoSettingsPropsDelimiter;
   }
 
-  void act() {
-    if (getTiming()->matches()) {
-      const char *currVersion = STRINGIFY(PROJ_VERSION);
-      if (!target->equals(currVersion) && !target->equals(SKIP_UPDATES_CODE)) {
-        log(CLASS_BOTINO_SETTINGS, Warn, "Have to update '%s'->'%s'", currVersion, target->getBuffer());
-        if (command != NULL) {
-          Buffer aux(64);
-          command(aux.fill(UPDATE_COMMAND, target->getBuffer()));
-        }
-      }
-    }
-  }
+  void act() { }
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
@@ -77,10 +58,6 @@ public:
         return STATUS_PROP_PREFIX "status";
       case (BotinoSettingsFsLogsProp):
         return DEBUG_PROP_PREFIX "fslogs";
-      case (BotinoSettingsUpdateTargetProp):
-        return ADVANCED_PROP_PREFIX "target";
-      case (BotinoSettingsUpdateFreqProp):
-        return ADVANCED_PROP_PREFIX "freq";
       default:
         return "";
     }
@@ -96,12 +73,6 @@ public:
         break;
       case (BotinoSettingsFsLogsProp):
         setPropBoolean(m, targetValue, actualValue, &fsLogs);
-        break;
-      case (BotinoSettingsUpdateTargetProp):
-        setPropValue(m, targetValue, actualValue, target);
-        break;
-      case (BotinoSettingsUpdateFreqProp):
-        setPropTiming(m, targetValue, actualValue, getTiming());
         break;
       default:
         break;
