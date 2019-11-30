@@ -85,10 +85,6 @@ void updateFirmwareVersion(const char *targetVersion, const char *currentVersion
 // Returns true if it was interrupted.
 bool sleepInterruptable(time_t cycleBegin, time_t periodSec);
 
-// Non-interruptable sleep function.
-// Returns true if it was interrupted.
-void deepSleepNotInterruptable(time_t cycleBegin, time_t periodSec);
-
 // Setup step specific to the architecture, tell bot mode to go to
 BotMode setupArchitecture();
 
