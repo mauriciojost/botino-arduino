@@ -422,7 +422,7 @@ public:
     md = new Metadata(n);
     md->getTiming()->setFreq("~1m");
     for (int i = 0; i < NRO_ROUTINES; i++) {
-      routines[i] = new Routine("r");
+      routines[i] = new Routine(name);
       routines[i]->set("never", "Z.");
     }
 
