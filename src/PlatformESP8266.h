@@ -378,6 +378,7 @@ BotMode setupArchitecture() {
 
   log(CLASS_MAIN, Debug, "Setup wifi");
   WiFi.persistent(false);
+  wifi_set_sleep_type(MODEM_SLEEP_T); // set modem sleep mode
   WiFi.hostname(apiDeviceLogin());
   heartbeat();
 
