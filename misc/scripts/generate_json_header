@@ -9,7 +9,7 @@ echo "# Generating header..."
 export tmpfile=`mktemp`
 
 echo "#define VERSION_DESCRIPTION_JSON \"" > $tmpfile
-cat $root_dir/../../src/Description.json | jq -c . | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/\\"STRINGIFY_PROJ_VERSION\\"/"STRINGIFY\(PROJ_VERSION\)"/g' >> $tmpfile
+cat $root_dir/../../src/Description.json | jq -c . | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/\\"STRINGIFY_PROJ_VERSION\\"/\\""STRINGIFY\(PROJ_VERSION\)"\\"/g' >> $tmpfile
 echo "\"" >>  $tmpfile
 
 cat $tmpfile | tr --delete '\n'  > $root_dir/../../src/Description.json.h 
