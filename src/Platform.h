@@ -12,7 +12,7 @@
 
 #define CLASS_PLATFORM "PL"
 
-#define WIFI_CONNECTION_RETRIES 8
+#define WIFI_CONNECTION_RETRIES 12
 
 #include <Description.json.h>
 
