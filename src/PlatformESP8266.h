@@ -74,7 +74,9 @@ extern "C" {
 volatile bool buttonEnabled = true;
 volatile unsigned char buttonInterrupts = 0;
 
+#ifdef TELNET_ENABLED
 RemoteDebug telnet;
+#endif // TELNET_ENABLED
 Servo servoLeft;
 Servo servoRight;
 Adafruit_SSD1306 *lcd = NULL;
@@ -127,21 +129,23 @@ const char *apiDevicePass() {
 void logLine(const char *str, const char *clz, LogLevel l) {
   Serial.setDebugOutput(getLogLevel() == Debug); // deep HW logs
   // serial print
-  /*
-Serial.print("HEA:");
-Serial.print(ESP.getFreeHeap());
-Serial.print("|");
-Serial.print("VCC:");
-Serial.print(VCC_FLOAT);
-Serial.print("|");
-*/
+#ifdef HEAP_VCC_LOG
+  Serial.print("HEA:");
+  Serial.print(ESP.getFreeHeap());
+  Serial.print("|");
+  Serial.print("VCC:");
+  Serial.print(VCC_FLOAT);
+  Serial.print("|");
+#endif // HEAP_VCC_LOG
   Serial.print(str);
   // telnet print
+#ifdef TELNET_ENABLED
   if (telnet.isActive()) {
     for (unsigned int i = 0; i < strlen(str); i++) {
       telnet.write(str[i]);
     }
   }
+#endif // TELNET_ENABLED
   // lcd print
   if (lcd != NULL && m->getBotinoSettings()->getLcdLogs()) { // can be called before LCD initialization
     currentLogLine = NEXT_LOG_LINE_ALGORITHM;
@@ -395,9 +399,11 @@ BotMode setupArchitecture() {
   heartbeat();
 
   log(CLASS_MAIN, Debug, "Setup commands");
+#ifdef TELNET_ENABLED
   telnet.setCallBackProjectCmds(reactCommandCustom);
   String helpCli("Type 'help' for help");
   telnet.setHelpProjectsCmds(helpCli);
+#endif // TELNET_ENABLED
   heartbeat();
 
   log(CLASS_MAIN, Debug, "Setup IO/lcd");
@@ -574,9 +580,11 @@ CmdExecStatus commandArchitecture(const char *c) {
 void configureModeArchitecture() {
   handleInterrupt();
   debugHandle();
+#ifdef TELNET_ENABLED
   if (m->getBot()->getClock()->currentTime() % 60 == 0) { // every minute
     m->getNotifier()->message(0, 2, "telnet %s", WiFi.localIP().toString().c_str());
   }
+#endif // TELNET_ENABLED
 }
 
 void abort(const char *msg) {
@@ -605,8 +613,12 @@ void debugHandle() {
   static bool firstTime = true;
   if (firstTime) {
     log(CLASS_MAIN, Debug, "Initialize debuggers...");
+#ifdef TELNET_ENABLED
     telnet.begin(apiDeviceLogin()); // Intialize the remote logging framework
+#endif // TELNET_ENABLED
+#ifdef OTA_ENABLED
     ArduinoOTA.begin();             // Intialize OTA
+#endif // OTA_ENABLED
     firstTime = false;
   }
 
@@ -623,8 +635,12 @@ void debugHandle() {
     logBuffer->clear();
   }
 
+#ifdef TELNET_ENABLED
   telnet.handle();     // Handle telnet log server and commands
-  ArduinoOTA.handle(); // Handle on the air firmware load
+#endif // TELNET_ENABLED
+#ifdef OTA_ENABLED
+  //ArduinoOTA.handle(); // Handle on the air firmware load
+#endif // OTA_ENABLED
 }
 
 ICACHE_RAM_ATTR
@@ -651,7 +667,9 @@ void bitmapToLcd(uint8_t bitmap[]) {
 }
 
 void reactCommandCustom() { // for the use via telnet
+#ifdef TELNET_ENABLED
   m->command(telnet.getLastCommand().c_str());
+#endif // TELNET_ENABLED
 }
 
 void heartbeat() {
