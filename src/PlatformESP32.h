@@ -125,6 +125,9 @@ const char *apiDevicePass() {
 
 void logLine(const char *str, const char *clz, LogLevel l) {
   Serial.setDebugOutput(getLogLevel() == Debug); // deep HW logs
+  int ts = (int)(now() % 10000);
+  Buffer aux(8);
+  aux.fill("%4d|", ts);
   // serial print
   /*
 Serial.print("HEA:");
@@ -158,6 +161,7 @@ Serial.print("|");
     if (logBuffer == NULL) {
       logBuffer = new Buffer(LOG_BUFFER_MAX_LENGTH);
     }
+    logBuffer->append(aux.getBuffer());
     logBuffer->append(str);
   }
 }
