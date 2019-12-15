@@ -6,6 +6,7 @@
 #include <main4ino/Boolean.h>
 #include <main4ino/Buffer.h>
 #include <main4ino/HttpCodes.h>
+#include <main4ino/HttpMethods.h>
 #include <main4ino/Integer.h>
 #include <main4ino/Misc.h>
 #include <main4ino/ParamStream.h>
@@ -32,19 +33,19 @@ private:
   const char *name;
   Metadata *md;
   Buffer *quotes[NRO_QUOTES];
-  int (*httpGet)(const char *url, ParamStream *response, Table *headers);
+  int (*httpMethod)(HttpMethod m, const char *url, const char *body, ParamStream *response, Table *headers);
   Buffer *jsonAuxBuffer;
   bool (*initWifiFunc)();
   Table *headers;
 
   bool isInitialized() {
-    return (httpGet != NULL && initWifiFunc != NULL);
+    return (httpMethod != NULL && initWifiFunc != NULL);
   }
 
 public:
   Quotes(const char *n) {
     name = n;
-    httpGet = NULL;
+    httpMethod = NULL;
     initWifiFunc = NULL;
     md = new Metadata(n);
 
@@ -60,8 +61,8 @@ public:
     return name;
   }
 
-  void setHttpGet(int (*h)(const char *url, ParamStream *response, Table *headers)) {
-    httpGet = h;
+  void setHttpMethod(int (*h)(HttpMethod m, const char *url, const char *body, ParamStream *response, Table *headers)) {
+    httpMethod = h;
   }
 
   void setInitWifi(bool (*f)()) {
@@ -83,7 +84,7 @@ public:
   void fillQuote(int i) {
     ParamStream httpBodyResponse(jsonAuxBuffer, true);
     log(CLASS_QUOTES, Debug, "Filling %d", i);
-    int errorCode = httpGet(URL_QUOTES, &httpBodyResponse, headers);
+    int errorCode = httpMethod(HttpGet, URL_QUOTES, NULL, &httpBodyResponse, headers);
     if (errorCode == HTTP_OK) {
       quotes[i]->fill("%s", httpBodyResponse.content());
     } else {

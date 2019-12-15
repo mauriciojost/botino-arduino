@@ -74,8 +74,7 @@ public:
              void (*iosFunc)(char led, IoMode v),
              bool (*initWifiFunc)(),
              void (*stopWifiFunc)(),
-             int (*httpPostFunc)(const char *url, const char *body, ParamStream *response, Table *headers),
-             int (*httpGetFunc)(const char *url, ParamStream *response, Table *headers),
+             int (*httpMethodFunc)(HttpMethod m, const char *url, const char *body, ParamStream *response, Table *headers),
              void (*clearDeviceFunc)(),
              bool (*fileReadFunc)(const char *fname, Buffer *content),
              bool (*fileWriteFunc)(const char *fname, const char *content),
@@ -93,8 +92,7 @@ public:
     module->setup(setupArchitectureFunc,
                   initWifiFunc,
                   stopWifiFunc,
-                  httpPostFunc,
-                  httpGetFunc,
+                  httpMethodFunc,
                   clearDeviceFunc,
                   fileReadFunc,
                   fileWriteFunc,
@@ -118,10 +116,10 @@ public:
     body->setNotifier(notifier);
 
     notifier->setup(lcdImgFunc, messageFunc);
-    quotes->setHttpGet(httpGetFunc);
+    quotes->setHttpMethod(httpMethodFunc);
     quotes->setInitWifi(initWifiFunc);
     ifttt->setInitWifi(initWifiFunc);
-    ifttt->setHttpPost(httpPostFunc);
+    ifttt->setHttpMethod(httpMethodFunc);
     body->setup(armsFunc, iosFunc, sleepInterruptableFunc);
   }
 

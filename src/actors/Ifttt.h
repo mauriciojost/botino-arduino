@@ -6,6 +6,7 @@
 #include <main4ino/Boolean.h>
 #include <main4ino/Clock.h>
 #include <main4ino/HttpCodes.h>
+#include <main4ino/HttpMethods.h>
 #include <main4ino/Misc.h>
 #include <main4ino/ParamStream.h>
 #include <main4ino/Table.h>
@@ -35,7 +36,7 @@ private:
   const char *name;
   Metadata *md;
   bool (*initWifiFunc)();
-  int (*httpPost)(const char *url, const char *body, ParamStream *response, Table *headers);
+  int (*httpMethod)(HttpMethod m, const char *url, const char *body, ParamStream *response, Table *headers);
 
   Buffer *iftttKey;
   Buffer *urlAuxBuffer;
@@ -49,7 +50,7 @@ public:
     iftttKey->load(IFTTT_KEY);
     urlAuxBuffer = new Buffer(128);
     initWifiFunc = NULL;
-    httpPost = NULL;
+    httpMethod = NULL;
     md = new Metadata(n);
     headers = new Table(0, 0, 0);
   }
@@ -72,19 +73,19 @@ public:
     initWifiFunc = f;
   }
 
-  void setHttpPost(int (*h)(const char *url, const char *body, ParamStream *response, Table *headers)) {
-    httpPost = h;
+  void setHttpMethod(int (*h)(HttpMethod m, const char *url, const char *body, ParamStream *response, Table *headers)) {
+    httpMethod = h;
   }
 
   bool triggerEvent(const char *eventName) {
-    if (initWifiFunc == NULL || httpPost == NULL) {
+    if (initWifiFunc == NULL || httpMethod == NULL) {
       log(CLASS_IFTTT, Error, "Init needed");
       return false;
     }
     bool connected = initWifiFunc();
     if (connected) {
       urlAuxBuffer->fill(IFTTT_API_URL_POS, eventName, iftttKey->getBuffer());
-      int errorCodePost = httpPost(urlAuxBuffer->getBuffer(), "{}", NULL, headers);
+      int errorCodePost = httpMethod(HttpPost, urlAuxBuffer->getBuffer(), "{}", NULL, headers);
       if (errorCodePost == HTTP_OK) {
         return true;
       }
