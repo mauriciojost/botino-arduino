@@ -23,7 +23,6 @@ private:
   Buffer *status;
   bool fsLogs;
   Metadata *md;
-  void (*command)(const char *);
 
 public:
   BotinoSettings(const char *n) {
@@ -33,11 +32,6 @@ public:
     fsLogs = false;
     md = new Metadata(n);
     md->getTiming()->setFreq("~24h");
-    command = NULL;
-  }
-
-  void setup(void (*cmd)(const char *)) {
-    command = cmd;
   }
 
   const char *getName() {
