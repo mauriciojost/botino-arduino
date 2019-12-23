@@ -34,7 +34,7 @@
 #define SERVO_BASE_STEPS 120
 #define SERVO_PERIOD_STEP_MS 2
 
-#define NEXT_LOG_LINE_ALGORITHM ((currentLogLine + 1) % 1)
+#define NEXT_LOG_LINE_ALGORITHM ((currentLogLine + 1) % 8)
 
 #define LOG_BUFFER_MAX_LENGTH 1024
 
