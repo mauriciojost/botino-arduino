@@ -22,6 +22,8 @@
 #define USER_DELAY_MS 8000
 #endif // USER_DELAY_MS
 
+#define USER_INTERACTION_LOOPS_MAX 80
+
 
 
 #include <Description.json.h>

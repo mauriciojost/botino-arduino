@@ -669,6 +669,7 @@ void handleInterrupt() {
     uint8_t c;
 
     while (true) {
+      int inLoop = 0;
       size_t n = Serial.readBytes(&c, 1);
 
       if (c == 0x08 && n == 1) { // backspace
@@ -679,7 +680,7 @@ void handleInterrupt() {
       } else if (c == 0x1b && n == 1) { // up/down
         log(CLASS_MAIN, Debug, "Up/down");
         cmdBuffer->load(cmdLast->getBuffer());
-      } else if (c == '\n' || c == '\r' ) { // if enter is pressed...
+      } else if ((c == '\n' || c == '\r') && n == 1) { // if enter is pressed...
         log(CLASS_MAIN, Debug, "Enter");
         if (cmdBuffer->getLength() > 0) {
           CmdExecStatus execStatus = m->command(cmdBuffer->getBuffer());
@@ -696,8 +697,13 @@ void handleInterrupt() {
       }
       // echo
       log(CLASS_MAIN, User, "> %s (%d)", cmdBuffer->getBuffer(), (int)c);
-      while (!Serial.available()) {
+      while (!Serial.available() && inLoop < USER_INTERACTION_LOOPS_MAX) {
+        inLoop++;
         delay(100);
+      }
+      if (inLoop >= USER_INTERACTION_LOOPS_MAX) {
+        log(CLASS_MAIN, User, "> (timeout)");
+        break;
       }
     }
     log(CLASS_MAIN, Debug, "Done with interrupt");
