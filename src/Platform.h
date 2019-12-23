@@ -14,6 +14,16 @@
 
 #define WIFI_CONNECTION_RETRIES 12
 
+#ifndef HTTP_TIMEOUT_MS
+#define HTTP_TIMEOUT_MS 3000
+#endif // HTTP_TIMEOUT_MS
+
+#ifndef USER_DELAY_MS
+#define USER_DELAY_MS 8000
+#endif // USER_DELAY_MS
+
+
+
 #include <Description.json.h>
 
 ModuleBotino *m;

@@ -39,10 +39,6 @@
 
 #define LOG_BUFFER_MAX_LENGTH 1024
 
-#ifndef USER_DELAY_MS
-#define USER_DELAY_MS 8000
-#endif // USER_DELAY_MS
-
 #define USER_LCD_FONT_SIZE 2
 
 //#define VCC_FLOAT ((float)ESP.getVcc() / 1024)
@@ -53,8 +49,6 @@
 // extern "C" {
 //#include "user_interface.h"
 //}
-
-#define HTTP_TIMEOUT_MS 60000
 
 #define PLATFORM_ID "esp32"
 
