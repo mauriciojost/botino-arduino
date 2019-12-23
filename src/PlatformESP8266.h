@@ -702,9 +702,7 @@ void handleInterrupt() {
       } else if (c == 0x1b && n == 1) { // up/down
         log(CLASS_MAIN, Debug, "Up/down");
         cmdBuffer->load(cmdLast->getBuffer());
-      } else if ((c == '\r') && n == 1) { // ignore
-        log(CLASS_MAIN, Debug, "\\r pressed (ignored)");
-      } else if (c == '\n' && n == 1) { // if enter is pressed...
+      } else if (c == '\n' || c == '\r' ) { // if enter is pressed...
         log(CLASS_MAIN, Debug, "Enter");
         if (cmdBuffer->getLength() > 0) {
           CmdExecStatus execStatus = m->command(cmdBuffer->getBuffer());
@@ -720,7 +718,7 @@ void handleInterrupt() {
         cmdBuffer->append(c);
       }
       // echo
-      log(CLASS_MAIN, User, "> %s", cmdBuffer->getBuffer());
+      log(CLASS_MAIN, User, "> %s (%d)", cmdBuffer->getBuffer(), (int)c);
       while (!Serial.available()) {
         delay(100);
       }
