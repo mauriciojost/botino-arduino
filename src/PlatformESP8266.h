@@ -1,7 +1,6 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <EspSaveCrash.h>
-#include <Main.h>
 #include <Pinout.h>
 #include <Platform.h>
 #include <RemoteDebug.h>
