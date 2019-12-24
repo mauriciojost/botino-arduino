@@ -13,7 +13,7 @@
 
 #define DELAY_MS_SPI 3
 #define ABORT_DELAY_SECS 5
-#define HW_STARTUP_DELAY_MSECS 500
+#define HW_STARTUP_DELAY_MSECS 10
 
 #define DEVICE_ALIAS_FILENAME "/alias.tuning"
 #define DEVICE_ALIAS_MAX_LENGTH 16
@@ -34,7 +34,7 @@
 #define SERVO_BASE_STEPS 120
 #define SERVO_PERIOD_STEP_MS 2
 
-#define NEXT_LOG_LINE_ALGORITHM ((currentLogLine + 1) % 8)
+#define NEXT_LOG_LINE_ALGORITHM ((currentLogLine + 1) % 6)
 
 #define LOG_BUFFER_MAX_LENGTH 1024
 
@@ -132,19 +132,22 @@ Serial.print("|");
 */
   Serial.print(str);
   // telnet print
+#ifdef TELNET_ENABLED
   if (telnet.isActive()) {
     for (unsigned int i = 0; i < strlen(str); i++) {
       telnet.write(str[i]);
     }
   }
+#endif // TELNET_ENABLED
   // lcd print
   if (lcd != NULL && m->getBotinoSettings()->getLcdLogs()) { // can be called before LCD initialization
     currentLogLine = NEXT_LOG_LINE_ALGORITHM;
+    int line = currentLogLine + 2;
     lcd->setTextWrap(false);
-    lcd->fillRect(0, currentLogLine * LCD_CHAR_HEIGHT, LCD_WIDTH, LCD_CHAR_HEIGHT, BLACK);
+    lcd->fillRect(0, line * LCD_CHAR_HEIGHT, LCD_WIDTH, LCD_CHAR_HEIGHT, BLACK);
     lcd->setTextSize(1);
     lcd->setTextColor(WHITE);
-    lcd->setCursor(0, currentLogLine * LCD_CHAR_HEIGHT);
+    lcd->setCursor(0, line * LCD_CHAR_HEIGHT);
     lcd->print(str);
     lcd->display();
     delay(DELAY_MS_SPI);
@@ -354,7 +357,7 @@ BotMode setupArchitecture() {
   log(CLASS_MAIN, Debug, "Setup SPIFFS");
   SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED);
 
-  log(CLASS_MAIN, Debug, "Setup pins & deepsleep (if failure think of activating deep sleep mode?)");
+  log(CLASS_MAIN, Debug, "Setup pins");
   pinMode(LEDR_PIN, OUTPUT);
   pinMode(LEDW_PIN, OUTPUT);
   pinMode(LEDY_PIN, OUTPUT);
@@ -389,9 +392,11 @@ BotMode setupArchitecture() {
   heartbeat();
 
   log(CLASS_MAIN, Debug, "Setup commands");
+#ifdef TELNET_ENABLED
   telnet.setCallBackProjectCmds(reactCommandCustom);
   String helpCli("Type 'help' for help");
   telnet.setHelpProjectsCmds(helpCli);
+#endif // TELNET_ENABLED
   heartbeat();
 
   log(CLASS_MAIN, Debug, "Setup IO/lcd");
@@ -568,9 +573,11 @@ if (servo == 'r' || servo == 'R') {
 void configureModeArchitecture() {
   handleInterrupt();
   debugHandle();
+#ifdef TELNET_ENABLED
   if (m->getBot()->getClock()->currentTime() % 60 == 0) { // every minute
     m->getNotifier()->message(0, 2, "telnet %s", WiFi.localIP().toString().c_str());
   }
+#endif // TELNET_ENABLED
 }
 
 void abort(const char *msg) {
@@ -599,8 +606,12 @@ void debugHandle() {
   static bool firstTime = true;
   if (firstTime) {
     log(CLASS_MAIN, Debug, "Initialize debuggers...");
+#ifdef TELNET_ENABLED
     telnet.begin(apiDeviceLogin()); // Intialize the remote logging framework
+#endif // TELNET_ENABLED
+#ifdef OTA_ENABLED
     ArduinoOTA.begin();             // Intialize OTA
+#endif // OTA_ENABLED
     firstTime = false;
   }
 
@@ -617,8 +628,12 @@ void debugHandle() {
     logBuffer->clear();
   }
 
+#ifdef TELNET_ENABLED
   telnet.handle();     // Handle telnet log server and commands
+#endif // TELNET_ENABLED
+#ifdef OTA_ENABLED
   ArduinoOTA.handle(); // Handle on the air firmware load
+#endif // OTA_ENABLED
 }
 
 ICACHE_RAM_ATTR
@@ -645,14 +660,18 @@ void bitmapToLcd(uint8_t bitmap[]) {
 }
 
 void reactCommandCustom() { // for the use via telnet
+#ifdef TELNET_ENABLED
   m->command(telnet.getLastCommand().c_str());
+#endif // TELNET_ENABLED
 }
 
 void heartbeat() {
+
   int x = ((LCD_WIDTH / LCD_CHAR_WIDTH) - 1) * LCD_CHAR_WIDTH;    // right
   int y = ((LCD_HEIGHT / LCD_CHAR_HEIGHT) - 1) * LCD_CHAR_HEIGHT; // bottom
   char c = 0x03;                                                  // heart
   int size = 1;                                                   // small
+
   LED_ALIVE_TOGGLE
   //lcd->drawChar(x, y, c, 1, 0, size);
   //lcd->display();

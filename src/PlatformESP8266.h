@@ -12,7 +12,7 @@
 
 #define DELAY_MS_SPI 3
 #define ABORT_DELAY_SECS 5
-#define HW_STARTUP_DELAY_MSECS 500
+#define HW_STARTUP_DELAY_MSECS 10
 
 #define DEVICE_ALIAS_FILENAME "/alias.tuning"
 #define DEVICE_ALIAS_MAX_LENGTH 16
@@ -33,7 +33,7 @@
 #define SERVO_BASE_STEPS 120
 #define SERVO_PERIOD_STEP_MS 2
 
-#define NEXT_LOG_LINE_ALGORITHM ((currentLogLine + 1) % 8)
+#define NEXT_LOG_LINE_ALGORITHM ((currentLogLine + 1) % 6)
 
 #define LOG_BUFFER_MAX_LENGTH 1024
 
@@ -145,11 +145,12 @@ void logLine(const char *str, const char *clz, LogLevel l) {
   // lcd print
   if (lcd != NULL && m->getBotinoSettings()->getLcdLogs()) { // can be called before LCD initialization
     currentLogLine = NEXT_LOG_LINE_ALGORITHM;
+    int line = currentLogLine + 2;
     lcd->setTextWrap(false);
-    lcd->fillRect(0, currentLogLine * LCD_CHAR_HEIGHT, LCD_WIDTH, LCD_CHAR_HEIGHT, BLACK);
+    lcd->fillRect(0, line * LCD_CHAR_HEIGHT, LCD_WIDTH, LCD_CHAR_HEIGHT, BLACK);
     lcd->setTextSize(1);
     lcd->setTextColor(WHITE);
-    lcd->setCursor(0, currentLogLine * LCD_CHAR_HEIGHT);
+    lcd->setCursor(0, line * LCD_CHAR_HEIGHT);
     lcd->print(str);
     lcd->display();
     delay(DELAY_MS_SPI);
@@ -636,7 +637,7 @@ void debugHandle() {
   telnet.handle();     // Handle telnet log server and commands
 #endif // TELNET_ENABLED
 #ifdef OTA_ENABLED
-  //ArduinoOTA.handle(); // Handle on the air firmware load
+  ArduinoOTA.handle(); // Handle on the air firmware load
 #endif // OTA_ENABLED
 }
 
