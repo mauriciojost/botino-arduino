@@ -27,9 +27,9 @@ private:
 public:
   BotinoSettings(const char *n) {
     name = n;
-    lcdLogs = false;
+    lcdLogs = true;
     status = new Buffer(STATUS_BUFFER_SIZE);
-    fsLogs = false;
+    fsLogs = true;
     md = new Metadata(n);
     md->getTiming()->setFreq("~24h");
   }
