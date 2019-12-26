@@ -619,7 +619,7 @@ void debugHandle() {
     firstTime = false;
   }
 
-  m->getBotinoSettings()->getStatus()->fill("vcc:%0.2f,heap:%d", VCC_FLOAT, ESP.getFreeHeap());
+  m->getBotinoSettings()->getStatus()->fill("vcc:%0.2f,heap:%d/%d", VCC_FLOAT, ESP.getFreeHeap(), ESP.getHeapSize());
   m->getBotinoSettings()->getMetadata()->changed();
 
 #ifdef TELNET_ENABLED

@@ -614,7 +614,7 @@ void debugHandle() {
     firstTime = false;
   }
 
-  m->getBotinoSettings()->getStatus()->fill("heap:%d", ESP.getFreeHeap());
+  m->getBotinoSettings()->getStatus()->fill("freeheap:%d/%d", ESP.getFreeHeap(), ESP.getHeapSize());
   m->getBotinoSettings()->getMetadata()->changed();
 
 #ifdef TELNET_ENABLED
