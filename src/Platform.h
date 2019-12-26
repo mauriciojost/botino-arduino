@@ -30,7 +30,9 @@
 
 #include <Description.json.h>
 
-ModuleBotino *m;
+Buffer *logBuffer = NULL;
+
+ModuleBotino *m = NULL;
 
 //////////////////////////////////////////////////////////////
 // To be provided by the specific Platform (ESPXXX, X86, ...)
@@ -116,6 +118,9 @@ void configureModeArchitecture();
 // Abort execution (non-recoverable-error)
 void abort(const char *msg);
 
+// Return the buffer containing the debugging logs
+Buffer *getLogBuffer();
+
 // Generic functions common to all architectures
 ///////////////////
 
@@ -154,5 +159,9 @@ Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLeng
 }
 
 void nop() {}
+
+Buffer *getLogBuffer() {
+  return logBuffer;
+}
 
 #endif // PLATFORM_INC

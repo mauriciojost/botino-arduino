@@ -76,7 +76,6 @@ Buffer *apiDevicePwd = NULL;
 // ServoConf *servo0Conf = NULL;
 // ServoConf *servo1Conf = NULL;
 int currentLogLine = 0;
-Buffer *logBuffer = NULL;
 Buffer *cmdBuffer = NULL;
 Buffer *cmdLast = NULL;
 
@@ -617,16 +616,6 @@ void debugHandle() {
 
   m->getBotinoSettings()->getStatus()->fill("heap:%d", ESP.getFreeHeap());
   m->getBotinoSettings()->getMetadata()->changed();
-
-  if (logBuffer != NULL && m->getBotinoSettings()->fsLogsEnabled()) {
-    log(CLASS_MAIN, Debug, "Push logs...");
-    PropSync *ps = m->getModule()->getPropSync();
-    PropSyncStatusCode status = ps->pushLogMessages(logBuffer->getBuffer());
-    if (ps->isFailure(status)) {
-      log(CLASS_MAIN, Warn, "Failed to push logs...");
-    }
-    logBuffer->clear();
-  }
 
 #ifdef TELNET_ENABLED
   telnet.handle();     // Handle telnet log server and commands

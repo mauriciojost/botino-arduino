@@ -87,7 +87,8 @@ public:
              void (*updateFunc)(const char *, const char *),
              void (*testFunc)(),
              const char *(*apiDeviceLoginFunc)(),
-             const char *(*apiDevicePassFunc)()) {
+             const char *(*apiDevicePassFunc)(),
+             Buffer *(*getLogBufferFunc)()) {
 
     module->setup(setupArchitectureFunc,
                   initWifiFunc,
@@ -106,7 +107,8 @@ public:
                   testFunc,
                   apiDeviceLoginFunc,
                   apiDevicePassFunc,
-                  NULL);
+                  NULL
+                  getLogBufferFunc);
 
     message = messageFunc;
 
