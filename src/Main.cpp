@@ -22,7 +22,9 @@ void setup() {
            updateFirmwareVersion,
            testArchitecture,
            apiDeviceLogin,
-           apiDevicePass);
+           apiDevicePass,
+           getLogBuffer
+           );
 
   m->getModule()->setDescription(VERSION_DESCRIPTION_JSON);
 
