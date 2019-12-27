@@ -107,7 +107,7 @@ public:
                   testFunc,
                   apiDeviceLoginFunc,
                   apiDevicePassFunc,
-                  NULL
+                  NULL,
                   getLogBufferFunc);
 
     message = messageFunc;
