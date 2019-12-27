@@ -26,10 +26,6 @@
 
 #define USER_INTERACTION_LOOPS_MAX 80
 
-
-
-#include <Description.json.h>
-
 Buffer *logBuffer = NULL;
 
 ModuleBotino *m = NULL;

@@ -1,5 +1,7 @@
 #include <Main.h>
 
+#include <Description.json.h>
+
 void setup() {
   m = new ModuleBotino();
   m->setup(setupArchitecture,
