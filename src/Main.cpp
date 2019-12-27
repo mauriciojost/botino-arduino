@@ -40,6 +40,7 @@ void setup() {
       abort("Could not startup");
     }
   } else {
+#ifdef ARDUINO
     // Tricky description pushing: unless declared specially (with PROGMEM for instance)
     // constant variables are kept in RAM. This is a 4K object that cannot stay there.
     // https://arduino-esp8266.readthedocs.io/en/latest/PROGMEM.html
@@ -49,6 +50,7 @@ void setup() {
     log(CLASS_MAIN, Debug, "Pushing description...");
     logRaw(CLASS_MAIN, Debug, desc.c_str());
     m->getModule()->getPropSync()->pushDescription(desc.c_str());
+#endif // ARDUINO
   }
 }
 
