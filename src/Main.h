@@ -3,6 +3,7 @@
 
 #define CLASS_MAIN "MA"
 
+#include <Constants.h>
 #include <ModuleBotino.h>
 #include <Platform.h>
 #include <main4ino/Misc.h>

@@ -4,6 +4,7 @@
 #include <Pinout.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
+#include <Constants.h>
 
 #include <actors/Body.h>
 #include <actors/BotinoSettings.h>
@@ -90,7 +91,9 @@ public:
              const char *(*apiDevicePassFunc)(),
              Buffer *(*getLogBufferFunc)()) {
 
-    module->setup(setupArchitectureFunc,
+    module->setup(PROJECT_ID,
+                  PLATFORM_ID,
+                  setupArchitectureFunc,
                   initWifiFunc,
                   stopWifiFunc,
                   httpMethodFunc,

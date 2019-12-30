@@ -1,6 +1,8 @@
 #ifndef PLATFORM_INC
 #define PLATFORM_INC
 
+#include <Constants.h>
+
 /**
  * This file contains common-to-any-platform declarations or functions:
  * - implementation of entry points for arduino programs (setup and loop functions)
@@ -21,8 +23,6 @@
 #ifndef USER_DELAY_MS
 #define USER_DELAY_MS 8000
 #endif // USER_DELAY_MS
-
-#define PROJECT_ID "botino"
 
 #define USER_INTERACTION_LOOPS_MAX 80
 
