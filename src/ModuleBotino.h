@@ -75,7 +75,7 @@ public:
              void (*iosFunc)(char led, IoMode v),
              bool (*initWifiFunc)(),
              void (*stopWifiFunc)(),
-             int (*httpMethodFunc)(HttpMethod m, const char *url, const char *body, ParamStream *response, Table *headers),
+             int (*httpMethodFunc)(HttpMethod m, const char *url, const char *body, ParamStream *response, Table *headers, const char *fingerprint),
              void (*clearDeviceFunc)(),
              bool (*fileReadFunc)(const char *fname, Buffer *content),
              bool (*fileWriteFunc)(const char *fname, const char *content),

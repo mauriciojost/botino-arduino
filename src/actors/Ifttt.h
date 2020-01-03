@@ -36,7 +36,7 @@ private:
   const char *name;
   Metadata *md;
   bool (*initWifiFunc)();
-  int (*httpMethod)(HttpMethod m, const char *url, const char *body, ParamStream *response, Table *headers);
+  int (*httpMethod)(HttpMethod m, const char *url, const char *body, ParamStream *response, Table *headers, const char *fingerprint);
 
   Buffer *iftttKey;
   Buffer *urlAuxBuffer;
@@ -73,7 +73,7 @@ public:
     initWifiFunc = f;
   }
 
-  void setHttpMethod(int (*h)(HttpMethod m, const char *url, const char *body, ParamStream *response, Table *headers)) {
+  void setHttpMethod(int (*h)(HttpMethod m, const char *url, const char *body, ParamStream *response, Table *headers, const char *fingerprint)) {
     httpMethod = h;
   }
 
@@ -85,7 +85,7 @@ public:
     bool connected = initWifiFunc();
     if (connected) {
       urlAuxBuffer->fill(IFTTT_API_URL_POS, eventName, iftttKey->getBuffer());
-      int errorCodePost = httpMethod(HttpPost, urlAuxBuffer->getBuffer(), "{}", NULL, headers);
+      int errorCodePost = httpMethod(HttpPost, urlAuxBuffer->getBuffer(), "{}", NULL, headers, NULL);
       if (errorCodePost == HTTP_OK) {
         return true;
       }

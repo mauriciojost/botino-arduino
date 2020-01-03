@@ -33,7 +33,7 @@ private:
   const char *name;
   Metadata *md;
   Buffer *quotes[NRO_QUOTES];
-  int (*httpMethod)(HttpMethod m, const char *url, const char *body, ParamStream *response, Table *headers);
+  int (*httpMethod)(HttpMethod m, const char *url, const char *body, ParamStream *response, Table *headers, const char *fingerprint);
   Buffer *jsonAuxBuffer;
   bool (*initWifiFunc)();
   Table *headers;
@@ -61,7 +61,7 @@ public:
     return name;
   }
 
-  void setHttpMethod(int (*h)(HttpMethod m, const char *url, const char *body, ParamStream *response, Table *headers)) {
+  void setHttpMethod(int (*h)(HttpMethod m, const char *url, const char *body, ParamStream *response, Table *headers, const char *fingerprint)) {
     httpMethod = h;
   }
 
@@ -84,7 +84,7 @@ public:
   void fillQuote(int i) {
     ParamStream httpBodyResponse(jsonAuxBuffer, true);
     log(CLASS_QUOTES, Debug, "Filling %d", i);
-    int errorCode = httpMethod(HttpGet, URL_QUOTES, NULL, &httpBodyResponse, headers);
+    int errorCode = httpMethod(HttpGet, URL_QUOTES, NULL, &httpBodyResponse, headers, NULL);
     if (errorCode == HTTP_OK) {
       quotes[i]->fill("%s", httpBodyResponse.content());
     } else {
