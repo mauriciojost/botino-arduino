@@ -349,6 +349,7 @@ BotMode setupArchitecture() {
   Serial.begin(115200);     // Initialize serial port
   Serial.setTimeout(10000); // Timeout for read
   setupLog(logLine);
+  setLogLevel(Info);
   log(CLASS_MAIN, Info, "Log initialized");
 
   log(CLASS_MAIN, Debug, "Setup cmds");
@@ -423,8 +424,10 @@ BotMode setupArchitecture() {
   log(CLASS_MAIN, Debug, "Letting user interrupt...");
   bool i = sleepInterruptable(now(), SLEEP_PERIOD_UPON_BOOT_SEC);
   if (i) {
+    log(CLASS_MAIN, Info, "Arch. setup OK => configure mode");
     return ConfigureMode;
   } else {
+    log(CLASS_MAIN, Info, "Arch. setup OK => run mode");
     return RunMode;
   }
 }
