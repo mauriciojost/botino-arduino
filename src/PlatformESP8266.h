@@ -326,7 +326,7 @@ void testArchitecture() {}
 void updateFirmwareVersion(const char *targetVersion, const char *currentVersion) {
   bool c = initWifiSimple();
   if (c) {
-    updateFirmwareFromMain4ino(PROJECT_ID, PLATFORM_ID, targetVersion, currentVersion);
+    updateFirmwareFromMain4ino(m->getModule()->getPropSync()->getSession(), apiDeviceLogin(), PROJECT_ID, PLATFORM_ID, targetVersion, currentVersion);
   } else {
     log(CLASS_MAIN, Error, "Could not connect");
   }
