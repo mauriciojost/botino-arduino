@@ -49,6 +49,8 @@
 //#include "user_interface.h"
 //}
 
+#define CLASS_PLATFORM "PL"
+
 #define PLATFORM_ID "esp32"
 
 #define HELP_COMMAND_ARCH_CLI                                                                                                              \
@@ -178,7 +180,7 @@ void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clearMode, int
   lcd->setCursor(x * size * LCD_CHAR_WIDTH, y * size * LCD_CHAR_HEIGHT);
   lcd->print(str);
   lcd->display();
-  log(CLASS_MAIN, Debug, "Msg: (%d,%d)'%s'", x, y, str);
+  log(CLASS_PLATFORM, Debug, "Msg: (%d,%d)'%s'", x, y, str);
   delay(DELAY_MS_SPI);
 }
 
@@ -189,7 +191,7 @@ static int lastDegR = -1;
 
 int steps = periodFactor * SERVO_BASE_STEPS;
 
-log(CLASS_MAIN, Debug, "Arms>%d&%d", left, right);
+log(CLASS_PLATFORM, Debug, "Arms>%d&%d", left, right);
 
 int targetDegL = servo0Conf->getTargetDegreesFromPosition(left);
 servoLeft.attach(SERVO0_PIN);
@@ -201,8 +203,8 @@ servoRight.attach(SERVO1_PIN);
 lastDegL = (lastDegL == -1 ? targetDegL : lastDegL);
 lastDegR = (lastDegR == -1 ? targetDegR : lastDegR);
 
-log(CLASS_MAIN, Debug, "Sv.Ldeg%d>deg%d", lastDegL, targetDegL);
-log(CLASS_MAIN, Debug, "Sv.Rdeg%d>deg%d", lastDegR, targetDegR);
+log(CLASS_PLATFORM, Debug, "Sv.Ldeg%d>deg%d", lastDegL, targetDegL);
+log(CLASS_PLATFORM, Debug, "Sv.Rdeg%d>deg%d", lastDegR, targetDegR);
 for (int i = 1; i <= steps; i++) {
 float factor = ((float)i) / steps;
 int vL = lastDegL + ((targetDegL - lastDegL) * factor);
@@ -245,7 +247,7 @@ void ios(char led, IoMode value) {
       break;
   }
   if (pin == -1) {
-    log(CLASS_MAIN, Warn, "Unknown pin: %c", pin);
+    log(CLASS_PLATFORM, Warn, "Unknown pin: %c", pin);
     return;
   }
   if (value == IoOn) {
@@ -255,50 +257,50 @@ void ios(char led, IoMode value) {
   } else if (value == IoToggle) {
     digitalWrite(pin, !digitalRead(pin));
   } else {
-    log(CLASS_MAIN, Warn, "Unknown IO request: %c<-%d", pin, value);
+    log(CLASS_PLATFORM, Warn, "Unknown IO request: %c<-%d", pin, value);
   }
 }
 
 void clearDevice() {
-  log(CLASS_MAIN, User, "   rm %s", DEVICE_ALIAS_FILENAME);
-  log(CLASS_MAIN, User, "   rm %s", DEVICE_PWD_FILENAME);
-  log(CLASS_MAIN, User, "   ls");
-  log(CLASS_MAIN, User, "   <remove all .properties>");
+  log(CLASS_PLATFORM, User, "   rm %s", DEVICE_ALIAS_FILENAME);
+  log(CLASS_PLATFORM, User, "   rm %s", DEVICE_PWD_FILENAME);
+  log(CLASS_PLATFORM, User, "   ls");
+  log(CLASS_PLATFORM, User, "   <remove all .properties>");
 }
 
 void lcdImg(char img, uint8_t bitmap[]) {
-  log(CLASS_MAIN, Debug, "Img '%c'", img);
+  log(CLASS_PLATFORM, Debug, "Img '%c'", img);
   switch (img) {
     case '_': // dim
-      log(CLASS_MAIN, Debug, "Dim face");
+      log(CLASS_PLATFORM, Debug, "Dim face");
       lcd->dim(true);
       break;
     case '-': // bright
-      log(CLASS_MAIN, Debug, "Bright face");
+      log(CLASS_PLATFORM, Debug, "Bright face");
       lcd->dim(false);
       break;
     case 'w': // white
-      log(CLASS_MAIN, Debug, "White face");
+      log(CLASS_PLATFORM, Debug, "White face");
       lcd->invertDisplay(true);
       break;
     case 'b': // black
-      log(CLASS_MAIN, Debug, "Black face");
+      log(CLASS_PLATFORM, Debug, "Black face");
       lcd->invertDisplay(false);
       break;
     case 'l': // clear
-      log(CLASS_MAIN, Debug, "Clear face");
+      log(CLASS_PLATFORM, Debug, "Clear face");
       lcd->invertDisplay(false);
       lcd->clearDisplay();
       break;
     case 'c': // custom
-      log(CLASS_MAIN, Debug, "Custom face", img);
+      log(CLASS_PLATFORM, Debug, "Custom face", img);
       if (bitmap != NULL) {
-        logHex(CLASS_MAIN, Debug, bitmap, IMG_SIZE_BYTES);
+        logHex(CLASS_PLATFORM, Debug, bitmap, IMG_SIZE_BYTES);
         bitmapToLcd(bitmap); // custom
       }
       break;
     default:
-      log(CLASS_MAIN, Debug, "Face?: %c", img);
+      log(CLASS_PLATFORM, Debug, "Face?: %c", img);
       break;
   }
   lcd->display();
@@ -324,7 +326,7 @@ void updateFirmwareVersion(const char *targetVersion, const char *currentVersion
   if (c) {
     updateFirmwareFromMain4ino(m->getModule()->getPropSync()->getSession(), apiDeviceLogin(), PROJECT_ID, PLATFORM_ID, targetVersion, currentVersion);
   } else {
-    log(CLASS_MAIN, Error, "Could not connect");
+    log(CLASS_PLATFORM, Error, "Could not connect");
   }
 }
 
@@ -345,18 +347,18 @@ BotMode setupArchitecture() {
   Serial.setTimeout(10000); // Timeout for read
   setupLog(logLine);
   setLogLevel(Info);
-  log(CLASS_MAIN, Info, "Log initialized");
+  log(CLASS_PLATFORM, Info, "Log initialized");
 
-  log(CLASS_MAIN, Debug, "Setup cmds");
+  log(CLASS_PLATFORM, Debug, "Setup cmds");
   cmdBuffer = new Buffer(COMMAND_MAX_LENGTH);
   cmdLast = new Buffer(COMMAND_MAX_LENGTH);
-  log(CLASS_MAIN, Debug, "Setup timing");
+  log(CLASS_PLATFORM, Debug, "Setup timing");
   setExternalMillis(millis);
 
-  log(CLASS_MAIN, Debug, "Setup SPIFFS");
+  log(CLASS_PLATFORM, Debug, "Setup SPIFFS");
   SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED);
 
-  log(CLASS_MAIN, Debug, "Setup pins");
+  log(CLASS_PLATFORM, Debug, "Setup pins");
   pinMode(LEDR_PIN, OUTPUT);
   pinMode(LEDW_PIN, OUTPUT);
   pinMode(LEDY_PIN, OUTPUT);
@@ -365,32 +367,32 @@ BotMode setupArchitecture() {
   pinMode(SERVO1_PIN, OUTPUT);
   pinMode(BUTTON0_PIN, INPUT);
 
-  log(CLASS_MAIN, Debug, "Setup LCD");
+  log(CLASS_PLATFORM, Debug, "Setup LCD");
   lcd = new Adafruit_SSD1306(-1);
   lcd->begin(SSD1306_SWITCHCAPVCC, 0x3C); // Initialize LCD
   delay(DELAY_MS_SPI);
   heartbeat();
 
-  // log(CLASS_MAIN, Debug, "Setup wdt");
+  // log(CLASS_PLATFORM, Debug, "Setup wdt");
   // ESP.wdtEnable(1); // argument not used
-  log(CLASS_MAIN, Debug, "Setup wifi");
+  log(CLASS_PLATFORM, Debug, "Setup wifi");
   WiFi.persistent(false);
   WiFi.setHostname(apiDeviceLogin());
   heartbeat();
 
-  log(CLASS_MAIN, Debug, "Setup http");
+  log(CLASS_PLATFORM, Debug, "Setup http");
   httpClient.setTimeout(HTTP_TIMEOUT_MS);
   heartbeat();
 
-  log(CLASS_MAIN, Debug, "Setup random");
+  log(CLASS_PLATFORM, Debug, "Setup random");
   randomSeed(analogRead(0) * 256 + analogRead(0));
   heartbeat();
 
-  log(CLASS_MAIN, Debug, "Setup interrupts");
+  log(CLASS_PLATFORM, Debug, "Setup interrupts");
   attachInterrupt(digitalPinToInterrupt(BUTTON0_PIN), buttonPressed, RISING);
   heartbeat();
 
-  log(CLASS_MAIN, Debug, "Setup commands");
+  log(CLASS_PLATFORM, Debug, "Setup commands");
 #ifdef TELNET_ENABLED
   telnet.setCallBackProjectCmds(reactCommandCustom);
   String helpCli("Type 'help' for help");
@@ -398,32 +400,32 @@ BotMode setupArchitecture() {
 #endif // TELNET_ENABLED
   heartbeat();
 
-  log(CLASS_MAIN, Debug, "Setup IO/lcd");
+  log(CLASS_PLATFORM, Debug, "Setup IO/lcd");
   ios('*', IoOff);
   lcdImg('l', NULL);
   heartbeat();
 
-  // log(CLASS_MAIN, Debug, "Setup servos");
+  // log(CLASS_PLATFORM, Debug, "Setup servos");
   // initializeServoConfigs();
 
   /*
-  log(CLASS_MAIN, Debug, "Clean up crashes");
+  log(CLASS_PLATFORM, Debug, "Clean up crashes");
   if (SaveCrash.count() > 5) {
-    log(CLASS_MAIN, Warn, "Too many Stack-trcs / clearing (!!!)");
+    log(CLASS_PLATFORM, Warn, "Too many Stack-trcs / clearing (!!!)");
     SaveCrash.clear();
   } else if (SaveCrash.count() > 0) {
-    log(CLASS_MAIN, Warn, "Stack-trcs (!!!)");
+    log(CLASS_PLATFORM, Warn, "Stack-trcs (!!!)");
     SaveCrash.print();
   }
   */
 
-  log(CLASS_MAIN, Debug, "Letting user interrupt...");
+  log(CLASS_PLATFORM, Debug, "Letting user interrupt...");
   bool i = sleepInterruptable(now(), SLEEP_PERIOD_UPON_BOOT_SEC);
   if (i) {
-    log(CLASS_MAIN, Info, "Arch. setup OK => configure mode");
+    log(CLASS_PLATFORM, Info, "Arch. setup OK => configure mode");
     return ConfigureMode;
   } else {
-    log(CLASS_MAIN, Info, "Arch. setup OK => run mode");
+    log(CLASS_PLATFORM, Info, "Arch. setup OK => run mode");
     return RunMode;
   }
 }
@@ -500,7 +502,7 @@ if (servo == 'r' || servo == 'R') {
   tuneServo("right servo", SERVO1_PIN, &servoRight, servo1Conf);
   servo1Conf->serialize(&serialized); // right servo1
   writeFile(SERVO_1_FILENAME, serialized.getBuffer());
-  log(CLASS_MAIN, User, "Stored tuning right servo");
+  log(CLASS_PLATFORM, User, "Stored tuning right servo");
   arms(0, 0, 1);
   arms(0, 9, 1);
   arms(0, 0, 1);
@@ -512,59 +514,59 @@ if (servo == 'r' || servo == 'R') {
   tuneServo("left servo", SERVO0_PIN, &servoLeft, servo0Conf);
   servo0Conf->serialize(&serialized); // left servo0
   writeFile(SERVO_0_FILENAME, serialized.getBuffer());
-  log(CLASS_MAIN, User, "Stored tuning left servo");
+  log(CLASS_PLATFORM, User, "Stored tuning left servo");
   arms(0, 0, 1);
   arms(9, 0, 1);
   arms(0, 0, 1);
   return Executed;
 } else {
-  log(CLASS_MAIN, User, "Invalid servo (l|r)");
+  log(CLASS_PLATFORM, User, "Invalid servo (l|r)");
   return InvalidArgs;
 }
   */
     return InvalidArgs;
   } else if (strcmp("init", c) == 0) {
-    logRaw(CLASS_MAIN, User, "-> Initialize");
-    logRaw(CLASS_MAIN, User, "Execute:");
-    logRaw(CLASS_MAIN, User, "   ls");
-    log(CLASS_MAIN, User, "   save %s <alias>", DEVICE_ALIAS_FILENAME);
-    log(CLASS_MAIN, User, "   save %s <pwd>", DEVICE_PWD_FILENAME);
-    // logRaw(CLASS_MAIN, User, "   servo l");
-    // logRaw(CLASS_MAIN, User, "   servo r");
-    logRaw(CLASS_MAIN, User, "   wifissid <ssid>");
-    logRaw(CLASS_MAIN, User, "   wifipass <password>");
-    logRaw(CLASS_MAIN, User, "   wifissidb <ssidb>");
-    logRaw(CLASS_MAIN, User, "   wifipassb <passwordb>");
-    logRaw(CLASS_MAIN, User, "   ifttttoken <token>");
-    logRaw(CLASS_MAIN, User, "   (setup of power consumption settings architecture specific if any)");
-    logRaw(CLASS_MAIN, User, "   store");
-    logRaw(CLASS_MAIN, User, "   ls");
+    logRaw(CLASS_PLATFORM, User, "-> Initialize");
+    logRaw(CLASS_PLATFORM, User, "Execute:");
+    logRaw(CLASS_PLATFORM, User, "   ls");
+    log(CLASS_PLATFORM, User, "   save %s <alias>", DEVICE_ALIAS_FILENAME);
+    log(CLASS_PLATFORM, User, "   save %s <pwd>", DEVICE_PWD_FILENAME);
+    // logRaw(CLASS_PLATFORM, User, "   servo l");
+    // logRaw(CLASS_PLATFORM, User, "   servo r");
+    logRaw(CLASS_PLATFORM, User, "   wifissid <ssid>");
+    logRaw(CLASS_PLATFORM, User, "   wifipass <password>");
+    logRaw(CLASS_PLATFORM, User, "   wifissidb <ssidb>");
+    logRaw(CLASS_PLATFORM, User, "   wifipassb <passwordb>");
+    logRaw(CLASS_PLATFORM, User, "   ifttttoken <token>");
+    logRaw(CLASS_PLATFORM, User, "   (setup of power consumption settings architecture specific if any)");
+    logRaw(CLASS_PLATFORM, User, "   store");
+    logRaw(CLASS_PLATFORM, User, "   ls");
     return Executed;
   } else if (strcmp("ls", c) == 0) {
     File root = SPIFFS.open("/");
     File file = root.openNextFile();
     while (file) {
-      log(CLASS_MAIN, User, "- %s (%d bytes)", file.name(), (int)file.size());
+      log(CLASS_PLATFORM, User, "- %s (%d bytes)", file.name(), (int)file.size());
       file = root.openNextFile();
     }
     return Executed;
   } else if (strcmp("rm", c) == 0) {
     const char *f = strtok(NULL, " ");
     bool succ = SPIFFS.remove(f);
-    log(CLASS_MAIN, User, "### File '%s' %s removed", f, (succ ? "" : "NOT"));
+    log(CLASS_PLATFORM, User, "### File '%s' %s removed", f, (succ ? "" : "NOT"));
     return Executed;
   } else if (strcmp("reset", c) == 0) {
     ESP.restart(); // it is normal that it fails if invoked the first time after firmware is written
     return Executed;
   } else if (strcmp("lightsleep", c) == 0) {
     int s = atoi(strtok(NULL, " "));
-    return (lightSleepInterruptable(now(), s, m->getModuleSettings()->miniPeriodMsec(), haveToInterrupt, heartbeat) ? ExecutedInterrupt
+    return (lightSleepInterruptable(now(), s, 1000, haveToInterrupt, heartbeat) ? ExecutedInterrupt
                                                                                                                     : Executed);
   } else if (strcmp("clearstack", c) == 0) {
     // SaveCrash.clear();
     return Executed;
   } else if (strcmp("help", c) == 0 || strcmp("?", c) == 0) {
-    logRaw(CLASS_MAIN, User, HELP_COMMAND_ARCH_CLI);
+    logRaw(CLASS_PLATFORM, User, HELP_COMMAND_ARCH_CLI);
     return Executed;
   } else {
     return NotFound;
@@ -582,19 +584,19 @@ void configureModeArchitecture() {
 }
 
 void abort(const char *msg) {
-  log(CLASS_MAIN, Error, "Abort: %s", msg);
+  log(CLASS_PLATFORM, Error, "Abort: %s", msg);
   m->getNotifier()->message(0, 2, "Abort: %s", msg);
   bool interrupt = sleepInterruptable(now(), ABORT_DELAY_SECS);
   if (interrupt) {
-    log(CLASS_MAIN, Debug, "Abort sleep interrupted");
+    log(CLASS_PLATFORM, Debug, "Abort sleep interrupted");
   } else {
-    log(CLASS_MAIN, Warn, "Will light sleep and restart upon abort...");
-    bool i = sleepInterruptable(now(), m->getModuleSettings()->periodMsec() / 1000L);
+    log(CLASS_PLATFORM, Warn, "Will light sleep and restart upon abort...");
+    bool i = sleepInterruptable(now(), 120L);
     if (!i) {
       ESP.restart();
     } else {
-      log(CLASS_MAIN, Warn, "Restart skipped because of interrupt.");
-      log(CLASS_MAIN, Warn, "System ready for exploration.");
+      log(CLASS_PLATFORM, Warn, "Restart skipped because of interrupt.");
+      log(CLASS_PLATFORM, Warn, "System ready for exploration.");
     }
   }
 }
@@ -604,10 +606,13 @@ void abort(const char *msg) {
 ////////////////////////////////////////
 
 void debugHandle() {
+  if (!m->getModuleSettings()->getDebug()) {
+    return;
+  }
   static bool firstTime = true;
-  Serial.setDebugOutput(getLogLevel() == Debug); // deep HW logs
+  Serial.setDebugOutput(getLogLevel() == Debug && m->getModuleSettings()->getDebug()); // deep HW logs
   if (firstTime) {
-    log(CLASS_MAIN, Debug, "Initialize debuggers...");
+    log(CLASS_PLATFORM, Debug, "Initialize debuggers...");
 #ifdef TELNET_ENABLED
     telnet.begin(apiDeviceLogin()); // Intialize the remote logging framework
 #endif // TELNET_ENABLED
@@ -689,21 +694,21 @@ void handleInterrupt() {
       size_t n = Serial.readBytes(&c, 1);
 
       if (c == 0x08 && n == 1) { // backspace
-        log(CLASS_MAIN, Debug, "Backspace");
+        log(CLASS_PLATFORM, Debug, "Backspace");
         if (cmdBuffer->getLength() > 0) {
           cmdBuffer->getUnsafeBuffer()[cmdBuffer->getLength() - 1] = 0;
         }
       } else if (c == 0x1b && n == 1) { // up/down
-        log(CLASS_MAIN, Debug, "Up/down");
+        log(CLASS_PLATFORM, Debug, "Up/down");
         cmdBuffer->load(cmdLast->getBuffer());
       } else if ((c == '\n' || c == '\r') && n == 1) { // if enter is pressed...
-        log(CLASS_MAIN, Debug, "Enter");
+        log(CLASS_PLATFORM, Debug, "Enter");
         if (cmdBuffer->getLength() > 0) {
           CmdExecStatus execStatus = m->command(cmdBuffer->getBuffer());
           bool interrupt = (execStatus == ExecutedInterrupt);
-          log(CLASS_MAIN, Debug, "Interrupt: %d", interrupt);
-          log(CLASS_MAIN, Debug, "Cmd status: %s", CMD_EXEC_STATUS(execStatus));
-          log(CLASS_MAIN, User, "('%s' => %s)", cmdBuffer->getBuffer(), CMD_EXEC_STATUS(execStatus));
+          log(CLASS_PLATFORM, Debug, "Interrupt: %d", interrupt);
+          log(CLASS_PLATFORM, Debug, "Cmd status: %s", CMD_EXEC_STATUS(execStatus));
+          log(CLASS_PLATFORM, User, "('%s' => %s)", cmdBuffer->getBuffer(), CMD_EXEC_STATUS(execStatus));
           cmdLast->load(cmdBuffer->getBuffer());
           cmdBuffer->clear();
         }
@@ -712,17 +717,17 @@ void handleInterrupt() {
         cmdBuffer->append(c);
       }
       // echo
-      log(CLASS_MAIN, User, "> %s (%d)", cmdBuffer->getBuffer(), (int)c);
+      log(CLASS_PLATFORM, User, "> %s (%d)", cmdBuffer->getBuffer(), (int)c);
       while (!Serial.available() && inLoop < USER_INTERACTION_LOOPS_MAX) {
         inLoop++;
         delay(100);
       }
       if (inLoop >= USER_INTERACTION_LOOPS_MAX) {
-        log(CLASS_MAIN, User, "> (timeout)");
+        log(CLASS_PLATFORM, User, "> (timeout)");
         break;
       }
     }
-    log(CLASS_MAIN, Debug, "Done with interrupt");
+    log(CLASS_PLATFORM, Debug, "Done with interrupt");
 
   } else if (buttonInterrupts > 0) {
     buttonEnabled = false;
@@ -730,7 +735,7 @@ void handleInterrupt() {
     int holds = -1;
     do {
       holds++;
-      log(CLASS_MAIN, Debug, "%d", holds);
+      log(CLASS_PLATFORM, Debug, "%d", holds);
       LED_INT_TOGGLE;
       m->sequentialCommand(holds, ONLY_SHOW_MSG);
       LED_INT_TOGGLE;
@@ -738,16 +743,16 @@ void handleInterrupt() {
     } while (BUTTON_IS_PRESSED);
     m->sequentialCommand(holds, SHOW_MSG_AND_REACT);
     buttonEnabled = true;
-    log(CLASS_MAIN, Debug, "Done");
+    log(CLASS_PLATFORM, Debug, "Done");
   }
 }
 
 bool haveToInterrupt() {
   if (Serial.available()) {
-    log(CLASS_MAIN, Debug, "Serial pinged: int");
+    log(CLASS_PLATFORM, Debug, "Serial pinged: int");
     return true;
     //} else if (buttonInterrupts > 0) {
-    //  log(CLASS_MAIN, Debug, "Button pressed: int");
+    //  log(CLASS_PLATFORM, Debug, "Button pressed: int");
     //  return true;
   } else {
     return false;
