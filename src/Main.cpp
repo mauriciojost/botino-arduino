@@ -1,10 +1,25 @@
-#include <Main.h>
+#include <main4ino/Misc.h>
+#include <ModuleBotino.h>
+#include <Platform.h>
+#include <Constants.h>
+
+#ifndef PROJ_VERSION
+#define PROJ_VERSION "snapshot"
+#endif // PROJ_VERSION
+
+#define CLASS_MAIN "MA"
+
+//////////////////////////////////////////////////////////////
+// Provided by generic Main
+//////////////////////////////////////////////////////////////
+
+// Standard arduino setup
 
 
 void setup() {
+  BotMode mode = setupArchitecture();
   m = new ModuleBotino();
-  m->setup(setupArchitecture,
-           lcdImg,
+  m->setup(lcdImg,
            arms,
            messageFunc,
            ios,
@@ -26,6 +41,7 @@ void setup() {
            apiDevicePass,
            getLogBuffer
            );
+  m->getBot()->setMode(mode);
 
   log(CLASS_MAIN, Info, "Startup of properties");
   ModuleStartupPropertiesCode ec = m->startupProperties();
@@ -57,3 +73,4 @@ void setup() {
 void loop() {
   m->loop();
 }
+

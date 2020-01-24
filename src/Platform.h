@@ -27,7 +27,6 @@
 #define USER_INTERACTION_LOOPS_MAX 80
 
 Buffer *logBuffer = NULL;
-
 ModuleBotino *m = NULL;
 
 //////////////////////////////////////////////////////////////
@@ -46,9 +45,6 @@ const char *apiDevicePass();
 // The log function (that will print to screen, Serial, telnet, or whatever wished).
 // It should not include "\n" ending as the log4ino library handles newline addition.
 void logLine(const char *str);
-
-// Setup wifi using provided parameters.
-bool initWifi(const char *ssid, const char *pass, const char *ssidb, const char *passb, bool skipIfAlreadyConnected, int retries);
 
 // HTTP GET function.
 int httpGet(const char *url, ParamStream *response, Table *headers);
@@ -120,13 +116,6 @@ Buffer *getLogBuffer();
 // Generic functions common to all architectures
 ///////////////////
 
-bool initWifiSimple() {
-  Settings *s = m->getModuleSettings();
-  log(CLASS_MAIN, Info, "W.steady");
-  bool connected = initWifi(s->getSsid(), s->getPass(), s->getSsidBackup(), s->getPassBackup(), true, WIFI_CONNECTION_RETRIES);
-  return connected;
-}
-
 Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLength, const char *defaultContent, bool obfuscate) {
   bool first = false;
   if (*var == NULL) {
@@ -159,5 +148,43 @@ void nop() {}
 Buffer *getLogBuffer() {
   return logBuffer;
 }
+
+#ifdef ARDUINO
+
+#ifdef ESP8266 // on ESP8266
+#include <PlatformESP8266.h>
+#endif // ESP8266
+
+#ifdef ESP32 // on ESP32
+#include <PlatformESP32.h>
+#endif // ESP32
+
+#else // on PC
+#include <PlatformX86_64.h>
+
+#endif // ARDUINO
+
+bool initWifiSimple() {
+  Settings *s = m->getModuleSettings();
+  log(CLASS_PLATFORM, Info, "W.steady");
+  bool connected = initializeWifi(s->getSsid(), s->getPass(), s->getSsidBackup(), s->getPassBackup(), true, WIFI_CONNECTION_RETRIES);
+  return connected;
+}
+
+bool sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
+  int msec = (m==NULL?1000:m->getModuleSettings()->miniPeriodMsec());
+  return lightSleepInterruptable(cycleBegin, periodSecs, msec, haveToInterrupt, heartbeat);
+}
+
+void updateFirmwareVersion(const char *targetVersion, const char *currentVersion) {
+  bool c = initWifiSimple();
+  if (c) {
+    updateFirmwareFromMain4ino(m->getModule()->getPropSync()->getSession(), apiDeviceLogin(), PROJECT_ID, PLATFORM_ID, targetVersion, currentVersion);
+  } else {
+    log(CLASS_PLATFORM, Error, "Could not connect");
+  }
+}
+
+
 
 #endif // PLATFORM_INC

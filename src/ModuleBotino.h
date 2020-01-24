@@ -68,8 +68,7 @@ public:
     message = NULL;
   }
 
-  void setup(BotMode (*setupArchitectureFunc)(),
-             void (*lcdImgFunc)(char img, uint8_t bitmap[]),
+  void setup(void (*lcdImgFunc)(char img, uint8_t bitmap[]),
              void (*armsFunc)(int left, int right, int steps),
              void (*messageFunc)(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str),
              void (*iosFunc)(char led, IoMode v),
@@ -93,7 +92,6 @@ public:
 
     module->setup(PROJECT_ID,
                   PLATFORM_ID,
-                  setupArchitectureFunc,
                   initWifiFunc,
                   stopWifiFunc,
                   httpMethodFunc,

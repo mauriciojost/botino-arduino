@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
+#include <Platform.h>
+#include <primitives/BoardX86_64.h>
 
 #ifndef SIMULATOR_LOGIN
 #define SIMULATOR_LOGIN "simulator_login"
@@ -21,7 +23,6 @@
 enum AppMode { Interactive = 0, NonInteractive = 1 };
 AppMode appMode = Interactive;
 
-#include <primitives/BoardX86_64.h>
 
 ////////////////////////////////////////
 // Functions requested for architecture
@@ -30,9 +31,6 @@ AppMode appMode = Interactive;
 // Callbacks
 ///////////////////
 
-bool initWifi(const char *ssid, const char *pass, const char *ssidb, const char *passb, bool skipIfAlreadyConnected, int retries) {
-  return initializeWifi(ssid, pass, ssidb, passb, skipIfAlreadyConnected, retries);
-}
 
 const char *apiDeviceLogin() {
   return SIMULATOR_LOGIN;
@@ -55,22 +53,20 @@ void arms(int left, int right, int steps) {
 }
 
 void ios(char led, IoMode v) {
-  log(CLASS_MAIN, Debug, "Led'%c'->%d", led, v);
+  log(CLASS_PLATFORM, Debug, "Led'%c'->%d", led, v);
 }
 
 void clearDevice() {
-  log(CLASS_MAIN, Debug, "Clear device");
+  log(CLASS_PLATFORM, Debug, "Clear device");
 }
 
 void lcdImg(char img, uint8_t bitmap[]) {
-  log(CLASS_MAIN, Debug, "Img '%c'", img);
+  log(CLASS_PLATFORM, Debug, "Img '%c'", img);
 }
 
 void infoArchitecture() {}
 
 void testArchitecture() {}
-
-void updateFirmwareVersion(const char *targetVersion, const char *currentVersion) {}
 
 // Execution
 ///////////////////
@@ -81,12 +77,8 @@ bool haveToInterrupt() {
   return false;
 }
 
-bool sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
-  return lightSleepInterruptable(cycleBegin, periodSecs, m->getModuleSettings()->miniPeriodMsec(), haveToInterrupt, heartbeat);
-}
-
 BotMode setupArchitecture() {
-  log(CLASS_MAIN, Debug, "Setup timing");
+  log(CLASS_PLATFORM, Debug, "Setup timing");
   setExternalMillis(millis);
   return RunMode;
 }
@@ -114,7 +106,7 @@ void configureModeArchitecture() {
 }
 
 void abort(const char *msg) {
-  log(CLASS_MAIN, Error, "Abort: %s", msg);
+  log(CLASS_PLATFORM, Error, "Abort: %s", msg);
 }
 
 ////////////////////////////////////////
@@ -137,14 +129,14 @@ int main(int argc, const char *argv[]) {
     appMode = (AppMode)atoi(argv[1]);
     simulationSteps = atoi(argv[2]);
   } else if (argc != 1 + 2) {
-    log(CLASS_MAIN, Error, "2 args max: <starter> [appMode [steps]]");
+    log(CLASS_PLATFORM, Error, "2 args max: <starter> [appMode [steps]]");
     return -1;
   }
 
   for (int i = 0; i < simulationSteps; i++) {
-    log(CLASS_MAIN, Debug, "### Step %d/%d", i, simulationSteps);
+    log(CLASS_PLATFORM, Debug, "### Step %d/%d", i, simulationSteps);
     loop();
   }
-  log(CLASS_MAIN, Debug, "### DONE");
+  log(CLASS_PLATFORM, Debug, "### DONE");
   return 0;
 }

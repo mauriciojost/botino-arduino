@@ -48,10 +48,6 @@ extern "C" {
 #include "user_interface.h"
 }
 
-#define CLASS_PLATFORM "PL"
-
-#define PLATFORM_ID "esp8266"
-
 #define HELP_COMMAND_ARCH_CLI                                                                                                              \
   "\n  ESP8266 HELP"                                                                                                                       \
   "\n  init              : initialize essential settings (wifi connection, logins, etc.)"                                                  \
@@ -142,6 +138,9 @@ void logLine(const char *str, const char *clz, LogLevel l) {
     }
   }
 #endif // TELNET_ENABLED
+  if (m == NULL) {
+    return;
+  }
   // lcd print
   if (lcd != NULL && m->getBotinoSettings()->getLcdLogs()) { // can be called before LCD initialization
     currentLogLine = NEXT_LOG_LINE_ALGORITHM;
@@ -325,21 +324,8 @@ void infoArchitecture() {
 
 void testArchitecture() {}
 
-void updateFirmwareVersion(const char *targetVersion, const char *currentVersion) {
-  bool c = initWifiSimple();
-  if (c) {
-    updateFirmwareFromMain4ino(m->getModule()->getPropSync()->getSession(), apiDeviceLogin(), PROJECT_ID, PLATFORM_ID, targetVersion, currentVersion);
-  } else {
-    log(CLASS_PLATFORM, Error, "Could not connect");
-  }
-}
-
 // Execution
 ///////////////////
-
-bool sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
-  return lightSleepInterruptable(cycleBegin, periodSecs, m->getModuleSettings()->miniPeriodMsec(), haveToInterrupt, heartbeat);
-}
 
 BotMode setupArchitecture() {
 
@@ -662,6 +648,9 @@ void bitmapToLcd(uint8_t bitmap[]) {
 }
 
 void reactCommandCustom() { // for the use via telnet
+  if (m == NULL) {
+    return;
+  }
 #ifdef TELNET_ENABLED
   m->command(telnet.getLastCommand().c_str());
 #endif // TELNET_ENABLED
@@ -670,6 +659,9 @@ void reactCommandCustom() { // for the use via telnet
 void heartbeat() {
 
 #ifdef VISUAL_HEARTBEAT
+  if (lcd == NULL) {
+    return;
+  }
   int x = ((LCD_WIDTH / LCD_CHAR_WIDTH) - 1) * LCD_CHAR_WIDTH;    // right
   int y = ((LCD_HEIGHT / LCD_CHAR_HEIGHT) - 1) * LCD_CHAR_HEIGHT; // bottom
   char c = 0x03;                                                  // heart
