@@ -8,11 +8,11 @@
 #include <primitives/BoardX86_64.h>
 
 #ifndef SIMULATOR_LOGIN
-#define SIMULATOR_LOGIN "simulator_login"
+#error "Must define SIMULATOR_LOGIN"
 #endif // SIMULATOR_LOGIN
 
 #ifndef SIMULATOR_PASS
-#define SIMULATOR_PASS "simulator_pass"
+#error "Must define SIMULATOR_PASS"
 #endif // SIMULATOR_PASS
 
 #define CL_MAX_LENGTH 65000
