@@ -194,3 +194,5 @@
 /serial_monitor
 /upload
 /*.gcda
+/.pio/
+/.vscode
