@@ -152,7 +152,7 @@ Buffer *getLogBuffer() {
 #ifdef ARDUINO
 
 #ifdef ESP8266 // on ESP8266
-#define DEBUG_HTTPCLIENT(fmt, ...) log("HT",fmt, ## __VA_ARGS__ )
+#define DEBUG_HTTPCLIENT(fmt, ...) log("HT", Debug, fmt, ## __VA_ARGS__ )
 #include <PlatformESP8266.h>
 #endif // ESP8266
 
