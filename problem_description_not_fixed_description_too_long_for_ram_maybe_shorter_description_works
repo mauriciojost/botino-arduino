@@ -1,0 +1,2 @@
+
+// this is to test #define DEBUG_HTTPCLIENT(fmt, ...) logeg("HT", Debug, fmt, ## __VA_ARGS__ )
