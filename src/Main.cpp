@@ -62,9 +62,11 @@ void setup() {
     // https://arduino-esp8266.readthedocs.io/en/latest/PROGMEM.html
     // Solution: put it in PROGMEM and store it in RAM only when required to push.
 #include <Description.json.h>
-    String desc = String(DESCRIPTION_JSON_VERSION);
+    String* desc = new String(DESCRIPTION_JSON_VERSION);
     log(CLASS_MAIN, Debug, "Pushing description...");
-    m->getModule()->getPropSync()->pushDescription(desc.c_str());
+    logRaw(CLASS_MAIN, Debug, desc->c_str());
+    m->getModule()->getPropSync()->pushDescription(desc->c_str());
+    delete desc;
 #endif // ARDUINO
   }
 }

@@ -63,7 +63,15 @@ public:
     commands = new Commands("commands");
 
     module->getActors()->add(
-        7, (Actor *)bsettings, (Actor *)quotes, (Actor *)body, (Actor *)images, (Actor *)ifttt, (Actor *)notifier, (Actor *)commands);
+        7, 
+        (Actor *)bsettings, 
+        (Actor *)quotes, 
+        (Actor *)body, 
+        (Actor *)images, 
+        (Actor *)ifttt, 
+        (Actor *)notifier, 
+        (Actor *)commands
+    );
 
     message = NULL;
   }

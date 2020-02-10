@@ -373,6 +373,7 @@ BotMode setupArchitecture() {
 
   log(CLASS_PLATFORM, Debug, "Setup http");
   httpClient.setTimeout(HTTP_TIMEOUT_MS);
+  httpClient.setUserAgent(apiDeviceLogin());
   heartbeat();
 
   log(CLASS_PLATFORM, Debug, "Setup random");
