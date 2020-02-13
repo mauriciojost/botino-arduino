@@ -31,6 +31,9 @@ AppMode appMode = Interactive;
 // Callbacks
 ///////////////////
 
+bool buttonIsPressed() {
+  return false;
+}
 
 const char *apiDeviceLogin() {
   return SIMULATOR_LOGIN;
