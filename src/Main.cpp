@@ -39,7 +39,8 @@ void setup() {
            testArchitecture,
            apiDeviceLogin,
            apiDevicePass,
-           getLogBuffer
+           getLogBuffer,
+           buttonIsPressed
            );
   m->getBot()->setMode(mode);
 

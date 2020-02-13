@@ -83,8 +83,11 @@ void led(char led, IoMode v) {
   }
 }
 
+bool buttonIsPressed() {
+  return false;
+}
 void initBody(Body *b, Quotes *q, Images *i, Ifttt *it, Notifier *n) {
-  b->setup(arms, led, sleepInt);
+  b->setup(arms, led, sleepInt, buttonIsPressed);
   b->setNotifier(n);
   b->setQuotes(q);
   b->setImages(i);

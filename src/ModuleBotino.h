@@ -96,7 +96,9 @@ public:
              void (*testFunc)(),
              const char *(*apiDeviceLoginFunc)(),
              const char *(*apiDevicePassFunc)(),
-             Buffer *(*getLogBufferFunc)()) {
+             Buffer *(*getLogBufferFunc)(),
+             bool (*buttonIsPressedFunc)()
+             ) {
 
     module->setup(PROJECT_ID,
                   PLATFORM_ID,
@@ -131,7 +133,7 @@ public:
     quotes->setInitWifi(initWifiFunc);
     ifttt->setInitWifi(initWifiFunc);
     ifttt->setHttpMethod(httpMethodFunc);
-    body->setup(armsFunc, iosFunc, sleepInterruptableFunc);
+    body->setup(armsFunc, iosFunc, sleepInterruptableFunc, buttonIsPressedFunc);
   }
 
   ModuleStartupPropertiesCode startupProperties() {

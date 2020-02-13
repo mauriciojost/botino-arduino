@@ -101,6 +101,11 @@ void handleInterrupt();
 // Callbacks
 ///////////////////
 
+
+bool buttonIsPressed() {
+  return BUTTON_IS_PRESSED;
+}
+
 const char *apiDeviceLogin() {
   return initializeTuningVariable(&apiDeviceId, DEVICE_ALIAS_FILENAME, DEVICE_ALIAS_MAX_LENGTH, NULL, false)->getBuffer();
 }

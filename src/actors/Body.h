@@ -89,6 +89,7 @@ private:
   Metadata *md;
   void (*arms)(int left, int right, int perFactor);
   bool (*sleepInterruptable)(time_t cycleBegin, time_t periodSec);
+  bool (*button)();
   Notifier *notifier;
   void (*iosFunc)(char led, IoMode v);
   Quotes *quotes;
@@ -200,7 +201,7 @@ private:
   }
 
   bool isInitialized() {
-    bool init = arms != NULL && sleepInterruptable != NULL && iosFunc != NULL && notifier != NULL && quotes != NULL && images != NULL &&
+    bool init = arms != NULL && button != NULL && sleepInterruptable != NULL && iosFunc != NULL && notifier != NULL && quotes != NULL && images != NULL &&
                 ifttt != NULL;
     return init;
   }
@@ -238,6 +239,7 @@ private:
   PoseExecStatus performPoseLen(const char *pose, int len) {
 
     char c0 = 'x', c1 = 'x';
+    int i0 = 0;
 
     log(CLASS_BODY, Debug, "Performing pose: '%.*s'", len, pose);
     if (sleepInterruptable(now(), 0)) { // check if this pose's execution has to be interrupted
@@ -363,6 +365,20 @@ private:
       } else {
         return Success;
       }
+    } else if (sscanf(pose, "T%d.", &i0) == 1) {
+      // TIMER
+      #define RESP 10
+      log(CLASS_BODY, Debug, "Timer %d s", i0);
+      for (int i = 0; i < i0 * RESP; i++) {
+        if (button()) break;
+        if (i % RESP == 0) {
+          notifier->message(1, 1, "%d", i / RESP);
+        }
+        notifier->message(1, 1, "OK!");
+        delay(1000 / RESP);
+      }
+      delay(500);
+      return Success;
     } else if (sscanf(pose, "Z%c", &c0) == 1) {
       // POWER OFF
       return z();
@@ -414,6 +430,7 @@ public:
     name = n;
     arms = NULL;
     sleepInterruptable = NULL;
+    button = NULL;
     iosFunc = NULL;
     quotes = NULL;
     images = NULL;
@@ -450,10 +467,11 @@ public:
     ifttt = i;
   }
 
-  void setup(void (*a)(int left, int right, int f), void (*f)(char led, IoMode v), bool (*i)(time_t cycleBegin, time_t periodSec)) {
+  void setup(void (*a)(int left, int right, int f), void (*f)(char led, IoMode v), bool (*i)(time_t cycleBegin, time_t periodSec), bool (*b)()) {
     arms = a;
     iosFunc = f;
     sleepInterruptable = i;
+    button = b;
   }
 
   void act() {

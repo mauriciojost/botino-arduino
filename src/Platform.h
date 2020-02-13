@@ -113,6 +113,9 @@ void abort(const char *msg);
 // Return the buffer containing the debugging logs
 Buffer *getLogBuffer();
 
+// Tells if the button has been pressed
+bool buttonIsPressed();
+
 // Generic functions common to all architectures
 ///////////////////
 

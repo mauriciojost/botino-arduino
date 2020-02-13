@@ -104,6 +104,10 @@ void initializeServoConfigs();
 // Callbacks
 ///////////////////
 
+bool buttonIsPressed() {
+  return BUTTON_IS_PRESSED;
+}
+
 bool initWifi(const char *ssid, const char *pass, const char *ssidb, const char *passb, bool skipIfAlreadyConnected, int retries) {
   return initializeWifi(ssid, pass, ssidb, passb, skipIfAlreadyConnected, retries);
 }
