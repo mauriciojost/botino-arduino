@@ -374,9 +374,9 @@ private:
         if (i % RESP == 0) {
           notifier->message(1, 1, "%d", i / RESP);
         }
-        notifier->message(1, 1, "OK!");
         delay(1000 / RESP);
       }
+      notifier->message(1, 1, "OK!");
       delay(500);
       return Success;
     } else if (sscanf(pose, "Z%c", &c0) == 1) {
