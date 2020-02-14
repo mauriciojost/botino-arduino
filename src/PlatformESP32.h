@@ -146,7 +146,7 @@ Serial.print("|");
     lcd->setTextWrap(false);
     lcd->fillRect(0, line * LCD_CHAR_HEIGHT, LCD_WIDTH, LCD_CHAR_HEIGHT, BLACK);
     lcd->setTextSize(1);
-    lcd->setTextColor(WHITE);
+    lcd->setTextColor(WHITE, !WHITE);
     lcd->setCursor(0, line * LCD_CHAR_HEIGHT);
     lcd->print(str);
     lcd->display();
@@ -163,20 +163,21 @@ Serial.print("|");
 }
 
 void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clearMode, int size, const char *str) {
+  lcd->setTextWrap(wrap);
+  lcd->setTextSize(size);
   switch (clearMode) {
     case FullClear:
       lcd->clearDisplay();
       break;
     case LineClear:
-      lcd->fillRect(x * size * LCD_CHAR_WIDTH, y * size * LCD_CHAR_HEIGHT, LCD_WIDTH, size * LCD_CHAR_HEIGHT, !color);
-      wrap = false;
+      lcd->setTextColor(!color, color);
+      lcd->setCursor(x * size * LCD_CHAR_WIDTH, y * size * LCD_CHAR_HEIGHT);
+      lcd->print(str);
       break;
     case NoClear:
       break;
   }
-  lcd->setTextWrap(wrap);
-  lcd->setTextSize(size);
-  lcd->setTextColor(color);
+  lcd->setTextColor(color, !color);
   lcd->setCursor(x * size * LCD_CHAR_WIDTH, y * size * LCD_CHAR_HEIGHT);
   lcd->print(str);
   lcd->display();
