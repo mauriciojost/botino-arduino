@@ -73,6 +73,9 @@ enum BodyProps {
 #define MOVE_DANCE_BACK_SLASH "A71.A82.L?.A71.A82.L?.A71.A82.L?.A71.A82."
 #define MOVE_DANCE_FORW_SLASH "A17.A28.L?.A17.A28.L?.A17.A28.L?.A17.A28."
 
+#define TIMER_MSG_X 7
+#define TIMER_MSG_Y 0
+
 // Create images with:
 // https://docs.google.com/spreadsheets/d/1jXa9mFxeiN_bUji_WiCPKO_gB6pxQUeQ5QxgoSINqdc/edit#gid=0
 uint8_t IMG_CRAZY[] = {0x00, 0x00, 0x7F, 0x00, 0x41, 0x3E, 0x41, 0x22, 0x49, 0x2A, 0x41, 0x22, 0x7F, 0x3E, 0x00, 0x00};
@@ -372,11 +375,11 @@ private:
       for (int i = 0; i < i0 * RESP; i++) {
         if (button()) break;
         if (i % RESP == 0) {
-          notifier->message(1, 1, "%d", i / RESP);
+          notifier->message(TIMER_MSG_X, TIMER_MSG_Y, "%d", i / RESP);
         }
         delay(1000 / RESP);
       }
-      notifier->message(1, 1, "OK!");
+      notifier->message(TIMER_MSG_X, TIMER_MSG_Y, "OK!");
       delay(500);
       return Success;
     } else if (sscanf(pose, "Z%c", &c0) == 1) {
