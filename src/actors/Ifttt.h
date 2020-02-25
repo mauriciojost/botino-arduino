@@ -52,7 +52,7 @@ public:
     initWifiFunc = NULL;
     httpMethod = NULL;
     md = new Metadata(n);
-    headers = new Table(0, 0, 0);
+    headers = new Table(0);
   }
 
   const char *getName() {
