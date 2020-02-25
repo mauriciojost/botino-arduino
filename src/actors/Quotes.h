@@ -54,7 +54,7 @@ public:
     for (int i = 0; i < NRO_QUOTES; i++) {
       quotes[i] = new Buffer(QUOTE_MAX_LENGTH, "Damn! No quote yet! :(");
     }
-    headers = new Table(0, 0, 0);
+    headers = new Table(0);
   }
 
   const char *getName() {
