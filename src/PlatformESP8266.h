@@ -410,7 +410,7 @@ BotMode setupArchitecture() {
     log(CLASS_PLATFORM, Warn, "Too many Stack-trcs / clearing (!!!)");
     espSaveCrash.clear();
   } else if (espSaveCrash.count() > 0) {
-    log(CLASS_PLATFORM, Warn, "Stack-trcs (!!!)");
+    log(CLASS_PLATFORM, Warn, "Crshs:%d", espSaveCrash.count());
     char logBfr[256];
     espSaveCrash.print(logBfr, 256);
     logRaw(CLASS_PLATFORM, Warn, logBfr);
