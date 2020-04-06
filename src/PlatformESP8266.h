@@ -411,7 +411,9 @@ BotMode setupArchitecture() {
     espSaveCrash.clear();
   } else if (espSaveCrash.count() > 0) {
     log(CLASS_PLATFORM, Warn, "Stack-trcs (!!!)");
-    espSaveCrash.print();
+    char logBfr[256];
+    espSaveCrash.print(logBfr, 256);
+    logRaw(CLASS_PLATFORM, Warn, logBfr);
   }
 
   log(CLASS_PLATFORM, Debug, "Letting user interrupt...");
