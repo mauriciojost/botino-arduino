@@ -65,7 +65,6 @@ void setup() {
 #include <Description.json.h>
     String* desc = new String(DESCRIPTION_JSON_VERSION);
     log(CLASS_MAIN, Debug, "Pushing description...");
-    logRaw(CLASS_MAIN, Debug, desc->c_str());
     m->getModule()->getPropSync()->pushDescription(desc->c_str());
     delete desc;
 #endif // ARDUINO
