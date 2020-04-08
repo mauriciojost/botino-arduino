@@ -412,14 +412,16 @@ BotMode setupArchitecture() {
   log(CLASS_PLATFORM, Debug, "Setup servos");
   initializeServoConfigs();
 
-  log(CLASS_PLATFORM, User, "Crshs:%d", espSaveCrash.count());
-  if (espSaveCrash.count() > 5) {
-    log(CLASS_PLATFORM, Warn, "Too many Stack-trcs / clearing (!!!)");
+  if (espSaveCrash.count() > 2) {
+    log(CLASS_PLATFORM, Error, "Crshs:%d(!!!)", espSaveCrash.count());
     espSaveCrash.clear();
   } else if (espSaveCrash.count() > 0) {
+    log(CLASS_PLATFORM, Warn, "Crshs:%d", espSaveCrash.count());
     char logBfr[256];
     espSaveCrash.print(logBfr, 256);
     logRaw(CLASS_PLATFORM, Warn, logBfr);
+  } else {
+    log(CLASS_PLATFORM, Debug, "No crashes");
   }
 
   log(CLASS_PLATFORM, Debug, "Letting user interrupt...");
