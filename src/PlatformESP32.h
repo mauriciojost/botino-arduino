@@ -114,7 +114,7 @@ const char *apiDevicePass() {
   return initializeTuningVariable(&apiDevicePwd, DEVICE_PWD_FILENAME, DEVICE_PWD_MAX_LENGTH, NULL, true)->getBuffer();
 }
 
-void logLine(const char *str, const char *clz, LogLevel l) {
+void logLine(const char *str, const char *clz, LogLevel l, bool newline) {
   int ts = (int)((millis()/1000) % 10000);
   Buffer aux(8);
   aux.fill("%04d|", ts);
