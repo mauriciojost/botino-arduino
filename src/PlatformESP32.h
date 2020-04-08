@@ -137,11 +137,12 @@ Serial.print("|");
     }
   }
 #endif // TELNET_ENABLED
-  if (m == NULL) {
-    return;
-  }
+  bool lcdLogsEnabled = (m==NULL?true:m->getBotinoSettings()->getLcdLogs());
+  bool fsLogsEnabled = (m==NULL?true:m->getBotinoSettings()->fsLogsEnabled());
+  int fsLogsLength = (m==NULL?DEFAULT_FS_LOGS_LENGTH:m->getBotinoSettings()->getFsLogsLength());
+
   // lcd print
-  if (lcd != NULL && m->getBotinoSettings()->getLcdLogs()) { // can be called before LCD initialization
+  if (lcd != NULL && lcdLogsEnabled) { // can be called before LCD initialization
     currentLogLine = NEXT_LOG_LINE_ALGORITHM;
     int line = currentLogLine + 2;
     lcd->setTextWrap(false);
@@ -154,14 +155,14 @@ Serial.print("|");
     delay(DELAY_MS_SPI);
   }
   // local logs (to be sent via network)
-  if (m->getBotinoSettings()->fsLogsEnabled()) {
+  if (fsLogsEnabled) {
     if (logBuffer == NULL) {
       logBuffer = new Buffer(LOG_BUFFER_MAX_LENGTH);
     }
     if (newline) {
       logBuffer->append(aux.getBuffer());
     }
-    unsigned int s = (unsigned int)(m->getBotinoSettings()->getFsLogsLength()) + 1;
+    unsigned int s = (unsigned int)(fsLogsLength) + 1;
     char aux2[s];
     strncpy(aux2, str, s);
     aux2[s - 1] = 0;
