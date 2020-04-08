@@ -126,9 +126,9 @@ void logLine(const char *str, const char *clz, LogLevel l, bool newline) {
   aux.fill("%04d|", ts);
   // serial print
 #ifdef HEAP_VCC_LOG
-  Serial.print("HEA:");
-  Serial.print(ESP.getFreeHeap());
-  Serial.print("|");
+  //Serial.print("HEA:");
+  //Serial.print(ESP.getFreeHeap()); // caused a crash, reenable upon upgrade
+  //Serial.print("|");
   Serial.print("VCC:");
   Serial.print(VCC_FLOAT);
   Serial.print("|");
@@ -325,12 +325,11 @@ void infoArchitecture() {
 
   m->getNotifier()->message(0,
                             1,
-                            "ID:%s\nV:%s\nCrashes:%d\nIP: %s\nMemory:%lu\nUptime:%luh\nVcc: %0.2f",
+                            "ID:%s\nV:%s\nCrashes:%d\nIP: %s\nnUptime:%luh\nVcc: %0.2f",
                             apiDeviceLogin(),
                             STRINGIFY(PROJ_VERSION),
                             espSaveCrash.count(),
                             WiFi.localIP().toString().c_str(),
-                            ESP.getFreeHeap(),
                             (millis() / 1000) / 3600,
                             VCC_FLOAT);
 }
@@ -629,7 +628,8 @@ void debugHandle() {
     firstTime = false;
   }
 
-  m->getBotinoSettings()->getStatus()->fill("vcc:%0.2f,freeheap:%d", VCC_FLOAT, ESP.getFreeHeap());
+  //m->getBotinoSettings()->getStatus()->fill("freeheap:%d", ESP.getFreeHeap()); // made crash, reenable upon upgrade
+  m->getBotinoSettings()->getStatus()->fill("vcc:%0.2f", VCC_FLOAT);
   m->getBotinoSettings()->getMetadata()->changed();
 
 #ifdef TELNET_ENABLED
