@@ -341,7 +341,6 @@ BotMode setupArchitecture() {
   Serial.begin(115200);     // Initialize serial port
   Serial.setTimeout(10000); // Timeout for read
   setupLog(logLine);
-  setLogLevel(Info);
   log(CLASS_PLATFORM, Info, "Log initialized");
 
   log(CLASS_PLATFORM, Debug, "Setup cmds");
@@ -405,12 +404,11 @@ BotMode setupArchitecture() {
   log(CLASS_PLATFORM, Debug, "Setup servos");
   initializeServoConfigs();
 
-  log(CLASS_PLATFORM, Debug, "Clean up crashes");
+  log(CLASS_PLATFORM, User, "Crshs:%d", espSaveCrash.count());
   if (espSaveCrash.count() > 5) {
     log(CLASS_PLATFORM, Warn, "Too many Stack-trcs / clearing (!!!)");
     espSaveCrash.clear();
   } else if (espSaveCrash.count() > 0) {
-    log(CLASS_PLATFORM, Warn, "Crshs:%d", espSaveCrash.count());
     char logBfr[256];
     espSaveCrash.print(logBfr, 256);
     logRaw(CLASS_PLATFORM, Warn, logBfr);
