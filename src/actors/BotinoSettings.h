@@ -7,11 +7,13 @@
 #define STATUS_BUFFER_SIZE 64
 
 #define CLASS_BOTINO_SETTINGS "SS"
+#define DEFAULT_FS_LOGS_LENGTH 32
 
 enum BotinoSettingsProps {
   BotinoSettingsLcdLogsProp = 0,  // boolean, define if the device display logs in LCD
   BotinoSettingsStatusProp,       // string, defines the current general status of the device (vcc level, heap, etc)
   BotinoSettingsFsLogsProp,       // boolean, define if logs are to be dumped in the file system (only in debug mode)
+  BotinoSettingsFsLengthLogsProp,       // integer, define the length of the line in the logs
   BotinoSettingsPropsDelimiter
 };
 
@@ -22,6 +24,7 @@ private:
   bool lcdLogs;
   Buffer *status;
   bool fsLogs;
+  int fsLogsLength;
   Metadata *md;
 
 public:
@@ -30,6 +33,7 @@ public:
     lcdLogs = true;
     status = new Buffer(STATUS_BUFFER_SIZE);
     fsLogs = true;
+    fsLogsLength = DEFAULT_FS_LOGS_LENGTH;
     md = new Metadata(n);
     md->getTiming()->setFreq("~24h");
   }
@@ -52,6 +56,8 @@ public:
         return STATUS_PROP_PREFIX "status";
       case (BotinoSettingsFsLogsProp):
         return DEBUG_PROP_PREFIX "fslogs";
+      case (BotinoSettingsFsLengthLogsProp):
+        return DEBUG_PROP_PREFIX "fsll";
       default:
         return "";
     }
@@ -67,6 +73,9 @@ public:
         break;
       case (BotinoSettingsFsLogsProp):
         setPropBoolean(m, targetValue, actualValue, &fsLogs);
+        break;
+      case (BotinoSettingsFsLengthLogsProp):
+        setPropInteger(m, targetValue, actualValue, &fsLogsLength);
         break;
       default:
         break;
@@ -86,6 +95,10 @@ public:
 
   bool fsLogsEnabled() {
     return fsLogs;
+  }
+
+  int getFsLogsLength() {
+    return fsLogsLength;
   }
 
   bool getLcdLogs() {

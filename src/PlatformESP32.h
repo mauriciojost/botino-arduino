@@ -118,6 +118,7 @@ void logLine(const char *str, const char *clz, LogLevel l, bool newline) {
   int ts = (int)((millis()/1000) % 10000);
   Buffer aux(8);
   aux.fill("%04d|", ts);
+
   // serial print
   /*
 Serial.print("HEA:");
@@ -157,8 +158,15 @@ Serial.print("|");
     if (logBuffer == NULL) {
       logBuffer = new Buffer(LOG_BUFFER_MAX_LENGTH);
     }
-    logBuffer->append(aux.getBuffer());
-    logBuffer->append(str);
+    if (newline) {
+      logBuffer->append(aux.getBuffer());
+    }
+    unsigned int s = (unsigned int)(m->getBotinoSettings()->getFsLogsLength()) + 1;
+    char aux2[s];
+    strncpy(aux2, str, s);
+    aux2[s - 1] = 0;
+    aux2[s - 2] = '\n';
+    logBuffer->append(aux2);
   }
 }
 
