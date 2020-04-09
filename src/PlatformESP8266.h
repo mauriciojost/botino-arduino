@@ -24,6 +24,9 @@
 #define SERVO_1_FILENAME "/servo1.tuning"
 #define SLEEP_PERIOD_UPON_BOOT_SEC 2
 
+#define ABORT_LOG_FILENAME "/abort.log"
+#define ABORT_LOG_MAX_LENGTH 64
+
 #define LCD_WIDTH 128
 #define LCD_HEIGHT 64
 
@@ -423,15 +426,25 @@ BotMode setupArchitecture() {
     log(CLASS_PLATFORM, Debug, "No crashes");
   }
 
+  Buffer fcontent(ABORT_LOG_MAX_LENGTH);
+  bool abrt = readFile(ABORT_LOG_FILENAME, &fcontent);
+  if (abrt) {
+    log(CLASS_PLATFORM, Warn, "Abort: %s", fcontent.getBuffer());
+    SPIFFS.begin();
+    SPIFFS.remove(ABORT_LOG_FILENAME);
+    SPIFFS.end();
+  }
+
   log(CLASS_PLATFORM, Debug, "Letting user interrupt...");
   bool i = sleepInterruptable(now(), SLEEP_PERIOD_UPON_BOOT_SEC);
   if (i) {
-    log(CLASS_PLATFORM, Info, "Arch. setup OK => configure mode");
+    log(CLASS_PLATFORM, Info, "SetpOK:confmode");
     return ConfigureMode;
   } else {
-    log(CLASS_PLATFORM, Info, "Arch. setup OK => run mode");
+    log(CLASS_PLATFORM, Info, "SetpOK:runmode");
     return RunMode;
   }
+
 }
 
 void runModeArchitecture() {
@@ -592,6 +605,11 @@ void configureModeArchitecture() {
 void abort(const char *msg) {
   log(CLASS_PLATFORM, Error, "Abort: %s", msg);
   m->getNotifier()->message(0, 2, "Abort: %s", msg);
+
+  Buffer fcontent(ABORT_LOG_MAX_LENGTH);
+  fcontent.fill("time=%ld msg=%s", now(), msg);
+  writeFile(ABORT_LOG_FILENAME, fcontent.getBuffer());
+
   bool interrupt = sleepInterruptable(now(), ABORT_DELAY_SECS);
   if (interrupt) {
     log(CLASS_PLATFORM, Debug, "Abort sleep interrupted");
