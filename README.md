@@ -7,6 +7,7 @@ This is a cool-geek-fully-configurable more-than-an-alarm project.
 ![Botino](misc/images/botino-v0.jpg)
 
 Use cases: 
+
 - you want to be gently reminded to drink water every 30 minutes in your desk TODO show image notifying you
 - you want to be be reminded when to leave work
 - you want to create dances and moves freely to use then to play jokes TODO show image dancing
@@ -14,6 +15,7 @@ Use cases:
 - you want to keep track of events like when you arrive and when you leave work (thanks to IFTTT) TODO show image of the button
 
 Features:
+
 - 8 fully configurable alarms
 - alarms can trigger cool moves on the bot (like arm moves, dances, light shows, fan, images, animations, etc.)
 - can provide the random quote of the day (as part of a move)
@@ -83,6 +85,7 @@ Among the poses, *Botino* can trigger IFTTT events.
 ### IFTTT connectivity
 
 This connectivity (as both This and That block) allows:
+
 - (as This) to control home artifacts like lights, heaters, etc. via a single button
 - (as This) to count events
 - (as That) make a move when an Ifttt condition is met (notify with a dance when tomorrow will rain)
