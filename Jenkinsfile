@@ -16,8 +16,7 @@ pipeline {
         stage('Update build refs') {
           steps {
             script {
-              def libraryjson = readJSON file: 'library.json'
-              def vers = libraryjson['version']
+              def vers = "./upload -i".execute().text
               def buildId = env.BUILD_ID
               currentBuild.displayName = "#$buildId - $vers"
             }
