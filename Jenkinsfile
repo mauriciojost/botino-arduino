@@ -1,6 +1,9 @@
 // https://jenkins.io/doc/book/pipeline/jenkinsfile/
 // Scripted pipeline (not declarative)
 pipeline {
+  triggers {
+    pollSCM '* * * * *'
+  }
   options {
     buildDiscarder(logRotator(numToKeepStr: '10'))
   }
