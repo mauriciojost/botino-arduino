@@ -12,6 +12,16 @@ pipeline {
     stage('Build & deliver') {
       agent { docker 'mauriciojost/arduino-ci:platformio-3.5.3-0.2.1' }
       stages {
+        stage('Scripts prepared') {
+          steps {
+            script {
+              sshagent(['bitbucket_key']) {
+                sh 'git submodule update --init --recursive'
+                sh '.mavarduino/create_links'
+              }
+            }
+          }
+        }
 
         stage('Update build refs') {
           steps {
@@ -28,8 +38,6 @@ pipeline {
             script {
               sshagent(['bitbucket_key']) {
                 wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
-                  sh 'git submodule update --init --recursive'
-                  sh '.mavarduino/create_links'
                   sh 'export GIT_COMMITTER_NAME=jenkinsbot && export GIT_COMMITTER_EMAIL=mauriciojostx@gmail.com && set && ./pull_dependencies -p -l'
                 }
               }
