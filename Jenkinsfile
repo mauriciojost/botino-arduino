@@ -16,7 +16,7 @@ pipeline {
         stage('Update build refs') {
           steps {
             script {
-              def vers = "./upload -i".execute().text
+              def vers = sh(script: './upload -i', returnStdout: true)
               def buildId = env.BUILD_ID
               currentBuild.displayName = "#$buildId - $vers"
             }
