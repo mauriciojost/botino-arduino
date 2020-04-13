@@ -9,6 +9,7 @@
 #include <Wire.h>
 #include <utils/Io.h>
 #include <utils/ServoConf.h>
+#include <PlatformESP.h>
 
 #define DELAY_MS_SPI 3
 #define ABORT_DELAY_SECS 5
@@ -449,13 +450,6 @@ void runModeArchitecture() {
   if (m->getModuleSettings()->getDebug()) {
     debugHandle();
   }
-}
-
-void askStringQuestion(const char *question, Buffer *answer) {
-  m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "%s\n(answer serial and enter)", question);
-  Serial.readBytesUntil('\n', answer->getUnsafeBuffer(), COMMAND_MAX_LENGTH);
-  answer->replace('\n', '\0');
-  answer->replace('\r', '\0');
 }
 
 bool askBoolQuestion(const char *question) {

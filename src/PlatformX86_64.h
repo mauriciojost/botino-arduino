@@ -111,6 +111,8 @@ void abort(const char *msg) {
   log(CLASS_PLATFORM, Error, "Abort: %s", msg);
 }
 
+void askStringQuestion(const char *question, Buffer *answer) { }
+
 ////////////////////////////////////////
 // Architecture specific functions
 ////////////////////////////////////////

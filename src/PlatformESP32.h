@@ -7,6 +7,7 @@
 //#include <Servo.h>
 #include <Wire.h>
 #include <utils/Io.h>
+#include <PlatformESP.h>
 //#include <utils/ServoConf.h>
 
 #define FORMAT_SPIFFS_IF_FAILED true
@@ -422,13 +423,6 @@ void runModeArchitecture() {
   if (m->getModuleSettings()->getDebug()) {
     debugHandle();
   }
-}
-
-void askStringQuestion(const char *question, Buffer *answer) {
-  m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "%s\n(answer serial and enter)", question);
-  Serial.readBytesUntil('\n', answer->getUnsafeBuffer(), COMMAND_MAX_LENGTH);
-  answer->replace('\n', '\0');
-  answer->replace('\r', '\0');
 }
 
 bool askBoolQuestion(const char *question) {

@@ -25,10 +25,11 @@
 #endif // USER_DELAY_MS
 
 #define USER_INTERACTION_LOOPS_MAX 80
+
 #ifndef QUESTION_ANSWER_MAX_LENGTH
 #define QUESTION_ANSWER_MAX_LENGTH 128
 #endif // QUESTION_ANSWER_MAX_LENGTH
-#define QUESTION_ANSWER_TIMEOUT_MS 60000
+
 
 
 Buffer *logBuffer = NULL;
@@ -88,9 +89,6 @@ void infoArchitecture();
 // Perform tests on the architecture
 void testArchitecture();
 
-// Update the firmware and restart the device
-void updateFirmwareVersion(const char *targetVersion, const char *currentVersion);
-
 // Execution
 ///////////////////
 
@@ -121,16 +119,10 @@ Buffer *getLogBuffer();
 // Tells if the button has been pressed
 bool buttonIsPressed();
 
+void askStringQuestion(const char *question, Buffer *answer);
+
 // Generic functions common to all architectures
 ///////////////////
-
-void askStringQuestion(const char *question, Buffer *answer) {
-  log(CLASS_PLATFORM, User, "Question: %s", question);
-  Serial.setTimeout(QUESTION_ANSWER_TIMEOUT_MS);
-  Serial.readBytesUntil('\n', answer->getUnsafeBuffer(), QUESTION_ANSWER_MAX_LENGTH);
-  answer->replace('\n', '\0');
-  answer->replace('\r', '\0');
-}
 
 Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLength, const char *defaultContent, bool obfuscate) {
   bool first = false;
@@ -200,7 +192,7 @@ void updateFirmwareVersion(const char *targetVersion, const char *currentVersion
   if (c) {
     updateFirmwareFromMain4ino(m->getModule()->getPropSync()->getSession(), apiDeviceLogin(), PROJECT_ID, PLATFORM_ID, targetVersion, currentVersion);
   } else {
-    log(CLASS_PLATFORM, Error, "Could not connect");
+    log(CLASS_PLATFORM, Error, "Could not update");
   }
 }
 
