@@ -137,7 +137,7 @@ public:
   }
 
   StartupStatus startupProperties() {
-    startupStatus result = module->startupProperties();
+    StartupStatus result = module->startupProperties();
 
     // setup retries
     module->getPropSync()->getTiming()->setRetryPeriod(PROPSYNC_RETRY_PERIOD_SECS);
