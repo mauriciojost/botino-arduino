@@ -422,7 +422,7 @@ void setupArchitecture() {
   heartbeat();
 
   if (espSaveCrash.count() > 0) {
-    bool fsLogsEnabled = (m==NULL?true:m->getSleepinoSettings()->fsLogsEnabled());
+    bool fsLogsEnabled = (m==NULL?true:m->getBotinoSettings()->fsLogsEnabled());
     if (fsLogsEnabled) {
       initLogBuffer();
       espSaveCrash.print(logBuffer->getUnsafeBuffer(), LOG_BUFFER_MAX_LENGTH);
