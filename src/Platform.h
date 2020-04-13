@@ -25,6 +25,10 @@
 #endif // USER_DELAY_MS
 
 #define USER_INTERACTION_LOOPS_MAX 80
+#ifndef QUESTION_ANSWER_MAX_LENGTH
+#define QUESTION_ANSWER_MAX_LENGTH 128
+#endif // QUESTION_ANSWER_MAX_LENGTH
+
 
 Buffer *logBuffer = NULL;
 ModuleBotino *m = NULL;
@@ -119,6 +123,13 @@ bool buttonIsPressed();
 // Generic functions common to all architectures
 ///////////////////
 
+void askStringQuestion(const char *question, Buffer *answer) {
+  log(CLASS_PLATFORM, User, "Question: %s", question);
+  Serial.readBytesUntil('\n', answer->getUnsafeBuffer(), QUESTION_ANSWER_MAX_LENGTH);
+  answer->replace('\n', '\0');
+  answer->replace('\r', '\0');
+}
+
 Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLength, const char *defaultContent, bool obfuscate) {
   bool first = false;
   if (*var == NULL) {
@@ -127,13 +138,16 @@ Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLeng
     bool succValue = readFile(filename, *var); // read value from file
     if (succValue) {                           // managed to retrieve the value
       log(CLASS_PLATFORM, Debug, "Read %s: OK", filename);
-      (*var)->replace('\n', 0);          // minor formatting
-    } else if (defaultContent != NULL) { // failed to retrieve value, use default content if provided
+      (*var)->replace('\n', 0);                // minor formatting
+    } else if (defaultContent != NULL) {       // failed to retrieve value, use default content if provided
       log(CLASS_PLATFORM, Debug, "Read %s: KO", filename);
       log(CLASS_PLATFORM, Debug, "Using default: %s", defaultContent);
       (*var)->fill(defaultContent);
     } else {
-      abort(filename);
+      Buffer buffer(QUESTION_ANSWER_MAX_LENGTH);
+      askStringQuestion(filename, &buffer);
+      writeFile(filename, buffer.getBuffer());
+      (*var)->fill(buffer.getBuffer());
     }
   }
   if (first) {
