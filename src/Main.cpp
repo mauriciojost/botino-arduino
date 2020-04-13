@@ -47,7 +47,7 @@ void setup() {
   StartupStatus c = m->startupProperties();
   m->getBot()->setMode(c.botMode);
   if (c.startupCode != ModuleStartupPropertiesCodeSuccess) {
-    log(CLASS_MAIN, Error, "Failure: %d", (int)ec.startupCode);
+    log(CLASS_MAIN, Error, "Failure: %d", (int)c.startupCode);
     bool i = sleepInterruptable(now(), 10);
     if (i) {
     } else {
