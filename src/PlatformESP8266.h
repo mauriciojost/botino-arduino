@@ -125,6 +125,12 @@ const char *apiDevicePass() {
   return initializeTuningVariable(&apiDevicePwd, DEVICE_PWD_FILENAME, DEVICE_PWD_MAX_LENGTH, NULL, true)->getBuffer();
 }
 
+void initLogBuffer() {
+  if (logBuffer == NULL) {
+    logBuffer = new Buffer(LOG_BUFFER_MAX_LENGTH);
+  }
+}
+
 void logLine(const char *str, const char *clz, LogLevel l, bool newline) {
   int ts = (int)((millis()/1000) % 10000);
   Buffer time(8);
@@ -166,9 +172,7 @@ void logLine(const char *str, const char *clz, LogLevel l, bool newline) {
   }
   // local logs (to be sent via network)
   if (fsLogsEnabled) {
-    if (logBuffer == NULL) {
-      logBuffer = new Buffer(LOG_BUFFER_MAX_LENGTH);
-    }
+    initLogBuffer();
     if (newline) {
       logBuffer->append(time.getBuffer());
     }
@@ -418,16 +422,18 @@ void setupArchitecture() {
   heartbeat();
 
   if (espSaveCrash.count() > 0) {
-    log(CLASS_PLATFORM, Warn, "Crshs:%d", espSaveCrash.count());
-    char logBfr[256];
-    espSaveCrash.print(logBfr, 256);
-    if (logBuffer != NULL) {
-      logBuffer->append("\n");
-      logBuffer->append(logBfr);
-      logBuffer->append("\n");
+    bool fsLogsEnabled = (m==NULL?true:m->getSleepinoSettings()->fsLogsEnabled());
+    if (fsLogsEnabled) {
+      initLogBuffer();
+      espSaveCrash.print(logBuffer->getUnsafeBuffer(), LOG_BUFFER_MAX_LENGTH);
+      writeFile(STACKTRACE_LOG_FILENAME, logBuffer->getBuffer());
+      espSaveCrash.clear();
     }
-    writeFile(STACKTRACE_LOG_FILENAME, logBfr);
-    espSaveCrash.clear();
+    // Useful links for debugging:
+    // https://links2004.github.io/Arduino/dc/deb/md_esp8266_doc_exception_causes.html
+    // ./packages/framework-arduinoespressif8266@2.20502.0/tools/sdk/include/user_interface.h
+    // https://bitbucket.org/mauriciojost/esp8266-stacktrace-translator/src/master/
+    log(CLASS_PLATFORM, Error, "Crshs:%d", espSaveCrash.count());
   } else {
     log(CLASS_PLATFORM, Debug, "No crashes");
   }
