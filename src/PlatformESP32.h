@@ -23,7 +23,6 @@
 
 //#define SERVO_0_FILENAME "/servo0.tuning"
 //#define SERVO_1_FILENAME "/servo1.tuning"
-#define SLEEP_PERIOD_UPON_BOOT_SEC 2
 
 #define LCD_WIDTH 128
 #define LCD_HEIGHT 64
@@ -334,7 +333,7 @@ void testArchitecture() {}
 // Execution
 ///////////////////
 
-BotMode setupArchitecture() {
+void setupArchitecture() {
 
   // Let HW startup
   delay(HW_STARTUP_DELAY_MSECS);
@@ -416,15 +415,6 @@ BotMode setupArchitecture() {
   }
   */
 
-  log(CLASS_PLATFORM, Debug, "Letting user interrupt...");
-  bool i = sleepInterruptable(now(), SLEEP_PERIOD_UPON_BOOT_SEC);
-  if (i) {
-    log(CLASS_PLATFORM, Info, "Arch. setup OK => configure mode");
-    return ConfigureMode;
-  } else {
-    log(CLASS_PLATFORM, Info, "Arch. setup OK => run mode");
-    return RunMode;
-  }
 }
 
 void runModeArchitecture() {

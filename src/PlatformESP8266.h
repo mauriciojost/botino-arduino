@@ -22,7 +22,6 @@
 
 #define SERVO_0_FILENAME "/servo0.tuning"
 #define SERVO_1_FILENAME "/servo1.tuning"
-#define SLEEP_PERIOD_UPON_BOOT_SEC 2
 
 #define ABORT_LOG_FILENAME "/abort.log"
 #define ABORT_LOG_MAX_LENGTH 64
@@ -344,7 +343,7 @@ void testArchitecture() {}
 // Execution
 ///////////////////
 
-BotMode setupArchitecture() {
+void setupArchitecture() {
 
   // Let HW startup
   delay(HW_STARTUP_DELAY_MSECS);
@@ -441,16 +440,6 @@ BotMode setupArchitecture() {
     SPIFFS.end();
   } else {
     log(CLASS_PLATFORM, Debug, "No abort");
-  }
-
-  log(CLASS_PLATFORM, Debug, "Letting user interrupt...");
-  bool i = sleepInterruptable(now(), SLEEP_PERIOD_UPON_BOOT_SEC);
-  if (i) {
-    log(CLASS_PLATFORM, Info, "SetpOK:confmode");
-    return ConfigureMode;
-  } else {
-    log(CLASS_PLATFORM, Info, "SetpOK:runmode");
-    return RunMode;
   }
 
 }

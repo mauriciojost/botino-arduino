@@ -136,8 +136,8 @@ public:
     body->setup(armsFunc, iosFunc, sleepInterruptableFunc, buttonIsPressedFunc);
   }
 
-  ModuleStartupPropertiesCode startupProperties() {
-    ModuleStartupPropertiesCode result = module->startupProperties();
+  StartupStatus startupProperties() {
+    startupStatus result = module->startupProperties();
 
     // setup retries
     module->getPropSync()->getTiming()->setRetryPeriod(PROPSYNC_RETRY_PERIOD_SECS);
