@@ -27,6 +27,8 @@
 
 #define LCD_WIDTH 128
 #define LCD_HEIGHT 64
+#define ABORT_LOG_FILENAME "/abort.log"
+#define ABORT_LOG_MAX_LENGTH 64
 
 #define LCD_CHAR_WIDTH 6
 #define LCD_CHAR_HEIGHT 8
@@ -276,6 +278,7 @@ void clearDevice() {
   log(CLASS_PLATFORM, User, "   rm %s", DEVICE_PWD_FILENAME);
   log(CLASS_PLATFORM, User, "   ls");
   log(CLASS_PLATFORM, User, "   <remove all .properties>");
+
 }
 
 void lcdImg(char img, uint8_t bitmap[]) {
@@ -350,6 +353,7 @@ void setupArchitecture() {
   log(CLASS_PLATFORM, Debug, "Setup cmds");
   cmdBuffer = new Buffer(COMMAND_MAX_LENGTH);
   cmdLast = new Buffer(COMMAND_MAX_LENGTH);
+
   log(CLASS_PLATFORM, Debug, "Setup timing");
   setExternalMillis(millis);
 
@@ -407,17 +411,17 @@ void setupArchitecture() {
   // log(CLASS_PLATFORM, Debug, "Setup servos");
   // initializeServoConfigs();
 
-  /*
-  log(CLASS_PLATFORM, Debug, "Clean up crashes");
-  if (SaveCrash.count() > 5) {
-    log(CLASS_PLATFORM, Warn, "Too many Stack-trcs / clearing (!!!)");
-    SaveCrash.clear();
-  } else if (SaveCrash.count() > 0) {
-    log(CLASS_PLATFORM, Warn, "Stack-trcs (!!!)");
-    SaveCrash.print();
-  }
-  */
 
+  Buffer fcontent(ABORT_LOG_MAX_LENGTH);
+  bool abrt = readFile(ABORT_LOG_FILENAME, &fcontent);
+  if (abrt) {
+    log(CLASS_PLATFORM, Warn, "Abort: %s", fcontent.getBuffer());
+
+    SPIFFS.remove(ABORT_LOG_FILENAME);
+
+  } else {
+    log(CLASS_PLATFORM, Debug, "No abort");
+  }
 }
 
 void runModeArchitecture() {
@@ -569,6 +573,11 @@ void configureModeArchitecture() {
 void abort(const char *msg) {
   log(CLASS_PLATFORM, Error, "Abort: %s", msg);
   m->getNotifier()->message(0, 2, "Abort: %s", msg);
+
+  Buffer fcontent(ABORT_LOG_MAX_LENGTH);
+  fcontent.fill("time=%ld msg=%s", now(), msg);
+  writeFile(ABORT_LOG_FILENAME, fcontent.getBuffer());
+
   bool interrupt = sleepInterruptable(now(), ABORT_DELAY_SECS);
   if (interrupt) {
     log(CLASS_PLATFORM, Debug, "Abort sleep interrupted");
