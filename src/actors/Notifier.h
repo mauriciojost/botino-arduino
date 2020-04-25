@@ -125,7 +125,7 @@ public:
     va_start(args, format);
     vsnprintf(buffer.getUnsafeBuffer(), MAX_MSG_LENGTH, format, args);
     buffer.getUnsafeBuffer()[MAX_MSG_LENGTH - 1] = 0;
-    messageFunc(0, line, WHITE, DO_WRAP, LineClear, size, buffer.getBuffer());
+    messageFunc(0, line, WHITE, DO_WRAP, FullClear, size, buffer.getBuffer());
     log(CLASS_NOTIFIER, Debug, "Message: '%s'", buffer.getBuffer());
     va_end(args);
 
