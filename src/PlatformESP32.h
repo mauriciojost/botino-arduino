@@ -7,6 +7,7 @@
 //#include <Servo.h>
 #include <Wire.h>
 #include <utils/Io.h>
+#include <primitives/BoardESP32.h>
 #include <PlatformESP.h>
 //#include <utils/ServoConf.h>
 
@@ -94,7 +95,6 @@ bool haveToInterrupt();
 void handleInterrupt();
 // void initializeServoConfigs();
 
-#include <primitives/BoardESP32.h>
 
 ////////////////////////////////////////
 // Functions requested for architecture

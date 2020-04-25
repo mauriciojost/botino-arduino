@@ -9,6 +9,7 @@
 #include <Wire.h>
 #include <utils/Io.h>
 #include <utils/ServoConf.h>
+#include <primitives/BoardESP8266.h>
 #include <PlatformESP.h>
 
 #define DELAY_MS_SPI 3
@@ -99,8 +100,6 @@ void debugHandle();
 bool haveToInterrupt();
 void handleInterrupt();
 void initializeServoConfigs();
-
-#include <primitives/BoardESP8266.h>
 
 ////////////////////////////////////////
 // Functions requested for architecture
