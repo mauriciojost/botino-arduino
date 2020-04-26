@@ -186,6 +186,7 @@
 /src/PinoutESP8266.h
 /src/X86_64.h
 /src/primitives
+/src/pinouts
 /src/Description.json.h
 /bump_version
 /format_code
