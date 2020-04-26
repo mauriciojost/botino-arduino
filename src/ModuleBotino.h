@@ -1,7 +1,6 @@
 #ifndef MODULE_BOTINO_INC
 #define MODULE_BOTINO_INC
 
-#include <Pinout.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
 #include <Constants.h>
