@@ -1,7 +1,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <EspSaveCrash.h>
-#include <Pinout.h>
+#include <PinoutESP8266.h>
 #include <Platform.h>
 #include <RemoteDebug.h>
 #include <SPI.h>
