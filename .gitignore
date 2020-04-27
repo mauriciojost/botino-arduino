@@ -195,3 +195,5 @@
 /*.gcda
 /.pio/
 /.vscode
+/src/ESP32_Servo.h
+/src/ESP32_Servo.cpp

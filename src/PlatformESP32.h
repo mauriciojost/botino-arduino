@@ -4,12 +4,12 @@
 #include <Platform.h>
 #include <RemoteDebug.h>
 #include <SPI.h>
-//#include <Servo.h>
+#include <ESP32_Servo.h>
 #include <Wire.h>
 #include <utils/Io.h>
+#include <utils/ServoConf.h>
 #include <primitives/BoardESP32.h>
 #include <PlatformESP.h>
-//#include <utils/ServoConf.h>
 
 #define FORMAT_SPIFFS_IF_FAILED true
 
@@ -23,13 +23,13 @@
 #define DEVICE_PWD_FILENAME "/pass.tuning"
 #define DEVICE_PWD_MAX_LENGTH 16
 
-//#define SERVO_0_FILENAME "/servo0.tuning"
-//#define SERVO_1_FILENAME "/servo1.tuning"
+#define SERVO_0_FILENAME "/servo0.tuning"
+#define SERVO_1_FILENAME "/servo1.tuning"
 
-#define LCD_WIDTH 128
-#define LCD_HEIGHT 64
 #define ABORT_LOG_FILENAME "/abort.log"
 #define ABORT_LOG_MAX_LENGTH 64
+#define LCD_WIDTH 128
+#define LCD_HEIGHT 64
 
 #define LCD_CHAR_WIDTH 6
 #define LCD_CHAR_HEIGHT 8
@@ -48,9 +48,6 @@
 #define ONLY_SHOW_MSG true
 #define SHOW_MSG_AND_REACT false
 
-// extern "C" {
-//#include "user_interface.h"
-//}
 
 #define HELP_COMMAND_ARCH_CLI                                                                                                              \
   "\n  ESP32 HELP"                                                                                                                         \
@@ -68,14 +65,16 @@
 volatile bool buttonEnabled = true;
 volatile unsigned char buttonInterrupts = 0;
 
+#ifdef TELNET_ENABLED
 RemoteDebug telnet;
-// Servo servoLeft;
-// Servo servoRight;
+#endif // TELNET_ENABLED
+Servo servoLeft;
+Servo servoRight;
 Adafruit_SSD1306 *lcd = NULL;
 Buffer *apiDeviceId = NULL;
 Buffer *apiDevicePwd = NULL;
-// ServoConf *servo0Conf = NULL;
-// ServoConf *servo1Conf = NULL;
+ServoConf *servo0Conf = NULL;
+ServoConf *servo1Conf = NULL;
 int currentLogLine = 0;
 Buffer *cmdBuffer = NULL;
 Buffer *cmdLast = NULL;
@@ -93,8 +92,7 @@ void heartbeat();
 void debugHandle();
 bool haveToInterrupt();
 void handleInterrupt();
-// void initializeServoConfigs();
-
+void initializeServoConfigs();
 
 ////////////////////////////////////////
 // Functions requested for architecture
@@ -102,7 +100,6 @@ void handleInterrupt();
 
 // Callbacks
 ///////////////////
-
 
 bool buttonIsPressed() {
   return BUTTON_IS_PRESSED;
@@ -116,20 +113,25 @@ const char *apiDevicePass() {
   return initializeTuningVariable(&apiDevicePwd, DEVICE_PWD_FILENAME, DEVICE_PWD_MAX_LENGTH, NULL, true)->getBuffer();
 }
 
+void initLogBuffer() {
+  if (logBuffer == NULL) {
+    logBuffer = new Buffer(LOG_BUFFER_MAX_LENGTH);
+  }
+}
+
 void logLine(const char *str, const char *clz, LogLevel l, bool newline) {
   int ts = (int)((millis()/1000) % 10000);
-  Buffer aux(8);
-  aux.fill("%04d|", ts);
-
+  Buffer time(8);
+  time.fill("%04d|", ts);
   // serial print
-  /*
-Serial.print("HEA:");
-Serial.print(ESP.getFreeHeap());
-Serial.print("|");
+#ifdef HEAP_VCC_LOG
+  //Serial.print("HEA:");
+  //Serial.print(ESP.getFreeHeap());
+  //Serial.print("|");
 Serial.print("VCC:");
 Serial.print(VCC_FLOAT);
 Serial.print("|");
-*/
+#endif // HEAP_VCC_LOG
   Serial.print(str);
   // telnet print
 #ifdef TELNET_ENABLED
@@ -158,11 +160,9 @@ Serial.print("|");
   }
   // local logs (to be sent via network)
   if (fsLogsEnabled) {
-    if (logBuffer == NULL) {
-      logBuffer = new Buffer(LOG_BUFFER_MAX_LENGTH);
-    }
+    initLogBuffer();
     if (newline) {
-      logBuffer->append(aux.getBuffer());
+      logBuffer->append(time.getBuffer());
     }
     unsigned int s = (unsigned int)(fsLogsLength) + 1;
     char aux2[s];
@@ -197,7 +197,6 @@ void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clearMode, int
 }
 
 void arms(int left, int right, int periodFactor) {
-  /*
 static int lastDegL = -1;
 static int lastDegR = -1;
 
@@ -229,7 +228,6 @@ lastDegL = targetDegL;
 lastDegR = targetDegR;
 servoLeft.detach();
 servoRight.detach();
-*/
 }
 
 void ios(char led, IoMode value) {
@@ -369,14 +367,17 @@ void setupArchitecture() {
   pinMode(SERVO1_PIN, OUTPUT);
   pinMode(BUTTON0_PIN, INPUT);
 
+  //log(CLASS_PLATFORM, Debug, "Setup wdt");
+  //ESP.wdtEnable(1); // argument not used
+
   log(CLASS_PLATFORM, Debug, "Setup LCD");
   lcd = new Adafruit_SSD1306(-1);
   lcd->begin(SSD1306_SWITCHCAPVCC, 0x3C); // Initialize LCD
   delay(DELAY_MS_SPI);
   heartbeat();
 
-  // log(CLASS_PLATFORM, Debug, "Setup wdt");
-  // ESP.wdtEnable(1); // argument not used
+
+
   log(CLASS_PLATFORM, Debug, "Setup wifi");
   WiFi.persistent(false);
   WiFi.setHostname(apiDeviceLogin());
@@ -408,10 +409,9 @@ void setupArchitecture() {
   lcdImg('l', NULL);
   heartbeat();
 
-  // log(CLASS_PLATFORM, Debug, "Setup servos");
-  // initializeServoConfigs();
-
-
+  log(CLASS_PLATFORM, Debug, "Setup servos");
+  initializeServoConfigs();
+  heartbeat();
   Buffer fcontent(ABORT_LOG_MAX_LENGTH);
   bool abrt = readFile(ABORT_LOG_FILENAME, &fcontent);
   if (abrt) {
@@ -422,6 +422,7 @@ void setupArchitecture() {
   } else {
     log(CLASS_PLATFORM, Debug, "No abort");
   }
+
 }
 
 void runModeArchitecture() {
@@ -438,7 +439,6 @@ bool askBoolQuestion(const char *question) {
   return (bool)answer;
 }
 
-/*
 void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
   servo->attach(pin);
   servo->write(0);
@@ -475,51 +475,47 @@ void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
 
   servo->detach();
 }
-*/
 
 CmdExecStatus commandArchitecture(const char *c) {
   if (strcmp("servo", c) == 0) {
-    /*
-char servo = strtok(NULL, " ")[0];
-Buffer serialized(16);
-if (servo == 'r' || servo == 'R') {
-  arms(2, 2, 1);
-  arms(2, 7, 1);
-  arms(2, 2, 1);
-  tuneServo("right servo", SERVO1_PIN, &servoRight, servo1Conf);
-  servo1Conf->serialize(&serialized); // right servo1
-  writeFile(SERVO_1_FILENAME, serialized.getBuffer());
-  log(CLASS_PLATFORM, User, "Stored tuning right servo");
-  arms(0, 0, 1);
-  arms(0, 9, 1);
-  arms(0, 0, 1);
-  return Executed;
-} else if (servo == 'l' || servo == 'L') {
-  arms(2, 2, 1);
-  arms(7, 2, 1);
-  arms(2, 2, 1);
-  tuneServo("left servo", SERVO0_PIN, &servoLeft, servo0Conf);
-  servo0Conf->serialize(&serialized); // left servo0
-  writeFile(SERVO_0_FILENAME, serialized.getBuffer());
-  log(CLASS_PLATFORM, User, "Stored tuning left servo");
-  arms(0, 0, 1);
-  arms(9, 0, 1);
-  arms(0, 0, 1);
-  return Executed;
-} else {
-  log(CLASS_PLATFORM, User, "Invalid servo (l|r)");
-  return InvalidArgs;
-}
-  */
-    return InvalidArgs;
+    char servo = strtok(NULL, " ")[0];
+    Buffer serialized(16);
+    if (servo == 'r' || servo == 'R') {
+      arms(2, 2, 1);
+      arms(2, 7, 1);
+      arms(2, 2, 1);
+      tuneServo("right servo", SERVO1_PIN, &servoRight, servo1Conf);
+      servo1Conf->serialize(&serialized); // right servo1
+      writeFile(SERVO_1_FILENAME, serialized.getBuffer());
+      log(CLASS_PLATFORM, User, "Stored tuning right servo");
+      arms(0, 0, 1);
+      arms(0, 9, 1);
+      arms(0, 0, 1);
+      return Executed;
+    } else if (servo == 'l' || servo == 'L') {
+      arms(2, 2, 1);
+      arms(7, 2, 1);
+      arms(2, 2, 1);
+      tuneServo("left servo", SERVO0_PIN, &servoLeft, servo0Conf);
+      servo0Conf->serialize(&serialized); // left servo0
+      writeFile(SERVO_0_FILENAME, serialized.getBuffer());
+      log(CLASS_PLATFORM, User, "Stored tuning left servo");
+      arms(0, 0, 1);
+      arms(9, 0, 1);
+      arms(0, 0, 1);
+      return Executed;
+    } else {
+      log(CLASS_PLATFORM, User, "Invalid servo (l|r)");
+      return InvalidArgs;
+    }
   } else if (strcmp("init", c) == 0) {
     logRaw(CLASS_PLATFORM, User, "-> Initialize");
     logRaw(CLASS_PLATFORM, User, "Execute:");
     logRaw(CLASS_PLATFORM, User, "   ls");
     log(CLASS_PLATFORM, User, "   save %s <alias>", DEVICE_ALIAS_FILENAME);
     log(CLASS_PLATFORM, User, "   save %s <pwd>", DEVICE_PWD_FILENAME);
-    // logRaw(CLASS_PLATFORM, User, "   servo l");
-    // logRaw(CLASS_PLATFORM, User, "   servo r");
+    logRaw(CLASS_PLATFORM, User, "   servo l");
+    logRaw(CLASS_PLATFORM, User, "   servo r");
     logRaw(CLASS_PLATFORM, User, "   wifissid <ssid>");
     logRaw(CLASS_PLATFORM, User, "   wifipass <password>");
     logRaw(CLASS_PLATFORM, User, "   wifissidb <ssidb>");
@@ -699,8 +695,10 @@ void handleInterrupt() {
       } else if (c == 0x1b && n == 1) { // up/down
         log(CLASS_PLATFORM, Debug, "Up/down");
         cmdBuffer->load(cmdLast->getBuffer());
-      } else if ((c == '\n' || c == '\r') && n == 1) { // if enter is pressed...
+      } else if (c == '\n' && n == 1) { // if enter is pressed...
         log(CLASS_PLATFORM, Debug, "Enter");
+        cmdBuffer->replace('\n', 0);
+        cmdBuffer->replace('\r', 0);
         if (cmdBuffer->getLength() > 0) {
           CmdExecStatus execStatus = m->command(cmdBuffer->getBuffer());
           bool interrupt = (execStatus == ExecutedInterrupt);
@@ -749,15 +747,14 @@ bool haveToInterrupt() {
   if (Serial.available()) {
     log(CLASS_PLATFORM, Debug, "Serial pinged: int");
     return true;
-    //} else if (buttonInterrupts > 0) {
-    //  log(CLASS_PLATFORM, Debug, "Button pressed: int");
-    //  return true;
+  } else if (buttonInterrupts > 0) {
+    log(CLASS_PLATFORM, Debug, "Button pressed: int");
+    return true;
   } else {
     return false;
   }
 }
 
-/*
 void initializeServoConfig(const char *tuningFilename, ServoConf **conf) {
   Buffer aux(SERVO_CONF_SERIALIZED_MAX_LENGTH);
   bool succServo0 = readFile(tuningFilename, &aux);
@@ -773,4 +770,3 @@ void initializeServoConfigs() {
   initializeServoConfig(SERVO_0_FILENAME, &servo0Conf);
   initializeServoConfig(SERVO_1_FILENAME, &servo1Conf);
 }
-*/
