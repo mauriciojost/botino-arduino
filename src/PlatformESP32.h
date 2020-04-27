@@ -1,6 +1,6 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include <Pinout.h>
+#include <PinoutESP32.h>
 #include <Platform.h>
 #include <RemoteDebug.h>
 #include <SPI.h>
