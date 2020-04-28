@@ -241,12 +241,21 @@ void ios(char led, IoMode value) {
       return;
     case 'r':
       pin = LEDR_PIN;
+#ifdef ESP32_LEDR_INVERT
+      value = invert(value);
+#endif // ESP32_LEDR_INVERT
       break;
     case 'w':
       pin = LEDW_PIN;
+#ifdef ESP32_LEDW_INVERT
+      value = invert(value);
+#endif // ESP32_LEDW_INVERT
       break;
     case 'y':
       pin = LEDY_PIN;
+#ifdef ESP32_LEDY_INVERT
+      value = invert(value);
+#endif // ESP32_LEDY_INVERT
       break;
     case 'f':
       pin = FAN_PIN;
