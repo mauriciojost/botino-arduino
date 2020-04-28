@@ -18,7 +18,7 @@
 #define LEDW_PIN GPIO13_PIN // WHITE LED
 #endif                      // LEDW_PIN
 #ifndef LEDR_PIN            // 1 off, 0 on
-#define LEDR_PIN GPIO14_PIN  // RED LED
+#define LEDR_PIN GPIO2_PIN  // RED LED
 #endif                      // LEDR_PIN
 
 // FAN

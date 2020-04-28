@@ -670,7 +670,7 @@ void heartbeat() {
   lcd->drawChar(x, y, c, 1, 0, size);
   lcd->display();
 #endif // VISUAL_HEARTBEAT
-  delay(4);
+  delay(50);
 #ifdef VISUAL_HEARTBEAT
   lcd->drawChar(x, y, c, 0, 0, size);
   lcd->display();
