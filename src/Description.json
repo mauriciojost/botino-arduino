@@ -2,7 +2,7 @@
   "version" : "STRINGIFY_PROJ_VERSION",
   "json" : [
     {
-      "patterns" : ["^.*..freq$"],
+      "patterns" : ["^.*.freq$"],
       "descriptions" : ["Frequency at which the actor will act and perform its duty. See <a href=\"https://bitbucket.org/mauriciojost/main4ino-arduino/src/master/README.md\" target=\"_blank\">here</a>."],
       "examples" : [
         "never     -> Never",
@@ -15,7 +15,7 @@
       ]
     },
     {
-      "patterns" : ["^body..r\\d{1,2}$"],
+      "patterns" : ["^body.r\\d+$"],
       "descriptions" : ["Routine i-th of the body (format: frequency:pose1.pose2...poseN. . See <a href=\"https://github.com/mauriciojost/botino-arduino/blob/master/src/actors/Body.md\" target=\"_blank\">all pose codes here</a>."],
       "examples" : [
         "@12h00:M2Message at midday.A99. -> Tell message Lunch! at 12 every day and put arms up quickly",
@@ -39,7 +39,7 @@
       "examples" : [ "Arms up:move C99.", "Update:update", "Execute IFTTT event:move Ievent.", "Acknowledge notification: ack" ]
     },
     {
-      "patterns" : ["^images.im\\d{1,2}"],
+      "patterns" : ["^images.im\\d+$"],
       "descriptions" :
           ["Bitmap of custom image i-th, represented in base 64. See <a href=\"https://docs.google.com/spreadsheets/d/1jXa9mFxeiN_bUji_WiCPKO_gB6pxQUeQ5QxgoSINqdc/edit\" target=\"_blank\">here</a>."],
       "examples" : [
@@ -50,8 +50,13 @@
       ]
     },
     {
-      "patterns" : ["^propsync..forcesyncfreq$"],
+      "patterns" : ["^propsync..fsyncfreq$"],
       "descriptions" : ["Frequency at which the device performs a full synchronization with the server (required as the server performs regular cleanup on old records)."],
+      "examples" : ["~72h"]
+    },
+    {
+      "patterns" : ["^propsync..fstorefreq$"],
+      "descriptions" : ["Frequency at which the device performs a full backup of all properties."],
       "examples" : ["~72h"]
     },
     {
