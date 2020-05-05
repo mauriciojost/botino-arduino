@@ -43,9 +43,7 @@ const char *apiDevicePass() {
   return SIMULATOR_PASS;
 }
 
-void logLine(const char *str) {
-  printf("LOG: %s", str);
-}
+void logLine(const char *str, const char *clz, LogLevel l, bool newline) { }
 
 void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str) {
   printf("\n\n***** LCD (size %d)\n  %s\n*****\n\n", size, str);
@@ -83,6 +81,7 @@ bool haveToInterrupt() {
 void setupArchitecture() {
   log(CLASS_PLATFORM, Debug, "Setup timing");
   setExternalMillis(millis);
+  setupLog(logLine);
 }
 
 void runModeArchitecture() {
