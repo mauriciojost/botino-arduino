@@ -149,44 +149,7 @@ void clearDevice() {
 
 }
 
-void lcdImg(char img, uint8_t bitmap[]) {
-  log(CLASS_PLATFORM, Debug, "Img '%c'", img);
-  switch (img) {
-    case '_': // dim
-      log(CLASS_PLATFORM, Debug, "Dim face");
-      lcd->dim(true);
-      break;
-    case '-': // bright
-      log(CLASS_PLATFORM, Debug, "Bright face");
-      lcd->dim(false);
-      break;
-    case 'w': // white
-      log(CLASS_PLATFORM, Debug, "White face");
-      lcd->invertDisplay(true);
-      break;
-    case 'b': // black
-      log(CLASS_PLATFORM, Debug, "Black face");
-      lcd->invertDisplay(false);
-      break;
-    case 'l': // clear
-      log(CLASS_PLATFORM, Debug, "Clear face");
-      lcd->invertDisplay(false);
-      lcd->clearDisplay();
-      break;
-    case 'c': // custom
-      log(CLASS_PLATFORM, Debug, "Custom face", img);
-      if (bitmap != NULL) {
-        logHex(CLASS_PLATFORM, Debug, bitmap, IMG_SIZE_BYTES);
-        bitmapToLcd(bitmap); // custom
-      }
-      break;
-    default:
-      log(CLASS_PLATFORM, Debug, "Face?: %c", img);
-      break;
-  }
-  lcd->display();
-  delay(DELAY_MS_SPI);
-}
+
 
 void infoArchitecture() {
 
@@ -326,7 +289,7 @@ void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
 
   for (int d = 0; d <= testRange; d = d + 2) {
     bool pressed = BUTTON_IS_PRESSED;
-    log(CLASS_MODULE, Info, "Moves: %d/%d %s", d, testRange, (pressed?"<= IN RANGE":""));
+    log(CLASS_MODULE, Info, "Moves: %d/%d %s", d, testRange, (pressed ? "<= IN RANGE" : ""));
     min = ((d < min) && pressed ? d : min);
     max = ((d > max) && pressed ? d : max);
     servo->write(d);
@@ -334,7 +297,7 @@ void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
   }
 
   bool dwn = askBoolQuestion("Is the arm\ndown now?");
-  m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Arm now:\n%s", (dwn?"DOWN":"UP"));
+  m->getNotifier()->message(0, USER_LCD_FONT_SIZE, "Arm now:\n%s", (dwn ? "DOWN" : "UP"));
   delay(USER_DELAY_MS);
   m->getNotifier()->message(0, 2, "Setup\n%s\ndone!", name);
   delay(USER_DELAY_MS);

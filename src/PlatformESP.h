@@ -166,6 +166,45 @@ void arms(int left, int right, int periodFactor) {
   servoRight.detach();
 }
 
+void lcdImg(char img, uint8_t bitmap[]) {
+  log(CLASS_PLATFORM, Debug, "Img '%c'", img);
+  switch (img) {
+    case '_': // dim
+      log(CLASS_PLATFORM, Debug, "Dim face");
+      lcd->dim(true);
+      break;
+    case '-': // bright
+      log(CLASS_PLATFORM, Debug, "Bright face");
+      lcd->dim(false);
+      break;
+    case 'w': // white
+      log(CLASS_PLATFORM, Debug, "White face");
+      lcd->invertDisplay(true);
+      break;
+    case 'b': // black
+      log(CLASS_PLATFORM, Debug, "Black face");
+      lcd->invertDisplay(false);
+      break;
+    case 'l': // clear
+      log(CLASS_PLATFORM, Debug, "Clear face");
+      lcd->invertDisplay(false);
+      lcd->clearDisplay();
+      break;
+    case 'c': // custom
+      log(CLASS_PLATFORM, Debug, "Custom face", img);
+      if (bitmap != NULL) {
+        logHex(CLASS_PLATFORM, Debug, bitmap, IMG_SIZE_BYTES);
+        bitmapToLcd(bitmap); // custom
+      }
+      break;
+    default:
+      log(CLASS_PLATFORM, Debug, "Face?: %c", img);
+      break;
+  }
+  lcd->display();
+  delay(DELAY_MS_SPI);
+}
+
 
 #endif // PLATFORM_ESP_INC
 
