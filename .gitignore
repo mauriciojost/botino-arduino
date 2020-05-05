@@ -197,3 +197,7 @@
 /.vscode
 /src/ESP32_Servo.h
 /src/ESP32_Servo.cpp
+/src/MemoryFree.cpp
+/src/MemoryFree.h
+/libs/MemoryFree/
+/libs/ESP32Servo/
