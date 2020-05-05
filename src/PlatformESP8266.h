@@ -473,7 +473,7 @@ void debugHandle() {
   }
 
   //m->getBotinoSettings()->getStatus()->fill("freeheap:%d", ESP.getFreeHeap()); // made crash, reenable upon upgrade
-  m->getBotinoSettings()->getStatus()->fill("vcc:%0.2f free:%d", VCC_FLOAT, freeMemory());
+  m->getBotinoSettings()->getStatus()->fill("vcc:%0.2f block:%d", VCC_FLOAT, (int)ESP.getMaxFreeBlockSize());
   m->getBotinoSettings()->getMetadata()->changed();
 
 #ifdef TELNET_ENABLED

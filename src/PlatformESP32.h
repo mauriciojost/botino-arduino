@@ -443,7 +443,7 @@ void debugHandle() {
     firstTime = false;
   }
 
-  m->getBotinoSettings()->getStatus()->fill("freeheap:%d/%d free:%d", ESP.getFreeHeap(), ESP.getHeapSize(), freeMemory());
+  m->getBotinoSettings()->getStatus()->fill("freeheap:%d/%d block:%d-%d", (int)ESP.getFreeHeap(), (int)ESP.getHeapSize(), (int)ESP.getMaxAllocHeap(), (int)ESP.getMaxAllocPsram());
   m->getBotinoSettings()->getMetadata()->changed();
 
 #ifdef TELNET_ENABLED

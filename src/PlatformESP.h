@@ -61,9 +61,6 @@ void logLine(const char *str, const char *clz, LogLevel l, bool newline) {
   time.fill("%04d|", ts);
   // serial print
 #ifdef HEAP_VCC_LOG
-  Serial.print("FREE:");
-  Serial.print(freeMemory());
-  Serial.print("|");
   Serial.print("VCC:");
   Serial.print(VCC_FLOAT);
   Serial.print("|");
