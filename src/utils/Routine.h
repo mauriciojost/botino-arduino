@@ -14,9 +14,13 @@ class Routine {
 public:
   Buffer *timingMove;
   Timing *timing;
-  Routine(const char *n) {
+  char name[3];
+  Routine(int idx) {
     timingMove = new Buffer(MOVE_STR_LENGTH);
-    timing = new Timing(n);
+    name[0] = 'R';
+    name[1] = idx + '0';
+    name[2] = 0;
+    timing = new Timing(name);
   }
   void set(const Value *v) {
     Buffer aux(MOVE_STR_LENGTH);
