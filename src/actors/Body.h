@@ -442,7 +442,8 @@ public:
     md = new Metadata(n);
     md->getTiming()->setFreq("~1m");
     for (int i = 0; i < NRO_ROUTINES; i++) {
-      routines[i] = new Routine(name);
+      const char* n = "RT" + (i + '0');
+      routines[i] = new Routine(n);
       routines[i]->set("never", "Z.");
     }
 
