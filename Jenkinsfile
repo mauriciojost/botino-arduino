@@ -64,6 +64,8 @@ pipeline {
             wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
               sh './upload -n esp8266 -p profiles/generic.prof -e' // shared volume with docker container
               sh './upload -n esp32 -p profiles/generic.prof -e' // shared volume with docker container
+              sh './upload -n esp8266 -p profiles/bimby.prof -e -t bimby'
+              sh './upload -n esp32 -p profiles/bimby.prof -e -t bimby'
             }
           }
         }

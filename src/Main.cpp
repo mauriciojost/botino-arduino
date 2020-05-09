@@ -44,7 +44,11 @@ void setup() {
            );
 
   log(CLASS_MAIN, Info, "Startup of properties");
+#ifdef BIMBY_MODE
+  StartupStatus c = m->startupPropertiesLight();
+#else // BIMBY_MODE
   StartupStatus c = m->startupProperties();
+#endif BIMBY_MODE
   m->getBot()->setMode(c.botMode);
   if (c.startupCode != ModuleStartupPropertiesCodeSuccess) {
     log(CLASS_MAIN, Error, "Failure: %d", (int)c.startupCode);
@@ -60,10 +64,12 @@ void setup() {
     // https://arduino-esp8266.readthedocs.io/en/latest/PROGMEM.html
     // Solution: put it in PROGMEM and store it in RAM only when required to push.
 #include <Description.json.h>
+#ifndef BIMBY_MODE
     String* desc = new String(DESCRIPTION_JSON_VERSION);
     log(CLASS_MAIN, Debug, "Pushing description...");
     m->getModule()->getPropSync()->pushDescription(desc->c_str());
     delete desc;
+#endif BIMBY_MODE
 #endif // ARDUINO
   }
 }
