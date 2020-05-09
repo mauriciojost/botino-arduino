@@ -13,14 +13,14 @@ void setUp() {}
 void tearDown() {}
 
 void test_basic_behaviour() {
-  Routine r0("routine0");
+  Routine r0(0);
   r0.set("never", "Z.");
 
   TEST_ASSERT_EQUAL_STRING("Z.", r0.getMove());
   TEST_ASSERT_EQUAL_STRING("never", r0.getTiming()->getFreq());
 
   Buffer b("@11h00:D0.");
-  Routine r1("routine1");
+  Routine r1(1);
   r1.set(&b);
 
   TEST_ASSERT_EQUAL_STRING("D0.", r1.getMove());
