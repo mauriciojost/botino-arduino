@@ -48,7 +48,7 @@ void setup() {
   StartupStatus c = m->startupPropertiesLight();
 #else // BIMBY_MODE
   StartupStatus c = m->startupProperties();
-#endif BIMBY_MODE
+#endif // BIMBY_MODE
   m->getBot()->setMode(c.botMode);
   if (c.startupCode != ModuleStartupPropertiesCodeSuccess) {
     log(CLASS_MAIN, Error, "Failure: %d", (int)c.startupCode);
@@ -69,7 +69,7 @@ void setup() {
     log(CLASS_MAIN, Debug, "Pushing description...");
     m->getModule()->getPropSync()->pushDescription(desc->c_str());
     delete desc;
-#endif BIMBY_MODE
+#endif // BIMBY_MODE
 #endif // ARDUINO
   }
 }
