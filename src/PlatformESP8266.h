@@ -10,6 +10,10 @@
 #include <utils/Io.h>
 #include <utils/ServoConf.h>
 #include <primitives/BoardESP8266.h>
+#ifndef TELNET_HANDLE_DELAY_MS
+#define TELNET_HANDLE_DELAY_MS 240000 // 4 minutes
+#endif // TELNET_HANDLE_DELAY_MS
+
 
 #define STACKTRACE_LOG_FILENAME "/stacktrace.log"
 
@@ -477,7 +481,11 @@ void debugHandle() {
   m->getBotinoSettings()->getMetadata()->changed();
 
 #ifdef TELNET_ENABLED
-  telnet.handle();     // Handle telnet log server and commands
+  log(CLASS_PLATFORM, User, "telnet?");
+  for (int i = 0; i < TELNET_HANDLE_DELAY_MS/1000; i++) {
+    telnet.handle();     // Handle telnet log server and commands
+    delay(1000);
+  }
 #endif // TELNET_ENABLED
 #ifdef OTA_ENABLED
   ArduinoOTA.handle(); // Handle on the air firmware load
