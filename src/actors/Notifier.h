@@ -173,10 +173,10 @@ public:
   }
 
   void queueToBuffer(RichBuffer *b) {
-    b->clear();
+    b->getBuffer()->clear();
     for (int i = 0; i < queue.capacity(); i++) {
-      b->append(queue.getAt(i, EMPTY_NOTIF_REPRESENTATION));
-      b->append(NOTIFS_SEPARATOR);
+      b->getBuffer()->append(queue.getAt(i, EMPTY_NOTIF_REPRESENTATION));
+      b->getBuffer()->append(NOTIFS_SEPARATOR);
     }
   }
 
@@ -184,12 +184,12 @@ public:
     if (propIndex == NotifierNotifsProp) {
       RichBuffer b = RichBuffer((MAX_NOTIF_LENGTH + 1) * MAX_NRO_NOTIFS);
       if (m == SetCustomValue) {
-        b.deserializeFromValue(targetValue);
+        b.getBuffer()->deserializeFromValue(targetValue);
         bufferToQueue(&b);
       }
       if (actualValue != NULL) {
         queueToBuffer(&b);
-        actualValue->deserializeFromValue(&b);
+        actualValue->deserializeFromValue(b.getBuffer());
       }
     }
     if (m != GetValue) {

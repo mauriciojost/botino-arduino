@@ -48,7 +48,7 @@ void test_serialization_deserialization() {
 
   n.queueToBuffer(&b);
 
-  TEST_ASSERT_EQUAL_STRING("notif1:notif2::", b.getBuffer());
+  TEST_ASSERT_EQUAL_STRING("notif1:notif2::", b.getBuffer()->getBuffer());
 
   TEST_ASSERT_EQUAL_STRING("notif1", n.getNotification());
   TEST_ASSERT_EQUAL(1, n.notificationRead());
