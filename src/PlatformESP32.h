@@ -447,7 +447,7 @@ void debugHandle() {
     firstTime = false;
   }
 
-  m->getBotinoSettings()->getStatus()->fill("freeheap:%d/%d block:%d-%d", (int)ESP.getFreeHeap(), (int)ESP.getHeapSize(), (int)ESP.getMaxAllocHeap(), (int)ESP.getMaxAllocPsram());
+  m->getBotinoSettings()->getStatus()->fill("freeheap:%d/%d block:%d-%d uptimeh:%d", (int)ESP.getFreeHeap(), (int)ESP.getHeapSize(), (int)ESP.getMaxAllocHeap(), (int)ESP.getMaxAllocPsram(), millis() / (1000 * 3600));
   m->getBotinoSettings()->getMetadata()->changed();
 
 #ifdef TELNET_ENABLED
