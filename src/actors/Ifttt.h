@@ -7,6 +7,7 @@
 #include <main4ino/Clock.h>
 #include <main4ino/HttpCodes.h>
 #include <main4ino/HttpMethods.h>
+#include <main4ino/HttpResponse.h>
 #include <main4ino/Misc.h>
 #include <main4ino/ParamStream.h>
 #include <main4ino/Table.h>
@@ -36,7 +37,7 @@ private:
   const char *name;
   Metadata *md;
   bool (*initWifiFunc)();
-  int (*httpMethod)(HttpMethod m, const char *url, const char *body, ParamStream *response, Table *headers, const char *fingerprint);
+  HttpResponse (*httpMethod)(HttpMethod m, const char *url, Stream *body, Table *headers, const char *fingerprint);
 
   Buffer *iftttKey;
   Buffer *urlAuxBuffer;
@@ -73,7 +74,7 @@ public:
     initWifiFunc = f;
   }
 
-  void setHttpMethod(int (*h)(HttpMethod m, const char *url, const char *body, ParamStream *response, Table *headers, const char *fingerprint)) {
+  void setHttpMethod(HttpResponse (*h)(HttpMethod m, const char *url, Stream *body, Table *headers, const char *fingerprint)) {
     httpMethod = h;
   }
 
@@ -85,8 +86,9 @@ public:
     bool connected = initWifiFunc();
     if (connected) {
       urlAuxBuffer->fill(IFTTT_API_URL_POS, eventName, iftttKey->getBuffer());
-      int errorCodePost = httpMethod(HttpPost, urlAuxBuffer->getBuffer(), "{}", NULL, headers, NULL);
-      if (errorCodePost == HTTP_OK) {
+      ParamStream s("{}");
+      HttpResponse resp = httpMethod(HttpPost, urlAuxBuffer->getBuffer(), &s, headers, NULL);
+      if (resp.code == HTTP_OK) {
         return true;
       }
     }

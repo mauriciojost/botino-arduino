@@ -16,9 +16,6 @@
 #endif // SIMULATOR_PASS
 
 #define CL_MAX_LENGTH 65000
-#define HTTP_CODE_KEY "HTTP_CODE:"
-#define CURL_COMMAND_GET "/usr/bin/curl --silent -w '" HTTP_CODE_KEY "%%{http_code}' -XGET '%s'"
-#define CURL_COMMAND_POST "/usr/bin/curl --silent -w '" HTTP_CODE_KEY "%%{http_code}' -XPOST '%s' -d '%s'"
 
 enum AppMode { Interactive = 0, NonInteractive = 1 };
 AppMode appMode = Interactive;

@@ -7,6 +7,7 @@
 #include <main4ino/Buffer.h>
 #include <main4ino/HttpCodes.h>
 #include <main4ino/HttpMethods.h>
+#include <main4ino/HttpResponse.h>
 #include <main4ino/Integer.h>
 #include <main4ino/Misc.h>
 #include <main4ino/ParamStream.h>
@@ -33,7 +34,7 @@ private:
   const char *name;
   Metadata *md;
   Buffer *quotes[NRO_QUOTES];
-  int (*httpMethod)(HttpMethod m, const char *url, const char *body, ParamStream *response, Table *headers, const char *fingerprint);
+  HttpResponse (*httpMethod)(HttpMethod m, const char *url, Stream *body, Table *headers, const char *fingerprint);
   Buffer *jsonAuxBuffer;
   bool (*initWifiFunc)();
   Table *headers;
@@ -61,7 +62,7 @@ public:
     return name;
   }
 
-  void setHttpMethod(int (*h)(HttpMethod m, const char *url, const char *body, ParamStream *response, Table *headers, const char *fingerprint)) {
+  void setHttpMethod(HttpResponse (*h)(HttpMethod m, const char *url, Stream *body, Table *headers, const char *fingerprint)) {
     httpMethod = h;
   }
 
@@ -82,13 +83,14 @@ public:
   }
 
   void fillQuote(int i) {
-    ParamStream httpBodyResponse(jsonAuxBuffer, true);
     log(CLASS_QUOTES, Debug, "Filling %d", i);
-    int errorCode = httpMethod(HttpGet, URL_QUOTES, NULL, &httpBodyResponse, headers, NULL);
-    if (errorCode == HTTP_OK) {
+    HttpResponse resp = httpMethod(HttpGet, URL_QUOTES, NULL, headers, NULL);
+    if (resp.code == HTTP_OK) {
+      resp.dumpResponse(jsonAuxBuffer);
+      ParamStream httpBodyResponse(jsonAuxBuffer, true);
       quotes[i]->fill("%s", httpBodyResponse.content());
     } else {
-      log(CLASS_QUOTES, Warn, "KO: %d", errorCode);
+      log(CLASS_QUOTES, Warn, "KO: %d", resp.code);
     }
   }
 

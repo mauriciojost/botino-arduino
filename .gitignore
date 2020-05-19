@@ -201,3 +201,5 @@
 /src/MemoryFree.h
 /libs/MemoryFree/
 /libs/ESP32Servo/
+/src/Stream.cpp
+/src/Stream.h
