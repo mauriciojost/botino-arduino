@@ -24,7 +24,7 @@ void setup() {
            messageFunc,
            ios,
            initWifiSimple,
-           nop,
+           noop,
            httpMethod,
            clearDevice,
            readFile,

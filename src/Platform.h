@@ -151,7 +151,7 @@ Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLeng
   return *var;
 }
 
-void nop() {}
+void noop() {}
 
 Buffer *getLogBuffer() {
   return logBuffer;
