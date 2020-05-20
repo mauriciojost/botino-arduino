@@ -88,7 +88,8 @@ public:
       urlAuxBuffer->fill(IFTTT_API_URL_POS, eventName, iftttKey->getBuffer());
       ParamStream s("{}");
       HttpResponse resp = httpMethod(HttpPost, urlAuxBuffer->getBuffer(), &s, headers, NULL);
-      if (resp.code == HTTP_OK) {
+      resp.close();
+      if (resp.codeIs(HTTP_OK)) {
         return true;
       }
     }

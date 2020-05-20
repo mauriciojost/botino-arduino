@@ -85,12 +85,12 @@ public:
   void fillQuote(int i) {
     log(CLASS_QUOTES, Debug, "Filling %d", i);
     HttpResponse resp = httpMethod(HttpGet, URL_QUOTES, NULL, headers, NULL);
-    if (resp.code == HTTP_OK) {
-      resp.dumpResponse(jsonAuxBuffer);
+    resp.dumpAndClose(jsonAuxBuffer);
+    if (resp.codeIs(HTTP_OK)) {
       ParamStream httpBodyResponse(jsonAuxBuffer, true);
       quotes[i]->fill("%s", httpBodyResponse.content());
     } else {
-      log(CLASS_QUOTES, Warn, "KO: %d", resp.code);
+      log(CLASS_QUOTES, Warn, "KO: %d", resp.getCode());
     }
   }
 
