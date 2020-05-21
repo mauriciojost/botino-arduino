@@ -17,7 +17,7 @@ FLAGS="-U ARDUINO $PARAM_FLAGS"
 
 SRC="
 src/Main.cpp
-src/Stream.cpp
+src/x86/Stream.cpp
 src/Time.cpp
 src/Base64.cpp
 src/DateStrings.cpp
