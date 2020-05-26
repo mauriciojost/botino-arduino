@@ -1,20 +1,21 @@
 # BOTINO
 
-[![Build Status](https://jenkins.martinenhome.com/buildStatus/icon?job=botino-arduino/master)](https://jenkins.martinenhome.com/job/botino-arduino/job/master/)
+## What is it? 
 
 This is a cool-geek-fully-configurable more-than-an-alarm project. 
 
 ![Botino](misc/images/botino-v0.jpg)
 
-Use cases: 
+## Use cases?
 
 - you want to be gently reminded to drink water every 30 minutes in your desk TODO show image notifying you
 - you want to be be reminded when to leave work
 - you want to create dances and moves freely to use then to play jokes TODO show image dancing
 - you want to be notified that today will rain (thanks to IFTTT) TODO show image notifying to you
 - you want to keep track of events like when you arrive and when you leave work (thanks to IFTTT) TODO show image of the button
+- you want to keep track of time in Scrum daily standup meetings
 
-Features:
+## Features?
 
 - 8 fully configurable alarms
 - alarms can trigger cool moves on the bot (like arm moves, dances, light shows, fan, images, animations, etc.)
@@ -28,17 +29,17 @@ Features:
 
 TODO find a way to explain this all in a simpler manner
 
-## 1. Get Started
+## Get Started
 
-### 1.1. Plug It
+### 1. Plug It
 
 To get started first connect the module to any standard USB plug.
 
-### 1.2. Set up you WIFI connection
+### 2. Set up you WIFI connection
 
 Connect to it via serial port (TODO explain why) and set up your wifi settings via commands (use `help` to get started).
 
-### 1.3. Play with It
+### 3. Play with It
 
 Interaction with *Botino* is done via the Internet. You send the setup to the internet via HTTP queries, and *Botino* regularly picks them up. 
 
@@ -57,14 +58,7 @@ you can tune to get the behaviour you want.
 
 Control your botino via the [Main4ino portal](http://martinenhome.com:6780).
 
-# 2. Extras
-
-## Low Power (a.k.a. Deep Sleep mode)
-
-To set it up: 
-
-- ensure file deepsleep.tuning is set to 1
-- ensure property settings.+onerun is set to true 
+# Extras
 
 ## Telnet
 
@@ -82,7 +76,7 @@ an IFTTT event, etc.
 
 Among the poses, *Botino* can trigger IFTTT events. 
 
-### IFTTT connectivity
+## IFTTT connectivity
 
 This connectivity (as both This and That block) allows:
 
@@ -101,21 +95,21 @@ Use the following commands to tune the servos:
 init
 ```
 
-# 3. Contribute
+# Contribute
 
-## 3.1. Hardware
+## Hardware
 
 For information, the Board used is [NODEMCU / ESP-01](http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family).
 
 - ESP8266 ESP-12E (see a full [list of variants here](https://www.esp8266.com/wiki/doku.php?id=esp8266-module-family))
 
 
-## 3.2. Software
+## Software
 
 To prepare your development environment first do:
 
 ```
-./pull_dependencies
+./pull_dependencies -p -l
 ```
 
 The project is a `platformio` project.
@@ -127,48 +121,50 @@ When contributing, keep always in mind the best practices:
 - Try not to overuse the heap (only 4K!): prefer static memory allocation rather than dynamic one
 - Reuse instances as much as possible
 
-### Eclipse
-
-To get started with _eclipse_ do:
-```
-platformio init --ide eclipse --board esp12e
-```
-
-## 3.3. Upload
+## Upload
 
 To upload the firmware just do: 
 
 ```
-# upload via USB serial port:
 
- ./upload -p profiles/dev7-custom.prof -f
+# upload via USB serial port:
+./upload -p profiles/dev7-custom.prof -f
+
+```
 
 To see the logs:
+
 ```
+
 # using minicom:
- sudo minicom -D /dev/ttyUSB0 -b 128000 -z -L -l # + Ctrl+a u  (and Ctrl+a q to exit)
+sudo minicom -D /dev/ttyUSB0 -b 128000 -z -L -l # + Ctrl+a u  (and Ctrl+a q to exit)
 
 # using platformio serial monitor:
- ./serial_monitor 0
+./serial_monitor 0
 
 ```
 
 To upload any tuning folder just do: 
 
 ```
+
 upload -p profile -s directory
+
 ```
 
-## 3.4. Simulate
+## Simulate
 
 Even if the current main implementation uses ESP8266, *Botino* is meant to be multi platform. You can launch it even in your PC:
 
 ```
+
 ./simulate 0 100 # mode interactive, 100 steps and quit
+
 ```
 
-## 3.5. Test
+## Test
 
 ```
 ./launch_tests
 ```
+
