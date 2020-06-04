@@ -30,8 +30,6 @@
 #define QUESTION_ANSWER_MAX_LENGTH 128
 #endif // QUESTION_ANSWER_MAX_LENGTH
 
-
-
 Buffer *logBuffer = NULL;
 ModuleBotino *m = NULL;
 
@@ -47,7 +45,6 @@ const char *apiDeviceLogin();
 
 // Allow to retrieve the main4ino API password
 const char *apiDevicePass();
-
 
 // HTTP GET function.
 int httpGet(const char *url, ParamStream *response, Table *headers);
@@ -127,10 +124,10 @@ Buffer *initializeTuningVariable(Buffer **var, const char *filename, int maxLeng
     first = true;
     *var = new Buffer(maxLength);
     bool succValue = readFile(filename, *var); // read value from file
-    if (succValue && !(*var)->isEmpty()) {                           // managed to retrieve the value
+    if (succValue && !(*var)->isEmpty()) {     // managed to retrieve the value
       log(CLASS_PLATFORM, Debug, "Read %s: OK", filename);
-      (*var)->replace('\n', 0);                // minor formatting
-    } else if (defaultContent != NULL) {       // failed to retrieve value, use default content if provided
+      (*var)->replace('\n', 0);          // minor formatting
+    } else if (defaultContent != NULL) { // failed to retrieve value, use default content if provided
       log(CLASS_PLATFORM, Debug, "Read %s: KO", filename);
       log(CLASS_PLATFORM, Debug, "Using default: %s", defaultContent);
       (*var)->fill(defaultContent);
@@ -180,19 +177,18 @@ bool initWifiSimple() {
 }
 
 bool sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
-  int msec = (m==NULL?1000:m->getModuleSettings()->miniPeriodMsec());
+  int msec = (m == NULL ? 1000 : m->getModuleSettings()->miniPeriodMsec());
   return lightSleepInterruptable(cycleBegin, periodSecs, msec, haveToInterrupt, heartbeat);
 }
 
 void updateFirmwareVersion(const char *targetVersion, const char *currentVersion) {
   bool c = initWifiSimple();
   if (c) {
-    updateFirmwareFromMain4ino(m->getModule()->getPropSync()->getSession(), apiDeviceLogin(), PROJECT_ID, PLATFORM_ID, targetVersion, currentVersion);
+    updateFirmwareFromMain4ino(
+        m->getModule()->getPropSync()->getSession(), apiDeviceLogin(), PROJECT_ID, PLATFORM_ID, targetVersion, currentVersion);
   } else {
     log(CLASS_PLATFORM, Error, "Could not update");
   }
 }
-
-
 
 #endif // PLATFORM_INC

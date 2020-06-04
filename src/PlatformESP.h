@@ -33,7 +33,6 @@
 #define SERVO_BASE_STEPS 120
 #define SERVO_PERIOD_STEP_MS 2
 
-
 void restoreSafeFirmware() { // to be invoked as last resource when things go wrong
   initializeWifi(RESTORE_WIFI_SSID, RESTORE_WIFI_PASS, RESTORE_WIFI_SSID, RESTORE_WIFI_PASS, true, RESTORE_RETRIES);
   updateFirmware(RESTORE_URL, STRINGIFY(PROJ_VERSION));
@@ -48,7 +47,6 @@ void askStringQuestion(const char *question, Buffer *answer) {
   log(CLASS_PLATFORM, User, "Answer: '%s'", answer->getBuffer());
 }
 
-
 void initLogBuffer() {
   if (logBuffer == NULL) {
     logBuffer = new Buffer(LOG_BUFFER_MAX_LENGTH);
@@ -56,7 +54,7 @@ void initLogBuffer() {
 }
 
 void logLine(const char *str, const char *clz, LogLevel l, bool newline) {
-  int ts = (int)((millis()/1000) % 10000);
+  int ts = (int)((millis() / 1000) % 10000);
   Buffer time(8);
   time.fill("%04d|", ts);
   // serial print
@@ -74,9 +72,9 @@ void logLine(const char *str, const char *clz, LogLevel l, bool newline) {
     }
   }
 #endif // TELNET_ENABLED
-  bool lcdLogsEnabled = (m==NULL?true:m->getBotinoSettings()->getLcdLogs());
-  bool fsLogsEnabled = (m==NULL?true:m->getBotinoSettings()->fsLogsEnabled());
-  int fsLogsLength = (m==NULL?DEFAULT_FS_LOGS_LENGTH:m->getBotinoSettings()->getFsLogsLength());
+  bool lcdLogsEnabled = (m == NULL ? true : m->getBotinoSettings()->getLcdLogs());
+  bool fsLogsEnabled = (m == NULL ? true : m->getBotinoSettings()->fsLogsEnabled());
+  int fsLogsLength = (m == NULL ? DEFAULT_FS_LOGS_LENGTH : m->getBotinoSettings()->getFsLogsLength());
 
   // lcd print
   if (lcd != NULL && lcdLogsEnabled) { // can be called before LCD initialization
@@ -202,6 +200,4 @@ void lcdImg(char img, uint8_t bitmap[]) {
   delay(DELAY_MS_SPI);
 }
 
-
 #endif // PLATFORM_ESP_INC
-

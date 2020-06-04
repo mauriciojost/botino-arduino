@@ -11,8 +11,7 @@
 #include <primitives/BoardESP32.h>
 #ifndef TELNET_HANDLE_DELAY_MS
 #define TELNET_HANDLE_DELAY_MS 240000 // 4 minutes
-#endif // TELNET_HANDLE_DELAY_MS
-
+#endif                                // TELNET_HANDLE_DELAY_MS
 
 #define FORMAT_SPIFFS_IF_FAILED true
 
@@ -26,7 +25,6 @@
 
 #define ONLY_SHOW_MSG true
 #define SHOW_MSG_AND_REACT false
-
 
 #define HELP_COMMAND_ARCH_CLI                                                                                                              \
   "\n  ESP32 HELP"                                                                                                                         \
@@ -94,7 +92,6 @@ const char *apiDevicePass() {
   return initializeTuningVariable(&apiDevicePwd, DEVICE_PWD_FILENAME, DEVICE_PWD_MAX_LENGTH, NULL, true)->getBuffer();
 }
 
-
 void ios(char led, IoMode value) {
   uint8_t pin = -1;
   switch (led) {
@@ -150,10 +147,7 @@ void clearDevice() {
   log(CLASS_PLATFORM, User, "   rm %s", DEVICE_PWD_FILENAME);
   log(CLASS_PLATFORM, User, "   ls");
   log(CLASS_PLATFORM, User, "   <remove all .properties>");
-
 }
-
-
 
 void infoArchitecture() {
 
@@ -204,16 +198,14 @@ void setupArchitecture() {
   pinMode(SERVO1_PIN, OUTPUT);
   pinMode(BUTTON0_PIN, INPUT);
 
-  //log(CLASS_PLATFORM, Debug, "Setup wdt");
-  //ESP.wdtEnable(1); // argument not used
+  // log(CLASS_PLATFORM, Debug, "Setup wdt");
+  // ESP.wdtEnable(1); // argument not used
 
   log(CLASS_PLATFORM, Debug, "Setup LCD");
   lcd = new Adafruit_SSD1306(-1);
   lcd->begin(SSD1306_SWITCHCAPVCC, 0x3C); // Initialize LCD
   delay(DELAY_MS_SPI);
   heartbeat();
-
-
 
   log(CLASS_PLATFORM, Debug, "Setup wifi");
   WiFi.persistent(false);
@@ -259,7 +251,6 @@ void setupArchitecture() {
   } else {
     log(CLASS_PLATFORM, Debug, "No abort");
   }
-
 }
 
 void runModeArchitecture() {
@@ -380,8 +371,7 @@ CmdExecStatus commandArchitecture(const char *c) {
     return Executed;
   } else if (strcmp("lightsleep", c) == 0) {
     int s = atoi(strtok(NULL, " "));
-    return (lightSleepInterruptable(now(), s, 1000, haveToInterrupt, heartbeat) ? ExecutedInterrupt
-                                                                                                                    : Executed);
+    return (lightSleepInterruptable(now(), s, 1000, haveToInterrupt, heartbeat) ? ExecutedInterrupt : Executed);
   } else if (strcmp("clearstack", c) == 0) {
     // SaveCrash.clear();
     return Executed;
@@ -440,26 +430,31 @@ void debugHandle() {
     log(CLASS_PLATFORM, Debug, "Initialize debuggers...");
 #ifdef TELNET_ENABLED
     telnet.begin(apiDeviceLogin()); // Intialize the remote logging framework
-#endif // TELNET_ENABLED
+#endif                              // TELNET_ENABLED
 #ifdef OTA_ENABLED
-    ArduinoOTA.begin();             // Intialize OTA
-#endif // OTA_ENABLED
+    ArduinoOTA.begin(); // Intialize OTA
+#endif                  // OTA_ENABLED
     firstTime = false;
   }
 
-  m->getBotinoSettings()->getStatus()->fill("freeheap:%d/%d block:%d-%d uptimeh:%d", (int)ESP.getFreeHeap(), (int)ESP.getHeapSize(), (int)ESP.getMaxAllocHeap(), (int)ESP.getMaxAllocPsram(), millis() / (1000 * 3600));
+  m->getBotinoSettings()->getStatus()->fill("freeheap:%d/%d block:%d-%d uptimeh:%d",
+                                            (int)ESP.getFreeHeap(),
+                                            (int)ESP.getHeapSize(),
+                                            (int)ESP.getMaxAllocHeap(),
+                                            (int)ESP.getMaxAllocPsram(),
+                                            millis() / (1000 * 3600));
   m->getBotinoSettings()->getMetadata()->changed();
 
 #ifdef TELNET_ENABLED
   log(CLASS_PLATFORM, User, "telnet?");
-  for (int i = 0; i < TELNET_HANDLE_DELAY_MS/1000; i++) {
-    telnet.handle();     // Handle telnet log server and commands
+  for (int i = 0; i < TELNET_HANDLE_DELAY_MS / 1000; i++) {
+    telnet.handle(); // Handle telnet log server and commands
     delay(1000);
   }
 #endif // TELNET_ENABLED
 #ifdef OTA_ENABLED
   ArduinoOTA.handle(); // Handle on the air firmware load
-#endif // OTA_ENABLED
+#endif                 // OTA_ENABLED
 }
 
 ICACHE_RAM_ATTR
@@ -504,7 +499,7 @@ void heartbeat() {
   int y = ((LCD_HEIGHT / LCD_CHAR_HEIGHT) - 1) * LCD_CHAR_HEIGHT; // bottom
   char c = 0x03;                                                  // heart
   int size = 1;                                                   // small
-#endif // VISUAL_HEARTBEAT
+#endif                                                            // VISUAL_HEARTBEAT
 
   LED_ALIVE_TOGGLE
 #ifdef VISUAL_HEARTBEAT

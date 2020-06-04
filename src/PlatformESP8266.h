@@ -12,8 +12,7 @@
 #include <primitives/BoardESP8266.h>
 #ifndef TELNET_HANDLE_DELAY_MS
 #define TELNET_HANDLE_DELAY_MS 240000 // 4 minutes
-#endif // TELNET_HANDLE_DELAY_MS
-
+#endif                                // TELNET_HANDLE_DELAY_MS
 
 #define STACKTRACE_LOG_FILENAME "/stacktrace.log"
 
@@ -104,7 +103,6 @@ const char *apiDevicePass() {
   return initializeTuningVariable(&apiDevicePwd, DEVICE_PWD_FILENAME, DEVICE_PWD_MAX_LENGTH, NULL, true)->getBuffer();
 }
 
-
 void ios(char led, IoMode value) {
   uint8_t pin = -1;
   switch (led) {
@@ -154,8 +152,6 @@ void clearDevice() {
   espSaveCrash.clear();
 }
 
-
-
 void infoArchitecture() {
 
   m->getNotifier()->message(0,
@@ -196,14 +192,13 @@ void setupArchitecture() {
 
   heartbeat();
 
-
   if (espSaveCrash.count() > 0) {
     // Useful links for debugging:
     // https://links2004.github.io/Arduino/dc/deb/md_esp8266_doc_exception_causes.html
     // ./packages/framework-arduinoespressif8266@2.20502.0/tools/sdk/include/user_interface.h
     // https://bitbucket.org/mauriciojost/esp8266-stacktrace-translator/src/master/
     log(CLASS_PLATFORM, Error, "Crshs:%d", (int)espSaveCrash.count());
-    bool fsLogsEnabled = (m==NULL?true:m->getBotinoSettings()->fsLogsEnabled());
+    bool fsLogsEnabled = (m == NULL ? true : m->getBotinoSettings()->fsLogsEnabled());
     if (fsLogsEnabled) {
       initLogBuffer();
       espSaveCrash.print(logBuffer->getUnsafeBuffer(), LOG_BUFFER_MAX_LENGTH);
@@ -214,7 +209,6 @@ void setupArchitecture() {
   } else {
     log(CLASS_PLATFORM, Debug, "No crashes");
   }
-
 
   log(CLASS_PLATFORM, Debug, "Setup pins");
   pinMode(LEDR_PIN, OUTPUT);
@@ -233,8 +227,6 @@ void setupArchitecture() {
   lcd->begin(SSD1306_SWITCHCAPVCC, 0x3C); // Initialize LCD
   delay(DELAY_MS_SPI);
   heartbeat();
-
-
 
   log(CLASS_PLATFORM, Debug, "Setup wifi");
   WiFi.persistent(false);
@@ -281,7 +273,6 @@ void setupArchitecture() {
   } else {
     log(CLASS_PLATFORM, Debug, "No abort");
   }
-
 }
 
 void runModeArchitecture() {
@@ -409,8 +400,7 @@ CmdExecStatus commandArchitecture(const char *c) {
     return Executed;
   } else if (strcmp("lightsleep", c) == 0) {
     int s = atoi(strtok(NULL, " "));
-    return (lightSleepInterruptable(now(), s, 1000, haveToInterrupt, heartbeat) ? ExecutedInterrupt
-                                                                                                                    : Executed);
+    return (lightSleepInterruptable(now(), s, 1000, haveToInterrupt, heartbeat) ? ExecutedInterrupt : Executed);
   } else if (strcmp("clearstack", c) == 0) {
     espSaveCrash.clear();
     return Executed;
@@ -469,27 +459,28 @@ void debugHandle() {
     log(CLASS_PLATFORM, Debug, "Initialize debuggers...");
 #ifdef TELNET_ENABLED
     telnet.begin(apiDeviceLogin()); // Intialize the remote logging framework
-#endif // TELNET_ENABLED
+#endif                              // TELNET_ENABLED
 #ifdef OTA_ENABLED
-    ArduinoOTA.begin();             // Intialize OTA
-#endif // OTA_ENABLED
+    ArduinoOTA.begin(); // Intialize OTA
+#endif                  // OTA_ENABLED
     firstTime = false;
   }
 
-  //m->getBotinoSettings()->getStatus()->fill("freeheap:%d", ESP.getFreeHeap()); // made crash, reenable upon upgrade
-  m->getBotinoSettings()->getStatus()->fill("vcc:%0.2f block:%d uptimeh:%d", VCC_FLOAT, (int)ESP.getMaxFreeBlockSize(), millis()/(1000 * 3600));
+  // m->getBotinoSettings()->getStatus()->fill("freeheap:%d", ESP.getFreeHeap()); // made crash, reenable upon upgrade
+  m->getBotinoSettings()->getStatus()->fill(
+      "vcc:%0.2f block:%d uptimeh:%d", VCC_FLOAT, (int)ESP.getMaxFreeBlockSize(), millis() / (1000 * 3600));
   m->getBotinoSettings()->getMetadata()->changed();
 
 #ifdef TELNET_ENABLED
   log(CLASS_PLATFORM, User, "telnet?");
-  for (int i = 0; i < TELNET_HANDLE_DELAY_MS/1000; i++) {
-    telnet.handle();     // Handle telnet log server and commands
+  for (int i = 0; i < TELNET_HANDLE_DELAY_MS / 1000; i++) {
+    telnet.handle(); // Handle telnet log server and commands
     delay(1000);
   }
 #endif // TELNET_ENABLED
 #ifdef OTA_ENABLED
   ArduinoOTA.handle(); // Handle on the air firmware load
-#endif // OTA_ENABLED
+#endif                 // OTA_ENABLED
 }
 
 ICACHE_RAM_ATTR
@@ -534,7 +525,7 @@ void heartbeat() {
   int y = ((LCD_HEIGHT / LCD_CHAR_HEIGHT) - 1) * LCD_CHAR_HEIGHT; // bottom
   char c = 0x03;                                                  // heart
   int size = 1;                                                   // small
-#endif // VISUAL_HEARTBEAT
+#endif                                                            // VISUAL_HEARTBEAT
 
   LED_ALIVE_TOGGLE
 #ifdef VISUAL_HEARTBEAT

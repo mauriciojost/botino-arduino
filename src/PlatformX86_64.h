@@ -20,7 +20,6 @@
 enum AppMode { Interactive = 0, NonInteractive = 1 };
 AppMode appMode = Interactive;
 
-
 ////////////////////////////////////////
 // Functions requested for architecture
 ////////////////////////////////////////
@@ -40,7 +39,7 @@ const char *apiDevicePass() {
   return SIMULATOR_PASS;
 }
 
-void logLine(const char *str, const char *clz, LogLevel l, bool newline) { }
+void logLine(const char *str, const char *clz, LogLevel l, bool newline) {}
 
 void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str) {
   printf("\n\n***** LCD (size %d)\n  %s\n*****\n\n", size, str);
@@ -107,7 +106,7 @@ void abort(const char *msg) {
   log(CLASS_PLATFORM, Error, "Abort: %s", msg);
 }
 
-void askStringQuestion(const char *question, Buffer *answer) { }
+void askStringQuestion(const char *question, Buffer *answer) {}
 
 ////////////////////////////////////////
 // Architecture specific functions

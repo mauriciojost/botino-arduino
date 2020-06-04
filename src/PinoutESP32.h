@@ -1,7 +1,7 @@
 #ifndef PINOUT_INC
 #define PINOUT_INC
 
-#include <pinouts/PinoutESP32DevKit.h> 
+#include <pinouts/PinoutESP32DevKit.h>
 
 // I2C OLED 128x64
 // (Kuman 0.96inches I2C OLED 128x64 LCD screen)
@@ -22,7 +22,7 @@
 #endif                      // LEDR_PIN
 
 // FAN
-#define FAN_PIN GPIO15_PIN   // 0 off, 1 on
+#define FAN_PIN GPIO15_PIN // 0 off, 1 on
 
 // SERVOS
 #define SERVO0_PIN GPIO33_PIN

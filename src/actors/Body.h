@@ -204,8 +204,8 @@ private:
   }
 
   bool isInitialized() {
-    bool init = arms != NULL && button != NULL && sleepInterruptable != NULL && iosFunc != NULL && notifier != NULL && quotes != NULL && images != NULL &&
-                ifttt != NULL;
+    bool init = arms != NULL && button != NULL && sleepInterruptable != NULL && iosFunc != NULL && notifier != NULL && quotes != NULL &&
+                images != NULL && ifttt != NULL;
     return init;
   }
 
@@ -369,11 +369,12 @@ private:
         return Success;
       }
     } else if (sscanf(pose, "T%d.", &i0) == 1) {
-      // TIMER
-      #define RESP 10
+// TIMER
+#define RESP 10
       log(CLASS_BODY, Debug, "Timer %d s", i0);
       for (int i = 0; i < i0 * RESP; i++) {
-        if (button()) break;
+        if (button())
+          break;
         if (i % RESP == 0) {
           notifier->message(TIMER_MSG_X, TIMER_MSG_Y, "%d", i / RESP);
         }
@@ -470,7 +471,8 @@ public:
     ifttt = i;
   }
 
-  void setup(void (*a)(int left, int right, int f), void (*f)(char led, IoMode v), bool (*i)(time_t cycleBegin, time_t periodSec), bool (*b)()) {
+  void
+  setup(void (*a)(int left, int right, int f), void (*f)(char led, IoMode v), bool (*i)(time_t cycleBegin, time_t periodSec), bool (*b)()) {
     arms = a;
     iosFunc = f;
     sleepInterruptable = i;

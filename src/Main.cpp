@@ -13,8 +13,7 @@
 // Provided by generic Main
 //////////////////////////////////////////////////////////////
 
-// Standard arduino setup 
-
+// Standard arduino setup
 
 void setup() {
   setupArchitecture();
@@ -40,13 +39,12 @@ void setup() {
            apiDeviceLogin,
            apiDevicePass,
            getLogBuffer,
-           buttonIsPressed
-           );
+           buttonIsPressed);
 
   log(CLASS_MAIN, Info, "Startup of properties");
 #ifdef BIMBY_MODE
   StartupStatus c = m->startupPropertiesLight();
-#else // BIMBY_MODE
+#else  // BIMBY_MODE
   StartupStatus c = m->startupProperties();
 #endif // BIMBY_MODE
   m->getBot()->setMode(c.botMode);
@@ -59,13 +57,13 @@ void setup() {
     }
   } else {
 #ifdef ARDUINO
-    // Tricky description pushing: unless declared specially (with PROGMEM for instance)
-    // constant variables are kept in RAM. This is a 4K object that cannot stay there.
-    // https://arduino-esp8266.readthedocs.io/en/latest/PROGMEM.html
-    // Solution: put it in PROGMEM and store it in RAM only when required to push.
+  // Tricky description pushing: unless declared specially (with PROGMEM for instance)
+  // constant variables are kept in RAM. This is a 4K object that cannot stay there.
+  // https://arduino-esp8266.readthedocs.io/en/latest/PROGMEM.html
+  // Solution: put it in PROGMEM and store it in RAM only when required to push.
 #include <Description.json.h>
 #ifndef BIMBY_MODE
-    String* desc = new String(DESCRIPTION_JSON_VERSION);
+    String *desc = new String(DESCRIPTION_JSON_VERSION);
     log(CLASS_MAIN, Debug, "Pushing description...");
     m->getModule()->getPropSync()->pushDescription(desc->c_str());
     delete desc;
@@ -77,4 +75,3 @@ void setup() {
 void loop() {
   m->loop();
 }
-

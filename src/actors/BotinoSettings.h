@@ -13,7 +13,7 @@ enum BotinoSettingsProps {
   BotinoSettingsLcdLogsProp = 0,  // boolean, define if the device display logs in LCD
   BotinoSettingsStatusProp,       // string, defines the current general status of the device (vcc level, heap, etc)
   BotinoSettingsFsLogsProp,       // boolean, define if logs are to be dumped in the file system (only in debug mode)
-  BotinoSettingsFsLengthLogsProp,       // integer, define the length of the line in the logs
+  BotinoSettingsFsLengthLogsProp, // integer, define the length of the line in the logs
   BotinoSettingsPropsDelimiter
 };
 
@@ -46,7 +46,7 @@ public:
     return BotinoSettingsPropsDelimiter;
   }
 
-  void act() { }
+  void act() {}
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {

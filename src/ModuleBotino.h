@@ -1,9 +1,9 @@
 #ifndef MODULE_BOTINO_INC
 #define MODULE_BOTINO_INC
 
+#include <Constants.h>
 #include <log4ino/Log.h>
 #include <main4ino/Actor.h>
-#include <Constants.h>
 
 #include <actors/Body.h>
 #include <actors/BotinoSettings.h>
@@ -62,15 +62,7 @@ public:
     commands = new Commands("commands");
 
     module->getActors()->add(
-        7, 
-        (Actor *)bsettings, 
-        (Actor *)quotes, 
-        (Actor *)body, 
-        (Actor *)images, 
-        (Actor *)ifttt, 
-        (Actor *)notifier, 
-        (Actor *)commands
-    );
+        7, (Actor *)bsettings, (Actor *)quotes, (Actor *)body, (Actor *)images, (Actor *)ifttt, (Actor *)notifier, (Actor *)commands);
 
     message = NULL;
   }
@@ -96,8 +88,7 @@ public:
              const char *(*apiDeviceLoginFunc)(),
              const char *(*apiDevicePassFunc)(),
              Buffer *(*getLogBufferFunc)(),
-             bool (*buttonIsPressedFunc)()
-             ) {
+             bool (*buttonIsPressedFunc)()) {
 
     module->setup(PROJECT_ID,
                   PLATFORM_ID,

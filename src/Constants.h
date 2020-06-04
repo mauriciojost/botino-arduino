@@ -3,7 +3,6 @@
 
 #define PROJECT_ID "botino"
 
-
 #ifdef ARDUINO
 #ifdef ESP8266 // on ESP8266
 #define PLATFORM_ID "esp8266"
