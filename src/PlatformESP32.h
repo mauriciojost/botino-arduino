@@ -1,14 +1,14 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <ESP32_Servo.h>
 #include <PinoutESP32.h>
 #include <Platform.h>
 #include <RemoteDebug.h>
 #include <SPI.h>
-#include <ESP32_Servo.h>
 #include <Wire.h>
+#include <primitives/BoardESP32.h>
 #include <utils/Io.h>
 #include <utils/ServoConf.h>
-#include <primitives/BoardESP32.h>
 #ifndef TELNET_HANDLE_DELAY_MS
 #define TELNET_HANDLE_DELAY_MS 240000 // 4 minutes
 #endif                                // TELNET_HANDLE_DELAY_MS

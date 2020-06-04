@@ -1,11 +1,10 @@
 #include <Platform.h>
 #include <cstdio>
 #include <iostream>
+#include <primitives/BoardX86_64.h>
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
-#include <Platform.h>
-#include <primitives/BoardX86_64.h>
 
 #ifndef SIMULATOR_LOGIN
 #error "Must define SIMULATOR_LOGIN"

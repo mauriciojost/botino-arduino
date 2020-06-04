@@ -1,7 +1,7 @@
-#include <main4ino/Misc.h>
+#include <Constants.h>
 #include <ModuleBotino.h>
 #include <Platform.h>
-#include <Constants.h>
+#include <main4ino/Misc.h>
 
 #ifndef PROJ_VERSION
 #define PROJ_VERSION "snapshot"

@@ -7,9 +7,9 @@
 #include <SPI.h>
 #include <Servo.h>
 #include <Wire.h>
+#include <primitives/BoardESP8266.h>
 #include <utils/Io.h>
 #include <utils/ServoConf.h>
-#include <primitives/BoardESP8266.h>
 #ifndef TELNET_HANDLE_DELAY_MS
 #define TELNET_HANDLE_DELAY_MS 240000 // 4 minutes
 #endif                                // TELNET_HANDLE_DELAY_MS
