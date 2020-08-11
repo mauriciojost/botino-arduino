@@ -9,7 +9,9 @@
 
 -D MAIN4INOSERVER_API_HOST_BASE=\"http://martinenhome.com/main4ino/prd\"
 -D MAIN4INOSERVER_FINGERPRINT=NULL
+-D LOG_OPTIONS_DEFAULT=\"TIW.PRD.AHD.PSW.SBI.82I.??F.\"
 
+-D LOG_FIXED_OPTIONS=\"TIW.PRD.AHD.PSW.SBD.82I.??F.\"
 
 -D MAX_LOG_MSG_LENGTH=128
 -D OVERRUN_THRESHOLD_SECS=14400
@@ -19,7 +21,8 @@
 -D MAX_JSON_STR_LENGTH=1024
 -D HTTP_TIMEOUT_MS=5000
 
--D LOG_LEVEL=0
+# keep log level to 1 to avoid seeing boot debug messages on startup, before fs properties are loaded
+-D DEFAULT_LOG_LEVEL=Warn
 -D YES_DEBUG
 
 #-D UNIT_TEST
@@ -40,4 +43,6 @@
 
 -D ESP32_LEDR_INVERT
 
+#-D UPDATE_FIRMWARE_MAIN4INO_DISABLED
  
+-Wdeprecated-declarations
