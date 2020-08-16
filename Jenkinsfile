@@ -12,7 +12,7 @@ pipeline {
 
   stages {
     stage('Build & deliver') {
-      agent { docker 'mauriciojost/arduino-ci:platformio-3.6.6-0.2.1' }
+      agent { docker 'mauriciojost/arduino-ci:python-python_2.7-platformio-3.6.6-gcovr-4.1' }
       stages {
         stage('Scripts prepared') {
           steps {
