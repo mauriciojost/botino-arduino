@@ -14,6 +14,16 @@ pipeline {
     stage('Build & deliver') {
       agent { docker 'mauriciojost/arduino-ci:python-python_2.7-platformio-3.6.6-gcovr-4.1' }
       stages {
+
+        stage('Context') {
+          steps {
+            script {
+              sh 'platformio --version'
+              sh 'platformio platform list'
+            }
+          }
+        }
+
         stage('Scripts prepared') {
           steps {
             script {
