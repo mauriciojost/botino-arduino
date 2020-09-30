@@ -94,10 +94,10 @@ void runModeArchitecture() {
     readFile(COMMANDS_FILENAME, commands.getBuffer());
     const char* command = NULL;
     while (command = commands.split(';')) {
-      log(CLASS_PLATFORM, Debug, "Command: '%s'", command);
       Buffer cmdBuffer(command);
       cmdBuffer.replace('\n', 0);
       cmdBuffer.replace('\r', 0);
+      log(CLASS_PLATFORM, Debug, "Command: '%s'", cmdBuffer.getBuffer());
       if (!cmdBuffer.equals("exit")) {
         CmdExecStatus s = m->command(cmdBuffer.getBuffer());
         printf("'%s' => %d\n", cmdBuffer.getBuffer(), (int)s);
