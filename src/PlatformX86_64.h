@@ -42,7 +42,9 @@ const char *apiDevicePass() {
   return SIMULATOR_PASS;
 }
 
-void logLine(const char *str, const char *clz, LogLevel l, bool newline) {}
+void logLine(const char *str, const char *clz, LogLevel l, bool newline) {
+  printf("%s", str);
+}
 
 void messageFunc(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str) {
   printf("\n\n***** LCD (size %d)\n  %s\n*****\n\n", size, str);
