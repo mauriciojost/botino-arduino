@@ -14,6 +14,10 @@
 #error "Must define SIMULATOR_PASS"
 #endif // SIMULATOR_PASS
 
+#ifndef COMMANDS_FILENAME
+#define COMMANDS_FILENAME "/tmp/commands.list"
+#endif // COMMANDS_FILENAME
+
 #define CL_MAX_LENGTH 65000
 
 enum AppMode { Interactive = 0, NonInteractive = 1 };
@@ -81,15 +85,27 @@ void setupArchitecture() {
 
 void runModeArchitecture() {
   if (appMode == Interactive) {
-    char str[100];
-    printf("Waiting for input: \n   ");
-    fgets(str, 100, stdin);
-    if (strlen(str) != 0) {
-      Buffer cmdBuffer(str);
+    RichBuffer commands(1024 * 16);
+    log(CLASS_PLATFORM, Debug, "Waiting for %s...", COMMANDS_FILENAME);
+    while(access(COMMANDS_FILENAME, 0 ) != 0) {
+      sleep(0.1);
+    }
+    log(CLASS_PLATFORM, Debug, "File %s found!", COMMANDS_FILENAME);
+    readFile(COMMANDS_FILENAME, commands.getBuffer());
+    const char* command = NULL;
+    while (command = commands.split(';')) {
+      log(CLASS_PLATFORM, Debug, "Command: '%s'", command);
+      Buffer cmdBuffer(command);
       cmdBuffer.replace('\n', 0);
       cmdBuffer.replace('\r', 0);
-      m->command(cmdBuffer.getBuffer());
+      if (!cmdBuffer.equals("exit")) {
+        CmdExecStatus s = m->command(cmdBuffer.getBuffer());
+        printf("'%s' => %d\n", cmdBuffer.getBuffer(), (int)s);
+      } else {
+        exit(0);
+      }
     }
+    remove(COMMANDS_FILENAME);
   }
 }
 
