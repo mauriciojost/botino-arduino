@@ -92,6 +92,7 @@ void runModeArchitecture() {
     }
     log(CLASS_PLATFORM, Debug, "File %s found!", COMMANDS_FILENAME);
     readFile(COMMANDS_FILENAME, commands.getBuffer());
+    remove(COMMANDS_FILENAME);
     const char* command = NULL;
     while (command = commands.split(';')) {
       Buffer cmdBuffer(command);
