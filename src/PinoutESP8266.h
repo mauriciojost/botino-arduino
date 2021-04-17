@@ -1,7 +1,7 @@
 #ifndef PINOUT_INC
 #define PINOUT_INC
 
-#include <pinouts/PinoutESP8266.h>
+#include <pinouts/PinoutESP8266NodeMCU.h>
 
 // I2C OLED 128x64
 // (Kuman 0.96inches I2C OLED 128x64 LCD screen)

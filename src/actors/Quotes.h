@@ -70,16 +70,22 @@ public:
     initWifiFunc = f;
   }
 
-  void act() {
+  Act act(Metadata *md) {
+    // TODO use new API
     if (!isInitialized()) {
       log(CLASS_QUOTES, Warn, "No init!");
-      return;
+      return Act("");
     }
     if (getTiming()->matches()) {
       for (int i = 0; i < NRO_QUOTES; i++) {
         fillQuote(i);
       }
     }
+    return Act("");
+  }
+
+  CmdExecStatus command(Cmd *) {
+    return NotFound;
   }
 
   void fillQuote(int i) {

@@ -99,7 +99,7 @@ void runModeArchitecture();
 // Handle an architecture specific command (if all the regular commands don't match).
 // Returns true if the command requires the current wait batch to be interrupted (normally true with change of bot mode)
 // Should provide a 'help' command too.
-CmdExecStatus commandArchitecture(const char *command);
+CmdExecStatus commandArchitecture(Cmd *command);
 
 // Loop in configure mode specific to the architecture
 void configureModeArchitecture();
@@ -179,16 +179,6 @@ bool initWifiSimple() {
 bool sleepInterruptable(time_t cycleBegin, time_t periodSecs) {
   int msec = (m == NULL ? 1000 : m->getModuleSettings()->miniPeriodMsec());
   return lightSleepInterruptable(cycleBegin, periodSecs, msec, haveToInterrupt, heartbeat);
-}
-
-void updateFirmwareVersion(const char *targetVersion, const char *currentVersion) {
-  bool c = initWifiSimple();
-  if (c) {
-    updateFirmwareFromMain4ino(
-        m->getModule()->getPropSync()->getSession(), apiDeviceLogin(), PROJECT_ID, PLATFORM_ID, targetVersion, currentVersion);
-  } else {
-    log(CLASS_PLATFORM, Error, "Could not update");
-  }
 }
 
 #endif // PLATFORM_INC

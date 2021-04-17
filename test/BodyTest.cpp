@@ -114,12 +114,12 @@ void test_body_shows_time() {
 
   Timing *t = b.getTiming();
   t->setCurrentTime(3600 * 2 + 60 * 33 + 10);
-  b.act();
+  b.act(b.getMetadata());
 
   TEST_ASSERT_EQUAL_STRING("02:33", lastMsg);
   TEST_ASSERT_EQUAL(1, faceCleared); // 1 act
 
-  b.act();
+  b.act(b.getMetadata());
 
   TEST_ASSERT_EQUAL(2, faceCleared); // 2 acts
 }
@@ -130,7 +130,7 @@ void executeMove(Body *b, const char *move) {
   b->setPropValue(BodyRoutine0Prop, &mv0);
   Timing *t = b->getTiming();
   t->setCurrentTime(t->getCurrentTime() + 1); // assumes configured to act every second
-  b->act();
+  b->act(b->getMetadata());
 }
 
 void setMove(Body *b, int i, const char *move) {

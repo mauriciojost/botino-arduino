@@ -46,7 +46,13 @@ public:
     return BotinoSettingsPropsDelimiter;
   }
 
-  void act() {}
+  Act act(Metadata *md) {
+    return Act("");
+  }
+
+  CmdExecStatus command(Cmd *) {
+    return NotFound;
+  }
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {

@@ -41,7 +41,7 @@ void restoreSafeFirmware() { // to be invoked as last resource when things go wr
 void askStringQuestion(const char *question, Buffer *answer) {
   log(CLASS_PLATFORM, User, "Question: %s", question);
   Serial.setTimeout(QUESTION_ANSWER_TIMEOUT_MS);
-  Serial.readBytesUntil('\n', answer->getUnsafeBuffer(), answer->getCapacity());
+  Serial.readBytesUntil('\n', answer->getUnsafeBuffer(), answer->getEffCapacity());
   answer->replace('\n', '\0');
   answer->replace('\r', '\0');
   log(CLASS_PLATFORM, User, "Answer: '%s'", answer->getBuffer());

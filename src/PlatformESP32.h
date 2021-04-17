@@ -26,16 +26,6 @@
 #define ONLY_SHOW_MSG true
 #define SHOW_MSG_AND_REACT false
 
-#define HELP_COMMAND_ARCH_CLI                                                                                                              \
-  "\n  ESP32 HELP"                                                                                                                         \
-  "\n  init              : initialize essential settings (wifi connection, logins, etc.)"                                                  \
-  "\n  servo ...         : tune the servo <s> (r|l) and make a test round "                                                                \
-  "\n  rm ...            : remove file in FS "                                                                                             \
-  "\n  ls                : list files present in FS "                                                                                      \
-  "\n  reset             : reset the device"                                                                                               \
-  "\n  lightsleep ...    : light sleep N provided seconds"                                                                                 \
-  "\n  clearstack        : clear stack trace "                                                                                             \
-  "\n"
 
 #define BUTTON_IS_PRESSED ((bool)digitalRead(BUTTON0_PIN))
 
@@ -68,7 +58,7 @@ void buttonPressed();
 void heartbeat();
 void debugHandle();
 bool haveToInterrupt();
-void handleInterrupt();
+void handleInterruptCustom();
 void initializeServoConfigs();
 
 #include <PlatformESP.h>
@@ -254,8 +244,8 @@ void setupArchitecture() {
 }
 
 void runModeArchitecture() {
-  handleInterrupt();
-  if (m->getModuleSettings()->getDebug()) {
+  handleInterruptCustom();
+  if (m->getModuleSettings()->getDebugFlag('d')) {
     debugHandle();
   }
 }
@@ -304,9 +294,9 @@ void tuneServo(const char *name, int pin, Servo *servo, ServoConf *servoConf) {
   servo->detach();
 }
 
-CmdExecStatus commandArchitecture(const char *c) {
-  if (strcmp("servo", c) == 0) {
-    char servo = strtok(NULL, " ")[0];
+CmdExecStatus commandArchitecture(Cmd *c) {
+  if (c->matches("servo", "initialize the servo", 1, "r|l")) {
+    char servo = (char)c->getArgIntBE(0);
     Buffer serialized(16);
     if (servo == 'r' || servo == 'R') {
       arms(2, 2, 1);
@@ -336,7 +326,7 @@ CmdExecStatus commandArchitecture(const char *c) {
       log(CLASS_PLATFORM, User, "Invalid servo (l|r)");
       return InvalidArgs;
     }
-  } else if (strcmp("init", c) == 0) {
+  } else if (c->matches("init", "initialize all device", 0)) {
     logRaw(CLASS_PLATFORM, User, "-> Initialize");
     logRaw(CLASS_PLATFORM, User, "Execute:");
     logRaw(CLASS_PLATFORM, User, "   ls");
@@ -353,38 +343,13 @@ CmdExecStatus commandArchitecture(const char *c) {
     logRaw(CLASS_PLATFORM, User, "   store");
     logRaw(CLASS_PLATFORM, User, "   ls");
     return Executed;
-  } else if (strcmp("ls", c) == 0) {
-    File root = SPIFFS.open("/");
-    File file = root.openNextFile();
-    while (file) {
-      log(CLASS_PLATFORM, User, "- %s (%d bytes)", file.name(), (int)file.size());
-      file = root.openNextFile();
-    }
-    return Executed;
-  } else if (strcmp("rm", c) == 0) {
-    const char *f = strtok(NULL, " ");
-    bool succ = SPIFFS.remove(f);
-    log(CLASS_PLATFORM, User, "### File '%s' %s removed", f, (succ ? "" : "NOT"));
-    return Executed;
-  } else if (strcmp("reset", c) == 0) {
-    ESP.restart(); // it is normal that it fails if invoked the first time after firmware is written
-    return Executed;
-  } else if (strcmp("lightsleep", c) == 0) {
-    int s = atoi(strtok(NULL, " "));
-    return (lightSleepInterruptable(now(), s, 1000, haveToInterrupt, heartbeat) ? ExecutedInterrupt : Executed);
-  } else if (strcmp("clearstack", c) == 0) {
-    // SaveCrash.clear();
-    return Executed;
-  } else if (strcmp("help", c) == 0 || strcmp("?", c) == 0) {
-    logRaw(CLASS_PLATFORM, User, HELP_COMMAND_ARCH_CLI);
-    return Executed;
   } else {
     return NotFound;
   }
 }
 
 void configureModeArchitecture() {
-  handleInterrupt();
+  handleInterruptCustom();
   debugHandle();
 #ifdef TELNET_ENABLED
   if (m->getBot()->getClock()->currentTime() % 60 == 0) { // every minute
@@ -421,11 +386,11 @@ void abort(const char *msg) {
 ////////////////////////////////////////
 
 void debugHandle() {
-  if (!m->getModuleSettings()->getDebug()) {
+  if (!m->getModuleSettings()->getDebugFlag('d')) {
     return;
   }
   static bool firstTime = true;
-  Serial.setDebugOutput(m->getModuleSettings()->getDebug()); // deep HW logs
+  Serial.setDebugOutput(m->getModuleSettings()->getDebugFlag('d')); // deep HW logs
   if (firstTime) {
     log(CLASS_PLATFORM, Debug, "Initialize debuggers...");
 #ifdef TELNET_ENABLED
@@ -514,7 +479,7 @@ void heartbeat() {
   LED_ALIVE_TOGGLE
 }
 
-void handleInterrupt() {
+void handleInterruptCustom() {
   if (Serial.available()) {
     // Handle serial commands
     uint8_t c;
@@ -536,7 +501,8 @@ void handleInterrupt() {
         cmdBuffer->replace('\n', 0);
         cmdBuffer->replace('\r', 0);
         if (cmdBuffer->getLength() > 0) {
-          CmdExecStatus execStatus = m->command(cmdBuffer->getBuffer());
+          Cmd cmd(cmdBuffer->getBuffer());
+          CmdExecStatus execStatus = m->getBot()->command(&cmd);
           bool interrupt = (execStatus == ExecutedInterrupt);
           log(CLASS_PLATFORM, Debug, "Interrupt: %d", interrupt);
           log(CLASS_PLATFORM, Debug, "Cmd status: %s", CMD_EXEC_STATUS(execStatus));

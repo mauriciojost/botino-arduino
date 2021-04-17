@@ -85,7 +85,13 @@ public:
     return name;
   }
 
-  void act() {}
+  Act act(Metadata *md) {
+    return Act("");
+  }
+
+  CmdExecStatus command(Cmd *) {
+    return NotFound;
+  }
 
   void getSetPropValue(int propIndex, GetSetMode setMode, const Value *targetValue, Value *actualValue) {
     if (propIndex >= CommandsCmdNameValue0Prop && propIndex < (NRO_COMMANDS + CommandsCmdNameValue0Prop)) {

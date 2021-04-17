@@ -48,6 +48,11 @@ private:
 
   void (*message)(int x, int y, int color, bool wrap, MsgClearMode clear, int size, const char *str);
 
+  std::function<CmdExecStatus (Cmd* cmd)> cmdProjExtFunc = [&](Cmd* c) {
+      return commandProjectExtended(c);
+  };
+
+
 public:
   ModuleBotino() {
 
@@ -81,7 +86,7 @@ public:
              void (*deepSleepNotInterruptableFunc)(time_t cycleBegin, time_t periodSec),
              void (*configureModeArchitectureFunc)(),
              void (*runModeArchitectureFunc)(),
-             CmdExecStatus (*commandArchitectureFunc)(const char *cmd),
+             CmdExecStatus (*commandArchitectureFunc)(Cmd *cmd),
              void (*infoFunc)(),
              void (*updateFunc)(const char *, const char *),
              void (*testFunc)(),
@@ -90,8 +95,8 @@ public:
              Buffer *(*getLogBufferFunc)(),
              bool (*buttonIsPressedFunc)()) {
 
-    module->setup(PROJECT_ID,
-                  PLATFORM_ID,
+    module->setup(STRINGIFY(PROJECT_ID),
+                  STRINGIFY(PLATFORM_ID),
                   initWifiFunc,
                   stopWifiFunc,
                   httpMethodFunc,
@@ -103,6 +108,7 @@ public:
                   configureModeArchitectureFunc,
                   runModeArchitectureFunc,
                   commandArchitectureFunc,
+                  cmdProjExtFunc,
                   infoFunc,
                   updateFunc,
                   testFunc,
@@ -147,70 +153,37 @@ public:
     body->z();
   }
 
-  /**
+ /**
    * Handle a user command.
    */
-  CmdExecStatus command(const char *cmd) {
-
-    {
-      Buffer b(cmd);
-      log(CLASS_MODULEB, User, "\n> %s\n", b.getBuffer());
-
-      if (b.getLength() == 0) {
-        return NotFound;
-      }
-
-      char *c = strtok(b.getUnsafeBuffer(), " ");
-
-      if (strcmp("move", c) == 0) {
-        c = strtok(NULL, " ");
-        if (c == NULL) {
-          logRaw(CLASS_MODULEB, User, "Argument needed:\n  move <move>");
-          return InvalidArgs;
-        }
-        log(CLASS_MODULEB, Info, "-> move %s", c);
-        body->performMove(c);
-        return Executed;
-      } else if (strcmp("freq", c) == 0) {
-        log(CLASS_MODULEB, Warn, "Intercepted: interferes with servo");
-        // changing the frequency to 160 MHz makes the servo module work unpredictably.
-        return CmdFailed;
-      } else if (strcmp("ack", c) == 0) {
-        ackCmd();
-        log(CLASS_MODULEB, Info, "Notification read");
-        return Executed;
-      } else if (strcmp("lcd", c) == 0) {
-        const char *x = strtok(NULL, " ");
-        const char *y = strtok(NULL, " ");
-        const char *color = strtok(NULL, " ");
-        const char *wrap = strtok(NULL, " ");
-        const char *clear = strtok(NULL, " ");
-        const char *size = strtok(NULL, " ");
-        const char *str = strtok(NULL, " ");
-        if (x == NULL || y == NULL || color == NULL || wrap == NULL || clear == NULL || size == NULL || str == NULL) {
-          logRaw(CLASS_MODULEB, Warn, "Arguments needed:\n  lcd <x> <y> <color> <wrap> <clear> <size> <str>");
-          return InvalidArgs;
-        }
-        log(CLASS_MODULEB, User, "-> Lcd %s", str);
-        message(atoi(x), atoi(y), atoi(color), atoi(wrap), (MsgClearMode)atoi(clear), atoi(size), str);
-        return Executed;
-      } else if (strcmp("ifttttoken", c) == 0) {
-        c = strtok(NULL, " ");
-        if (c == NULL) {
-          logRaw(CLASS_MODULEB, User, "Argument needed:\n  ifttttoken <token>");
-          return InvalidArgs;
-        }
-        ifttt->setKey(c);
-        log(CLASS_MODULEB, Info, "Ifttt token: %s", ifttt->getKey());
-        return Executed;
-      } else if (strcmp("help", c) == 0 || strcmp("?", c) == 0) {
-        logRaw(CLASS_MODULEB, User, HELP_COMMAND_CLI_PROJECT);
-        return module->command("?");
-      }
-      // deallocate buffer memory
+  CmdExecStatus commandProjectExtended(Cmd *c) {
+    // HEADS UP: changing the frequency to 160 MHz makes the servo module work unpredictably.
+    if (c->matches("move", "perform a move", 1, "move")) {
+      log(CLASS_MODULEB, Info, "-> move %s", c->getAsLastArg(0));
+      body->performMove(c->getAsLastArg(0));
+      return Executed;
+    } else if (c->matches("ack", "acknoledge notification", 0)) {
+      ackCmd();
+      log(CLASS_MODULEB, Info, "Notification read");
+      return Executed;
+    } else if (c->matches("lcd", "write message to LCD", 7, "x", "y", "color", "wrap", "clear", "size", "str")) {
+      int x = c->getArgIntBE(0);
+      int y = c->getArgIntBE(1);
+      int color = c->getArgIntBE(2);
+      int wrap = c->getArgIntBE(3);
+      int clear = c->getArgIntBE(4);
+      int size = c->getArgIntBE(5);
+      const char *str = c->getAsLastArg(6);
+      log(CLASS_MODULEB, User, "-> Lcd %s", str);
+      message(x, y, color, wrap, (MsgClearMode)clear, size, str);
+      return Executed;
+    } else if (c->matches("ifttttoken", "provide ifttt token", 1, "token") == 0) {
+      ifttt->setKey(c->getAsLastArg(0));
+      log(CLASS_MODULEB, Info, "Ifttt token: %s", ifttt->getKey());
+      return Executed;
+    } else {
+      return NotFound;
     }
-    // if none of the above went through
-    return module->command(cmd);
   }
 
   /**
@@ -233,7 +206,7 @@ public:
         const char *mvName = getCommands()->getCmdName(ind);
         getNotifier()->message(0, 2, "%s?", mvName);
         if (!dryRun) {
-          command(getCommands()->getCmdValue(ind));
+          // command(getCommands()->getCmdValue(ind)); TODO FIX
         }
       } break;
       case 8: {
@@ -307,6 +280,7 @@ public:
   void loop() {
     module->loop();
   }
+
 };
 
 #endif // MODULE_BOTINO_INC

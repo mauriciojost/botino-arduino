@@ -82,6 +82,10 @@ public:
     md->getTiming()->setFreq("never");
   }
 
+  CmdExecStatus command(Cmd *) {
+    return NotFound;
+  }
+
   const char *getName() {
     return name;
   }
@@ -152,7 +156,10 @@ public:
     return i;
   }
 
-  void act() {}
+  Act act(Metadata *md) {
+    return Act("");
+  }
+
 
   const char *getPropName(int propIndex) {
     switch (propIndex) {
@@ -164,10 +171,10 @@ public:
   }
 
   void bufferToQueue(RichBuffer *b) {
-    const char *p;
-    while ((p = b->split(NOTIFS_SEPARATOR)) != NULL) {
-      if (strcmp(p, EMPTY_NOTIF_REPRESENTATION) != 0) { // filter out empty notifs
-        queue.pushUnique(p);                            // add to the existent ones, does not remove
+    Buffer aux(16);
+    while ((b->split(NOTIFS_SEPARATOR, &aux)) != -1) {
+      if (!aux.isEmpty()) {                              // filter out empty notifs
+        queue.pushUnique(aux.getBuffer());               // add to the existent ones, does not remove
       }
     }
   }

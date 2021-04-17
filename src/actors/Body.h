@@ -479,10 +479,11 @@ public:
     button = b;
   }
 
-  void act() {
+  Act act(Metadata *md) {
+    // TODO use the new API
     if (!isInitialized()) {
       log(CLASS_BODY, Warn, "No init!");
-      return;
+      return Act("");
     }
     for (int i = 0; i < NRO_ROUTINES; i++) {
       routines[i]->timing->setCurrentTime(getTiming()->getCurrentTime()); // align with Body's time
@@ -492,6 +493,11 @@ public:
         performMove(i);
       }
     }
+    return Act("");
+  }
+
+  CmdExecStatus command(Cmd *) {
+    return NotFound;
   }
 
   const char *getPropName(int propIndex) {

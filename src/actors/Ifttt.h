@@ -60,7 +60,13 @@ public:
     return name;
   }
 
-  void act() {}
+  Act act(Metadata *md) {
+    return Act("");
+  }
+
+  CmdExecStatus command(Cmd *) {
+    return NotFound;
+  }
 
   void setKey(const char *k) {
     iftttKey->fill("%s", k);
