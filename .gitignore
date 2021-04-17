@@ -206,3 +206,4 @@
 /src/x86
 /simulate
 /.mavarduino.simulator.bin
+/upload_ota
