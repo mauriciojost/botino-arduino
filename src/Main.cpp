@@ -75,3 +75,7 @@ void setup() {
 void loop() {
   m->loop();
 }
+
+#ifdef X86_64
+#include <MavarduinoSimulatorLauncher.h>
+#endif // X86_64
