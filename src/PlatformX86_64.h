@@ -96,14 +96,14 @@ void runModeArchitecture() {
     readFile(COMMANDS_FILENAME, commands.getBuffer());
     printf("###COMMAND: %s\n", commands.getBuffer()->getBuffer());
     remove(COMMANDS_FILENAME);
-    const char* command = NULL;
-    while (command = commands.split(';')) {
-      Buffer cmdBuffer(command);
+    Buffer cmdBuffer(64);
+    while (commands.split(';', &cmdBuffer) != -1) {
       cmdBuffer.replace('\n', 0);
       cmdBuffer.replace('\r', 0);
       log(CLASS_PLATFORM, Debug, "Command: '%s'", cmdBuffer.getBuffer());
       if (!cmdBuffer.equals("exit")) {
-        CmdExecStatus s = m->command(cmdBuffer.getBuffer());
+        Cmd cmd(cmdBuffer.getBuffer());
+        CmdExecStatus s = m->getBot()->command(&cmd);
         printf("'%s' => %d\n", cmdBuffer.getBuffer(), (int)s);
       } else {
         exit(0);
@@ -113,7 +113,7 @@ void runModeArchitecture() {
   }
 }
 
-CmdExecStatus commandArchitecture(const char *c) {
+CmdExecStatus commandArchitecture(Cmd* cmd) {
   return NotFound;
 }
 

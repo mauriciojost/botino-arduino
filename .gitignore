@@ -204,3 +204,5 @@
 /src/Stream.cpp
 /src/Stream.h
 /src/x86
+/simulate
+/.mavarduino.simulator.bin
