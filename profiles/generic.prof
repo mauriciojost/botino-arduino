@@ -4,10 +4,10 @@
 -D IFTTT_KEY=\"defaultiftttkey\"
 -D API_PASSWORD=\"passwordgeneric\"
 
-#-D MAIN4INOSERVER_API_HOST_BASE=\"https://martinenhome.com/main4ino/prd\"
+#-D MAIN4INOSERVER_API_HOST_BASE=\"https://vps-b2005803.vps.ovh.net/main4ino/prd\"
 #-D MAIN4INOSERVER_FINGERPRINT=\"0C:C6:4C:20:67:DA:53:74:B7:CD:EC:6A:0A:E3:6D:46:53:BB:54:10\"
 
--D MAIN4INOSERVER_API_HOST_BASE=\"http://martinenhome.com/main4ino/prd\"
+-D MAIN4INOSERVER_API_HOST_BASE=\"http://vps-b2005803.vps.ovh.net/main4ino/prd\"
 -D MAIN4INOSERVER_FINGERPRINT=NULL
 -D LOG_OPTIONS_DEFAULT=\"TIW.PRD.PSW.??I.\"
 
