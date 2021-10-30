@@ -207,3 +207,4 @@
 /simulate
 /.mavarduino.simulator.bin
 /upload_ota
+/libs/arduino-cicd/

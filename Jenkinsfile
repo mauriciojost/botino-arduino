@@ -104,7 +104,7 @@ pipeline {
         stage('Publish') {
           steps {
             wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
-              sh 'bash ./misc/scripts/expose_artifacts'
+              sh 'bash ./libs/arduino-cicd/expose_artifacts'
             }
           }
         }
