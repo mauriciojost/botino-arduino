@@ -72,16 +72,20 @@ pipeline {
         stage('Artifact (generic)') {
           steps {
             wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
-              sh './upload -n esp8266 -p profiles/generic.prof -e' // shared volume with docker container
-              sh './upload -n esp32 -p profiles/generic.prof -e' // shared volume with docker container
-            }
-          }
-        }
-        stage('Artifact (bimdy)') {
-          steps {
-            wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'xterm']) {
-              sh './upload -n esp8266 -p profiles/bimby.prof -e -t bimby' // shared volume with docker container
-              sh './upload -n esp32 -p profiles/bimby.prof -e -t bimby' // shared volume with docker container
+              sh '''
+                for platform in $(cat .platforms.build)
+                do
+                  for feature in $(cat .feature_branches.build)
+                  do
+									  if [ "$feature" == "generic" ]
+										then
+                      ./upload -n "$platform" -p "profiles/$feature.prof" -e
+										else
+										  ./upload -n "$platform" -p "profiles/$feature.prof" -e -t "$feature"
+										fi
+                  done
+                done
+              '''
             }
           }
         }
