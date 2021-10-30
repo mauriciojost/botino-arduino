@@ -5,7 +5,7 @@
 
 #define RESTORE_WIFI_SSID "assid"
 #define RESTORE_WIFI_PASS "apassword"
-#define RESTORE_URL "http://main4ino.martinenhome.com/main4ino/prd/firmwares/" PROJECT_ID "/" PLATFORM_ID "/content?version=LATEST"
+#define RESTORE_URL "http://main4ino.martinenhome.com/main4ino/prd/firmwares/" STRINGIFY(PROJECT_ID) "/" STRINGIFY(PLATFORM_ID) "/content?version=LATEST"
 #define RESTORE_RETRIES 10
 
 #define DELAY_MS_SPI 3
