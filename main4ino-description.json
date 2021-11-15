@@ -1,19 +1,6 @@
 {
   "json" : [
     {
-      "patterns" : ["^.*.freq$"],
-      "descriptions" : ["Frequency at which the actor will act and perform its duty. See <a href=\"https://bitbucket.org/mauriciojost/main4ino-arduino/src/master/README.md\" target=\"_blank\">here</a>."],
-      "examples" : [
-        "never     -> Never",
-        "~10s  -> Every 10 seconds",
-        "~30m  -> Every 30 minutes",
-        "@08h00   -> Everyday at 8h",
-        "[SMtwtfs]@15h00 -> At 15h00 on Sundays and Mondays",
-        "[smTWtfs]~30mf6t18 -> Every 30 minutes from 06h until 18h on Tuesdays and Wednesdays",
-        "oneoff    -> Once and go back to previous configuration"
-      ]
-    },
-    {
       "patterns" : ["^body.r\\d+$"],
       "descriptions" : ["Routine i-th of the body (format: frequency:pose1.pose2...poseN. . See <a href=\"https://github.com/mauriciojost/botino-arduino/blob/master/src/actors/Body.md\" target=\"_blank\">all pose codes here</a>."],
       "examples" : [
@@ -27,17 +14,6 @@
       ]
     },
     {
-      "patterns" : ["^clocksync..zone$"],
-      "descriptions" : ["Zone to pick up the current date-time from. See <a href=\"https://timezonedb.com/\" target=\"_blank\">here</a>."],
-      "examples" : [ "Europe/Paris", "America/Argentina", "Asia/Shanghai", "Africa/Freetown" ]
-    },
-    {"patterns" : ["^notifier.n\\d{1,2}"], "descriptions" : ["Notification item i-th."], "examples" : ["Drink water"]},
-    {
-      "patterns" : ["^commands.cm\\d{1,2}"],
-      "descriptions" : ["Command i-th: name of the command, : character, and command to execute in i-th turn while pressing button."],
-      "examples" : [ "Arms up:move C99.", "Update:update", "Execute IFTTT event:move Ievent.", "Acknowledge notification: ack" ]
-    },
-    {
       "patterns" : ["^images.im\\d+$"],
       "descriptions" :
           ["Bitmap of custom image i-th, represented in base 64. See <a href=\"https://docs.google.com/spreadsheets/d/1jXa9mFxeiN_bUji_WiCPKO_gB6pxQUeQ5QxgoSINqdc/edit\" target=\"_blank\">here</a>."],
@@ -47,16 +23,6 @@
         "00000000001C03A20441080107FE0000 -> clouds",
         "07E008100FF0381028103810081007E0 -> mug"
       ]
-    },
-    {
-      "patterns" : ["^propsync..fsyncfreq$"],
-      "descriptions" : ["Frequency at which the device performs a full synchronization with the server (required as the server performs regular cleanup on old records)."],
-      "examples" : ["~72h"]
-    },
-    {
-      "patterns" : ["^propsync..fstorefreq$"],
-      "descriptions" : ["Frequency at which the device performs a full backup of all properties."],
-      "examples" : ["~72h"]
     },
     {
       "patterns" : ["^settings..lcdlogs$"],
