@@ -1,6 +1,8 @@
 #ifndef PLATFORM_ESP_INC
 #define PLATFORM_ESP_INC
 
+#include <mod4ino-espconfig/Mod4inoEspConfig.h>
+
 #define QUESTION_ANSWER_TIMEOUT_MS 60000
 
 #define RESTORE_WIFI_SSID "assid"

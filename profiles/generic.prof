@@ -24,7 +24,6 @@
 -D HTTP_TIMEOUT_MS=5000
 
 # keep log level to 1 to avoid seeing boot debug messages on startup, before fs properties are loaded
--D DEFAULT_LOG_LEVEL=Warn
 -D YES_DEBUG
 #-D LOG_FIXED_OPTIONS=\"TIW.PRD.AHD.PSW.SBD.82I.??F.\"
 -D LOG_OPTIONS_DEFAULT=\"TIW.PRD.PSW.??I.\"

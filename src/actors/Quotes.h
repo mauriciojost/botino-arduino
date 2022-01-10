@@ -36,7 +36,7 @@ private:
   Buffer *quotes[NRO_QUOTES];
   HttpResponse (*httpMethod)(HttpMethod m, const char *url, Stream *body, Table *headers, const char *fingerprint);
   Buffer *jsonAuxBuffer;
-  bool (*initWifiFunc)();
+  std::function<bool ()> initWifiFunc;
   Table *headers;
 
   bool isInitialized() {
@@ -66,7 +66,7 @@ public:
     httpMethod = h;
   }
 
-  void setInitWifi(bool (*f)()) {
+  void setInitWifi(std::function<bool ()> f) {
     initWifiFunc = f;
   }
 

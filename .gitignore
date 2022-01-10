@@ -208,3 +208,9 @@
 /.mavarduino.simulator.bin
 /upload_ota
 /libs/arduino-cicd/
+/libs/WiFiManager/
+/libs/mod4ino-espconfig/
+/src/WiFiManager.cpp
+/src/WiFiManager.h
+/src/mod4ino-espconfig
+/src/strings_en.h

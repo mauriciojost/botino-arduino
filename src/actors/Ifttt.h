@@ -36,7 +36,7 @@ class Ifttt : public Actor {
 private:
   const char *name;
   Metadata *md;
-  bool (*initWifiFunc)();
+  std::function<bool ()> initWifiFunc;
   HttpResponse (*httpMethod)(HttpMethod m, const char *url, Stream *body, Table *headers, const char *fingerprint);
 
   Buffer *iftttKey;
@@ -76,7 +76,7 @@ public:
     return iftttKey->getBuffer();
   }
 
-  void setInitWifi(bool (*f)()) {
+  void setInitWifi(std::function<bool ()> f) {
     initWifiFunc = f;
   }
 

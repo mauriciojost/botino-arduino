@@ -15,6 +15,17 @@
 
 // Standard arduino setup
 
+
+HttpResponse httpMethodCustom(HttpMethod m, const char *url, Stream *body, Table *headers, const char *fingerprint) {
+  heartbeat();
+  return httpMethod(m, url, body, headers, fingerprint);
+}
+
+std::function<bool ()> initWifiSimpleWrapper = []() {return initWifiSimple();};
+std::function<void ()> stopWifiWrapper = []() {stopWifi();};
+
+std::function<bool ()> needFirstSetup = [&]() { return wasHardwareReset(); };
+
 void setup() {
   setupArchitecture();
   m = new ModuleBotino();
@@ -22,9 +33,9 @@ void setup() {
            arms,
            messageFunc,
            ios,
-           initWifiSimple,
-           noop,
-           httpMethod,
+           initWifiSimpleWrapper,
+           stopWifiWrapper,
+           httpMethodCustom,
            clearDevice,
            readFile,
            writeFile,
@@ -40,6 +51,8 @@ void setup() {
            apiDevicePass,
            getLogBuffer,
            buttonIsPressed);
+  m->getModule()->setNeedFirstSetupFunc(needFirstSetup);
+  m->getModule()->setFirstSetupFunc(firstSetupArchitecture);
 
   log(CLASS_MAIN, Info, "Startup of properties");
 #ifdef BIMBY_MODE
@@ -55,20 +68,6 @@ void setup() {
     } else {
       abort("Could not startup");
     }
-  } else {
-#ifdef ARDUINO
-  // Tricky description pushing: unless declared specially (with PROGMEM for instance)
-  // constant variables are kept in RAM. This is a 4K object that cannot stay there.
-  // https://arduino-esp8266.readthedocs.io/en/latest/PROGMEM.html
-  // Solution: put it in PROGMEM and store it in RAM only when required to push.
-#include <Description.json.h>
-#ifndef BIMBY_MODE
-    String *desc = new String(DESCRIPTION_JSON_VERSION);
-    log(CLASS_MAIN, Debug, "Pushing description...");
-    m->getModule()->getPropSync()->pushDescription(desc->c_str());
-    delete desc;
-#endif // BIMBY_MODE
-#endif // ARDUINO
   }
 }
 
